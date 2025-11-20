@@ -1,0 +1,56 @@
+# Directorios de build
+build/
+build_*/
+cmake-build-*/
+out/
+bin/
+lib/
+
+# IDEs
+.idea/
+.vscode/
+.vs/
+*.swp
+*.swo
+*~
+
+# Compilados
+*.o
+*.a
+*.so
+*.dll
+*.exe
+*.out
+
+# CMake cache
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+.dockerignore
+docker-compose.yml
+
+# Documentación
+docs/
+*.md
+!README.md
+
+# Temporales
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Tests
+tests/
