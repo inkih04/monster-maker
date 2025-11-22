@@ -1,209 +1,79 @@
-cmake_minimum_required(VERSION 3.22)
-project(PokemonEngine VERSION 0.1.0 LANGUAGES C CXX)
+# Establecer la versión mínima de CMake.
+cmake_minimum_required(VERSION 3.10)
 
-# ==========================================================
-# CONFIGURACIÓN GLOBAL
-# ==========================================================
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+# Políticas para compatibilidad
+cmake_policy(SET CMP0072 NEW)
 
-# Para IDEs (genera compile_commands.json)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# Nombre del proyecto y lenguajes (C y C++ son necesarios)
+project(PokemonGameEngine VERSION 0.1.0 LANGUAGES C CXX)
 
-# Forzar static libs (importante para distribución)
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(ENGINE_ROOT ${CMAKE_CURRENT_SOURCE_DIR})
-set(EXTERNAL_DIR ${ENGINE_ROOT}/external)
+# =========================================================================
+# 1. Rutas de Cabecera (Headers)
+# =========================================================================
+include_directories(include)
 
-# ==========================================================
-# COMPILADOR (OPCIONAL: CLANG)
-# ==========================================================
-option(USE_CLANG "Prefer Clang if available" ON)
+# Rutas de librerías externas locales (Source Code)
+include_directories(
+        ${PROJECT_SOURCE_DIR}/external/glm
+        ${PROJECT_SOURCE_DIR}/external/freetype-2.3.5-1-bin/include
+)
 
-if (USE_CLANG AND NOT DEFINED CMAKE_CXX_COMPILER)
-    find_program(CLANGPP clang++)
-    find_program(CLANG clang)
+# =========================================================================
+# 2. Configuración y Dependencias
+# =========================================================================
 
-    if (CLANGPP AND CLANG)
-        message(STATUS "✓ Using Clang as compiler")
-        set(CMAKE_CXX_COMPILER ${CLANGPP} CACHE PATH "" FORCE)
-        set(CMAKE_C_COMPILER ${CLANG} CACHE PATH "" FORCE)
-    endif()
-endif()
-
-# ==========================================================
-# DEPENDENCIAS LOCALES (DOCKER-FRIENDLY)
-# ==========================================================
-
-# --- GLFW (Window + OpenGL context) ---
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+# --- GLFW (Compilado desde código fuente local) ---
+# Desactivamos Wayland explícitamente para evitar problemas de dependencias en local si no las tienes
 set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_X11 ON CACHE BOOL "" FORCE)
-add_subdirectory(${EXTERNAL_DIR}/glfw EXCLUDE_FROM_ALL)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+add_subdirectory(external/glfw)
 
-# --- GLM (Math library, header-only) ---
-add_subdirectory(${EXTERNAL_DIR}/glm EXCLUDE_FROM_ALL)
+# --- SOIL (Compilado desde código fuente local) ---
+add_subdirectory(external/soil)
 
-# --- GLEW (OpenGL extensions) ---
-add_subdirectory(${EXTERNAL_DIR}/glew/build/cmake EXCLUDE_FROM_ALL)
+# --- GLEW (Buscado en el sistema operativo) ---
+# En local es mejor buscar la instalación de apt-get
+find_package(GLEW REQUIRED)
 
-# --- SOIL (Image loading) ---
-file(GLOB SOIL_SRC ${EXTERNAL_DIR}/soil/src/*.c)
-add_library(SOIL STATIC ${SOIL_SRC})
-target_include_directories(SOIL PUBLIC ${EXTERNAL_DIR}/soil/src)
-set_target_properties(SOIL PROPERTIES FOLDER "External")
+# --- DEPENDENCIAS DE SISTEMA (OpenGL y Threads) ---
+find_package(OpenGL REQUIRED)
+find_package(Threads REQUIRED)
+# X11 suele ser encontrado automáticamente por GLFW, pero lo buscamos por si acaso
+find_package(X11 REQUIRED)
 
-# --- FreeType (Font rendering) ---
-# Esta sí usa FetchContent porque es grande y compleja
-include(FetchContent)
-FetchContent_Declare(
-        freetype
-        GIT_REPOSITORY https://gitlab.freedesktop.org/freetype/freetype.git
-        GIT_TAG VER-2-13-2
-        GIT_SHALLOW TRUE
-)
-set(FT_DISABLE_ZLIB ON CACHE BOOL "" FORCE)
-set(FT_DISABLE_BZIP2 ON CACHE BOOL "" FORCE)
-set(FT_DISABLE_PNG ON CACHE BOOL "" FORCE)
-set(FT_DISABLE_HARFBUZZ ON CACHE BOOL "" FORCE)
-set(FT_DISABLE_BROTLI ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(freetype)
+# =========================================================================
+# 3. Definición del Ejecutable
+# =========================================================================
 
-# ==========================================================
-# MOTOR: LIBRERÍA ESTÁTICA
-# ==========================================================
-
-# Lista explícita (MEJOR que GLOB para CMake)
-set(ENGINE_SOURCES
-        # Core
-        src/core/Engine.cpp
-        src/core/Application.cpp
-
-        # Graphics
-        src/graphics/Renderer.cpp
-        src/graphics/Shader.cpp
-        src/graphics/Texture.cpp
-        src/graphics/TileMap.cpp
-        src/graphics/Camera.cpp
-
-        # Entities
-        src/entities/Entity.cpp
-        src/entities/Player.cpp
-
-        # Input
-        src/input/InputManager.cpp
-
-        # Audio
-        src/audio/AudioManager.cpp
-
-        # World
-        src/world/World.cpp
-        src/world/Map.cpp
-
-        # Events
-        src/events/EventManager.cpp
-
-        # Scripting
-        src/scripting/LuaEngine.cpp
-
-        # UI
-        src/ui/UIManager.cpp
+file(GLOB_RECURSE ENGINE_SOURCES
+        src/*.cpp
+        src/*/*.cpp
 )
 
-add_library(engine STATIC ${ENGINE_SOURCES})
+add_executable(${PROJECT_NAME} ${ENGINE_SOURCES})
 
-target_include_directories(engine PUBLIC
-        ${ENGINE_ROOT}/include
-        ${ENGINE_ROOT}/src
+# =========================================================================
+# 4. Enlazado (Linking)
+# =========================================================================
+
+target_link_libraries(${PROJECT_NAME}
+        # Librerías del sistema
+        ${OPENGL_LIBRARIES}
+        GLEW::GLEW             # Enlazamos el target moderno de GLEW
+        ${CMAKE_THREAD_LIBS_INIT}
+        ${X11_LIBRARIES}
+
+        # Librerías internas compiladas
+        glfw                   # Target de GLFW
+        SOIL_lib               # Target de SOIL
 )
 
-# ==========================================================
-# LINKING
-# ==========================================================
-target_link_libraries(engine PUBLIC
-        glfw
-        glm::glm
-        libglew_static
-        SOIL
-        freetype
+# Configuración de RPATH para que encuentre librerías dinámicas si es necesario
+set_target_properties(${PROJECT_NAME} PROPERTIES
+        INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib"
+        RUNTIME_OUTPUT_NAME "${PROJECT_NAME}"
 )
-
-# ==========================================================
-# PLATFORM-SPECIFIC
-# ==========================================================
-if (WIN32)
-    target_link_libraries(engine PUBLIC opengl32)
-
-    # Evitar consola en Windows Release
-    if (CMAKE_BUILD_TYPE STREQUAL "Release")
-        set_target_properties(engine PROPERTIES
-                LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup"
-        )
-    endif()
-
-elseif (APPLE)
-    target_link_libraries(engine PUBLIC
-            "-framework Cocoa"
-            "-framework OpenGL"
-            "-framework IOKit"
-    )
-
-else() # Linux
-    find_package(OpenGL REQUIRED)
-    target_link_libraries(engine PUBLIC
-            OpenGL::GL
-            pthread
-            dl
-            X11
-            Xrandr
-            Xi
-    )
-endif()
-
-# ==========================================================
-# COMPILER FLAGS
-# ==========================================================
-if (MSVC)
-    target_compile_options(engine PRIVATE /W4)
-else()
-    target_compile_options(engine PRIVATE
-            -Wall -Wextra
-            $<$<CONFIG:RELEASE>:-O3>
-            $<$<CONFIG:DEBUG>:-g -O0>
-    )
-endif()
-
-# ==========================================================
-# EXECUTABLE (GAME RUNNER)
-# ==========================================================
-option(BUILD_GAME_RUNNER "Build executable game runner" ON)
-
-if (BUILD_GAME_RUNNER)
-    add_executable(GameRunner src/main.cpp)
-    target_link_libraries(GameRunner PRIVATE engine)
-
-    # Copiar recursos al build
-    add_custom_command(TARGET GameRunner POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-            ${ENGINE_ROOT}/resources $<TARGET_FILE_DIR:GameRunner>/resources
-            COMMENT "Copying resources..."
-    )
-endif()
-
-# ==========================================================
-# INSTALACIÓN (PARA DISTRIBUCIÓN)
-# ==========================================================
-install(TARGETS engine GameRunner
-        LIBRARY DESTINATION lib
-        RUNTIME DESTINATION bin
-        ARCHIVE DESTINATION lib
-)
-
-install(DIRECTORY include/ DESTINATION include)
-install(DIRECTORY resources/ DESTINATION share/pokemon-engine/resources)

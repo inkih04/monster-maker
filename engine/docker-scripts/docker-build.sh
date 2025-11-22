@@ -1,19 +1,18 @@
 #!/bin/bash
-set -e  # Salir si hay errores
+set -e
 
-# Colores para output
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
 echo -e "${GREEN}🐳 Building Pokemon Engine Docker Images${NC}"
 
-# Detectar arquitectura
 ARCH=$(uname -m)
 echo -e "${YELLOW}Architecture: ${ARCH}${NC}"
 
-# Build de la imagen de runtime
+
 echo -e "${GREEN}📦 Building runtime image...${NC}"
 docker build \
     --target runtime \
@@ -32,11 +31,11 @@ docker build \
     --progress=plain \
     .
 
-# Mostrar imágenes creadas
+
 echo -e "${GREEN}✅ Build completed!${NC}"
 docker images | grep pokemon-engine
 
-# Mostrar tamaños
+
 echo -e "${YELLOW}📊 Image sizes:${NC}"
 docker images pokemon-engine --format "table {{.Repository}}:{{.Tag}}\t{{.Size}}"
 
