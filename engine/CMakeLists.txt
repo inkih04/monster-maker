@@ -61,7 +61,8 @@ add_executable(${PROJECT_NAME} ${ENGINE_SOURCES}
         include/Engine.h
         src/core/Engine.cpp
         src/core/Application.cpp
-        include/Application.h)
+        include/Application.h
+        src/input/InputManager.cpp)
 
 # =========================================================================
 # 4. Enlazado (Linking)

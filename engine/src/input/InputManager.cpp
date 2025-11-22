@@ -1,0 +1,65 @@
+//
+// Created by inkih on 22/11/25.
+//
+
+#include "InputManager.h"
+#include <vector>
+
+InputManager* InputManager::instance = nullptr;
+
+void InputManager::initialize(GLFWwindow* window) {
+    if (!instance) {
+        instance = new InputManager(window);
+    }
+}
+
+InputManager::InputManager(GLFWwindow* window) : window(window) {
+}
+
+InputManager& InputManager::getInstance() {
+    return *instance;
+}
+
+
+bool InputManager::isKeyDown(int key) const {
+    return glfwGetKey(window, key) == GLFW_PRESS;
+}
+
+bool InputManager::isKeyPressed(int key) {
+    return currentKeyState[key] && !previousKeyState[key];
+}
+
+bool InputManager::isKeyReleased(int key) {
+    return !currentKeyState[key] && previousKeyState[key];
+}
+
+void InputManager::update() {
+    previousKeyState = currentKeyState;
+
+    updateKeyStates();
+}
+
+void InputManager::updateKeyStates() {
+    static const std::vector<int> keysToTrack = {
+        GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D,
+        GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
+        GLFW_KEY_Z, GLFW_KEY_X, GLFW_KEY_C,
+        GLFW_KEY_SPACE, GLFW_KEY_ENTER, GLFW_KEY_ESCAPE,
+        GLFW_KEY_E, GLFW_KEY_Q
+    };
+
+    for (int key : keysToTrack) {
+        currentKeyState[key] = (glfwGetKey(window, key) == GLFW_PRESS);
+    }
+}
+
+
+glm::vec2 InputManager::getMousePosition() const {
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    return glm::vec2(x, y);
+}
+
+bool InputManager::isMouseButtonDown(int button) const {
+    return glfwGetMouseButton(window, button) == GLFW_PRESS;
+}

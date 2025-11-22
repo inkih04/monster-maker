@@ -3,12 +3,14 @@
 //
 #include "Engine.h"
 #include <iostream>
+#include "InputManager.h"
 
 #define TARGET_FRAMERATE 60.0f
 
 Engine::Engine(int width, int height, const std::string& title)
     : m_width(width), m_height(height), m_title(title) {
     initGLFW();
+    InputManager::initialize(m_window);
 }
 
 Engine::~Engine() {
@@ -41,7 +43,9 @@ void Engine::startLoop(std::function<void(int)> gameUpdate) {
     while (!glfwWindowShouldClose(m_window)) {
         double currentTime = glfwGetTime();
         if (currentTime - timePreviousFrame >= timePerFrame) {
-            int deltaTime = int(1000.0f * (currentTime - timePreviousFrame));
+            int deltaTime = static_cast<int>(1000.0f * (currentTime - timePreviousFrame));
+
+            InputManager::getInstance().update();
 
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
