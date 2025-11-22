@@ -82,10 +82,12 @@ services:
       - .:/home/builder/engine
       - build-output:/home/builder/engine/build
 
+    # USAMOS EL NOMBRE CORRECTO DEL EJECUTABLE
     command: >
       bash -c "
         cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release &&
-        cmake --build build --parallel $(nproc)
+        cmake --build build --parallel $(nproc) &&
+        test -f build/PokemonGameEngine
       "
 
 volumes:
