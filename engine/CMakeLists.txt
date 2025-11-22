@@ -54,7 +54,14 @@ file(GLOB_RECURSE ENGINE_SOURCES
         src/*/*.cpp
 )
 
-add_executable(${PROJECT_NAME} ${ENGINE_SOURCES})
+add_executable(${PROJECT_NAME} ${ENGINE_SOURCES}
+        include/Engine.h
+        include/Engine.h
+        include/Engine.h
+        include/Engine.h
+        src/core/Engine.cpp
+        src/core/Application.cpp
+        include/Application.h)
 
 # =========================================================================
 # 4. Enlazado (Linking)

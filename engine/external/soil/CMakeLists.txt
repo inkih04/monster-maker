@@ -5,6 +5,7 @@ add_library(SOIL_lib STATIC
         src/image_DXT.c
         src/image_helper.c
         src/stb_image_aug.c
+        ../../include/Engine.h
 )
 
 # Añade las rutas de cabecera de SOIL para que el compilador las encuentre
