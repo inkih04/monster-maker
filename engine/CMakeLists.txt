@@ -1,79 +1,115 @@
-# Establecer la versión mínima de CMake.
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.14)
+project(PokemonGameEngine CXX)
 
-# Políticas para compatibilidad
-cmake_policy(SET CMP0072 NEW)
-
-# Nombre del proyecto y lenguajes (C y C++ son necesarios)
-project(PokemonGameEngine VERSION 0.1.0 LANGUAGES C CXX)
-
+# Configuración del estándar C++
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# =========================================================================
-# 1. Rutas de Cabecera (Headers)
-# =========================================================================
+# ==============================================================================
+# 1. CONFIGURACIÓN DE DEPENDENCIAS (PATHS y COMPILACIÓN DE LIBRERÍAS)
+# ==============================================================================
+
+# Incluir cabeceras del proyecto
 include_directories(include)
 
-# Rutas de librerías externas locales (Source Code)
-include_directories(
-        ${PROJECT_SOURCE_DIR}/external/glm
-        ${PROJECT_SOURCE_DIR}/external/freetype-2.3.5-1-bin/include
-)
+# Incluir cabeceras de librerías externas
+include_directories(external/glm)
+include_directories(external/glfw/include)
+include_directories(external/glew/include)
 
-# =========================================================================
-# 2. Configuración y Dependencias
-# =========================================================================
-
-# --- GLFW (Compilado desde código fuente local) ---
-# Desactivamos Wayland explícitamente para evitar problemas de dependencias en local si no las tienes
-set(GLFW_BUILD_WAYLAND OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+# ✅ GLFW: Desactivar explícitamente el soporte a Wayland y compilar GLFW
+set(GLFW_BUILD_WAYLAND FALSE CACHE BOOL "Disable Wayland support")
 add_subdirectory(external/glfw)
 
-# --- SOIL (Compilado desde código fuente local) ---
-add_subdirectory(external/soil)
+# ❌ GLEW: Se elimina 'add_subdirectory(external/glew)' porque no tiene CMakeLists.txt.
+# GLEW debe ser compilado manualmente o enlazado por ruta.
 
-# --- GLEW (Buscado en el sistema operativo) ---
-# En local es mejor buscar la instalación de apt-get
-find_package(GLEW REQUIRED)
 
-# --- DEPENDENCIAS DE SISTEMA (OpenGL y Threads) ---
-find_package(OpenGL REQUIRED)
-find_package(Threads REQUIRED)
-# X11 suele ser encontrado automáticamente por GLFW, pero lo buscamos por si acaso
-find_package(X11 REQUIRED)
+# ==============================================================================
+# 2. TARGET PRINCIPAL: EL JUEGO (PokemonGameEngine)
+# ==============================================================================
 
-# =========================================================================
-# 3. Definición del Ejecutable
-# =========================================================================
+# Descubre dinámicamente todos los archivos .cpp en la carpeta src
+file(GLOB_RECURSE GAME_SOURCES "src/*.cpp")
 
-file(GLOB_RECURSE ENGINE_SOURCES
-        src/*.cpp
-        src/*/*.cpp
+add_executable(PokemonGameEngine ${GAME_SOURCES})
+
+# ----------------------------------------------------------------------
+# ENLAZADO MULTIPLATAFORMA
+# ----------------------------------------------------------------------
+
+# ✅ INDICAR LA RUTA DONDE SE ESPERAN LAS LIBRERÍAS COMPILADAS
+# (Necesario para GLEW, ya que no se usa add_subdirectory para él)
+target_link_directories(PokemonGameEngine PRIVATE
+        external/glew/lib
+        # Se incluye glfw/lib por si acaso, aunque add_subdirectory suele hacerlo
+        external/glfw/lib
 )
 
-add_executable(${PROJECT_NAME} ${ENGINE_SOURCES})
-
-# =========================================================================
-# 4. Enlazado (Linking)
-# =========================================================================
-
-target_link_libraries(${PROJECT_NAME}
-        # Librerías del sistema
-        ${OPENGL_LIBRARIES}
-        GLEW::GLEW             # Enlazamos el target moderno de GLEW
-        ${CMAKE_THREAD_LIBS_INIT}
-        ${X11_LIBRARIES}
-
-        # Librerías internas compiladas
-        glfw                   # Target de GLFW
-        SOIL_lib               # Target de SOIL
+# Enlazar con los targets principales
+target_link_libraries(PokemonGameEngine
+        PRIVATE
+        glfw # Target creado por add_subdirectory
+        GLEW # Nombre de la librería binaria (libGLEW.a o libGLEW.so)
+        GL
 )
 
-# Configuración de RPATH para que encuentre librerías dinámicas si es necesario
-set_target_properties(${PROJECT_NAME} PROPERTIES
-        INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib"
-        RUNTIME_OUTPUT_NAME "${PROJECT_NAME}"
+# Dependencias de bajo nivel SOLO para Linux/UNIX.
+if (UNIX)
+    message(STATUS "Linking Linux/UNIX-specific system libraries (X11, pthread, dl, rt).")
+    target_link_libraries(PokemonGameEngine
+            PRIVATE
+            X11
+            pthread
+            dl
+            rt
+    )
+endif()
+
+# ==============================================================================
+# 3. CONFIGURACIÓN DE TESTS Y GOOGLE TEST (FETCHCONTENT)
+# ==============================================================================
+
+enable_testing()
+
+include(FetchContent)
+FetchContent_Declare(
+        googletest
+        GIT_REPOSITORY https://github.com/google/googletest.git
+        GIT_TAG v1.14.0
 )
+# Forzamos librerías estáticas de GTest
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+# ==============================================================================
+# 4. TARGET DE TESTS: UNIT TESTS (UnitTests)
+# ==============================================================================
+
+# Fuentes del código que se quiere testear + Test files + Mocks
+set(TEST_SOURCES
+        src/input/InputManager.cpp
+        tests/unitary/InputManagerTest.cpp
+        tests/mocks/MockGLFW.cpp
+)
+
+add_executable(UnitTests ${TEST_SOURCES})
+
+# Incluimos los directorios necesarios para las cabeceras
+target_include_directories(UnitTests PRIVATE
+        include
+        external/glm
+        external/glfw/include
+)
+
+# Enlazamos con los targets de Google Test
+target_link_libraries(UnitTests PRIVATE gtest gtest_main)
+
+# ==============================================================================
+# 5. DESCUBRIMIENTO DE TESTS
+# ==============================================================================
+include(GoogleTest)
+gtest_discover_tests(UnitTests)
