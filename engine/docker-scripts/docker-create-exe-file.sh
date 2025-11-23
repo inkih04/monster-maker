@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Colores
+
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
@@ -16,7 +16,7 @@ cd "${PROJECT_ROOT}"
 
 if ! docker image inspect pokemon-engine:dev >/dev/null 2>&1; then
     echo -e "${YELLOW}⚠️  Imagen de compilación no encontrada. Creándola...${NC}"
-    docker build --target development -t pokemon-engine:dev .
+    ./docker-scripts/docker-build.sh
 fi
 
 
@@ -30,12 +30,17 @@ docker run \
         # Crear carpeta build si no existe
         mkdir -p build
 
-        # Configurar CMake (si no está configurado)
+        # Configurar CMake
         if [ ! -f build/build.ninja ]; then
             echo '⚙️  Configurando CMake...'
+            rm -f build/CMakeCache.txt
+
             cmake -B build -G Ninja \
                 -DCMAKE_BUILD_TYPE=Debug \
-                -DGLFW_BUILD_WAYLAND=OFF \
+                -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
+                -DVCPKG_TARGET_TRIPLET=x64-linux \
+                -DVCPKG_MANIFEST_MODE=OFF \
+                -DVCPKG_INSTALLED_DIR=/opt/vcpkg/installed \
                 -DCMAKE_C_COMPILER=gcc \
                 -DCMAKE_CXX_COMPILER=g++ \
                 -DCMAKE_CXX_FLAGS='-march=x86-64 -mtune=generic'
@@ -43,7 +48,7 @@ docker run \
 
         # Compilar
         echo '🔨 Compilando...'
-        cmake --build build --parallel $(nproc)
+        cmake --build build --parallel \$(nproc)
     "
 
 echo -e "${GREEN}✅ Compilación terminada.${NC}"

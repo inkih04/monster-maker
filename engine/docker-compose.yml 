@@ -1,9 +1,6 @@
 version: '3.8'
 
 services:
-  # ============================================================
-  # Servicio principal: Runtime del juego
-  # ============================================================
   game-runtime:
     build:
       context: .
@@ -12,7 +9,6 @@ services:
     image: pokemon-engine:latest
     container_name: pokemon-engine-runtime
 
-    # Configuración de recursos
     deploy:
       resources:
         limits:
@@ -22,29 +18,22 @@ services:
           cpus: '1'
           memory: 512M
 
-    # Variables de entorno
     environment:
       - DISPLAY=${DISPLAY:-:0}
       - LOG_LEVEL=info
 
-    # Volúmenes (para persistir datos de juego)
     volumes:
       - ./game_data:/home/gamerunner/game/data
       - ./logs:/home/gamerunner/game/logs
 
-    # Para GUI en Linux (X11)
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:ro
 
-    # Red
     network_mode: host
 
-    # Restart policy
     restart: unless-stopped
 
-  # ============================================================
-  # Servicio de desarrollo
-  # ============================================================
+
   game-dev:
     build:
       context: .
@@ -53,23 +42,21 @@ services:
     image: pokemon-engine:dev
     container_name: pokemon-engine-dev
 
-    # Montar código fuente para desarrollo
+
     volumes:
       - .:/home/builder/engine
       - build-cache:/home/builder/engine/build
 
-    # Mantener contenedor vivo
+
     stdin_open: true
     tty: true
 
-    # Comando de desarrollo
+
     command: /bin/bash
 
     working_dir: /home/builder/engine
 
-  # ============================================================
-  # Servicio de build aislado (solo compilación)
-  # ============================================================
+
   builder:
     build:
       context: .
@@ -82,7 +69,6 @@ services:
       - .:/home/builder/engine
       - build-output:/home/builder/engine/build
 
-    # USAMOS EL NOMBRE CORRECTO DEL EJECUTABLE
     command: >
       bash -c "
         cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release &&

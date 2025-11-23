@@ -4,6 +4,8 @@
   "dependencies": [
     "glfw3",
     "glew",
-    "glm"
+    "glm",
+    "soil",
+    "freetype"
   ]
 }

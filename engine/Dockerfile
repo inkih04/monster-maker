@@ -1,14 +1,23 @@
-
-FROM ubuntu:22.04 AS builder
-
+# ==============================================================================
+# ETAPA 1: Dependencias (Cacheable)
+# Esta etapa solo se reconstruye si cambias vcpkg.json o el sistema base
+# ==============================================================================
+FROM ubuntu:22.04 AS dependencies
 
 ENV DEBIAN_FRONTEND=noninteractive
+ENV VCPKG_ROOT=/opt/vcpkg
+ENV PATH="${VCPKG_ROOT}:${PATH}"
 
-
+# 1. Instalar herramientas del sistema necesarias para vcpkg y compilación
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     git \
+    curl \
+    zip \
+    unzip \
+    tar \
+    pkg-config \
     ninja-build \
     libx11-dev \
     libxrandr-dev \
@@ -17,88 +26,71 @@ RUN apt-get update && apt-get install -y \
     libxi-dev \
     libgl1-mesa-dev \
     libglu1-mesa-dev \
-    libglew-dev \
     libwayland-dev \
-    libfreetype6-dev \
-    pkg-config \
     && rm -rf /var/lib/apt/lists/*
 
+# 2. Clonar y preparar vcpkg
+WORKDIR /opt
+RUN git clone https://github.com/microsoft/vcpkg.git \
+    && cd vcpkg \
+    && ./bootstrap-vcpkg.sh
+
+# 3. Instalar librerías del proyecto
+WORKDIR /dependencies
+COPY vcpkg.json .
+
+# Instalar con vcpkg
+RUN /opt/vcpkg/vcpkg install --triplet x64-linux --clean-after-build \
+    && chmod -R 777 /opt/vcpkg
+
+# ==============================================================================
+# ETAPA 2: Builder (Compilación del Juego)
+# ==============================================================================
+FROM dependencies AS builder
+
+ENV VCPKG_ROOT=/opt/vcpkg
+
+# Crear usuario builder
 RUN useradd -m -s /bin/bash builder
-USER builder
 WORKDIR /home/builder/engine
 
-COPY --chown=builder:builder . .
+# Copiamos el código fuente del proyecto
+COPY . .
 
+# Limpiamos builds previos y configuramos CMake usando el TOOLCHAIN de vcpkg
 RUN rm -rf build && \
     cmake -B build \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake \
+    -DVCPKG_TARGET_TRIPLET=x64-linux \
+    -DVCPKG_INSTALLED_DIR=${VCPKG_ROOT}/installed \
+    -DCMAKE_PREFIX_PATH=${VCPKG_ROOT}/installed/x64-linux \
     -DGLFW_BUILD_WAYLAND=OFF \
     -DCMAKE_C_COMPILER=gcc \
     -DCMAKE_CXX_COMPILER=g++ \
     -DCMAKE_CXX_FLAGS="-march=x86-64 -mtune=generic"
 
-
+# Compilar
 RUN cmake --build build --parallel $(nproc)
 
-
+# Verificar que el ejecutable existe
 RUN test -f build/PokemonGameEngine || (echo "ERROR: PokemonGameEngine not built" && exit 1)
 
-
-FROM ubuntu:22.04 AS runtime
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-
-RUN apt-get update && apt-get install -y \
-    libx11-6 \
-    libxrandr2 \
-    libxinerama1 \
-    libxcursor1 \
-    libxi6 \
-    libgl1 \
-    libglu1-mesa \
-    libfreetype6 \
-    libglew2.2 \
-    libwayland-client0 \
-    gdb \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN useradd -m -s /bin/bash gamerunner
-USER gamerunner
-WORKDIR /home/gamerunner/game
-
-
-COPY --from=builder --chown=gamerunner:gamerunner \
-    /home/builder/engine/build/PokemonGameEngine ./PokemonGameEngine
-
-COPY --from=builder --chown=gamerunner:gamerunner \
-    /home/builder/engine/resources ./resources
-
-RUN chmod +x ./PokemonGameEngine
-
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD pgrep -f PokemonGameEngine || exit 1
-
-ENTRYPOINT ["./PokemonGameEngine"]
-CMD []
-
-
+# ==============================================================================
+# ETAPA 3: Development (Para usar como entorno de desarrollo)
+# ==============================================================================
 FROM builder AS development
 
-USER builder
-WORKDIR /home/builder/engine
+ENV VCPKG_ROOT=/opt/vcpkg
 
 USER root
 RUN apt-get update && apt-get install -y \
     vim \
     valgrind \
-    clang-format \
-    clang-tidy \
-    clang \
-    llvm \
+    gdb \
     && rm -rf /var/lib/apt/lists/*
 
 USER builder
+WORKDIR /home/builder/engine
 CMD ["/bin/bash"]

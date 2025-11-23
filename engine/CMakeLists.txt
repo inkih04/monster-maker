@@ -5,37 +5,28 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# ==============================================================================
-# 1. CONFIGURACIÓN DE DEPENDENCIAS (VCPKG)
-# ==============================================================================
 
 include_directories(include)
 
-# Buscamos los paquetes instalados por vcpkg
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 
-# ==============================================================================
-# 2. TARGET PRINCIPAL: EL JUEGO (PokemonGameEngine)
-# ==============================================================================
 
 file(GLOB_RECURSE GAME_SOURCES "src/*.cpp")
 
 add_executable(PokemonGameEngine ${GAME_SOURCES})
 
-# ✅ CORREGIDO: Usamos 'glfw' en lugar de 'glfw3::glfw3'
+
 target_link_libraries(PokemonGameEngine
         PRIVATE
-        glfw        # <--- CAMBIO AQUÍ
+        glfw
         GLEW::GLEW
         glm::glm
         GL
 )
 
-# ==============================================================================
-# 3. CONFIGURACIÓN DE TESTS (GOOGLE TEST)
-# ==============================================================================
+
 
 enable_testing()
 
@@ -50,9 +41,7 @@ set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# ==============================================================================
-# 4. TARGET DE TESTS: UNIT TESTS (UnitTests)
-# ==============================================================================
+
 
 set(TEST_SOURCES
         src/input/InputManager.cpp
@@ -62,17 +51,13 @@ set(TEST_SOURCES
 
 add_executable(UnitTests ${TEST_SOURCES})
 
-# ✅ CORREGIDO: Usamos 'glfw' aquí también
 target_link_libraries(UnitTests
         PRIVATE
         gtest
         gtest_main
-        glfw        # <--- CAMBIO AQUÍ
+        glfw
         glm::glm
 )
 
-# ==============================================================================
-# 5. DESCUBRIMIENTO DE TESTS
-# ==============================================================================
 include(GoogleTest)
 gtest_discover_tests(UnitTests)
