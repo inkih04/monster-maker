@@ -52,5 +52,3 @@ Thumbs.db
 .github/
 .gitlab-ci.yml
 
-# Tests
-tests/
