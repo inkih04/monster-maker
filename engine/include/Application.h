@@ -14,6 +14,7 @@ public:
     ~Application() = default;
     void update(int deltaTime);
     void run();
+    void render();
 
 private:
     std::unique_ptr<Engine> m_engine;
