@@ -45,6 +45,8 @@ void Engine::startLoop(std::function<void(int)> gameUpdate) {
         if (currentTime - timePreviousFrame >= timePerFrame) {
             int deltaTime = static_cast<int>(1000.0f * (currentTime - timePreviousFrame));
 
+            //todo: EN vez de esto aqui hace flata poderle pasar dos callbacks, uno para update y otro para render
+            //todo: asi el engine no tiene que saber nada de render ni update y el update del inputManager hacerlo desde el application
             InputManager::getInstance().update();
 
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);

@@ -11,7 +11,11 @@ Application::Application(const char* title, int width, int height) {
 }
 
 void Application::update(int deltaTime) {
+ //Aqui deberia llamar al stateManager para que renderice lo que le toque
+    //todo: m_stateManager->update(deltaTime);
+}
 
+void Application::render() {
 
 }
 
