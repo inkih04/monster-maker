@@ -45,8 +45,12 @@ FetchContent_MakeAvailable(googletest)
 
 set(TEST_SOURCES
         src/input/InputManager.cpp
+        src/core/StateManager.cpp
+
         tests/unitary/InputManagerTest.cpp
         tests/mocks/MockGLFW.cpp
+        tests/mocks/MockState.h
+        tests/unitary/StateManagerTest.cpp
 )
 
 add_executable(UnitTests ${TEST_SOURCES})

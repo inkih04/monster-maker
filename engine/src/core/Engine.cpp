@@ -36,7 +36,7 @@ void Engine::initGLFW() {
     if (glewInit() != GLEW_OK) exit(-1);
 }
 
-void Engine::startLoop(std::function<void(int)> gameUpdate) {
+void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()> gameRender) {
     constexpr double timePerFrame = 1.f / TARGET_FRAMERATE;
     double timePreviousFrame = glfwGetTime();
 
@@ -44,15 +44,13 @@ void Engine::startLoop(std::function<void(int)> gameUpdate) {
         double currentTime = glfwGetTime();
         if (currentTime - timePreviousFrame >= timePerFrame) {
             int deltaTime = static_cast<int>(1000.0f * (currentTime - timePreviousFrame));
-
-            //todo: EN vez de esto aqui hace flata poderle pasar dos callbacks, uno para update y otro para render
-            //todo: asi el engine no tiene que saber nada de render ni update y el update del inputManager hacerlo desde el application
             InputManager::getInstance().update();
+            if (gameUpdate) gameUpdate(deltaTime);
 
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            if (gameUpdate) gameUpdate(deltaTime);
+            if (gameRender) gameRender();
 
             timePreviousFrame = currentTime;
             glfwSwapBuffers(m_window);

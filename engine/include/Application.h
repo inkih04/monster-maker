@@ -6,6 +6,7 @@
 #define POKEMONGAMEENGINE_APPLICATION_H
 #include "Engine.h"
 #include <memory>
+#include "StateManager.h"
 
 
 class Application {
@@ -18,10 +19,7 @@ public:
 
 private:
     std::unique_ptr<Engine> m_engine;
-
-    // Aquí irían variables del juego (ej: Player, Map)
-    // World* m_world;
-
+    StateManager m_stateManager;
 };
 
 #endif //POKEMONGAMEENGINE_APPLICATION_H

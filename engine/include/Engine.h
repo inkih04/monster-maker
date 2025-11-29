@@ -15,7 +15,7 @@ public:
     Engine(int width, int height, const std::string& title);
     ~Engine();
 
-    void startLoop(std::function<void(int)> gameUpdate);
+    void startLoop(std::function<void(int)> gameUpdate, std::function<void()> gameRender);
 
 private:
     void initGLFW();
