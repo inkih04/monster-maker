@@ -14,15 +14,19 @@ classDiagram
     State <|-- PokemonState
 
     class StateManager {
-        -vector m_states
-        +render()
-        +update()
+        -stack m_stateStack
+        +renderCurrentState()
+        +updateCurrentState(int deltaTime)
+        +pushState(State* state)
+        +popState()
+        +getCurrentState() State*
     }
 
     class State {
         <<abstract>>
-        +reder()*
-        +update()*
+        -StateManager* m_stateManager
+        +render()*
+        +update(int deltaTime)*
     }
 
     class ExplorationState {
@@ -51,7 +55,8 @@ classDiagram
 
 
     class Application{
-      +StateManager m_stateManager  
+      -StateManager m_stateManager
+      -Engine m_engine 
       +render()
       +update()
       +run()
