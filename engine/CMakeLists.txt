@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
-include_directories(include)
+include_directories(include include/enums)
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
@@ -15,7 +15,15 @@ find_package(glm CONFIG REQUIRED)
 
 file(GLOB_RECURSE GAME_SOURCES "src/*.cpp")
 
-add_executable(PokemonGameEngine ${GAME_SOURCES})
+add_executable(PokemonGameEngine ${GAME_SOURCES}
+        include/EntityManager.h
+        src/entities/EntityManager.cpp
+        include/Entity.h
+        src/entities/Entity.cpp
+        include/enums/ComponentsType.h
+        src/core/StateManager.cpp
+        include/StateManager.h
+        include/StateManager.h)
 
 
 target_link_libraries(PokemonGameEngine
@@ -45,8 +53,21 @@ FetchContent_MakeAvailable(googletest)
 
 set(TEST_SOURCES
         src/input/InputManager.cpp
+        src/core/StateManager.cpp
+        src/entities/Entity.cpp
+        src/entities/EntityManager.cpp
+
         tests/unitary/InputManagerTest.cpp
         tests/mocks/MockGLFW.cpp
+        tests/mocks/MockState.h
+        tests/unitary/StateManagerTest.cpp
+        include/Component.h
+        tests/mocks/MockComponent.h
+        tests/unitary/EntityTest.cpp
+        tests/unitary/EntityManagerTest.cpp
+        tests/mocks/MockState.h
+        tests/mocks/MockState.h
+        tests/unitary/StateManagerTest.cpp
 )
 
 add_executable(UnitTests ${TEST_SOURCES})

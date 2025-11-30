@@ -1,10 +1,10 @@
 ```mermaid
 classDiagram
 
-    Application<--Engine
-    Engine <--InputManager
-    Application <-- StateManager
-    StateManager <-- State
+    Application "1"-- "1" Engine
+    Engine -- InputManager
+    Application "1"--"1" StateManager
+    StateManager "1"--"*" State
 
     State <|-- ExplorationState
     State <|-- CombatState
@@ -12,17 +12,87 @@ classDiagram
     State <|-- InventoryState
     State <|-- MenuPokemonState
     State <|-- PokemonState
+    
+    EntityManager "1"-- * State
+    EntityManager "*"--"*" Entity
+    Entity "*"--"*" Component
+    Component <|-- PositionComponent
+    Component <|-- RenderComponent
+    Component <|-- SpriteComponent
+    Component <|-- ColliderComponent
+    
+    
+    class PositionComponent {
+        +float x
+        +float y
+    }
+    
+    class ColliderComponent {
+        +int width
+        +int height
+    }
+    
+    class RenderComponent {
+        +string texturePath
+        +int width
+        +int height
+    }
+    
+    class SpriteComponent {
+        +string spriteSheetPath
+        +int frameWidth
+        +int frameHeight
+        +int currentFrame
+        +float animationSpeed
+    }
+    
+    class ComponentsType {
+    <<Enum>>
+        POSITION
+        RENDER
+        SPRITE
+        COLLIDER
+    }
+    
+    class Component {
+        <<abstract>>    
+    }
+    
+    class EntityManager {
+    -vector~unique_ptr~Entity~~ m_entities
+       
+       +createEntity() Entity*
+       +updateEntities(int deltaTime)
+       +renderEntities()
+       +getEntitiesByComponent(ComponentsType type) vector~Entity*~
+   
+    }
+    
+    class Entity {
+       -unordered_map~ComponentsType, unique_ptr~Component~ m_components
+       
+       +addComponent(unique_ptr~Component~, ComponentsType type) void
+       +getComponent(ComponentsType type) Component*
+       +update(int deltaTime)
+       +hasComponent(ComponentsType type) bool
+       +render() 
+    }
 
     class StateManager {
-        -vector m_states
-        +render()
-        +update()
+        -stack m_stateStack
+        +renderCurrentState()
+        +updateCurrentState(int deltaTime)
+        +pushState(State* state)
+        +popState()
+        +getCurrentState() State*
     }
 
     class State {
         <<abstract>>
-        +reder()*
-        +update()*
+        -StateManager* m_stateManager
+        -EntityManager* m_entityManager
+        +render()*
+        +update(int deltaTime)*
     }
 
     class ExplorationState {
@@ -51,7 +121,8 @@ classDiagram
 
 
     class Application{
-      +StateManager m_stateManager  
+      -StateManager m_stateManager
+      -Engine m_engine 
       +render()
       +update()
       +run()
