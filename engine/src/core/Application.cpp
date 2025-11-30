@@ -11,21 +11,22 @@ class Engine;
 
 Application::Application(const char* title, int width, int height) {
     m_engine = std::make_unique<Engine>(width, height, title);
+    m_stateManager = StateManager();
 
 }
 
 void Application::update(int deltaTime) {
- //Aqui deberia llamar al stateManager para que renderice lo que le toque
-    //todo: m_stateManager->update(deltaTime);
+    m_stateManager.updateCurrentState(deltaTime);
 }
 
 void Application::render() {
-
+    m_stateManager.renderCurrentState();
 }
 
 void Application::run() {
-
     m_engine->startLoop([this](int deltaTime) {
         update(deltaTime);
+    }, [this]() {
+        render();
     });
 }
