@@ -23,7 +23,11 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/enums/ComponentsType.h
         src/core/StateManager.cpp
         include/StateManager.h
-        include/StateManager.h)
+        include/StateManager.h
+        include/Texture.h
+        src/graphics/Texture.cpp
+        include/Shader.h
+        src/graphics/Shader.cpp)
 
 
 target_link_libraries(PokemonGameEngine
