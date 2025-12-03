@@ -1,0 +1,8 @@
+//
+// Created by inkih on 3/12/25.
+//
+
+#ifndef POKEMONGAMEENGINE_RENDERER_H
+#define POKEMONGAMEENGINE_RENDERER_H
+
+#endif //POKEMONGAMEENGINE_RENDERER_H

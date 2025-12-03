@@ -27,7 +27,11 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/Texture.h
         src/graphics/Texture.cpp
         include/Shader.h
-        src/graphics/Shader.cpp)
+        src/graphics/Shader.cpp
+        include/Renderer.h
+        src/graphics/Renderer.cpp
+        include/Camera.h
+        src/graphics/Camera.cpp)
 
 
 target_link_libraries(PokemonGameEngine
