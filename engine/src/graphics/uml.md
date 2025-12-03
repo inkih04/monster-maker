@@ -28,7 +28,7 @@ Renderer "1"-- "*" Camera
     -GLuint m_quadVAO
     -GLuint m_quadVBO
     -*Shader m_currentShader
-    -unordered_map~string, Shader~ m_shaders
+    -unordered_map ~ string, unique_ptr~Shader ~ ~ m_shaders
     -Camera* m_activeCamera
     -void initRenderData()
     -void updateCameraUniforms()
