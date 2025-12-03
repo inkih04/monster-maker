@@ -1,19 +1,24 @@
-# ============================================================
-# STAGE 1: Builder - Compila el motor
-# ============================================================
-FROM ubuntu:22.04 AS builder
+# ==============================================================================
+# ETAPA 1: Dependencias (Cacheable)
+# Esta etapa solo se reconstruye si cambias vcpkg.json o el sistema base
+# ==============================================================================
+FROM ubuntu:22.04 AS dependencies
 
-# Evitar prompts interactivos
 ENV DEBIAN_FRONTEND=noninteractive
+ENV VCPKG_ROOT=/opt/vcpkg
+ENV PATH="${VCPKG_ROOT}:${PATH}"
 
-# Instalar dependencias de compilación
+# 1. Instalar herramientas del sistema necesarias para vcpkg y compilación
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
-    clang \
     git \
+    curl \
+    zip \
+    unzip \
+    tar \
+    pkg-config \
     ninja-build \
-    # Dependencias de GLFW
     libx11-dev \
     libxrandr-dev \
     libxinerama-dev \
@@ -21,100 +26,71 @@ RUN apt-get update && apt-get install -y \
     libxi-dev \
     libgl1-mesa-dev \
     libglu1-mesa-dev \
-    # Dependencias de FreeType
-    libfreetype6-dev \
-    # Herramientas
-    pkg-config \
+    libwayland-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Crear usuario no-root para compilación
+# 2. Clonar y preparar vcpkg
+WORKDIR /opt
+RUN git clone https://github.com/microsoft/vcpkg.git \
+    && cd vcpkg \
+    && ./bootstrap-vcpkg.sh
+
+# 3. Instalar librerías del proyecto
+WORKDIR /dependencies
+COPY vcpkg.json .
+
+# Instalar con vcpkg
+RUN /opt/vcpkg/vcpkg install --triplet x64-linux --clean-after-build \
+    && chmod -R 777 /opt/vcpkg
+
+# ==============================================================================
+# ETAPA 2: Builder (Compilación del Juego)
+# ==============================================================================
+FROM dependencies AS builder
+
+ENV VCPKG_ROOT=/opt/vcpkg
+
+# Crear usuario builder
 RUN useradd -m -s /bin/bash builder
-USER builder
 WORKDIR /home/builder/engine
 
-# Copiar archivos del proyecto (como usuario builder)
-COPY --chown=builder:builder . .
+# Copiamos el código fuente del proyecto
+COPY . .
 
-# Configurar CMake
-RUN cmake -B build \
+# Limpiamos builds previos y configuramos CMake usando el TOOLCHAIN de vcpkg
+RUN rm -rf build && \
+    cmake -B build \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-    -DUSE_CLANG=ON \
-    -DBUILD_GAME_RUNNER=ON \
+    -DCMAKE_TOOLCHAIN_FILE=${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake \
+    -DVCPKG_TARGET_TRIPLET=x64-linux \
+    -DVCPKG_INSTALLED_DIR=${VCPKG_ROOT}/installed \
+    -DCMAKE_PREFIX_PATH=${VCPKG_ROOT}/installed/x64-linux \
+    -DGLFW_BUILD_WAYLAND=OFF \
+    -DCMAKE_C_COMPILER=gcc \
+    -DCMAKE_CXX_COMPILER=g++ \
     -DCMAKE_CXX_FLAGS="-march=x86-64 -mtune=generic"
 
-# Compilar (usa todos los cores disponibles)
+# Compilar
 RUN cmake --build build --parallel $(nproc)
 
 # Verificar que el ejecutable existe
-RUN test -f build/GameRunner || (echo "ERROR: GameRunner not built" && exit 1)
+RUN test -f build/PokemonGameEngine || (echo "ERROR: PokemonGameEngine not built" && exit 1)
 
-# ============================================================
-# STAGE 2: Runtime - Imagen final ligera
-# ============================================================
-FROM ubuntu:22.04 AS runtime
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Instalar solo dependencias de runtime (mucho más ligero)
-RUN apt-get update && apt-get install -y \
-    libx11-6 \
-    libxrandr2 \
-    libxinerama1 \
-    libxcursor1 \
-    libxi6 \
-    libgl1 \
-    libglu1-mesa \
-    libfreetype6 \
-    # Para debugging (opcional, quitar en producción)
-    gdb \
-    && rm -rf /var/lib/apt/lists/*
-
-# Crear usuario para ejecutar el juego
-RUN useradd -m -s /bin/bash gamerunner
-USER gamerunner
-WORKDIR /home/gamerunner/game
-
-# Copiar ejecutable y recursos desde builder
-COPY --from=builder --chown=gamerunner:gamerunner \
-    /home/builder/engine/build/GameRunner ./GameRunner
-
-# Copiar recursos (ajusta según tu estructura)
-COPY --from=builder --chown=gamerunner:gamerunner \
-    /home/builder/engine/resources ./resources
-
-# Hacer ejecutable
-RUN chmod +x ./GameRunner
-
-# Exponer puerto si usas networking (opcional)
-# EXPOSE 8080
-
-# Healthcheck (opcional, para verificar que funciona)
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD pgrep -f GameRunner || exit 1
-
-# Comando por defecto
-ENTRYPOINT ["./GameRunner"]
-CMD []
-
-# ============================================================
-# STAGE 3: Development - Para desarrollo con hot-reload
-# ============================================================
+# ==============================================================================
+# ETAPA 3: Development (Para usar como entorno de desarrollo)
+# ==============================================================================
 FROM builder AS development
 
-USER builder
-WORKDIR /home/builder/engine
+ENV VCPKG_ROOT=/opt/vcpkg
 
-# Instalar herramientas de desarrollo adicionales
 USER root
 RUN apt-get update && apt-get install -y \
     vim \
     valgrind \
-    clang-format \
-    clang-tidy \
+    gdb \
     && rm -rf /var/lib/apt/lists/*
 
 USER builder
-
-# Mantener el contenedor vivo para desarrollo interactivo
+WORKDIR /home/builder/engine
 CMD ["/bin/bash"]

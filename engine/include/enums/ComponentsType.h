@@ -1,0 +1,15 @@
+//
+// Created by inkih on 30/11/25.
+//
+
+#ifndef POKEMONGAMEENGINE_COMPONENTSTYPE_H
+#define POKEMONGAMEENGINE_COMPONENTSTYPE_H
+
+enum ComponentsType {
+    POSITION,
+    RENDER,
+    SPRITE,
+    COLLIDER,
+};
+
+#endif //POKEMONGAMEENGINE_COMPONENTSTYPE_H
