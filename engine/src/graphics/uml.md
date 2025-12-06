@@ -8,10 +8,10 @@ Renderer "1"-- "*" Shader
 Renderer "1"-- "*" Camera
 
     class ResourceManager {
-        -static map~string, Texture*~ textures
-        -static map~string, Shader*~ shaders
+        -static unordered_map~string, unique_ptr~ Texture~~ textures
+        -static unordered_map~string, unique_ptr~Shader~ ~ shaders
         +static loadTexture(path)
-        +static loadShader(name, ...)
+        +static loadShader(vertexShaderPath, fragmentShaderPath)
     }
 
     class Entity {
