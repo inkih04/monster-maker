@@ -5,9 +5,17 @@
 #ifndef POKEMONGAMEENGINE_COMPONENT_H
 #define POKEMONGAMEENGINE_COMPONENT_H
 
+class Entity;
+
 class Component {
+        protected:
+            Entity* m_entity = nullptr;
+
+
         public:
             Component() = default;
+            void setOwner(Entity* entity) { m_entity = entity; }
+            Entity* getOwner() const { return m_entity; }
             virtual ~Component() = default;
             virtual void render() = 0;
             virtual void update(int deltaTime) = 0;

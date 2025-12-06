@@ -18,34 +18,46 @@ classDiagram
     Entity "*"--"*" Component
     Component <|-- PositionComponent
     Component <|-- RenderComponent
-    Component <|-- SpriteComponent
     Component <|-- ColliderComponent
+    State -- EntityLoader
+    
+    
+    class EntityLoader {
+        +static loadEntitiesFromFile(string filePath, EntityManager& entityManager) void
+    }
     
     
     class PositionComponent {
-        +float x
-        +float y
+        -float m_x
+        -float m_y
+        -float m_rotation
+        +PositionComponent(float x, float y, float rotation)
+        +PositionComponent(const Position& position)
+        +setPosition(float x, float y, float rotation)
+        +setPosition(const Position& position)
+        +getPosition() Position
+        +update(int deltaTime) override
+        +render() override
     }
     
     class ColliderComponent {
-        +int width
-        +int height
+        -float m_width
+        -float m_height
+        +ColliderComponent(float width, float height)
+        +update(int deltaTime) override
+        +render() override
     }
     
     class RenderComponent {
-        +string texturePath
-        +int width
-        +int height
+        -string m_spriteSheetPath
+        -SpriteRect spriteRect
+        RenderComponent(string spriteSheetPath, SpriteRect spriteRect)
+        RenderComponent(string spriteSheetPath, float x, float y)
+        +update(int deltaTime) override
+        +render() override
     }
     
-    class SpriteComponent {
-        +string spriteSheetPath
-        +int frameWidth
-        +int frameHeight
-        +int currentFrame
-        +float animationSpeed
-    }
-    
+
     class ComponentsType {
     <<Enum>>
         POSITION
@@ -55,7 +67,12 @@ classDiagram
     }
     
     class Component {
-        <<abstract>>    
+        <<abstract>>
+        -Entity* m_entity
+        +update(int  deltaTime)*
+        +getOwner() Entity*
+        +setOwner(Entity* entity) void
+        +render()*  
     }
     
     class EntityManager {

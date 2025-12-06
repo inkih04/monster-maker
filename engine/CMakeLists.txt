@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
-include_directories(include include/enums)
+include_directories(include include/enums include/components include/structs )
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
@@ -34,7 +34,13 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         src/graphics/Camera.cpp
         include/ResourceManager.h
         src/graphics/ResourceManager.cpp
-        include/enums/ShaderPath.h
+        include/structs/ShaderPath.h
+        include/EntityLoader.h
+        src/entities/EntityLoader.cpp
+        include/components/PositionComponent.h
+        include/structs/SpriteRect.h
+        include/structs/Position.h
+        src/entities/components/RenderComponent.cpp
 )
 
 
@@ -73,13 +79,15 @@ set(TEST_SOURCES
         tests/mocks/MockGLFW.cpp
         tests/mocks/MockState.h
         tests/unitary/StateManagerTest.cpp
-        include/Component.h
+        include/components/Component.h
         tests/mocks/MockComponent.h
         tests/unitary/EntityTest.cpp
         tests/unitary/EntityManagerTest.cpp
         tests/mocks/MockState.h
         tests/mocks/MockState.h
         tests/unitary/StateManagerTest.cpp
+        include/components/RenderComponent.h
+        include/components/ColliderComponent.h
 )
 
 add_executable(UnitTests ${TEST_SOURCES})

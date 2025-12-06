@@ -7,7 +7,7 @@
 #include "ComponentsType.h"
 #include <unordered_map>
 #include <memory>
-#include "Component.h"
+#include "components/Component.h"
 
 class Entity {
     private:
