@@ -10,7 +10,7 @@
 #include "Shader.h"
 #include <unordered_map>
 #include <memory>
-#include "ShaderPath.h"
+#include "structs/ShaderPath.h"
 
 class ResourceManager {
     public:

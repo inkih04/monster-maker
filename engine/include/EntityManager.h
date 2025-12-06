@@ -17,6 +17,7 @@ class EntityManager {
 
     public:
         Entity* createEntity();
+        ~EntityManager() = default;
         void updateEntities(int deltaTime) const;
         void renderEntities() const;
         std::vector<Entity*> getEntitiesByComponent(ComponentsType type) const;

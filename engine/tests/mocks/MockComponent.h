@@ -6,7 +6,7 @@
 #define POKEMONGAMEENGINE_MOCKCOMPONENT_H
 
 #pragma once
-#include "Component.h"
+#include "../../include/components/Component.h"
 
 class MockComponent : public Component {
 public:
