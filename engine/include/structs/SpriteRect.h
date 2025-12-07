@@ -9,7 +9,7 @@ struct SpriteRect {
     float x;
     float y;
 
-    SpriteRect(float x, float y);
+    SpriteRect(float x, float y): x(x), y(y) {};
 };
 
 #endif //POKEMONGAMEENGINE_SPRITE_H

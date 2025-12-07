@@ -22,6 +22,9 @@ private:
     void initGLEW();
 
     GLFWwindow* m_window{};
+    void setUpShaders() const;
+    void setUpCamera(int width, int height) const;
+
     int m_width;
     int m_height;
     std::string m_title;

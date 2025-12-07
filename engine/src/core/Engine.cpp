@@ -3,7 +3,10 @@
 //
 #include "Engine.h"
 #include <iostream>
+#include <memory>
+
 #include "InputManager.h"
+#include "Renderer.h"
 
 #define TARGET_FRAMERATE 60.0f
 
@@ -11,6 +14,8 @@ Engine::Engine(int width, int height, const std::string& title)
     : m_width(width), m_height(height), m_title(title) {
     initGLFW();
     InputManager::initialize(m_window);
+    setUpShaders();
+    setUpCamera(width, height);
 }
 
 Engine::~Engine() {
@@ -57,4 +62,13 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
         }
         glfwPollEvents();
     }
+}
+
+void Engine::setUpShaders() const {
+    Renderer::getInstance().loadShader("sprite", "../src/graphics/Shader/sprite.vert", "../src/graphics/Shader/sprite.frag");
+}
+
+void Engine::setUpCamera(int width, int height) const {
+    std::unique_ptr<Camera> camera = std::make_unique<Camera>(width, height);
+    Renderer::getInstance().setCamera(*camera);
 }

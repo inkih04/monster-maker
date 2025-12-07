@@ -28,16 +28,16 @@ Renderer "1"-- "*" Camera
     -GLuint m_quadVAO
     -GLuint m_quadVBO
     -*Shader m_currentShader
-    -unordered_map ~ string, unique_ptr~Shader ~ ~ m_shaders
     -Camera* m_activeCamera
     -void initRenderData()
     -void updateCameraUniforms()
-    +Renderer()
-    +~Renderer()
+    -Renderer()
+    -~Renderer()
+    +Renderer* getInstance()
     +void loadShader(const string& name, const string& vertexPath, const string& fragmentPath)
     +void setShader(const string& name)
     +void setCamera(Camera* camera)
-    +void drawSprite(Texture& texture, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f))
+    +void drawSprite(const string& texturePath, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f))
     }
     
     class Texture {

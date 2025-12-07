@@ -30,8 +30,8 @@ void StateManager::updateCurrentState(int deltaTime) {
         m_states.top()->update(deltaTime);
 }
 
-//m_stateManager.pushState(std::make_unique<MenuState>(&m_stateManager));
 void StateManager::pushState(std::unique_ptr<State> state) {
+    state->setStateManager(this);
     m_states.push(std::move(state));
 }
 

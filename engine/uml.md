@@ -51,8 +51,10 @@ classDiagram
     class RenderComponent {
         -string m_spriteSheetPath
         -SpriteRect spriteRect
-        RenderComponent(string spriteSheetPath, SpriteRect spriteRect)
-        RenderComponent(string spriteSheetPath, float x, float y)
+        -float m_height
+        -float m_width
+        RenderComponent(const string& spriteSheetPath, SpriteRect spriteRect)
+        RenderComponent(const string& spriteSheetPath, float x, float y)
         +update(int deltaTime) override
         +render() override
     }
@@ -78,6 +80,7 @@ classDiagram
     class EntityManager {
     -vector~unique_ptr~Entity~~ m_entities
        
+       +EntityManager()
        +createEntity() Entity*
        +updateEntities(int deltaTime)
        +renderEntities()
@@ -108,11 +111,17 @@ classDiagram
         <<abstract>>
         -StateManager* m_stateManager
         -EntityManager* m_entityManager
+        -setEntityManager()*
         +render()*
         +update(int deltaTime)*
+        +setStateManager(StateManager* stateManager) void*
+        +getEntityManager() EntityManager*
     }
 
     class ExplorationState {
+        update(int deltaTime) override
+        render() override
+        setEntityManager() override
     }
 
     class CombatState {
@@ -149,6 +158,8 @@ classDiagram
       -int m_height
       -string m_title
       -GLFWwindow m_window
+      -void setUpShaders()
+      -void setUpCamera()
       +Engine()
       +startLoop()
     }

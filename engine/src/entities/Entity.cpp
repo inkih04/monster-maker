@@ -22,5 +22,5 @@ bool Entity::hasComponent(ComponentsType type) const {
 }
 
 void Entity::render() {
-    // Render logic for the entity can be added here
+    components[ComponentsType::RENDER]->render();
 }

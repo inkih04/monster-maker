@@ -11,6 +11,9 @@ struct ShaderPath{
     std::string vertexPath;
     std::string fragmentPath;
 
+    ShaderPath(const std::string& v, const std::string& f)
+    : vertexPath(v), fragmentPath(f) {}
+
     bool operator==(const ShaderPath& other) const {
         return vertexPath == other.vertexPath &&
                fragmentPath == other.fragmentPath;

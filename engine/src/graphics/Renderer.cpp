@@ -5,7 +5,9 @@
 #include "Renderer.h"
 
 #include <iostream>
+#include <string>
 #include <glm/gtc/matrix_transform.hpp>
+#include "ResourceManager.h"
 
 Renderer::Renderer(): m_currentShader(nullptr), m_activeCamera(nullptr) {
     initRenderData();
@@ -17,21 +19,21 @@ Renderer::~Renderer() {
 }
 
 void Renderer::loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) {
-    m_shaders[name] = std::make_unique<Shader>(vertexPath, fragmentPath);
+    m_shaders[name] = ResourceManager::loadShader(vertexPath, fragmentPath);
+
     if (m_currentShader == nullptr) {
         setShader(name);
     }
+
 }
 
 void Renderer::setShader(const std::string& name) {
     auto it = m_shaders.find(name);
     if (it != m_shaders.end()) {
-        m_currentShader = it->second.get();
+        m_currentShader = it->second;
         m_currentShader->use();
 
-        if (m_activeCamera) {
-            updateCameraUniforms();
-        }
+        if (m_activeCamera) updateCameraUniforms();
     } else {
         std::cerr << "Advertencia: Intentando usar shader no existente '" << name << "'" << std::endl;
     }
@@ -78,8 +80,9 @@ void Renderer::initRenderData() {
     glBindVertexArray(0);
 }
 
-void Renderer::drawSprite(const Texture& texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
+void Renderer::drawSprite(const std::string& texturePath, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
     if (!m_currentShader) return;
+    Texture *texture = ResourceManager::loadTexture(texturePath);
 
     m_currentShader->use();
 
@@ -96,7 +99,7 @@ void Renderer::drawSprite(const Texture& texture, glm::vec2 position, glm::vec2 
     m_currentShader->setVec4("spriteColor", glm::vec4(color, 1.f));
     m_currentShader->setBool("useTexture", true);
 
-    texture.bind(0);
+    texture->bind(0);
 
     glBindVertexArray(m_quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);

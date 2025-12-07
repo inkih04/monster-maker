@@ -4,7 +4,6 @@
 
 #ifndef POKEMONGAMEENGINE_RENDERER_H
 #define POKEMONGAMEENGINE_RENDERER_H
-#include <memory>
 #include <GL/glew.h>
 #include <unordered_map>
 
@@ -17,20 +16,27 @@ class Renderer {
         GLuint m_quadVAO;
         GLuint m_quadVBO;
         Shader* m_currentShader;
-        std::unordered_map<std::string, std::unique_ptr<Shader>> m_shaders;
+        std::unordered_map<std::string, Shader*> m_shaders;
         const Camera* m_activeCamera;
+        Renderer();
+        ~Renderer();
+
+        Renderer(const Renderer&) = delete;
+        Renderer& operator=(const Renderer&) = delete;
 
         void initRenderData();
         void updateCameraUniforms() const;
 
     public:
-        Renderer();
-        ~Renderer();
+        static Renderer& getInstance() {
+            static Renderer instance;
+            return instance;
+        };
 
         void loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
         void setShader(const std::string& name);
         void setCamera(const Camera &camera);
-        void drawSprite(const Texture& texture, glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f)) const;
+        void drawSprite(const std::string& texturePath, glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f)) const;
 
 };
 

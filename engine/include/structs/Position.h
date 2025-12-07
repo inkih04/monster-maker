@@ -8,5 +8,5 @@ struct Position {
     float y;
     float rotation;
 
-    Position(float x, float y, float rotation);
+    Position(float x, float y, float rotation) : x(x), y(y), rotation(rotation) {};
 };
