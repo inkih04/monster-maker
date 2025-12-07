@@ -51,8 +51,10 @@ classDiagram
     class RenderComponent {
         -string m_spriteSheetPath
         -SpriteRect spriteRect
-        RenderComponent(string spriteSheetPath, SpriteRect spriteRect)
-        RenderComponent(string spriteSheetPath, float x, float y)
+        -float m_height
+        -float m_width
+        RenderComponent(const string& spriteSheetPath, SpriteRect spriteRect)
+        RenderComponent(const string& spriteSheetPath, float x, float y)
         +update(int deltaTime) override
         +render() override
     }
@@ -149,6 +151,8 @@ classDiagram
       -int m_height
       -string m_title
       -GLFWwindow m_window
+      -void setUpShaders()
+      -void setUpCamera()
       +Engine()
       +startLoop()
     }
