@@ -80,6 +80,7 @@ classDiagram
     class EntityManager {
     -vector~unique_ptr~Entity~~ m_entities
        
+       +EntityManager()
        +createEntity() Entity*
        +updateEntities(int deltaTime)
        +renderEntities()
@@ -110,11 +111,17 @@ classDiagram
         <<abstract>>
         -StateManager* m_stateManager
         -EntityManager* m_entityManager
+        -setEntityManager()*
         +render()*
         +update(int deltaTime)*
+        +setStateManager(StateManager* stateManager) void*
+        +getEntityManager() EntityManager*
     }
 
     class ExplorationState {
+        update(int deltaTime) override
+        render() override
+        setEntityManager() override
     }
 
     class CombatState {

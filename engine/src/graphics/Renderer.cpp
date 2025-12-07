@@ -20,19 +20,20 @@ Renderer::~Renderer() {
 
 void Renderer::loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) {
     m_shaders[name] = ResourceManager::loadShader(vertexPath, fragmentPath);
+
     if (m_currentShader == nullptr) {
         setShader(name);
     }
+
 }
 
 void Renderer::setShader(const std::string& name) {
     auto it = m_shaders.find(name);
     if (it != m_shaders.end()) {
+        m_currentShader = it->second;
         m_currentShader->use();
 
-        if (m_activeCamera) {
-            updateCameraUniforms();
-        }
+        if (m_activeCamera) updateCameraUniforms();
     } else {
         std::cerr << "Advertencia: Intentando usar shader no existente '" << name << "'" << std::endl;
     }

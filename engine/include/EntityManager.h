@@ -16,6 +16,7 @@ class EntityManager {
         std::vector<std::unique_ptr<Entity>> m_entities;
 
     public:
+        EntityManager() = default;
         Entity* createEntity();
         ~EntityManager() = default;
         void updateEntities(int deltaTime) const;

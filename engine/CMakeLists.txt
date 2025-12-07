@@ -41,6 +41,8 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/structs/SpriteRect.h
         include/structs/Position.h
         src/entities/components/RenderComponent.cpp
+        include/ExplorationState.h
+        src/states/ExplorationState.cpp
 )
 
 

@@ -65,7 +65,7 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
 }
 
 void Engine::setUpShaders() const {
-    Renderer::getInstance().loadShader("sprite", "../src/graphics/Shaders/sprite.vert", "../src/graphics/Shader/sprite.frag");
+    Renderer::getInstance().loadShader("sprite", "../src/graphics/Shader/sprite.vert", "../src/graphics/Shader/sprite.frag");
 }
 
 void Engine::setUpCamera(int width, int height) const {
