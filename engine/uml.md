@@ -23,7 +23,12 @@ classDiagram
     
     
     class EntityLoader {
-        +static loadEntitiesFromFile(string filePath, EntityManager& entityManager) void
+        <<static>>
+        +loadEntitiesFromFile(string filePath, EntityManager& entityManager) void
+        -parseEntity(json entityJson, EntityManager& entityManager) void
+        -createPositionComponent(json data) unique_ptr~Component~
+        -createRenderComponent(json data) unique_ptr~Component~
+        -createColliderComponent(json data) unique_ptr~Component~
     }
     
     
@@ -64,7 +69,6 @@ classDiagram
     <<Enum>>
         POSITION
         RENDER
-        SPRITE
         COLLIDER
     }
     

@@ -5,14 +5,22 @@
 #ifndef POKEMONGAMEENGINE_ENTITYLOADER_H
 #define POKEMONGAMEENGINE_ENTITYLOADER_H
 
-#include "Entity.h"
-#include "components/Component.h"
-#include "ComponentsType.h"
+#include <string>
+#include <nlohmann/json.hpp>
+#include "EntityManager.h"
+
+using json = nlohmann::json;
 
 class EntityLoader {
+public:
+    static void loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager);
 
+private:
+    static void parseEntity(const json& entityJson, EntityManager& entityManager);
 
-
+    static std::unique_ptr<Component> createPositionComponent(const json& data);
+    static std::unique_ptr<Component> createRenderComponent(const json& data);
+    static std::unique_ptr<Component> createColliderComponent(const json& data);
 };
 
 #endif //POKEMONGAMEENGINE_ENTITYLOADER_H
