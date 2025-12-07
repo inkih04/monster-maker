@@ -101,6 +101,8 @@ void Renderer::drawSprite(const std::string& texturePath, glm::vec2 position, gl
 
     texture->bind(0);
 
+    m_currentShader->setInt("texture1", 0);
+
     glBindVertexArray(m_quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);

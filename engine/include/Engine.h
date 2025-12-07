@@ -7,8 +7,11 @@
 
 #include <string>
 #include <functional>
+#include <memory>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+
+#include "Camera.h"
 
 class Engine {
 public:
@@ -23,10 +26,11 @@ private:
 
     GLFWwindow* m_window{};
     void setUpShaders() const;
-    void setUpCamera(int width, int height) const;
+    void setUpCamera(int width, int height);
 
     int m_width;
     int m_height;
+    std::unique_ptr<Camera> m_camera;
     std::string m_title;
 };
 

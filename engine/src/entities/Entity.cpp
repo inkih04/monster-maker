@@ -5,6 +5,7 @@
 
 void Entity::addComponent(ComponentsType type, std::unique_ptr<Component> component) {
     components[type] = std::move(component);
+    components[type]->setOwner(this);
 }
 
 Component *Entity::getComponent(ComponentsType type) {

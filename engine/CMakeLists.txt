@@ -11,6 +11,7 @@ include_directories(include include/enums include/components include/structs )
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
 
 file(GLOB_RECURSE GAME_SOURCES "src/*.cpp")
@@ -52,6 +53,7 @@ target_link_libraries(PokemonGameEngine
         GLEW::GLEW
         glm::glm
         GL
+        nlohmann_json::nlohmann_json
 )
 
 
@@ -100,6 +102,7 @@ target_link_libraries(UnitTests
         gtest_main
         glfw
         glm::glm
+        nlohmann_json::nlohmann_json
 )
 
 include(GoogleTest)
