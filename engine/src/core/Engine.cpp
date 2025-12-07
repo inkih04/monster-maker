@@ -7,6 +7,7 @@
 
 #include "InputManager.h"
 #include "Renderer.h"
+#include <iostream>
 
 #define TARGET_FRAMERATE 60.0f
 
@@ -68,7 +69,7 @@ void Engine::setUpShaders() const {
     Renderer::getInstance().loadShader("sprite", "../src/graphics/Shader/sprite.vert", "../src/graphics/Shader/sprite.frag");
 }
 
-void Engine::setUpCamera(int width, int height) const {
-    std::unique_ptr<Camera> camera = std::make_unique<Camera>(width, height);
-    Renderer::getInstance().setCamera(*camera);
+void Engine::setUpCamera(int width, int height)  {
+    m_camera = std::make_unique<Camera>(width, height);
+    Renderer::getInstance().setCamera(*m_camera);
 }

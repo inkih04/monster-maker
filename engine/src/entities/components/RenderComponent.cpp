@@ -3,9 +3,10 @@
 //
 
 #include "RenderComponent.h"
+
+
+
 #include "Renderer.h"
-#include "Camera.h"
-#include <memory>
 
 #include "Entity.h"
 #include "Position.h"
@@ -13,7 +14,7 @@
 
 void RenderComponent::render() {
     Renderer::getInstance().setShader("sprite");
-    Renderer::getInstance().drawSprite(m_spriteSheetPath,  getPrettyPosition(), glm::vec2(m_width, m_height));
+    Renderer::getInstance().drawSprite(m_spriteSheetPath,  getPrettyPosition(), glm::vec2(m_height, m_width));
 }
 
 void RenderComponent::update(int deltaTime) {
@@ -23,6 +24,8 @@ void RenderComponent::update(int deltaTime) {
 
 glm::vec2  RenderComponent::getPrettyPosition() const {
     Component *defaultComponent = m_entity->getComponent(ComponentsType::POSITION);
+    if (!defaultComponent) return glm::vec2(0.0f, 0.0f);
+
     auto positionComponent = dynamic_cast<PositionComponent*>(defaultComponent);
     Position position = positionComponent->getPosition();
 
