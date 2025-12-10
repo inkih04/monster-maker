@@ -11,7 +11,6 @@
 #include <stdexcept>
 
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
-
     std::ifstream file(filePath);
     if (!file.is_open()) {
         throw std::runtime_error("No se pudo abrir el archivo: " + filePath);
@@ -92,13 +91,15 @@ std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data)
 
     std::string spriteSheetPath = data["spriteSheetPath"];
 
-    float x = data.value("x", 0.0f);
-    float y = data.value("y", 0.0f);
+    float x = data.value("x", -1.0f);
+    float y = data.value("y", -1.0f);
+    float w = data.value("w", -1.0f);
+    float h = data.value("h", -1.0f);
 
     float width = data.value("width", 32.0f);
     float height = data.value("height", 32.0f);
 
-    return std::make_unique<RenderComponent>(spriteSheetPath, x, y, width, height);
+    return std::make_unique<RenderComponent>(spriteSheetPath, x, y, w, h, width, height);
 }
 
 std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& data) {

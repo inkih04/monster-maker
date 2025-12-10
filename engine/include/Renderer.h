@@ -9,6 +9,7 @@
 
 #include "Camera.h"
 #include "Shader.h"
+#include "SpriteRect.h"
 #include "Texture.h"
 
 class Renderer {
@@ -36,7 +37,8 @@ class Renderer {
         void loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
         void setShader(const std::string& name);
         void setCamera(const Camera &camera);
-        void drawSprite(const std::string& texturePath, glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f), float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f)) const;
+        void drawSprite(const std::string& texturePath, glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f),
+            float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f),const SpriteRect* spriteRect = nullptr) const;
 
 };
 

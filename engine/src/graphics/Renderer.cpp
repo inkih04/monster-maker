@@ -80,7 +80,14 @@ void Renderer::initRenderData() {
     glBindVertexArray(0);
 }
 
-void Renderer::drawSprite(const std::string& texturePath, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
+void Renderer::drawSprite(
+    const std::string& texturePath,
+    glm::vec2 position,
+    glm::vec2 size,
+    float rotate,
+    glm::vec3 color,
+    const SpriteRect* spriteRect) const
+{
     if (!m_currentShader) return;
     Texture *texture = ResourceManager::loadTexture(texturePath);
 
@@ -88,19 +95,33 @@ void Renderer::drawSprite(const std::string& texturePath, glm::vec2 position, gl
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(position, 0.0f));
-
     model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
-
     model = glm::scale(model, glm::vec3(size, 1.0f));
 
     m_currentShader->setMat4("model", model);
     m_currentShader->setVec4("spriteColor", glm::vec4(color, 1.f));
     m_currentShader->setBool("useTexture", true);
 
-    texture->bind(0);
+    if (spriteRect) {
+        float texWidth = static_cast<float>(texture->getWidth());
+        float texHeight = static_cast<float>(texture->getHeight());
 
+        glm::vec4 uvRect(
+            spriteRect->x / texWidth,           // u_min
+            spriteRect->y / texHeight,          // v_min
+            spriteRect->width / texWidth,       // u_size
+            spriteRect->height / texHeight      // v_size
+        );
+
+        m_currentShader->setVec4("uvRect", uvRect);
+        m_currentShader->setBool("useUVRect", true);
+    } else {
+        m_currentShader->setBool("useUVRect", false);
+    }
+
+    texture->bind(0);
     m_currentShader->setInt("texture1", 0);
 
     glBindVertexArray(m_quadVAO);

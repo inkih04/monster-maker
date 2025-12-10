@@ -37,7 +37,7 @@ Renderer "1"-- "*" Camera
     +void loadShader(const string& name, const string& vertexPath, const string& fragmentPath)
     +void setShader(const string& name)
     +void setCamera(Camera* camera)
-    +void drawSprite(const string& texturePath, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f))
+    +void drawSprite(const string& texturePath, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f), SpriteRect spriteRect = null)
     }
     
     class Texture {

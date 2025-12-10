@@ -18,12 +18,13 @@ class RenderComponent: public Component {
         float m_height;
         float m_width;
         glm::vec2 getPrettyPosition() const;
+        void draw() const;
 
     public:
         void render() override;
         void update(int deltaTime) override;
         RenderComponent(const std::string& sheetPath, const SpriteRect& spriteRect, const float width, const float height): m_spriteSheetPath(sheetPath), spriteRect(spriteRect), m_height(width), m_width(height) {};
-        RenderComponent(const std::string& sheetPath, const float x, const float y, const float width, const float height): m_spriteSheetPath (sheetPath), spriteRect(x, y), m_width(width), m_height(height) {};
+        RenderComponent(const std::string& sheetPath, const float x, const float y,const float w, const float h ,const float width, const float height): m_spriteSheetPath (sheetPath), spriteRect(x, y, w, h), m_width(width), m_height(height) {};
 
 
 

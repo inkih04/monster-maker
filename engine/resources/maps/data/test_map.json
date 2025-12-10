@@ -2,19 +2,306 @@
   "mapId": "test_map",
   "entities": [
     {
-      "id": "test_entity",
+      "id": "test_entity2",
       "components": {
         "POSITION": {
-          "x": 400.0,
-          "y": 300.0,
+          "x": 0.0,
+          "y": 0.0,
           "rotation": 0.0
         },
         "RENDER": {
-          "spriteSheetPath": "../resources/1.png",
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 16.0,
+          "y": 16.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
           "x": 0.0,
+          "y": 16.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 0.0,
+          "y": 32.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 0.0,
+          "y": 48.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 16.0,
           "y": 0.0,
-          "width": 32.0,
-          "height": 32.0
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 16.0,
+          "y": 32.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 16.0,
+          "y": 48.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 32.0,
+          "y": 0.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 32.0,
+          "y": 16.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 32.0,
+          "y": 32.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 32.0,
+          "y": 48.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 48.0,
+          "y": 0.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 48.0,
+          "y": 16.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 48.0,
+          "y": 32.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 48.0,
+          "y": 48.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
         }
       }
     }

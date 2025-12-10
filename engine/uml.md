@@ -59,8 +59,9 @@ classDiagram
         -float m_height
         -float m_width
         RenderComponent(const string& spriteSheetPath, SpriteRect spriteRect)
-        RenderComponent(const string& spriteSheetPath, float x, float y)
+        RenderComponent(const string& spriteSheetPath, float x, float y, float w, float h, float width, float height)
         +update(int deltaTime) override
+        +draw()
         +render() override
     }
     
