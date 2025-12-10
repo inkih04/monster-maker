@@ -70,6 +70,6 @@ void Engine::setUpShaders() const {
 }
 
 void Engine::setUpCamera(int width, int height)  {
-    m_camera = std::make_unique<Camera>(width, height);
+    m_camera = std::make_unique<Camera>(64, 64);
     Renderer::getInstance().setCamera(*m_camera);
 }

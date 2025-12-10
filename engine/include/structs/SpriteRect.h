@@ -8,8 +8,10 @@
 struct SpriteRect {
     float x;
     float y;
+    float width;
+    float height;
 
-    SpriteRect(float x, float y): x(x), y(y) {};
+    SpriteRect(float x, float y, float width, float height): x(x), y(y), width(width), height(height)  {};
 };
 
 #endif //POKEMONGAMEENGINE_SPRITE_H

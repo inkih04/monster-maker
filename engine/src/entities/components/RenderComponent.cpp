@@ -3,9 +3,6 @@
 //
 
 #include "RenderComponent.h"
-
-
-
 #include "Renderer.h"
 
 #include "Entity.h"
@@ -14,7 +11,7 @@
 
 void RenderComponent::render() {
     Renderer::getInstance().setShader("sprite");
-    Renderer::getInstance().drawSprite(m_spriteSheetPath,  getPrettyPosition(), glm::vec2(m_height, m_width));
+    draw();
 }
 
 void RenderComponent::update(int deltaTime) {
@@ -30,4 +27,12 @@ glm::vec2  RenderComponent::getPrettyPosition() const {
     Position position = positionComponent->getPosition();
 
     return glm::vec2(position.x, position.y);
+}
+
+void RenderComponent::draw() const {
+    if (spriteRect.width == -1 && spriteRect.height == -1 && spriteRect.x == -1 && spriteRect.y == -1) {
+        Renderer::getInstance().drawSprite(m_spriteSheetPath,  getPrettyPosition(), glm::vec2(m_height, m_width));
+    } else {
+        Renderer::getInstance().drawSprite(m_spriteSheetPath, getPrettyPosition(), glm::vec2(m_height, m_width), 0.0f, glm::vec3(1.0f), &spriteRect);
+    }
 }
