@@ -21,6 +21,7 @@ private:
     static std::unique_ptr<Component> createPositionComponent(const json& data);
     static std::unique_ptr<Component> createRenderComponent(const json& data);
     static std::unique_ptr<Component> createColliderComponent(const json& data);
+    static std::unique_ptr<Component> createAnimationComponent(const json& data);
 };
 
 #endif //POKEMONGAMEENGINE_ENTITYLOADER_H

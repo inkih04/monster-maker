@@ -1,0 +1,24 @@
+{
+  "mapId": "test_map",
+  "entities": [
+    {
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 0.0,
+          "y": 0.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/sprites/1.png",
+          "x": 0.0,
+          "y": 0.0,
+          "w": 64.0,
+          "h": 64.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    }
+  ]
+}

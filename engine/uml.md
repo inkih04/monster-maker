@@ -16,9 +16,6 @@ classDiagram
     EntityManager "1"-- * State
     EntityManager "*"--"*" Entity
     Entity "*"--"*" Component
-    Component <|-- PositionComponent
-    Component <|-- RenderComponent
-    Component <|-- ColliderComponent
     State -- EntityLoader
     
     
@@ -29,48 +26,6 @@ classDiagram
         -createPositionComponent(json data) unique_ptr~Component~
         -createRenderComponent(json data) unique_ptr~Component~
         -createColliderComponent(json data) unique_ptr~Component~
-    }
-    
-    
-    class PositionComponent {
-        -float m_x
-        -float m_y
-        -float m_rotation
-        +PositionComponent(float x, float y, float rotation)
-        +PositionComponent(const Position& position)
-        +setPosition(float x, float y, float rotation)
-        +setPosition(const Position& position)
-        +getPosition() Position
-        +update(int deltaTime) override
-        +render() override
-    }
-    
-    class ColliderComponent {
-        -float m_width
-        -float m_height
-        +ColliderComponent(float width, float height)
-        +update(int deltaTime) override
-        +render() override
-    }
-    
-    class RenderComponent {
-        -string m_spriteSheetPath
-        -SpriteRect spriteRect
-        -float m_height
-        -float m_width
-        RenderComponent(const string& spriteSheetPath, SpriteRect spriteRect)
-        RenderComponent(const string& spriteSheetPath, float x, float y, float w, float h, float width, float height)
-        +update(int deltaTime) override
-        +draw()
-        +render() override
-    }
-    
-
-    class ComponentsType {
-    <<Enum>>
-        POSITION
-        RENDER
-        COLLIDER
     }
     
     class Component {
