@@ -5,7 +5,7 @@ classDiagram
 Component <|-- PositionComponent
 Component <|-- RenderComponent
 Component <|-- ColliderComponent
-
+Component <|-- MovementComponent
 Component <|-- AnimationComponent
 
 class AnimationComponent {
@@ -69,6 +69,7 @@ class AnimationComponent {
         RENDER
         COLLIDER
         ANIMATION
+        MOVEMENT
     }
 
     class Component {
@@ -78,6 +79,18 @@ class AnimationComponent {
         +getOwner() Entity*
         +setOwner(Entity* entity) void
         +render()*  
+    }
+    
+     class MovementComponent {
+        -Direction m_lastDirection
+        -AnimationComponent* getAnimation()
+        -PositionComponent* getPosition()
+        -string getStandAnimation()
+
+        +MovementComponent()
+        +void move(Position pos)
+        +void update(int deltaTime)
+        +void render()
     }
 
 
