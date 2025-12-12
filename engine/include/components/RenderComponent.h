@@ -21,6 +21,7 @@ class RenderComponent: public Component {
         void draw() const;
 
     public:
+        void setSpriteRect(const SpriteRect& rect) { spriteRect = rect; }
         void render() override;
         void update(int deltaTime) override;
         RenderComponent(const std::string& sheetPath, const SpriteRect& spriteRect, const float width, const float height): m_spriteSheetPath(sheetPath), spriteRect(spriteRect), m_height(width), m_width(height) {};

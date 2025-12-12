@@ -8,6 +8,7 @@
 #include "ColliderComponent.h"
 #include <fstream>
 #include <iostream>
+#include "components/AnimationComponent.h"
 #include <stdexcept>
 
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
@@ -70,10 +71,12 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
         }
     }
 
-    // LAYER Component
-    // if (components.contains("LAYER")) {
-    //     // ...
-    // }
+    if (components.contains("ANIMATION")) {
+        auto animationComponent = createAnimationComponent(components["ANIMATION"]);
+        entity->addComponent(ComponentsType::ANIMATION, std::move(animationComponent));
+    }
+
+
 }
 
 std::unique_ptr<Component> EntityLoader::createPositionComponent(const json& data) {
@@ -107,4 +110,44 @@ std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& dat
     float height = data.value("height", 0.0f);
 
     return std::make_unique<CollisionComponent>(width, height);
+}
+
+std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& data) {
+    auto animComponent = std::make_unique<AnimationComponent>();
+
+    if (!data.contains("animations")) {
+        throw std::runtime_error("AnimationComponent requiere un array 'animations'");
+    }
+
+    for (const auto& animJson : data["animations"]) {
+        std::string name = animJson.value("name", "");
+
+        if (!animJson.contains("frames")) {
+            throw std::runtime_error("Animation '" + name + "' requiere 'frames'");
+        }
+
+        std::vector<SpriteRect> frames;
+
+        for (const auto& frame : animJson["frames"]) {
+            SpriteRect rect;
+            rect.x = frame.value("x", 0);
+            rect.y = frame.value("y", 0);
+            rect.width = frame.value("w", 32);
+            rect.height = frame.value("h", 32);
+            frames.push_back(rect);
+        }
+
+        float frameDuration = animJson.value("frameDuration", 100.0f);
+        bool loop = animJson.value("loop", true);
+        int priority = animJson.value("priority", 0);
+
+        animComponent->addAnimation(name, frames, frameDuration, loop, priority);
+    }
+
+    if (data.contains("defaultAnimation")) {
+        std::string defaultAnim = data["defaultAnimation"];
+        animComponent->play(defaultAnim, true);
+    }
+
+    return animComponent;
 }

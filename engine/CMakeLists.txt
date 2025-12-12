@@ -44,6 +44,9 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         src/entities/components/RenderComponent.cpp
         include/ExplorationState.h
         src/states/ExplorationState.cpp
+        include/components/AnimationComponent.h
+        include/structs/Animation.h
+        src/entities/components/AnimationComponent.cpp
 )
 
 

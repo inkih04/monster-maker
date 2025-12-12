@@ -9,9 +9,7 @@ enum ComponentsType {
     POSITION,
     RENDER,
     COLLIDER,
-    LAYER1,
-    LAYER2,
-    LAYER3,
+    ANIMATION,
 };
 
 #endif //POKEMONGAMEENGINE_COMPONENTSTYPE_H
