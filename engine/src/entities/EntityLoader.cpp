@@ -11,6 +11,8 @@
 #include "components/AnimationComponent.h"
 #include <stdexcept>
 
+#include "MovementComponent.h"
+
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -41,7 +43,20 @@ void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManag
 }
 
 void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityManager) {
-    Entity* entity = entityManager.createEntity();
+    EntityTag tag = EntityTag::UNKNOWN;
+    EntityLayer layer = EntityLayer::UNKNOWN;
+
+    if (entityJson.contains("tag")) {
+        std::string tagStr = entityJson["tag"].get<std::string>();
+        tag = stringToTag(tagStr);
+    }
+
+    if (entityJson.contains("layer")) {
+        std::string layerStr = entityJson["layer"].get<std::string>();
+        layer = stringToLayer(layerStr);
+    }
+
+    Entity* entity = entityManager.createEntity(tag, layer);
 
     if (!entityJson.contains("components")) {
         std::cerr << "Advertencia: Entity sin componentes encontrada" << std::endl;
@@ -74,6 +89,10 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
     if (components.contains("ANIMATION")) {
         auto animationComponent = createAnimationComponent(components["ANIMATION"]);
         entity->addComponent(ComponentsType::ANIMATION, std::move(animationComponent));
+    }
+
+    if (components.contains("MOVEMENT")) {
+        entity->addComponent(ComponentsType::MOVEMENT, std::move(std::make_unique<MovementComponent>()));
     }
 
 

@@ -47,6 +47,11 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/components/AnimationComponent.h
         include/structs/Animation.h
         src/entities/components/AnimationComponent.cpp
+        include/enums/EntityTag.h
+        include/enums/EntityLayer.h
+        include/enums/BasicAnimation.h
+        include/components/MovementComponent.h
+        src/entities/components/MovementComponent.cpp
 )
 
 
@@ -95,6 +100,7 @@ set(TEST_SOURCES
         tests/unitary/StateManagerTest.cpp
         include/components/RenderComponent.h
         include/components/ColliderComponent.h
+        include/enums/Direction.h
 )
 
 add_executable(UnitTests ${TEST_SOURCES})

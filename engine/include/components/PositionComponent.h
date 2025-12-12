@@ -15,7 +15,6 @@ class PositionComponent: public Component {
     public:
         PositionComponent(const float x, const float y, const float rotation): m_x(x), m_y(y), m_rotation(rotation)  {};
         explicit PositionComponent(const Position& position): m_x(position.x), m_y(position.y), m_rotation(position.rotation) {}
-
         void update(int deltaTime) override {};
         void render() override {};
         void setPosition(const float x, const float y, const float rotation) {m_x = x;m_y = y; m_rotation = rotation;};
