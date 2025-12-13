@@ -6,12 +6,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 
-include_directories(include include/enums include/components include/structs )
+include_directories(include include/enums include/components include/structs include/scripting )
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
+find_package(lua CONFIG REQUIRED)
+find_package(sol2 CONFIG REQUIRED)
+
+
 
 
 file(GLOB_RECURSE GAME_SOURCES "src/*.cpp")
@@ -52,6 +56,10 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/enums/BasicAnimation.h
         include/components/MovementComponent.h
         src/entities/components/MovementComponent.cpp
+        include/scripting/ScriptEngine.h
+        include/scripting/ScriptBindings.h
+        src/scripting/ScriptBindings.cpp
+        src/scripting/ScriptEngine.cpp
 )
 
 
@@ -62,6 +70,7 @@ target_link_libraries(PokemonGameEngine
         glm::glm
         GL
         nlohmann_json::nlohmann_json
+        lua
 )
 
 
@@ -112,6 +121,7 @@ target_link_libraries(UnitTests
         glfw
         glm::glm
         nlohmann_json::nlohmann_json
+        lua
 )
 
 include(GoogleTest)
