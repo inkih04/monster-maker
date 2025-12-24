@@ -5,7 +5,9 @@
 #ifndef POKEMONGAMEENGINE_EXPLORATIONSTATE_H
 #define POKEMONGAMEENGINE_EXPLORATIONSTATE_H
 
+
 #include "State.h"
+#include "TextRenderer.h"
 
 
 class ExplorationState : public State{
@@ -19,6 +21,9 @@ class ExplorationState : public State{
         void setEntityManager() override;
 
     private:
+        TextRenderer* m_textRenderer;
+
+
         void renderGround() const;
         void renderDecoration() const;
         void renderEntities() const;
