@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-
 include_directories(include include/enums include/components include/structs include/scripting )
 
 find_package(glfw3 CONFIG REQUIRED)
@@ -16,8 +15,16 @@ find_package(lua CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
 
-
-
+if(APPLE)
+    find_library(OPENGL_FRAMEWORK OpenGL)
+    if(NOT OPENGL_FRAMEWORK)
+        message(FATAL_ERROR "OpenGL framework not found")
+    endif()
+    set(OPENGL_LIBRARIES "-framework OpenGL")
+elseif(UNIX)
+    find_package(OpenGL REQUIRED)
+    set(OPENGL_LIBRARIES OpenGL::GL)
+endif()
 
 file(GLOB_RECURSE GAME_SOURCES "src/*.cpp")
 
@@ -70,19 +77,16 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         src/ui/DialogBox.cpp
 )
 
-
 target_link_libraries(PokemonGameEngine
         PRIVATE
         glfw
         GLEW::GLEW
         glm::glm
-        GL
+        ${OPENGL_LIBRARIES}
         nlohmann_json::nlohmann_json
         lua
         Freetype::Freetype
 )
-
-
 
 enable_testing()
 
@@ -96,8 +100,6 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 set(BUILD_GMOCK ON CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
-
-
 
 set(TEST_SOURCES
         src/input/InputManager.cpp
@@ -133,6 +135,7 @@ target_link_libraries(UnitTests
         gtest_main
         glfw
         glm::glm
+        ${OPENGL_LIBRARIES}
         nlohmann_json::nlohmann_json
         lua
         Freetype::Freetype
