@@ -6,6 +6,9 @@
     "glew",
     "glm",
     "stb",
-    "freetype"
+    "freetype",
+    "nlohmann-json",
+    "lua",
+    "sol2"
   ]
 }

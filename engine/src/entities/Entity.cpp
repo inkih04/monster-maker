@@ -5,6 +5,7 @@
 
 void Entity::addComponent(ComponentsType type, std::unique_ptr<Component> component) {
     components[type] = std::move(component);
+    components[type]->setOwner(this);
 }
 
 Component *Entity::getComponent(ComponentsType type) {
@@ -13,7 +14,11 @@ Component *Entity::getComponent(ComponentsType type) {
 }
 
 void Entity::update(int deltaTime) {
-    // Update logic for the entity can be added here
+    for (auto& component: components) {
+        if (component.second) {
+            component.second->update(deltaTime);
+        }
+    }
 }
 
 bool Entity::hasComponent(ComponentsType type) const {
@@ -22,5 +27,5 @@ bool Entity::hasComponent(ComponentsType type) const {
 }
 
 void Entity::render() {
-    // Render logic for the entity can be added here
+    components[ComponentsType::RENDER]->render();
 }

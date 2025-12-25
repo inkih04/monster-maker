@@ -16,51 +16,31 @@ classDiagram
     EntityManager "1"-- * State
     EntityManager "*"--"*" Entity
     Entity "*"--"*" Component
-    Component <|-- PositionComponent
-    Component <|-- RenderComponent
-    Component <|-- SpriteComponent
-    Component <|-- ColliderComponent
+    State -- EntityLoader
     
     
-    class PositionComponent {
-        +float x
-        +float y
-    }
-    
-    class ColliderComponent {
-        +int width
-        +int height
-    }
-    
-    class RenderComponent {
-        +string texturePath
-        +int width
-        +int height
-    }
-    
-    class SpriteComponent {
-        +string spriteSheetPath
-        +int frameWidth
-        +int frameHeight
-        +int currentFrame
-        +float animationSpeed
-    }
-    
-    class ComponentsType {
-    <<Enum>>
-        POSITION
-        RENDER
-        SPRITE
-        COLLIDER
+    class EntityLoader {
+        <<static>>
+        +loadEntitiesFromFile(string filePath, EntityManager& entityManager) void
+        -parseEntity(json entityJson, EntityManager& entityManager) void
+        -createPositionComponent(json data) unique_ptr~Component~
+        -createRenderComponent(json data) unique_ptr~Component~
+        -createColliderComponent(json data) unique_ptr~Component~
     }
     
     class Component {
-        <<abstract>>    
+        <<abstract>>
+        -Entity* m_entity
+        +update(int  deltaTime)*
+        +getOwner() Entity*
+        +setOwner(Entity* entity) void
+        +render()*  
     }
     
     class EntityManager {
     -vector~unique_ptr~Entity~~ m_entities
        
+       +EntityManager()
        +createEntity() Entity*
        +updateEntities(int deltaTime)
        +renderEntities()
@@ -91,11 +71,17 @@ classDiagram
         <<abstract>>
         -StateManager* m_stateManager
         -EntityManager* m_entityManager
+        -setEntityManager()*
         +render()*
         +update(int deltaTime)*
+        +setStateManager(StateManager* stateManager) void*
+        +getEntityManager() EntityManager*
     }
 
     class ExplorationState {
+        update(int deltaTime) override
+        render() override
+        setEntityManager() override
     }
 
     class CombatState {
@@ -132,6 +118,8 @@ classDiagram
       -int m_height
       -string m_title
       -GLFWwindow m_window
+      -void setUpShaders()
+      -void setUpCamera()
       +Engine()
       +startLoop()
     }

@@ -24,7 +24,7 @@ TEST(EntityTest, AddAndGetComponent) {
 TEST(EntityTest, HasComponentReturnsFalseWhenMissing) {
     Entity entity;
 
-    EXPECT_FALSE(entity.hasComponent(ComponentsType::SPRITE));
+    EXPECT_FALSE(entity.hasComponent(ComponentsType::RENDER));
 }
 
 

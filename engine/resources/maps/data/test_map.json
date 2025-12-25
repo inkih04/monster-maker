@@ -1,0 +1,427 @@
+{
+  "mapId": "test_map",
+  "entities": [
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0.0,
+          "y": 0.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "tag": "player",
+      "layer": "entities",
+      "id": "test_entity2",
+      "components": {
+        "POSITION": {
+          "x": 0.0,
+          "y": 0.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/sprites/1.png",
+          "x": 0.0,
+          "y": 0.0,
+          "w": 64.0,
+          "h": 64.0,
+          "width": 64.0,
+          "height": 64.0
+        },
+        "MOVEMENT" : {},
+        "ANIMATION": {
+          "animations": [
+            {
+              "name": "standdown",
+              "frames": [{"x": 0.0, "y": 0.0, "w": 64.0, "h": 64.0}],
+              "frameDuration": 200,
+              "loop": true,
+              "priority": 0
+            },
+            {
+              "name": "standup",
+              "frames": [{"x": 0.0, "y": 192.0, "w": 64.0, "h": 64.0}],
+              "frameDuration": 200,
+              "loop": true,
+              "priority": 0
+            },
+            {
+              "name": "moveright",
+              "frames": [
+                {"x": 0, "y": 128, "w": 64, "h": 64},
+                {"x": 64, "y": 128, "w": 64, "h": 64},
+                {"x": 128, "y": 128, "w": 64, "h": 64},
+                {"x": 192, "y": 128, "w": 64, "h": 64}
+              ],
+              "frameDuration": 150,
+              "loop": true,
+              "priority": 1
+            },
+            {
+              "name": "moveleft",
+              "frames": [
+                {"x": 0, "y": 64, "w": 64, "h": 64},
+                {"x": 64, "y": 64, "w": 64, "h": 64},
+                {"x": 128, "y": 64, "w": 64, "h": 64},
+                {"x": 192, "y": 64, "w": 64, "h": 64}
+              ],
+              "frameDuration": 150,
+              "loop": true,
+              "priority": 1
+            },
+            {
+              "name": "movedown",
+              "frames": [
+                {"x": 0, "y": 0, "w": 64, "h": 64},
+                {"x": 64, "y": 0, "w": 64, "h": 64},
+                {"x": 128, "y": 0, "w": 64, "h": 64},
+                {"x": 192, "y": 0, "w": 64, "h": 64}
+              ],
+              "frameDuration": 150,
+              "loop": true,
+              "priority": 1
+            },
+            {
+              "name": "moveup",
+              "frames": [
+                {"x": 0, "y": 192, "w": 64, "h": 64},
+                {"x": 64, "y": 192, "w": 64, "h": 64},
+                {"x": 128, "y": 192, "w": 64, "h": 64},
+                {"x": 192, "y": 192, "w": 64, "h": 64}
+              ],
+              "frameDuration": 150,
+              "loop": true,
+              "priority": 1
+            },
+            {
+              "name": "standleft",
+              "frames": [{"x": 0.0, "y": 64.0, "w": 64.0, "h": 64.0}],
+              "frameDuration": 200,
+              "loop": true,
+              "priority": 0
+            },
+            {
+              "name": "standright",
+              "frames": [{"x": 0.0, "y": 128.0, "w": 64.0, "h": 64.0}],
+              "frameDuration": 200,
+              "loop": true,
+              "priority": 0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 16.0,
+          "y": 16.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0.0,
+          "y": 16.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0.0,
+          "y": 32.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0.0,
+          "y": 48.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 16.0,
+          "y": 0.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 16.0,
+          "y": 32.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 16.0,
+          "y": 48.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32.0,
+          "y": 0.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32.0,
+          "y": 16.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32.0,
+          "y": 32.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32.0,
+          "y": 48.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 48.0,
+          "y": 0.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 48.0,
+          "y": 16.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 48.0,
+          "y": 32.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    },
+    {
+      "id": "test_entity2",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 48.0,
+          "y": 48.0,
+          "rotation": 0.0
+        },
+        "RENDER": {
+          "spriteSheetPath": "../resources/maps/tilesets/TileMap2.png",
+          "x": 80.0,
+          "y": 16.0,
+          "w": 16.0,
+          "h": 16.0,
+          "width": 16.0,
+          "height": 16.0
+        }
+      }
+    }
+  ]
+}

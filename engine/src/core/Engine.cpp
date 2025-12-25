@@ -3,7 +3,13 @@
 //
 #include "Engine.h"
 #include <iostream>
+#include <memory>
+
 #include "InputManager.h"
+#include "Renderer.h"
+#include <iostream>
+
+#include "GameConfig.h"
 
 #define TARGET_FRAMERATE 60.0f
 
@@ -11,6 +17,8 @@ Engine::Engine(int width, int height, const std::string& title)
     : m_width(width), m_height(height), m_title(title) {
     initGLFW();
     InputManager::initialize(m_window);
+    setUpShaders();
+    setUpCamera(width, height);
 }
 
 Engine::~Engine() {
@@ -50,6 +58,19 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
             glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
+            int scaleX = m_width  / GameConfig::Width;
+            int scaleY = m_height / GameConfig::Height;
+            int scale  = std::min(scaleX, scaleY);
+
+            int viewportWidth  = GameConfig::Width  * scale;
+            int viewportHeight = GameConfig::Height * scale;
+
+            int viewportX = (m_width  - viewportWidth)  / 2;
+            int viewportY = (m_height - viewportHeight) / 2;
+
+            glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
+
+
             if (gameRender) gameRender();
 
             timePreviousFrame = currentTime;
@@ -57,4 +78,15 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
         }
         glfwPollEvents();
     }
+}
+
+void Engine::setUpShaders() const {
+    Renderer::getInstance().loadShader("sprite", "../src/graphics/Shader/sprite.vert", "../src/graphics/Shader/sprite.frag");
+
+    Renderer::getInstance().setShader("sprite");
+}
+
+void Engine::setUpCamera(int width, int height)  {
+    m_camera = std::make_unique<Camera>(GameConfig::Width, GameConfig::Height);
+    Renderer::getInstance().setCamera(*m_camera);
 }

@@ -8,10 +8,12 @@ Renderer "1"-- "*" Shader
 Renderer "1"-- "*" Camera
 
     class ResourceManager {
-        -static map~string, Texture*~ textures
-        -static map~string, Shader*~ shaders
+        -static unordered_map~string, unique_ptr~ Texture~~ textures
+        -static unordered_map~string, unique_ptr~Shader~ ~ shaders
+        - static std::unordered_map<std::string, std::unique_ptr<TextRenderer>> m_fonts
         +static loadTexture(path)
-        +static loadShader(name, ...)
+        +static loadShader(vertexShaderPath, fragmentShaderPath)
+        + static TextRenderer* loadFont(const std::string& fontPath, unsigned int fontSize)
     }
 
     class Entity {
@@ -28,16 +30,17 @@ Renderer "1"-- "*" Camera
     -GLuint m_quadVAO
     -GLuint m_quadVBO
     -*Shader m_currentShader
-    -unordered_map ~ string, unique_ptr~Shader ~ ~ m_shaders
     -Camera* m_activeCamera
     -void initRenderData()
     -void updateCameraUniforms()
-    +Renderer()
-    +~Renderer()
+    -Renderer()
+    -~Renderer()
+    +Renderer* getInstance()
     +void loadShader(const string& name, const string& vertexPath, const string& fragmentPath)
     +void setShader(const string& name)
     +void setCamera(Camera* camera)
-    +void drawSprite(Texture& texture, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f))
+      +void draw(glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f), SpriteRect spriteRect = null)
+    +void drawSprite(const string& texturePath, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f), SpriteRect spriteRect = null)
     }
     
     class Texture {
