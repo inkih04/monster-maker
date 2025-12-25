@@ -11,13 +11,10 @@
 #include "InputManager.h"
 #include "MovementComponent.h"
 #include "PositionComponent.h"
-#include "ResourceManager.h"
-#include "TextRenderer.h"
-#include "enums/GameConfig.h"
+
 
 ExplorationState::ExplorationState() {
     setEntityManager();
-    m_textRenderer = ResourceManager::loadFont("../resources/fonts/Roboto/Roboto.ttf", 24);
 
 }
 
@@ -25,6 +22,7 @@ ExplorationState::ExplorationState() {
 void ExplorationState::update(int deltaTime) {
     updatePlayerMovement(deltaTime);
     m_entityManager->updateEntities(deltaTime);
+    m_dialogBox->update(static_cast<float>(deltaTime));
 }
 
 void ExplorationState::setEntityManager() {
@@ -39,23 +37,6 @@ void ExplorationState::render() {
     renderEntities();
     renderShadows();
     renderForeground();
-
-    if (m_textRenderer) {
-        std::string message = "Hola Mundo";
-
-        // Escala 1.0
-        float scale = 1.0f;
-
-        // Medir ancho y alto del texto
-        float textWidth = m_textRenderer->getTextWidth(message, scale);
-        float textHeight = m_textRenderer->getTextHeight(scale);
-
-        // Coordenadas para centrar
-        float x = (GameConfig::Width  - textWidth) / 2.0f;
-        float y = (GameConfig::Height - textHeight) / 2.0f;
-
-        m_textRenderer->renderText(message, {x, y}, scale, {1.0f, 1.0f, 1.0f}); // blanco
-    }
 
 }
 

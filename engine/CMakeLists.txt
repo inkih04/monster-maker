@@ -66,10 +66,10 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/enums/DialogSpeed.h
         include/structs/DialogData.h
         include/TextManager.h
-        src/ui/TextManager.cpp
         include/TextRenderer.h
         src/ui/TextRenderer.cpp
         include/enums/GameConfig.h
+        src/ui/DialogBox.cpp
 )
 
 

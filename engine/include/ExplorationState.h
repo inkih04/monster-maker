@@ -6,8 +6,8 @@
 #define POKEMONGAMEENGINE_EXPLORATIONSTATE_H
 
 
+#include "DialogBox.h"
 #include "State.h"
-#include "TextRenderer.h"
 
 
 class ExplorationState : public State{
@@ -21,7 +21,7 @@ class ExplorationState : public State{
         void setEntityManager() override;
 
     private:
-        TextRenderer* m_textRenderer;
+        std::unique_ptr<DialogBox> m_dialogBox;
 
 
         void renderGround() const;

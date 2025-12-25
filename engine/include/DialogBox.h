@@ -48,12 +48,7 @@ class DialogBox {
         void drawText();
 
     public:
-        DialogBox(
-            glm::vec2 position,
-            glm::vec2 size,
-            TextRenderer* textRenderer,
-            Renderer* renderer
-        );
+        DialogBox(glm::vec2 position, glm::vec2 size, const std::string& pathFont , unsigned int fontSize);
 
         ~DialogBox() = default;
 
@@ -73,6 +68,8 @@ class DialogBox {
         void setPosition(glm::vec2 position);
         void setSize(glm::vec2 size);
         void setPadding(float padding);
+        void centerOnScreen();
+        void placeBottom(float margin);
 
 
         bool isActive() const { return m_isActive; }
