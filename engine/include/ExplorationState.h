@@ -21,8 +21,6 @@ class ExplorationState : public State{
         void setEntityManager() override;
 
     private:
-        std::unique_ptr<DialogBox> m_dialogBox;
-
 
         void renderGround() const;
         void renderDecoration() const;

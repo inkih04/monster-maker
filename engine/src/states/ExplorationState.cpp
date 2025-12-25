@@ -22,7 +22,6 @@ ExplorationState::ExplorationState() {
 void ExplorationState::update(int deltaTime) {
     updatePlayerMovement(deltaTime);
     m_entityManager->updateEntities(deltaTime);
-    m_dialogBox->update(static_cast<float>(deltaTime));
 }
 
 void ExplorationState::setEntityManager() {

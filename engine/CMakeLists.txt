@@ -64,8 +64,6 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/DialogBox.h
         include/structs/Character.h
         include/enums/DialogSpeed.h
-        include/structs/DialogData.h
-        include/TextManager.h
         include/TextRenderer.h
         src/ui/TextRenderer.cpp
         include/enums/GameConfig.h
@@ -106,6 +104,7 @@ set(TEST_SOURCES
         src/core/StateManager.cpp
         src/entities/Entity.cpp
         src/entities/EntityManager.cpp
+        src/ui/DialogBox.cpp
 
         tests/unitary/InputManagerTest.cpp
         tests/mocks/MockGLFW.cpp
@@ -121,6 +120,7 @@ set(TEST_SOURCES
         include/components/RenderComponent.h
         include/components/ColliderComponent.h
         include/enums/Direction.h
+        tests/unitary/DialogBoxTest.cpp
 )
 
 add_executable(UnitTests ${TEST_SOURCES})

@@ -129,10 +129,10 @@ El editor puede lanzar este Docker para compilar el juego final sin requerir too
 ```mermaid
 classDiagram
 
-    Application<--Engine
-    Engine <--InputManager
-    Application <-- StateManager
-    StateManager <-- State
+    Application "1"-- "1" Engine
+    Engine -- InputManager
+    Application "1"--"1" StateManager
+    StateManager "1"--"*" State
 
     State <|-- ExplorationState
     State <|-- CombatState
@@ -140,20 +140,76 @@ classDiagram
     State <|-- InventoryState
     State <|-- MenuPokemonState
     State <|-- PokemonState
+    
+    EntityManager "1"-- * State
+    EntityManager "*"--"*" Entity
+    Entity "*"--"*" Component
+    State -- EntityLoader
+    
+    
+    class EntityLoader {
+        <<static>>
+        +loadEntitiesFromFile(string filePath, EntityManager& entityManager) void
+        -parseEntity(json entityJson, EntityManager& entityManager) void
+        -createPositionComponent(json data) unique_ptr~Component~
+        -createRenderComponent(json data) unique_ptr~Component~
+        -createColliderComponent(json data) unique_ptr~Component~
+    }
+    
+    class Component {
+        <<abstract>>
+        -Entity* m_entity
+        +update(int  deltaTime)*
+        +getOwner() Entity*
+        +setOwner(Entity* entity) void
+        +render()*  
+    }
+    
+    class EntityManager {
+    -vector~unique_ptr~Entity~~ m_entities
+       
+       +EntityManager()
+       +createEntity() Entity*
+       +updateEntities(int deltaTime)
+       +renderEntities()
+       +getEntitiesByComponent(ComponentsType type) vector~Entity*~
+   
+    }
+    
+    class Entity {
+       -unordered_map~ComponentsType, unique_ptr~Component~ m_components
+       
+       +addComponent(unique_ptr~Component~, ComponentsType type) void
+       +getComponent(ComponentsType type) Component*
+       +update(int deltaTime)
+       +hasComponent(ComponentsType type) bool
+       +render() 
+    }
 
     class StateManager {
-        -vector m_states
-        +render()
-        +update()
+        -stack m_stateStack
+        +renderCurrentState()
+        +updateCurrentState(int deltaTime)
+        +pushState(State* state)
+        +popState()
+        +getCurrentState() State*
     }
 
     class State {
         <<abstract>>
-        +reder()*
-        +update()*
+        -StateManager* m_stateManager
+        -EntityManager* m_entityManager
+        -setEntityManager()*
+        +render()*
+        +update(int deltaTime)*
+        +setStateManager(StateManager* stateManager) void*
+        +getEntityManager() EntityManager*
     }
 
     class ExplorationState {
+        update(int deltaTime) override
+        render() override
+        setEntityManager() override
     }
 
     class CombatState {
@@ -179,7 +235,8 @@ classDiagram
 
 
     class Application{
-      +StateManager m_stateManager  
+      -StateManager m_stateManager
+      -Engine m_engine 
       +render()
       +update()
       +run()
@@ -189,6 +246,8 @@ classDiagram
       -int m_height
       -string m_title
       -GLFWwindow m_window
+      -void setUpShaders()
+      -void setUpCamera()
       +Engine()
       +startLoop()
     }

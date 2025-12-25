@@ -14,8 +14,9 @@ DialogBox::DialogBox(glm::vec2 position, glm::vec2 size, const std::string& path
     , m_textColor(0.0f, 0.0f, 0.0f), m_borderThickness(3.0f), m_currentCharIndex(0), m_timeAccumulator(0.0f)
     , m_textSpeed(DialogSpeed::NORMAL), m_isActive(false), m_isComplete(false), m_isVisible(false), m_padding(20.0f)
     , m_maxCharsPerLine(40), m_textRenderer(nullptr), m_renderer(nullptr) {
-        m_textRenderer = ResourceManager::loadFont(pathFont , fontSize);
-        m_renderer = &Renderer::getInstance();
+        //m_textRenderer = ResourceManager::loadFont(pathFont , fontSize);
+        //m_renderer = &Renderer::getInstance();
+    //todo Esto deberta de ir en el futuro manager que los controla, porque sino los tests son un infierno
     }
 
 void DialogBox::setText(const std::string& text) {
