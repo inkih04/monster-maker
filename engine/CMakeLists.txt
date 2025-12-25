@@ -14,6 +14,7 @@ find_package(glm CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(lua CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
+find_package(Freetype REQUIRED)
 
 
 
@@ -60,6 +61,13 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/scripting/ScriptBindings.h
         src/scripting/ScriptBindings.cpp
         src/scripting/ScriptEngine.cpp
+        include/DialogBox.h
+        include/structs/Character.h
+        include/enums/DialogSpeed.h
+        include/TextRenderer.h
+        src/ui/TextRenderer.cpp
+        include/enums/GameConfig.h
+        src/ui/DialogBox.cpp
 )
 
 
@@ -71,6 +79,7 @@ target_link_libraries(PokemonGameEngine
         GL
         nlohmann_json::nlohmann_json
         lua
+        Freetype::Freetype
 )
 
 
@@ -84,7 +93,7 @@ FetchContent_Declare(
         GIT_TAG v1.14.0
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-set(BUILD_GMOCK OFF CACHE BOOL "" FORCE)
+set(BUILD_GMOCK ON CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
@@ -95,6 +104,7 @@ set(TEST_SOURCES
         src/core/StateManager.cpp
         src/entities/Entity.cpp
         src/entities/EntityManager.cpp
+        src/ui/DialogBox.cpp
 
         tests/unitary/InputManagerTest.cpp
         tests/mocks/MockGLFW.cpp
@@ -110,18 +120,22 @@ set(TEST_SOURCES
         include/components/RenderComponent.h
         include/components/ColliderComponent.h
         include/enums/Direction.h
+        tests/unitary/DialogBoxTest.cpp
 )
 
 add_executable(UnitTests ${TEST_SOURCES})
 
 target_link_libraries(UnitTests
         PRIVATE
+        gmock
+        gmock_main
         gtest
         gtest_main
         glfw
         glm::glm
         nlohmann_json::nlohmann_json
         lua
+        Freetype::Freetype
 )
 
 include(GoogleTest)

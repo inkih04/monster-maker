@@ -6,13 +6,16 @@
 #include <iostream>
 
 #include "AnimationComponent.h"
+#include "Engine.h"
 #include "EntityLoader.h"
 #include "InputManager.h"
 #include "MovementComponent.h"
 #include "PositionComponent.h"
 
+
 ExplorationState::ExplorationState() {
     setEntityManager();
+
 }
 
 
@@ -33,6 +36,7 @@ void ExplorationState::render() {
     renderEntities();
     renderShadows();
     renderForeground();
+
 }
 
 
