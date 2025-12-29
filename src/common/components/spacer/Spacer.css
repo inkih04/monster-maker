@@ -1,0 +1,25 @@
+.spacer {
+  background-color: var(--color-3);
+  margin: var(--space-sm);
+  padding: var(--space-ms);
+}
+
+.normal {
+  padding: var(--space-ms);
+}
+
+.small {
+  padding: var(--space-sm);
+}
+
+.spacer.horizontal {
+  height: var(--space-ms);
+  width: 90%;
+  flex-shrink: 0;
+}
+
+.spacer.vertical {
+  width: var(--space-ms);
+  height: 90%;
+  flex-shrink: 0;
+}
