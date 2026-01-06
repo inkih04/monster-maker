@@ -1,5 +1,6 @@
 import './Layout.css';
 import Spacer from '../common/components/spacer/Spacer';
+import TileMap from '../tilemap/TileMap';
 
 function Layout() {
   return (
@@ -7,7 +8,9 @@ function Layout() {
       <div className="tools"></div>
       <main className="main">
         <aside className="map-utility">
-          <div className="tilemap"></div>
+          <div className="tilemap-container">
+            <TileMap />
+          </div>
           <Spacer size="small" />
           <div className="maps"></div>
         </aside>

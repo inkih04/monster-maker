@@ -25,7 +25,7 @@
 }
 
 .map-utility {
-  flex-grow: 0.8;
+  flex-grow: 1.5;
   display: flex;
   flex-direction: column;
   margin-left: var(--space-sm);
@@ -43,8 +43,13 @@
   align-items: center;
 }
 
-.tilemap {
+.tilemap-container {
   flex-grow: 2;
+  overflow: hidden;
+  height: 0;
+  object-fit: contain;
+  object-position: top left;
+   position: relative; 
 }
 
 .maps {
@@ -59,7 +64,6 @@
 }
 
 .files-menu {
-
   flex-grow: 0.91;
 }
 
