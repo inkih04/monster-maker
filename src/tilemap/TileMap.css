@@ -54,6 +54,7 @@
   align-items: center;
   justify-content: right;
   flex-shrink: 0;
+  gap: var(--space-sm);
 }
 
 .tilemap-controls-name span {
