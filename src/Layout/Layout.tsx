@@ -1,6 +1,7 @@
 import './Layout.css';
 import Spacer from '../common/components/spacer/Spacer';
 import TileMap from '../Tilemap/TileMap';
+import Map from '../Map/Map';
 
 function Layout() {
   return (
@@ -16,6 +17,9 @@ function Layout() {
         </aside>
         <div className="map">
           <Spacer direction="vertical" />
+          <div className='map-container'>
+            <Map/>
+          </div>
         </div>
         <aside className="entity">
           <Spacer direction="vertical" />
