@@ -1,6 +1,6 @@
 import './Layout.css';
 import Spacer from '../common/components/spacer/Spacer';
-import TileMap from '../tilemap/TileMap';
+import TileMap from '../Tilemap/TileMap';
 
 function Layout() {
   return (
