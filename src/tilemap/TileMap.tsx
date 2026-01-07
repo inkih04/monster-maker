@@ -1,33 +1,50 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTileMapStore } from './TileMapGState'; 
+import { drawGrid, drawSelection } from '../common/utils/canvasUtils'; 
 import './TileMap.css';
 
 function TileMap() {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	const [zoom, setZoom] = useState(1);
-	const [imageLoaded, setImageLoaded] = useState(false);
 	const imageRef = useRef<HTMLImageElement | null>(null);
-	const [selectedArea, setSelectedArea] = useState<{
-		startX: number;
-		startY: number;
-		endX: number;
-		endY: number;
-	} | null>(null);
+	
 	const [isDragging, setIsDragging] = useState(false);
 	const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(null);
 
-	const TILE_SIZE = 16;
+
+	const zoom = useTileMapStore((state) => state.zoom);
+	const setZoom = useTileMapStore((state) => state.setZoom);
+	const selectedArea = useTileMapStore((state) => state.selectedArea);
+	const setSelectedArea = useTileMapStore((state) => state.setSelectedArea);
+	const currentTileMapId = useTileMapStore((state) => state.currentTileMapId);
+	const tilemaps = useTileMapStore((state) => state.tilemaps);
+	const setTileMapLoaded = useTileMapStore((state) => state.setTileMapLoaded);
+
+	const currentTileMap = tilemaps.find((tm) => tm.id === currentTileMapId);
+	const TILE_SIZE = currentTileMap?.tileSizeX || 16;
+
 
 	useEffect(() => {
+		if (!currentTileMap) return;
+
 		const img = new Image();
-		img.src = '../../engine/resources/maps/tilesets/TileMap2.png';
+		img.src = currentTileMap.pathImg;
 		img.onload = () => {
 			imageRef.current = img;
-			setImageLoaded(true);
+			setTileMapLoaded(currentTileMap.id, true);
 		};
-	}, []);
+		img.onerror = () => {
+			console.error(`Error al cargar imagen: ${currentTileMap.pathImg}`);
+			setTileMapLoaded(currentTileMap.id, false);
+		};
+
+		return () => {
+			imageRef.current = null;
+		};
+	}, [currentTileMap?.id, currentTileMap?.pathImg, setTileMapLoaded]);
+
 
 	useEffect(() => {
-		if (!imageLoaded || !canvasRef.current || !imageRef.current) return;
+		if (!currentTileMap?.isLoaded || !canvasRef.current || !imageRef.current) return;
 
 		const canvas = canvasRef.current;
 		const ctx = canvas.getContext('2d');
@@ -46,24 +63,17 @@ function TileMap() {
 		ctx.imageSmoothingEnabled = false;
 		ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
 
-		ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-		ctx.lineWidth = 1;
-
 		const tileSize = TILE_SIZE * zoom;
+		drawGrid({
+			ctx,
+			width: scaledWidth,
+			height: scaledHeight,
+			tileSize,
+			color: 'white',
+			opacity: 0.3,
+			lineWidth: 1
+		});
 
-		for (let x = 0; x <= scaledWidth; x += tileSize) {
-			ctx.beginPath();
-			ctx.moveTo(x, 0);
-			ctx.lineTo(x, scaledHeight);
-			ctx.stroke();
-		}
-
-		for (let y = 0; y <= scaledHeight; y += tileSize) {
-			ctx.beginPath();
-			ctx.moveTo(0, y);
-			ctx.lineTo(scaledWidth, y);
-			ctx.stroke();
-		}
 
 		if (selectedArea) {
 			const minX = Math.min(selectedArea.startX, selectedArea.endX);
@@ -71,24 +81,20 @@ function TileMap() {
 			const minY = Math.min(selectedArea.startY, selectedArea.endY);
 			const maxY = Math.max(selectedArea.startY, selectedArea.endY);
 
-			ctx.fillStyle = 'rgba(0, 255, 0, 0.2)';
-			ctx.fillRect(
-				minX * tileSize,
-				minY * tileSize,
-				(maxX - minX + 1) * tileSize,
-				(maxY - minY + 1) * tileSize
-			);
-
-			ctx.strokeStyle = '#00ff00';
-			ctx.lineWidth = 3;
-			ctx.strokeRect(
-				minX * tileSize,
-				minY * tileSize,
-				(maxX - minX + 1) * tileSize,
-				(maxY - minY + 1) * tileSize
-			);
+			drawSelection({
+				ctx,
+				minX,
+				minY,
+				width: maxX - minX + 1,
+				height: maxY - minY + 1,
+				tileSize,
+				fillColor: '0, 255, 0',
+				fillOpacity: 0.2,
+				strokeColor: '#00ff00',
+				strokeWidth: 3
+			});
 		}
-	}, [zoom, imageLoaded, selectedArea]);
+	}, [zoom, currentTileMap?.isLoaded, selectedArea, TILE_SIZE]);
 
 	const getTileCoordinates = (e: React.MouseEvent<HTMLCanvasElement>) => {
 		if (!canvasRef.current) return null;
@@ -148,11 +154,11 @@ function TileMap() {
 	};
 
 	const handleZoomIn = () => {
-		setZoom((prev) => Math.min(prev + 0.5, 5));
+		setZoom(Math.min(zoom + 0.5, 5));
 	};
 
 	const handleZoomOut = () => {
-		setZoom((prev) => Math.max(prev - 0.5, 0.5));
+		setZoom(Math.max(zoom - 0.5, 0.5));
 	};
 
 	const getSelectionInfo = () => {
@@ -170,6 +176,10 @@ function TileMap() {
 	};
 
 	const selectionInfo = getSelectionInfo();
+
+	if (!currentTileMap) {
+		return <div className="tilemap-wrapper">No hay tilemap seleccionado</div>;
+	}
 
 	return (
 		<div className="tilemap-wrapper">
@@ -194,7 +204,7 @@ function TileMap() {
 					</button>
 				</div>
 				<div className="tilemap-controls-name">
-					<span>Nombre.png</span>
+					<span>{currentTileMap.pathImg.split('/').pop() || 'Nombre.png'}</span>
 					{selectionInfo && (
 						<span className="tile-coords">
 							{' '}
