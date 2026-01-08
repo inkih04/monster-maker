@@ -10,11 +10,17 @@ interface PaintedTile {
 	y: number;
 	tilesetX: number;
 	tilesetY: number;
+	entityId: string;
 }
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
 	const setZoom = useMapStore((state) => state.setZoom);
+	const activeLayer = useMapStore((state) => state.activeLayer);
+	const addEntity = useMapStore((state) => state.addEntity);
+	const removeEntity = useMapStore((state) => state.removeEntity);
+	const addComponent = useMapStore((state) => state.addComponent);
+
 	const tileSets = useTileSetStore((state) => state.tilemaps);
 	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
@@ -29,18 +35,16 @@ function Map() {
 	const tilesetImageRef = useTileSetImage(currentTileSet, setTileMapLoaded);
 
 	const { minWidth, minHeight } = useMemo(() => {
-
 		const baseMapWidthInTiles = 50;
-		const baseMapHeightInTiles = 50;
+		const baseMapHeightInTiles = 25;
 		const tileSize = 16;
 
 		let maxX = baseMapWidthInTiles;
 		let maxY = baseMapHeightInTiles;
 
 		if (paintedTiles.length > 0) {
-			maxX = Math.max(...paintedTiles.map((t) => t.x)) + 10; 
+			maxX = Math.max(...paintedTiles.map((t) => t.x)) + 10;
 			maxY = Math.max(...paintedTiles.map((t) => t.y)) + 10;
-
 
 			maxX = Math.max(maxX, baseMapWidthInTiles);
 			maxY = Math.max(maxY, baseMapHeightInTiles);
@@ -138,9 +142,14 @@ function Map() {
 		setZoom(Math.max(zoom - 0.5, 0.5));
 	};
 
-	const paintTile = (tileX: number, tileY: number) => {
-		if (!currentTileSet) return;
+	const generateEntityId = () => {
+		return `tile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+	};
 
+	const paintTile = (tileX: number, tileY: number) => {
+		if (!currentTileSet || !currentTileSet.pathImg) return;
+
+		const tileSize = currentTileSet.tileSizeX;
 		const newTiles: PaintedTile[] = [];
 
 		if (selectedArea) {
@@ -155,20 +164,88 @@ function Map() {
 					const offsetY = tilesetY - minTilesetY;
 					const mapX = tileX + offsetX;
 					const mapY = tileY + offsetY;
+					const entityId = generateEntityId();
 
 					newTiles.push({
 						x: mapX,
 						y: mapY,
 						tilesetX: tilesetX,
 						tilesetY: tilesetY,
+						entityId: entityId,
+					});
+
+					// Crear entidad en el store
+					addEntity({
+						id: entityId,
+						tag: 'TILEMAP',
+						layer: activeLayer,
+						components: {},
+					});
+
+					// Agregar componente POSITION
+					addComponent(entityId, 'POSITION', {
+						x: mapX * tileSize,
+						y: mapY * tileSize,
+						rotation: 0,
+					});
+
+					// Agregar componente RENDER
+					addComponent(entityId, 'RENDER', {
+						spriteSheetPath: currentTileSet.pathImg,
+						x: tilesetX * tileSize,
+						y: tilesetY * tileSize,
+						w: tileSize,
+						h: tileSize,
+						width: tileSize,
+						height: tileSize,
 					});
 				}
 			}
 		} else {
-			newTiles.push({ x: tileX, y: tileY, tilesetX: 0, tilesetY: 0 });
+			const entityId = generateEntityId();
+			newTiles.push({
+				x: tileX,
+				y: tileY,
+				tilesetX: 0,
+				tilesetY: 0,
+				entityId: entityId,
+			});
+
+			// Crear entidad en el store
+			addEntity({
+				id: entityId,
+				tag: 'TILEMAP',
+				layer: activeLayer,
+				components: {},
+			});
+
+			// Agregar componente POSITION
+			addComponent(entityId, 'POSITION', {
+				x: tileX * tileSize,
+				y: tileY * tileSize,
+				rotation: 0,
+			});
+
+			// Agregar componente RENDER
+			addComponent(entityId, 'RENDER', {
+				spriteSheetPath: currentTileSet.pathImg,
+				x: 0,
+				y: 0,
+				w: tileSize,
+				h: tileSize,
+				width: tileSize,
+				height: tileSize,
+			});
 		}
 
 		setPaintedTiles((prev) => {
+			// Eliminar entidades del store que serán reemplazadas
+			const tilesToRemove = prev.filter((existing) =>
+				newTiles.some((nt) => nt.x === existing.x && nt.y === existing.y)
+			);
+			tilesToRemove.forEach((tile) => removeEntity(tile.entityId));
+
+			// Filtrar los tiles que serán reemplazados
 			const filtered = prev.filter(
 				(existing) => !newTiles.some((nt) => nt.x === existing.x && nt.y === existing.y)
 			);
@@ -220,6 +297,8 @@ function Map() {
 	};
 
 	const handleClearMap = () => {
+		// Eliminar todas las entidades del store
+		paintedTiles.forEach((tile) => removeEntity(tile.entityId));
 		setPaintedTiles([]);
 	};
 
