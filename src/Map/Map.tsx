@@ -1,41 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
-import './Map.css'
-import { drawGrid } from '../common/utils/canvasUtils';
-
-
+import './Map.css';
+import { useMapStore } from './MapGState';
+import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 
 function Map() {
-    const [zoom, setZoom] = useState(1);
+	const zoom = useMapStore((state) => state.zoom);
+	const setZoom = useMapStore((state) => state.setZoom);
+	const { canvasRef, containerRef } = useGridCanvas({
+		zoom,
+		tileSize: 16,
+		selectedArea: null,
+		minWidth: 0,
+		minHeight: 0,
+	});
 
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    
-        useEffect(() => {
-            if (!canvasRef.current) return;
-    
-            const canvas = canvasRef.current;
-            const ctx = canvas.getContext('2d');
-            if (!ctx) return;
-    
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    
-            const scaledTileSize = 16 * zoom;
-    
-            drawGrid({
-                ctx,
-                width: canvas.width,
-                height: canvas.height,
-                tileSize: scaledTileSize,
-                color: 'white',
-                opacity: 0.3,
-                lineWidth: 1,
-            });
-    
-        }, [zoom]);
-
-
-
-    const handleZoomIn = () => {
+	const handleZoomIn = () => {
 		setZoom(Math.min(zoom + 0.5, 5));
 	};
 
@@ -43,14 +21,10 @@ function Map() {
 		setZoom(Math.max(zoom - 0.5, 0.5));
 	};
 
-
 	return (
 		<div className="tilemap-wrapper">
-			<div className="tilemap-viewport">
-				<canvas
-					ref={canvasRef}
-					className="tilemap-canvas"
-				/>
+			<div className="tilemap-viewport" ref={containerRef}>
+				<canvas ref={canvasRef} className="tilemap-canvas" />
 			</div>
 
 			<div className="tilemap-controls">

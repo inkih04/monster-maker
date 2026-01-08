@@ -1,0 +1,15 @@
+export type Tag =
+	| 'PLAYER'
+	| 'ENEMY'
+	| 'NPC'
+	| 'ITEM'
+	| 'TILEMAP'
+	| 'TILEMAP_COLLIDER'
+	| 'TRIGGER'
+	| 'DOOR'
+	| 'SIGN'
+	| 'PARTICLE'
+	| 'PROJECTILE'
+	| 'SPAWN_POINT'
+	| 'PLAYER_SPAWN_POINT'
+	| 'UNKNOWN';
