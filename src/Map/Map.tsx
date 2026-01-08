@@ -3,7 +3,7 @@ import { useMapStore } from './MapGState';
 import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSetStore } from '../Tileset/TileSetGState';
 import { useTileSetImage } from '../common/customHooks/useTileSetImage';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 interface PaintedTile {
 	x: number;
@@ -28,6 +28,30 @@ function Map() {
 
 	const tilesetImageRef = useTileSetImage(currentTileSet, setTileMapLoaded);
 
+	const { minWidth, minHeight } = useMemo(() => {
+
+		const baseMapWidthInTiles = 50;
+		const baseMapHeightInTiles = 50;
+		const tileSize = 16;
+
+		let maxX = baseMapWidthInTiles;
+		let maxY = baseMapHeightInTiles;
+
+		if (paintedTiles.length > 0) {
+			maxX = Math.max(...paintedTiles.map((t) => t.x)) + 10; 
+			maxY = Math.max(...paintedTiles.map((t) => t.y)) + 10;
+
+
+			maxX = Math.max(maxX, baseMapWidthInTiles);
+			maxY = Math.max(maxY, baseMapHeightInTiles);
+		}
+
+		return {
+			minWidth: maxX * tileSize * zoom,
+			minHeight: maxY * tileSize * zoom,
+		};
+	}, [paintedTiles, zoom]);
+
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
 		const tilesetImage = tilesetImageRef.current;
 		if (!tilesetImage || !currentTileSet) return;
@@ -50,7 +74,7 @@ function Map() {
 		});
 
 		if (previewPosition && !isDrawing) {
-			ctx.globalAlpha = 0.5; 
+			ctx.globalAlpha = 0.5;
 
 			if (selectedArea) {
 				const minTilesetX = Math.min(selectedArea.startX, selectedArea.endX);
@@ -92,7 +116,7 @@ function Map() {
 				);
 			}
 
-			ctx.globalAlpha = 1.0; 
+			ctx.globalAlpha = 1.0;
 		}
 	};
 
@@ -101,8 +125,8 @@ function Map() {
 		tileSize: 16,
 		selectedArea: null,
 		drawBackground,
-		minWidth: 0,
-		minHeight: 0,
+		minWidth,
+		minHeight,
 		redrawTrigger: [paintedTiles, currentTileSet?.isLoaded, previewPosition],
 	});
 
@@ -192,7 +216,7 @@ function Map() {
 
 	const handleMouseLeave = () => {
 		setIsDrawing(false);
-		setPreviewPosition(null); 
+		setPreviewPosition(null);
 	};
 
 	const handleClearMap = () => {
