@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export interface TileMapData {
+export interface TileSetData {
 	id: string;
 	pathImg: string;
 	pathTileMapConfig: string;
@@ -16,8 +16,8 @@ export interface TileSelection {
 	endY: number;
 }
 
-export interface TileMapStore {
-	tilemaps: TileMapData[];
+export interface TileSetStore {
+	tilemaps: TileSetData[];
 	currentTileMapId: string | null;
 	selectedArea: TileSelection | null;
 	zoom: number;
@@ -25,11 +25,11 @@ export interface TileMapStore {
 	setSelectedArea: (area: TileSelection | null) => void;
 	setZoom: (zoom: number) => void;
 	setCurrentTileMap: (id: string) => void;
-	addTileMap: (tilemap: TileMapData) => void;
+	addTileMap: (tilemap: TileSetData) => void;
 	setTileMapLoaded: (id: string, loaded: boolean) => void;
 }
 
-export const useTileMapStore = create<TileMapStore>((set, get) => {
+export const useTileSetStore = create<TileSetStore>((set, get) => {
 	return {
 		tilemaps: [
 			{

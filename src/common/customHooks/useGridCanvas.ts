@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { drawGrid, drawSelection } from '../utils/canvasUtils';
-import { TileSelection } from '../../Tilemap/TileMapGState';
+import { TileSelection } from '../../Tileset/TileSetGState';
 
 interface UseGridCanvasProps {
 	zoom: number;

@@ -1,23 +1,23 @@
-import { useTileMapStore } from './TileMapGState';
-import { useTileMapImage } from '../common/customHooks/useTileMapImage';
+import { useTileSetStore } from './TileSetGState';
+import { useTileSetImage } from '../common/customHooks/useTileSetImage';
 import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSelection } from '../common/customHooks/useTileSelection';
-import { getSelectionInfo, getFileNameFromPath } from './TileMapUtils';
-import './TileMap.css';
+import { getSelectionInfo, getFileNameFromPath } from './TileSetUtils';
+import './TileSet.css';
 
-function TileMap() {
-	const zoom = useTileMapStore((state) => state.zoom);
-	const setZoom = useTileMapStore((state) => state.setZoom);
-	const selectedArea = useTileMapStore((state) => state.selectedArea);
-	const setSelectedArea = useTileMapStore((state) => state.setSelectedArea);
-	const currentTileMapId = useTileMapStore((state) => state.currentTileMapId);
-	const tilemaps = useTileMapStore((state) => state.tilemaps);
-	const setTileMapLoaded = useTileMapStore((state) => state.setTileMapLoaded);
+function TileSet() {
+	const zoom = useTileSetStore((state) => state.zoom);
+	const setZoom = useTileSetStore((state) => state.setZoom);
+	const selectedArea = useTileSetStore((state) => state.selectedArea);
+	const setSelectedArea = useTileSetStore((state) => state.setSelectedArea);
+	const currentTileMapId = useTileSetStore((state) => state.currentTileMapId);
+	const tilemaps = useTileSetStore((state) => state.tilemaps);
+	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
 
 	const currentTileMap = tilemaps.find((tm) => tm.id === currentTileMapId);
 	const TILE_SIZE = currentTileMap?.tileSizeX || 16;
 
-	const imageRef = useTileMapImage(currentTileMap, setTileMapLoaded);
+	const imageRef = useTileSetImage(currentTileMap, setTileMapLoaded);
 
 	const scaledWidth = imageRef.current ? imageRef.current.width * zoom : 0;
 	const scaledHeight = imageRef.current ? imageRef.current.height * zoom : 0;
@@ -99,4 +99,4 @@ function TileMap() {
 	);
 }
 
-export default TileMap;
+export default TileSet;
