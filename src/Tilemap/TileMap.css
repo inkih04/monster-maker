@@ -39,6 +39,7 @@
   justify-content: space-between;
   padding: 8px;
   flex-shrink: 0;
+  gap: var(--space-ms);
 }
 
 .tilemap-controls-zoom {

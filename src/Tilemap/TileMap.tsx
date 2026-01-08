@@ -19,22 +19,24 @@ function TileMap() {
 
 	const imageRef = useTileMapImage(currentTileMap, setTileMapLoaded);
 
-	const canvasRef = useGridCanvas({
+	const scaledWidth = imageRef.current ? imageRef.current.width * zoom : 0;
+	const scaledHeight = imageRef.current ? imageRef.current.height * zoom : 0;
+
+	const { canvasRef, containerRef } = useGridCanvas({
 		zoom,
 		tileSize: TILE_SIZE,
 		selectedArea,
+		minWidth: scaledWidth,
+		minHeight: scaledHeight,
 		drawBackground: (ctx) => {
 			if (!imageRef.current) return;
 
 			const img = imageRef.current;
-			const scaledWidth = img.width * zoom;
-			const scaledHeight = img.height * zoom;
-
-			ctx.canvas.width = scaledWidth;
-			ctx.canvas.height = scaledHeight;
+			const imgScaledWidth = img.width * zoom;
+			const imgScaledHeight = img.height * zoom;
 
 			ctx.imageSmoothingEnabled = false;
-			ctx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+			ctx.drawImage(img, 0, 0, imgScaledWidth, imgScaledHeight);
 		},
 	});
 
@@ -53,8 +55,6 @@ function TileMap() {
 		setZoom(Math.max(zoom - 0.5, 0.5));
 	};
 
-
-
 	const selectionInfo = getSelectionInfo(selectedArea);
 
 	if (!currentTileMap) {
@@ -63,7 +63,7 @@ function TileMap() {
 
 	return (
 		<div className="tilemap-wrapper">
-			<div className="tilemap-viewport">
+			<div className="tilemap-viewport" ref={containerRef}>
 				<canvas
 					ref={canvasRef}
 					className="tilemap-canvas"
@@ -76,15 +76,15 @@ function TileMap() {
 
 			<div className="tilemap-controls">
 				<div className="tilemap-controls-zoom">
-					<button onClick={handleZoomOut} className="zoom-btn">
-						-
-					</button>
-					<span className="zoom-level">{Math.round(zoom * 100)}%</span>
 					<button onClick={handleZoomIn} className="zoom-btn">
 						+
 					</button>
-				</div>
 
+					<span className="zoom-level">{Math.round(zoom * 100)}%</span>
+					<button onClick={handleZoomOut} className="zoom-btn">
+						-
+					</button>
+				</div>
 				<div className="tilemap-controls-name">
 					<span>{getFileNameFromPath(currentTileMap.pathImg)}</span>
 					{selectionInfo && (
