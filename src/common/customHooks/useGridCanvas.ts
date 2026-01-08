@@ -9,6 +9,7 @@ interface UseGridCanvasProps {
 	drawBackground?: (ctx: CanvasRenderingContext2D) => void;
 	minWidth?: number;
 	minHeight?: number;
+	redrawTrigger?: unknown;
 }
 
 export function useGridCanvas({
@@ -18,6 +19,7 @@ export function useGridCanvas({
 	drawBackground,
 	minWidth = 0,
 	minHeight = 0,
+	redrawTrigger,
 }: UseGridCanvasProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -85,7 +87,7 @@ export function useGridCanvas({
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [zoom, tileSize, selectedArea, drawBackground, minWidth, minHeight]);
+	}, [zoom, tileSize, selectedArea, drawBackground, minWidth, minHeight, redrawTrigger]);
 
 	return { canvasRef, containerRef };
 }
