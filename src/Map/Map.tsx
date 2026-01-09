@@ -15,6 +15,8 @@ function Map() {
 	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
 	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
+	const setActiveLayer = useMapStore((state) => state.setActiveLayer);
+	const activeLayer = useMapStore((state) => state.activeLayer);
 
 	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
 
@@ -139,8 +141,53 @@ function Map() {
 					onMouseLeave={handleMouseLeave}
 				/>
 			</div>
-			<div className="tilemap-controls">
-				<div className="tilemap-controls-zoom">
+			<div className="map-controls">
+				<div className="layers-container">
+					<button
+						className={`layer-button ${activeLayer === 'ground' ? 'layer-active' : ''}`}
+						onClick={() => {
+							setActiveLayer('ground');
+						}}
+					>
+						Ground
+					</button>
+					<button
+						className={`layer-button ${activeLayer === 'decoration' ? 'layer-active' : ''}`}
+						onClick={() => {
+							setActiveLayer('decoration');
+						}}
+					>
+						Decoration
+					</button>
+					<button
+						className={`layer-button ${activeLayer === 'entities' ? 'layer-active' : ''}`}
+						onClick={() => {
+							setActiveLayer('entities');
+						}}
+					>
+						Entities
+					</button>
+					<button
+						className={`layer-button ${activeLayer === 'shadows' ? 'layer-active' : ''}`}
+						onClick={() => {
+							setActiveLayer('shadows');
+						}}
+					>
+						Shadows
+					</button>
+					<button
+						className={`layer-button ${activeLayer === 'foreground' ? 'layer-active' : ''}`}
+						onClick={() => {
+							setActiveLayer('foreground');
+						}}
+					>
+						Foreground
+					</button>
+					<button className="layer-button" onClick={clearMap}>
+						clean
+					</button>
+				</div>
+				<div className="map-controls-zoom">
 					<button onClick={handleZoomIn} className="zoom-btn">
 						+
 					</button>
@@ -150,9 +197,6 @@ function Map() {
 						-
 					</button>
 				</div>
-				<button onClick={clearMap} className="zoom-btn">
-					Limpiar
-				</button>
 			</div>
 		</div>
 	);

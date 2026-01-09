@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useMapStore } from '../../Map/MapGState';
 import { useTileSetStore } from '../../Tileset/TileSetGState';
+import { Layer } from '../../domain/ecs/layer';
 
 export interface PaintedTile {
 	x: number;
