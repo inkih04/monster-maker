@@ -54,7 +54,11 @@ export const useMapStore = create<MapStore>((set, get) => ({
 	zoom: 1,
 	activeLayer: 'ground',
 
-	setActiveLayer: (layer) => set({ activeLayer: layer }),
+	setActiveLayer: (layer) => {
+		console.log(layer);
+
+		set({ activeLayer: layer });
+	},
 
 	setZoom: (zoom) => {
 		set({ zoom });
