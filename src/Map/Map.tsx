@@ -3,41 +3,37 @@ import { useMapStore } from './MapGState';
 import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSetStore } from '../Tileset/TileSetGState';
 import { useTileSetImage } from '../common/customHooks/useTileSetImage';
-import { useState, useMemo } from 'react';
-
-interface PaintedTile {
-	x: number;
-	y: number;
-	tilesetX: number;
-	tilesetY: number;
-	entityId: string;
-}
+import { useMemo } from 'react';
+import { useTilePainter } from './customHooks/useTilePainter';
+import { useCanvasMouse } from './customHooks/useCanvasMouse';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
 	const setZoom = useMapStore((state) => state.setZoom);
-	const activeLayer = useMapStore((state) => state.activeLayer);
-	const addEntity = useMapStore((state) => state.addEntity);
-	const removeEntity = useMapStore((state) => state.removeEntity);
-	const addComponent = useMapStore((state) => state.addComponent);
 
 	const tileSets = useTileSetStore((state) => state.tilemaps);
 	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
-	const selectedArea = useTileSetStore((state) => state.selectedArea);
 	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
+	const selectedArea = useTileSetStore((state) => state.selectedArea);
 
 	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
 
-	const [paintedTiles, setPaintedTiles] = useState<PaintedTile[]>([]);
-	const [isDrawing, setIsDrawing] = useState(false);
-	const [previewPosition, setPreviewPosition] = useState<{ x: number; y: number } | null>(null);
+	const {
+		paintedTiles,
+		isDrawing,
+		previewPosition,
+		setIsDrawing,
+		setPreviewPosition,
+		paintTile,
+		clearMap,
+	} = useTilePainter();
 
 	const tilesetImageRef = useTileSetImage(currentTileSet, setTileMapLoaded);
 
 	const { minWidth, minHeight } = useMemo(() => {
 		const baseMapWidthInTiles = 50;
 		const baseMapHeightInTiles = 25;
-		const tileSize = 16;
+		const tileSize = 16; //todo: lo tengo que sacar del mapa
 
 		let maxX = baseMapWidthInTiles;
 		let maxY = baseMapHeightInTiles;
@@ -45,9 +41,6 @@ function Map() {
 		if (paintedTiles.length > 0) {
 			maxX = Math.max(...paintedTiles.map((t) => t.x)) + 10;
 			maxY = Math.max(...paintedTiles.map((t) => t.y)) + 10;
-
-			maxX = Math.max(maxX, baseMapWidthInTiles);
-			maxY = Math.max(maxY, baseMapHeightInTiles);
 		}
 
 		return {
@@ -81,46 +74,29 @@ function Map() {
 			ctx.globalAlpha = 0.5;
 
 			if (selectedArea) {
-				const minTilesetX = Math.min(selectedArea.startX, selectedArea.endX);
-				const maxTilesetX = Math.max(selectedArea.startX, selectedArea.endX);
-				const minTilesetY = Math.min(selectedArea.startY, selectedArea.endY);
-				const maxTilesetY = Math.max(selectedArea.startY, selectedArea.endY);
+				const minX = Math.min(selectedArea.startX, selectedArea.endX);
+				const maxX = Math.max(selectedArea.startX, selectedArea.endX);
+				const minY = Math.min(selectedArea.startY, selectedArea.endY);
+				const maxY = Math.max(selectedArea.startY, selectedArea.endY);
 
-				for (let tilesetY = minTilesetY; tilesetY <= maxTilesetY; tilesetY++) {
-					for (let tilesetX = minTilesetX; tilesetX <= maxTilesetX; tilesetX++) {
-						const offsetX = tilesetX - minTilesetX;
-						const offsetY = tilesetY - minTilesetY;
-						const mapX = previewPosition.x + offsetX;
-						const mapY = previewPosition.y + offsetY;
-
+				for (let y = minY; y <= maxY; y++) {
+					for (let x = minX; x <= maxX; x++) {
 						ctx.drawImage(
 							tilesetImage,
-							tilesetX * tileSize,
-							tilesetY * tileSize,
+							x * tileSize,
+							y * tileSize,
 							tileSize,
 							tileSize,
-							mapX * scaledTileSize,
-							mapY * scaledTileSize,
+							(previewPosition.x + (x - minX)) * scaledTileSize,
+							(previewPosition.y + (y - minY)) * scaledTileSize,
 							scaledTileSize,
 							scaledTileSize
 						);
 					}
 				}
-			} else {
-				ctx.drawImage(
-					tilesetImage,
-					0,
-					0,
-					tileSize,
-					tileSize,
-					previewPosition.x * scaledTileSize,
-					previewPosition.y * scaledTileSize,
-					scaledTileSize,
-					scaledTileSize
-				);
 			}
 
-			ctx.globalAlpha = 1.0;
+			ctx.globalAlpha = 1;
 		}
 	};
 
@@ -134,172 +110,21 @@ function Map() {
 		redrawTrigger: [paintedTiles, currentTileSet?.isLoaded, previewPosition],
 	});
 
+	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
+		zoom,
+		tileSize: 16,
+		isDrawing,
+		setIsDrawing,
+		setPreviewPosition,
+		paintTile,
+	});
+
 	const handleZoomIn = () => {
 		setZoom(Math.min(zoom + 0.5, 5));
 	};
 
 	const handleZoomOut = () => {
 		setZoom(Math.max(zoom - 0.5, 0.5));
-	};
-
-	const generateEntityId = () => {
-		return `tile_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-	};
-
-	const paintTile = (tileX: number, tileY: number) => {
-		if (!currentTileSet || !currentTileSet.pathImg) return;
-
-		const tileSize = currentTileSet.tileSizeX;
-		const newTiles: PaintedTile[] = [];
-
-		if (selectedArea) {
-			const minTilesetX = Math.min(selectedArea.startX, selectedArea.endX);
-			const maxTilesetX = Math.max(selectedArea.startX, selectedArea.endX);
-			const minTilesetY = Math.min(selectedArea.startY, selectedArea.endY);
-			const maxTilesetY = Math.max(selectedArea.startY, selectedArea.endY);
-
-			for (let tilesetY = minTilesetY; tilesetY <= maxTilesetY; tilesetY++) {
-				for (let tilesetX = minTilesetX; tilesetX <= maxTilesetX; tilesetX++) {
-					const offsetX = tilesetX - minTilesetX;
-					const offsetY = tilesetY - minTilesetY;
-					const mapX = tileX + offsetX;
-					const mapY = tileY + offsetY;
-					const entityId = generateEntityId();
-
-					newTiles.push({
-						x: mapX,
-						y: mapY,
-						tilesetX: tilesetX,
-						tilesetY: tilesetY,
-						entityId: entityId,
-					});
-
-					// Crear entidad en el store
-					addEntity({
-						id: entityId,
-						tag: 'TILEMAP',
-						layer: activeLayer,
-						components: {},
-					});
-
-					// Agregar componente POSITION
-					addComponent(entityId, 'POSITION', {
-						x: mapX * tileSize,
-						y: mapY * tileSize,
-						rotation: 0,
-					});
-
-					// Agregar componente RENDER
-					addComponent(entityId, 'RENDER', {
-						spriteSheetPath: currentTileSet.pathImg,
-						x: tilesetX * tileSize,
-						y: tilesetY * tileSize,
-						w: tileSize,
-						h: tileSize,
-						width: tileSize,
-						height: tileSize,
-					});
-				}
-			}
-		} else {
-			const entityId = generateEntityId();
-			newTiles.push({
-				x: tileX,
-				y: tileY,
-				tilesetX: 0,
-				tilesetY: 0,
-				entityId: entityId,
-			});
-
-			// Crear entidad en el store
-			addEntity({
-				id: entityId,
-				tag: 'TILEMAP',
-				layer: activeLayer,
-				components: {},
-			});
-
-			// Agregar componente POSITION
-			addComponent(entityId, 'POSITION', {
-				x: tileX * tileSize,
-				y: tileY * tileSize,
-				rotation: 0,
-			});
-
-			// Agregar componente RENDER
-			addComponent(entityId, 'RENDER', {
-				spriteSheetPath: currentTileSet.pathImg,
-				x: 0,
-				y: 0,
-				w: tileSize,
-				h: tileSize,
-				width: tileSize,
-				height: tileSize,
-			});
-		}
-
-		setPaintedTiles((prev) => {
-			// Eliminar entidades del store que serán reemplazadas
-			const tilesToRemove = prev.filter((existing) =>
-				newTiles.some((nt) => nt.x === existing.x && nt.y === existing.y)
-			);
-			tilesToRemove.forEach((tile) => removeEntity(tile.entityId));
-
-			// Filtrar los tiles que serán reemplazados
-			const filtered = prev.filter(
-				(existing) => !newTiles.some((nt) => nt.x === existing.x && nt.y === existing.y)
-			);
-			return [...filtered, ...newTiles];
-		});
-	};
-
-	const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-
-		setIsDrawing(true);
-
-		const rect = canvas.getBoundingClientRect();
-		const x = e.clientX - rect.left;
-		const y = e.clientY - rect.top;
-
-		const tileX = Math.floor(x / (16 * zoom));
-		const tileY = Math.floor(y / (16 * zoom));
-
-		paintTile(tileX, tileY);
-	};
-
-	const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-		const canvas = canvasRef.current;
-		if (!canvas) return;
-
-		const rect = canvas.getBoundingClientRect();
-		const x = e.clientX - rect.left;
-		const y = e.clientY - rect.top;
-
-		const tileX = Math.floor(x / (16 * zoom));
-		const tileY = Math.floor(y / (16 * zoom));
-
-		setPreviewPosition({ x: tileX, y: tileY });
-
-		if (isDrawing) {
-			paintTile(tileX, tileY);
-		}
-	};
-
-	const handleMouseUp = () => {
-		setIsDrawing(false);
-	};
-
-	const handleMouseLeave = () => {
-		setIsDrawing(false);
-		setPreviewPosition(null);
-	};
-
-	const handleClearMap = () => {
-		// Eliminar todas las entidades del store
-		paintedTiles.forEach((tile) => removeEntity(tile.entityId));
-		setPaintedTiles([]);
 	};
 
 	return (
@@ -314,23 +139,22 @@ function Map() {
 					onMouseLeave={handleMouseLeave}
 				/>
 			</div>
-
 			<div className="tilemap-controls">
 				<div className="tilemap-controls-zoom">
 					<button onClick={handleZoomIn} className="zoom-btn">
 						+
 					</button>
+
 					<span className="zoom-level">{Math.round(zoom * 100)}%</span>
 					<button onClick={handleZoomOut} className="zoom-btn">
 						-
 					</button>
 				</div>
-				<button onClick={handleClearMap} className="zoom-btn">
+				<button onClick={clearMap} className="zoom-btn">
 					Limpiar
 				</button>
 			</div>
 		</div>
 	);
 }
-
 export default Map;
