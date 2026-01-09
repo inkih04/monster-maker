@@ -9,6 +9,7 @@ export interface PaintedTile {
 	tilesetX: number;
 	tilesetY: number;
 	entityId: string;
+	layer: Layer;
 }
 
 interface PreviewPosition {
@@ -75,6 +76,7 @@ export function useTilePainter(): UseTilePainterResult {
 							tilesetX,
 							tilesetY,
 							entityId,
+							layer: activeLayer,
 						});
 
 						addEntity({
@@ -110,6 +112,7 @@ export function useTilePainter(): UseTilePainterResult {
 					tilesetX: 0,
 					tilesetY: 0,
 					entityId,
+					layer: activeLayer,
 				});
 
 				addEntity({
@@ -138,13 +141,18 @@ export function useTilePainter(): UseTilePainterResult {
 
 			setPaintedTiles((prev) => {
 				const tilesToRemove = prev.filter((existing) =>
-					newTiles.some((nt) => nt.x === existing.x && nt.y === existing.y)
+					newTiles.some(
+						(nt) => nt.x === existing.x && nt.y === existing.y && nt.layer === existing.layer
+					)
 				);
 
 				tilesToRemove.forEach((tile) => removeEntity(tile.entityId));
 
 				const filtered = prev.filter(
-					(existing) => !newTiles.some((nt) => nt.x === existing.x && nt.y === existing.y)
+					(existing) =>
+						!newTiles.some(
+							(nt) => nt.x === existing.x && nt.y === existing.y && nt.layer === existing.layer
+						)
 				);
 
 				return [...filtered, ...newTiles];

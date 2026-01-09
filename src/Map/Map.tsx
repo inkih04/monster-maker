@@ -6,6 +6,7 @@ import { useTileSetImage } from '../common/customHooks/useTileSetImage';
 import { useMemo } from 'react';
 import { useTilePainter } from './customHooks/useTilePainter';
 import { useCanvasMouse } from './customHooks/useCanvasMouse';
+import { Layer } from '../domain/ecs/layer';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
@@ -58,18 +59,24 @@ function Map() {
 		const tileSize = currentTileSet.tileSizeX;
 		const scaledTileSize = tileSize * zoom;
 
-		paintedTiles.forEach((tile) => {
-			ctx.drawImage(
-				tilesetImage,
-				tile.tilesetX * tileSize,
-				tile.tilesetY * tileSize,
-				tileSize,
-				tileSize,
-				tile.x * scaledTileSize,
-				tile.y * scaledTileSize,
-				scaledTileSize,
-				scaledTileSize
-			);
+		const layerOrder: Layer[] = ['ground', 'decoration', 'entities', 'shadows', 'foreground'];
+
+		layerOrder.forEach((layer) => {
+			const tilesInLayer = paintedTiles.filter((tile) => tile.layer === layer);
+
+			tilesInLayer.forEach((tile) => {
+				ctx.drawImage(
+					tilesetImage,
+					tile.tilesetX * tileSize,
+					tile.tilesetY * tileSize,
+					tileSize,
+					tileSize,
+					tile.x * scaledTileSize,
+					tile.y * scaledTileSize,
+					scaledTileSize,
+					scaledTileSize
+				);
+			});
 		});
 
 		if (previewPosition && !isDrawing) {
