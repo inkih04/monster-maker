@@ -1,4 +1,4 @@
-import { TileSelection } from './TileMapGState';
+import { TileSelection } from './TileSetGState';
 
 export interface SelectionInfo {
 	minX: number;

@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { TileMapData } from '../../Tilemap/TileMapGState';
+import { TileSetData } from '../../Tileset/TileSetGState';
 
-export function useTileMapImage(
-	currentTileMap: TileMapData | undefined,
+export function useTileSetImage(
+	currentTileMap: TileSetData | undefined,
 	setTileMapLoaded: (id: string, loaded: boolean) => void
 ) {
 	const imageRef = useRef<HTMLImageElement | null>(null);
