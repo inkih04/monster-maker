@@ -5,11 +5,7 @@
 	flex-direction: column;
 }
 
-.tools {
-	flex-grow: 0.4;
-	min-width: 100%;
-	background-color: var(--color-3);
-}
+
 
 .main {
 	flex-grow: 5;
@@ -18,14 +14,14 @@
 }
 
 .map-container {
-  margin-top: var(--space-sm);
+	margin-top: var(--space-sm);
 
 	height: 100%;
 	width: 100%;
 	position: relative;
-  object-fit: contain;
+	object-fit: contain;
 	object-position: top left;
-  overflow: hidden;
+	overflow: hidden;
 }
 
 .files {
