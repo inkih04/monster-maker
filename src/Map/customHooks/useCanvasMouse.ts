@@ -1,4 +1,3 @@
-// ./customHooks/useCanvasMouse.ts
 import { useCallback } from 'react';
 
 interface Position {

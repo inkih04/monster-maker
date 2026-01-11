@@ -1,12 +1,13 @@
 import './Layout.css';
 import Spacer from '../common/components/spacer/Spacer';
+import ToolBar from '../ToolBar/ToolBar';
 import TileSet from '../Tileset/TileSet';
 import Map from '../Map/Map';
 
 function Layout() {
 	return (
 		<div className="content">
-			<div className="tools"></div>
+			<ToolBar/>
 			<main className="main">
 				<aside className="map-utility">
 					<div className="tilemap-container">
