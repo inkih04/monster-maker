@@ -5,6 +5,7 @@ import { useProjectForm } from '../../customHooks/useProjectForm';
 import { Folder } from 'iconoir-react';
 import checkInvalidChars from '../../../../global/checks/checkInvalidChars';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CreateProps {
 	open: boolean;
@@ -14,6 +15,7 @@ interface CreateProps {
 function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 	const { addProject } = useProjectStore();
 	const [hasError, setHasError] = useState(false);
+	const { t } = useTranslation();
 
 	const { name, setPath, setName, path, selectFolder, submit, reset, isDisabled, isSubmitting } =
 		useProjectForm({
@@ -29,7 +31,7 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 	const handleSubmit = async () => {
 		setHasError(false);
 
-		const result =  await submit(addProject);
+		const result = await submit(addProject);
 
 		if (!result.success && result.error === 'File with that name already exists') {
 			setHasError(true);
@@ -45,7 +47,7 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 				<Dialog.Overlay className="create--overlay" />
 				<Dialog.Content className="create--wrapper">
 					<div className="create--header">
-						<Dialog.Title className="create--title">New Project</Dialog.Title>
+						<Dialog.Title className="create--title">{t('newProject')}</Dialog.Title>
 
 						<Dialog.Close asChild>
 							<button className="create--close" aria-label="Close">
@@ -56,7 +58,7 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 					<div className="create--form">
 						<div className="create--section">
 							<label htmlFor="projectName" className="create--label">
-								Project Name
+								{t('projectName')}
 							</label>
 							<input
 								id="projectName"
@@ -69,7 +71,7 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 						</div>
 						<div className="create--section">
 							<label htmlFor="projectLocation" className="create--label">
-								Location
+								{t('location')}
 							</label>
 							<div className="create--input-group">
 								<div className="create--input-wrapper">
@@ -79,7 +81,7 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 										className="create--input create--input-path"
 										value={path}
 										onChange={(e) => setPath(e.target.value)}
-										placeholder="Select a folder..."
+										placeholder={t('selectFolder')}
 									/>
 
 									<button type="button" className="create--input-folder" onClick={selectFolder}>
@@ -96,14 +98,14 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 							onClick={handleClose}
 							disabled={isSubmitting}
 						>
-							Cancel
+							{t('cancel')}
 						</button>
 						<button
 							className="create--btn create--btn-create"
 							onClick={handleSubmit}
 							disabled={isButtonDisabled}
 						>
-							{isSubmitting ? 'Creating...' : 'New Project'}
+							{isSubmitting ? t('creating') : t('newProject')}
 						</button>
 					</div>
 				</Dialog.Content>

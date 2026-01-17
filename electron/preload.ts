@@ -7,4 +7,8 @@ contextBridge.exposeInMainWorld('api', {
 	removeProject: (pd: ProjectData) => ipcRenderer.invoke('config:remove', pd),
 	selectFolder: () => ipcRenderer.invoke('config:selectFolder'),
 	openProject: (pd: ProjectData) => ipcRenderer.invoke('config:open', pd),
+	onLanguageChange: (callback: (lng: string) => void) => {
+		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
+		return () => ipcRenderer.removeAllListeners('change-language');
+	},
 });

@@ -1,0 +1,14 @@
+{
+	"searchProjects": "Buscar proyectos...",
+	"newProject": "Nuevo Proyecto",
+	"projectName": "Nombre",
+	"location": "Ubicación",
+	"selectFolder": "Selecciona una carpeta...",
+	"cancel": "Cancelar",
+	"creating": "Creando...",
+	"close": "Cerrar",
+	"openProject": "Abrir Proyecto",
+	"invalidDirectory": "Ese directorio no es un proyecto válido",
+	"opening": "Abriendo...",
+    "open": "Abrir"
+}

@@ -4,6 +4,7 @@ import { useProjectStore } from '../../../Project/ProjectConfigGState';
 import { useProjectForm } from '../../customHooks/useProjectForm';
 import { Folder } from 'iconoir-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface OpenProjectProps {
 	open: boolean;
@@ -14,6 +15,7 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 	const { openProject } = useProjectStore();
 	const [hasError, setHasError] = useState(false);
 	const [isSubmittingLocal, setIsSubmittingLocal] = useState(false);
+	const { t } = useTranslation();
 
 	const { setPath, path, selectFolder, reset, isSelecting } = useProjectForm({
 		onSuccess: () => onOpenChange(false),
@@ -67,9 +69,9 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 				<Dialog.Overlay className="open--overlay" />
 				<Dialog.Content className="open--wrapper">
 					<div className="open--header">
-						<Dialog.Title className="open--title">Open Project</Dialog.Title>
+						<Dialog.Title className="open--title">{t('openProject')}</Dialog.Title>
 						<Dialog.Close asChild>
-							<button className="open--close" aria-label="Close">
+							<button className="open--close" aria-label={t('close')}>
 								×
 							</button>
 						</Dialog.Close>
@@ -77,7 +79,7 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 					<div className="open--form">
 						<div className="open--section">
 							<label htmlFor="projectLocation" className="open--label">
-								Location
+								{t('location')}
 							</label>
 							<div className="open--input-group">
 								<div className="open--input-wrapper">
@@ -90,7 +92,7 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 											setPath(e.target.value);
 											if (hasError) setHasError(false);
 										}}
-										placeholder="Select a folder..."
+										placeholder={t('selectFolder')}
 										autoFocus
 									/>
 									<button type="button" className="open--input-folder" onClick={selectFolder}>
@@ -99,10 +101,7 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 								</div>
 							</div>
 						</div>
-						<div></div>
-						{hasError && (
-							<span className="open--input-error-text">This directory is not a valid project</span>
-						)}
+						{hasError && <span className="open--input-error-text">{t('invalidDirectory')}</span>}
 					</div>
 
 					<div className="open--actions">
@@ -111,14 +110,14 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 							onClick={handleClose}
 							disabled={isSubmittingLocal}
 						>
-							Cancel
+							{t('cancel')}
 						</button>
 						<button
 							className="open--btn open--btn-create"
 							onClick={handleSubmit}
 							disabled={isButtonDisabled}
 						>
-							{isSubmittingLocal ? 'Opening...' : 'Open Project'}
+							{isSubmittingLocal ? t('opening') : t('openProject')}
 						</button>
 					</div>
 				</Dialog.Content>
