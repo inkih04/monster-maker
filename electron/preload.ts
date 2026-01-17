@@ -1,24 +1,10 @@
-import { ipcRenderer, contextBridge } from 'electron'
+import { ipcRenderer, contextBridge } from 'electron';
+import { ProjectData } from '../global/types/projectData';
 
-// --------- Expose some API to the Renderer process ---------
-contextBridge.exposeInMainWorld('ipcRenderer', {
-  on(...args: Parameters<typeof ipcRenderer.on>) {
-    const [channel, listener] = args
-    return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
-  },
-  off(...args: Parameters<typeof ipcRenderer.off>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.off(channel, ...omit)
-  },
-  send(...args: Parameters<typeof ipcRenderer.send>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.send(channel, ...omit)
-  },
-  invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.invoke(channel, ...omit)
-  },
-
-  // You can expose other APTs you need here.
-  // ...
-})
+contextBridge.exposeInMainWorld('api', {
+	getProjects: () => ipcRenderer.invoke('config:getAll'),
+	addProject: (pd: ProjectData) => ipcRenderer.invoke('config:add', pd),
+	removeProject: (pd: ProjectData) => ipcRenderer.invoke('config:remove', pd),
+	selectFolder: () => ipcRenderer.invoke('config:selectFolder'),
+	openProject: (pd: ProjectData) => ipcRenderer.invoke('config:open', pd),
+});

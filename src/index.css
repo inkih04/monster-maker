@@ -1,78 +1,80 @@
 @font-face {
-  font-family: 'Roboto';
-  src: url('./assets/fonts/Roboto-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'Roboto';
+	src: url('./assets/fonts/Roboto-Regular.ttf') format('truetype');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: 'Roboto';
-  src: url('./assets/fonts/Roboto-Bold.ttf') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'Roboto';
+	src: url('./assets/fonts/Roboto-Bold.ttf') format('truetype');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: 'Roboto';
-  src: url('./assets/fonts/Roboto-Italic.ttf') format('truetype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
+	font-family: 'Roboto';
+	src: url('./assets/fonts/Roboto-Italic.ttf') format('truetype');
+	font-weight: 400;
+	font-style: italic;
+	font-display: swap;
 }
 
 @font-face {
-  font-family: 'Roboto';
-  src: url('./assets/fonts/Roboto-Medium.ttf') format('truetype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+	font-family: 'Roboto';
+	src: url('./assets/fonts/Roboto-Medium.ttf') format('truetype');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
 }
 
 :root {
-  --color-1: #f1f4fe;
-  --color-2: #e4e6ed;
-  --color-3: #c8cad3;
-  --color-4: #a9adb9;
-  --color-5: #9094a3;
-  --color-6: #7f8496;
-  --color-7: #777c91;
-  --color-8: #63687c;
-  --color-9: #595e72;
+	--color-1: #f1f4fe;
+	--color-2: #e4e6ed;
+	--color-3: #c8cad3;
+	--color-4: #a9adb9;
+	--color-5: #9094a3;
+	--color-6: #7f8496;
+	--color-7: #777c91;
+	--color-8: #63687c;
+	--color-9: #595e72;
+	--color-9: #2d2d22;
 
-  --font-sm: 0.875rem;
-  --font-md: 1rem;
-  --font-lg: 1.25rem;
-  --font-xl: 1.5rem;
+	--font-sm: 0.875rem;
+	--font-md: 1rem;
+	--font-lg: 1.25rem;
+	--font-xl: 1.5rem;
 
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-ms: 12px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
+	--space-xs: 4px;
+	--space-sm: 8px;
+	--space-ms: 12px;
+	--space-md: 16px;
+	--space-lg: 24px;
+	--space-xl: 32px;
 
-  --radius: 4px;
+	--radius: 4px;
 
-  --bg-color: var(--color-2);
+	--bg-color: var(--color-2);
 }
+
 
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family:
-    'Roboto',
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
+	margin: 0;
+	padding: 0;
+	font-family:
+		'Roboto',
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		sans-serif;
 
-  background-color: var(--bg-color);
+	background-color: var(--bg-color);
 }

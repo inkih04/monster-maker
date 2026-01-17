@@ -21,6 +21,7 @@ export function getSelectionInfo(selectedArea: TileSelection | null): SelectionI
 	return { minX, minY, width, height };
 }
 
-export function getFileNameFromPath(path: string): string {
+export function getFileNameFromPath(path: string | undefined): string {
+	if (!path) return '';
 	return path.split('/').pop() || 'Nombre.png';
 }
