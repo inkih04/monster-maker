@@ -1,8 +1,8 @@
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from 'electron';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { log } from 'node:console';
+import { setupMapHandlers } from './ipc/mapHandlers';
 import { setupProjectConfigHandlers } from './ipc/projectConfigHandlers';
 import defaultMenu from 'electron-default-menu';
 
@@ -83,7 +83,23 @@ function createWindow() {
 app.whenReady().then(() => {
 	createWindow();
 	const menu = defaultMenu(app, require('electron').shell);
-	menu.splice(- 1, 0, {
+
+	const editMenuIndex = menu.findIndex((item) => item.label === 'Edit');
+	if (editMenuIndex !== -1 && menu[editMenuIndex].submenu) {
+		const editSubmenu = menu[editMenuIndex].submenu as MenuItemConstructorOptions[];
+		editSubmenu.push(
+			{ type: 'separator' },
+			{
+				label: 'Export Current Map to JSON',
+				accelerator: 'CmdOrCtrl+E',
+				click: () => {
+					win?.webContents.send('export-map-request');
+				},
+			}
+		);
+	}
+
+	menu.splice(-1, 0, {
 		label: 'Language',
 		submenu: [
 			{
@@ -103,6 +119,7 @@ app.whenReady().then(() => {
 });
 
 setupProjectConfigHandlers();
+setupMapHandlers();
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') app.quit();

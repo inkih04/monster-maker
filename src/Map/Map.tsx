@@ -3,7 +3,7 @@ import { useMapStore } from './MapGState';
 import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSetStore } from '../Tileset/TileSetGState';
 import { useTileSetImage } from '../common/customHooks/useTileSetImage';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTilePainter } from './customHooks/useTilePainter';
 import { useCanvasMouse } from './customHooks/useCanvasMouse';
 import { Layer } from '../domain/ecs/layer';
@@ -15,9 +15,11 @@ function Map() {
 	const tileSets = useTileSetStore((state) => state.tilemaps);
 	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
 	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
+	const tileSize = useMapStore((state) => state.map?.tileSize ?? 16);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
 	const setActiveLayer = useMapStore((state) => state.setActiveLayer);
 	const activeLayer = useMapStore((state) => state.activeLayer);
+	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
 
 	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
 
@@ -36,7 +38,6 @@ function Map() {
 	const { minWidth, minHeight } = useMemo(() => {
 		const baseMapWidthInTiles = 50;
 		const baseMapHeightInTiles = 25;
-		const tileSize = 16; //todo: lo tengo que sacar del mapa
 
 		let maxX = baseMapWidthInTiles;
 		let maxY = baseMapHeightInTiles;
@@ -50,7 +51,29 @@ function Map() {
 			minWidth: maxX * tileSize * zoom,
 			minHeight: maxY * tileSize * zoom,
 		};
-	}, [paintedTiles, zoom]);
+	}, [paintedTiles, zoom, tileSize]);
+
+	useEffect(() => {
+		const handleExport = async () => {
+			const mapJson = exportToEngineFormat();
+
+			try {
+				const result = await window.api.exportMap(mapJson);
+
+				if (result.success) {
+					console.log('Mapa exportado exitosamente a:', result.path);
+				} else {
+					console.error('Error al exportar:', result.error);
+				}
+			} catch (error) {
+				console.error('Error al exportar:', error);
+			}
+		};
+
+		const cleanup = window.api.onExportMapRequest(handleExport);
+
+		return cleanup;
+	}, [exportToEngineFormat]);
 
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
 		const tilesetImage = tilesetImageRef.current;
@@ -111,7 +134,7 @@ function Map() {
 
 	const { canvasRef, containerRef } = useGridCanvas({
 		zoom,
-		tileSize: 16,
+		tileSize: tileSize,
 		selectedArea: null,
 		drawBackground,
 		minWidth,
@@ -121,7 +144,7 @@ function Map() {
 
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
 		zoom,
-		tileSize: 16,
+		tileSize: tileSize,
 		isDrawing,
 		setIsDrawing,
 		setPreviewPosition,
