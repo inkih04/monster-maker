@@ -1,9 +1,10 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu } from 'electron';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { log } from 'node:console';
 import { setupProjectConfigHandlers } from './ipc/projectConfigHandlers';
+import defaultMenu from 'electron-default-menu';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -79,7 +80,27 @@ function createWindow() {
 	}
 }
 
-app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+	createWindow();
+	const menu = defaultMenu(app, require('electron').shell);
+	menu.splice(- 1, 0, {
+		label: 'Language',
+		submenu: [
+			{
+				label: 'English',
+				type: 'radio',
+				click: () => win?.webContents.send('change-language', 'en'),
+			},
+			{
+				label: 'Español',
+				type: 'radio',
+				click: () => win?.webContents.send('change-language', 'es'),
+			},
+		],
+	});
+
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+});
 
 setupProjectConfigHandlers();
 

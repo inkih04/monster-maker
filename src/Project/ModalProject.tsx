@@ -6,8 +6,10 @@ import Project from './Project';
 import Create from '../common/components/create/Create';
 import { useProjectStore } from './ProjectConfigGState';
 import OpenProject from '../common/components/openProject/OpenProject';
+import { useTranslation } from 'react-i18next';
 
 function ModalProject() {
+	const { t } = useTranslation();
 	const [open, setOpen] = useState(true);
 	const [showNewProject, setShowNewProject] = useState(false);
 	const [showOpenProject, setShowOpenProject] = useState(false);
@@ -19,16 +21,10 @@ function ModalProject() {
 		loadProjects();
 	}, [loadProjects]);
 
-
 	const filteredProjects = useMemo(() => {
-		if (!searchValue.trim()) {
-			return projects;
-		}
-
+		if (!searchValue.trim()) return projects;
 		const searchLower = searchValue.toLowerCase();
-		return projects.filter((project) =>
-			project.name.toLowerCase().includes(searchLower)
-		);
+		return projects.filter((project) => project.name.toLowerCase().includes(searchLower));
 	}, [projects, searchValue]);
 
 	return (
@@ -40,38 +36,36 @@ function ModalProject() {
 						<div className="dialog-content">
 							<div className="dialog-options-bar">
 								<div className="dialog-searchbar">
-									<SearchBar 
-										value={searchValue}
-										onChange={setSearchValue}
-									/>
+									<SearchBar value={searchValue} onChange={setSearchValue} />
 								</div>
 								<div className="dialog-buttons">
 									<button className="dialog-btn" onClick={() => setShowNewProject(true)}>
-										New Project
+										{t('newProject')}
 									</button>
-									<button className="dialog-btn" onClick={() => setShowOpenProject(true)}>Open</button>
+									<button className="dialog-btn" onClick={() => setShowOpenProject(true)}>
+										{t('open')}
+									</button>
 								</div>
 							</div>
 							<div className="dialog-projects">
-								{
-									filteredProjects.map((project, index) => (
-										<Project 
-											onClick={() => { setOpen(false) }}
-											key={project.path}
-											index={index}
-											name={project.name}
-											path={project.path}
-											color={project.color}
-										/>
-									))}
+								{filteredProjects.map((project, index) => (
+									<Project
+										onClick={() => setOpen(false)}
+										key={project.path}
+										index={index}
+										name={project.name}
+										path={project.path}
+										color={project.color}
+									/>
+								))}
 							</div>
 						</div>
 					</Dialog.Content>
 				</Dialog.Portal>
 			</Dialog.Root>
 
-			<Create open={showNewProject}  onOpenChange={setShowNewProject} />
-			<OpenProject open={showOpenProject}  onOpenChange={setShowOpenProject} />
+			<Create open={showNewProject} onOpenChange={setShowNewProject} />
+			<OpenProject open={showOpenProject} onOpenChange={setShowOpenProject} />
 		</>
 	);
 }

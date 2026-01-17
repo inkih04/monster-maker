@@ -10,6 +10,7 @@ declare global {
 			removeProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			selectFolder: () => Promise<{ success: boolean; path?: string; error?: string }>;
 			openProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
+			onLanguageChange: (callback: (lng: string) => void) => () => void;
 		};
 	}
 }
