@@ -11,4 +11,11 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');
 	},
+
+	exportMap: (mapData: string) => ipcRenderer.invoke('map:export', mapData),
+	
+	onExportMapRequest: (callback: () => void) => {
+		ipcRenderer.on('export-map-request', callback);
+		return () => ipcRenderer.removeAllListeners('export-map-request');
+	},
 });

@@ -49,7 +49,13 @@ interface MapStore {
 }
 
 export const useMapStore = create<MapStore>((set, get) => ({
-	map: null,
+	map: {
+		mapId: "1",
+		width: 100,
+		height: 100,
+		tileSize: 16,
+		entities: {}
+	},
 	selectedEntityId: null,
 	zoom: 1,
 	activeLayer: 'ground',

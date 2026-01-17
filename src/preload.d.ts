@@ -11,6 +11,8 @@ declare global {
 			selectFolder: () => Promise<{ success: boolean; path?: string; error?: string }>;
 			openProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			onLanguageChange: (callback: (lng: string) => void) => () => void;
+			exportMap: (mapData: string) => Promise<{ success: boolean; path?: string; error?: string }>;
+			onExportMapRequest: (callback: () => void) => () => void;
 		};
 	}
 }
