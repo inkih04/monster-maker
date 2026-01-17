@@ -15,12 +15,17 @@ function TileSet() {
 	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
 
 	const currentTileMap = tilemaps.find((tm) => tm.id === currentTileMapId);
-	const TILE_SIZE = currentTileMap?.tileSizeX || 16;
+	const hasTileMap = Boolean(currentTileMap);
 
-	const imageRef = useTileSetImage(currentTileMap, setTileMapLoaded);
+	const TILE_SIZE = currentTileMap?.tileSizeX ?? 16;
 
-	const scaledWidth = imageRef.current ? imageRef.current.width * zoom : 0;
-	const scaledHeight = imageRef.current ? imageRef.current.height * zoom : 0;
+	const imageRef = useTileSetImage(hasTileMap ? currentTileMap : null, setTileMapLoaded);
+
+	const DEFAULT_GRID_SIZE = 20 * TILE_SIZE * zoom;
+
+	const scaledWidth = imageRef.current ? imageRef.current.width * zoom : DEFAULT_GRID_SIZE;
+
+	const scaledHeight = imageRef.current ? imageRef.current.height * zoom : DEFAULT_GRID_SIZE;
 
 	const { canvasRef, containerRef } = useGridCanvas({
 		zoom,
@@ -29,14 +34,11 @@ function TileSet() {
 		minWidth: scaledWidth,
 		minHeight: scaledHeight,
 		drawBackground: (ctx) => {
-			if (!imageRef.current) return;
+			if (!hasTileMap || !imageRef.current) return;
 
 			const img = imageRef.current;
-			const imgScaledWidth = img.width * zoom;
-			const imgScaledHeight = img.height * zoom;
-
 			ctx.imageSmoothingEnabled = false;
-			ctx.drawImage(img, 0, 0, imgScaledWidth, imgScaledHeight);
+			ctx.drawImage(img, 0, 0, img.width * zoom, img.height * zoom);
 		},
 	});
 
@@ -47,19 +49,10 @@ function TileSet() {
 		setSelectedArea,
 	});
 
-	const handleZoomIn = () => {
-		setZoom(Math.min(zoom + 0.5, 5));
-	};
-
-	const handleZoomOut = () => {
-		setZoom(Math.max(zoom - 0.5, 0.5));
-	};
+	const handleZoomIn = () => setZoom(Math.min(zoom + 0.5, 5));
+	const handleZoomOut = () => setZoom(Math.max(zoom - 0.5, 0.5));
 
 	const selectionInfo = getSelectionInfo(selectedArea);
-
-	if (!currentTileMap) {
-		return <div className="tilemap-wrapper">No hay tilemap seleccionado</div>;
-	}
 
 	return (
 		<div className="tilemap-wrapper">
@@ -73,20 +66,18 @@ function TileSet() {
 					onMouseLeave={handleMouseLeave}
 				/>
 			</div>
-
 			<div className="tilemap-controls">
 				<div className="tilemap-controls-zoom">
 					<button onClick={handleZoomIn} className="zoom-btn">
 						+
 					</button>
-
 					<span className="zoom-level">{Math.round(zoom * 100)}%</span>
 					<button onClick={handleZoomOut} className="zoom-btn">
 						-
 					</button>
 				</div>
 				<div className="tilemap-controls-name">
-					<span>{getFileNameFromPath(currentTileMap.pathImg)}</span>
+					<span>{getFileNameFromPath(currentTileMap?.pathImg)}</span>
 					{selectionInfo && (
 						<span className="tile-coords">
 							({selectionInfo.minX}, {selectionInfo.minY}) - {selectionInfo.width}×

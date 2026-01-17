@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { TileSetData } from '../../Tileset/TileSetGState';
 
 export function useTileSetImage(
-	currentTileMap: TileSetData | undefined,
+	currentTileMap: TileSetData | undefined | null,
 	setTileMapLoaded: (id: string, loaded: boolean) => void
 ) {
 	const imageRef = useRef<HTMLImageElement | null>(null);
