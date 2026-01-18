@@ -9,10 +9,15 @@ interface FileItem {
 }
 
 const transformToFileItems = (fileNames: string[]): FileItem[] => {
-	return fileNames.map((fileName) => ({
-		name: getFileNameWithoutExtension(fileName),
-		type: getFileType(fileName),
-	}));
+	return fileNames
+		.filter((fileName) => {
+			const name = fileName.split(/[/\\]/).pop() || fileName;
+			return !name.startsWith('.');
+		})
+		.map((fileName) => ({
+			name: getFileNameWithoutExtension(fileName),
+			type: getFileType(fileName),
+		}));
 };
 
 export function useFileWatcher() {
