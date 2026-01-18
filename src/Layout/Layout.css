@@ -5,11 +5,10 @@
 	flex-direction: column;
 }
 
-
-
 .main {
 	flex-grow: 5;
-
+	min-height: 0;
+	margin-bottom: 10px;
 	display: flex;
 }
 
@@ -27,8 +26,9 @@
 .files {
 	display: flex;
 	align-items: center;
-	flex-grow: 1.5;
+	flex-grow: 1.6;
 	flex-direction: column;
+	min-height: 0;
 }
 
 .map-utility {
@@ -68,12 +68,21 @@
 	height: 100%;
 	display: flex;
 	flex-direction: row;
+	min-height: 0;
 }
 
 .files-menu {
 	flex-grow: 0.91;
+	object-fit: contain;
+	object-position: top left;
+	position: relative;
+	overflow: hidden;
+	min-height: 0;
 }
 
 .raw-files {
 	flex-grow: 4.25;
+	position: relative;
+	overflow: hidden;
+	min-height: 0;
 }

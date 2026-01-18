@@ -64,14 +64,23 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 	const isButtonDisabled = path.trim() === '' || isSubmittingLocal || isSelecting;
 
 	return (
-		<Dialog.Root open={open} onOpenChange={onOpenChange}>
+		<Dialog.Root
+			open={open}
+			onOpenChange={(isOpen) => {
+				if (!isOpen) {
+					handleClose();
+				} else {
+					onOpenChange(isOpen);
+				}
+			}}
+		>
 			<Dialog.Portal>
-				<Dialog.Overlay className="open--overlay" />
-				<Dialog.Content className="open--wrapper">
+				<Dialog.Overlay className="open--overlay" onClick={handleClose} />
+				<Dialog.Content className="open--wrapper" onEscapeKeyDown={handleClose}>
 					<div className="open--header">
 						<Dialog.Title className="open--title">{t('openProject')}</Dialog.Title>
 						<Dialog.Close asChild>
-							<button className="open--close" aria-label={t('close')}>
+							<button className="open--close" aria-label={t('close')} onClick={handleClose}>
 								×
 							</button>
 						</Dialog.Close>
@@ -100,8 +109,9 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 									</button>
 								</div>
 							</div>
+							<div className="emptyDiv"></div>
+							{hasError && <span className="open--input-error-text">{t('invalidDirectory')}</span>}
 						</div>
-						{hasError && <span className="open--input-error-text">{t('invalidDirectory')}</span>}
 					</div>
 
 					<div className="open--actions">

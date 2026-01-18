@@ -1,5 +1,6 @@
 import { ipcRenderer, contextBridge } from 'electron';
 import { ProjectData } from '../global/types/projectData';
+import FolderNode from '../global/types/folderNode';
 
 contextBridge.exposeInMainWorld('api', {
 	getProjects: () => ipcRenderer.invoke('config:getAll'),
@@ -7,15 +8,33 @@ contextBridge.exposeInMainWorld('api', {
 	removeProject: (pd: ProjectData) => ipcRenderer.invoke('config:remove', pd),
 	selectFolder: () => ipcRenderer.invoke('config:selectFolder'),
 	openProject: (pd: ProjectData) => ipcRenderer.invoke('config:open', pd),
+	validateProjectPath: (pd: ProjectData) => ipcRenderer.invoke('validate-project-path', pd),
+	getDirectoryStructure: (pd: ProjectData) =>
+		ipcRenderer.invoke('config:getDirectoryStructure', pd),
+
+	startWatchingDirectory: (pd: ProjectData) => ipcRenderer.invoke('config:startWatching', pd),
+	stopWatchingDirectory: () => ipcRenderer.invoke('config:stopWatching'),
+	onDirectoryStructureChanged: (callback: (structure: FolderNode[]) => void) => {
+		ipcRenderer.on('directory-structure-changed', (_event, structure) => callback(structure));
+		return () => ipcRenderer.removeAllListeners('directory-structure-changed');
+	},
 	onLanguageChange: (callback: (lng: string) => void) => {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');
 	},
-
 	exportMap: (mapData: string) => ipcRenderer.invoke('map:export', mapData),
-	
 	onExportMapRequest: (callback: () => void) => {
 		ipcRenderer.on('export-map-request', callback);
 		return () => ipcRenderer.removeAllListeners('export-map-request');
+	},
+	getFilesInFolder: (pd: ProjectData, folder: FolderNode) =>
+		ipcRenderer.invoke('config:getFilesInFolder', pd, folder),
+
+	startWatchingFiles: (pd: ProjectData, folder: FolderNode) =>
+		ipcRenderer.invoke('config:startWatchingFiles', pd, folder),
+	stopWatchingFiles: () => ipcRenderer.invoke('config:stopWatchingFiles'),
+	onFilesChanged: (callback: (files: string[]) => void) => {
+		ipcRenderer.on('files-changed', (_event, files) => callback(files));
+		return () => ipcRenderer.removeAllListeners('files-changed');
 	},
 });

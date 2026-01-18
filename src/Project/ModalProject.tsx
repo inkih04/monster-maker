@@ -7,6 +7,7 @@ import Create from '../common/components/create/Create';
 import { useProjectStore } from './ProjectConfigGState';
 import OpenProject from '../common/components/openProject/OpenProject';
 import { useTranslation } from 'react-i18next';
+import { ProjectData } from '../../global/types/projectData';
 
 function ModalProject() {
 	const { t } = useTranslation();
@@ -14,6 +15,7 @@ function ModalProject() {
 	const [showNewProject, setShowNewProject] = useState(false);
 	const [showOpenProject, setShowOpenProject] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
+	const { setCurrentProject, removeProject } = useProjectStore();
 
 	const { projects, loadProjects } = useProjectStore();
 
@@ -26,6 +28,18 @@ function ModalProject() {
 		const searchLower = searchValue.toLowerCase();
 		return projects.filter((project) => project.name.toLowerCase().includes(searchLower));
 	}, [projects, searchValue]);
+
+	const handleProjectClick = async (project: ProjectData) => {
+		const isValid = await window.api.validateProjectPath(project);
+
+		if (!isValid) {
+			await removeProject(project.path);
+			return;
+		}
+
+		setOpen(false);
+		setCurrentProject(project);
+	};
 
 	return (
 		<>
@@ -50,7 +64,7 @@ function ModalProject() {
 							<div className="dialog-projects">
 								{filteredProjects.map((project, index) => (
 									<Project
-										onClick={() => setOpen(false)}
+										onClick={() => handleProjectClick(project)}
 										key={project.path}
 										index={index}
 										name={project.name}

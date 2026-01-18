@@ -4,16 +4,21 @@ import { ProjectData } from '../../global/types/projectData';
 interface ProjectStore {
 	projects: ProjectData[];
 	isLoading: boolean;
+	currentProject: ProjectData | null;
 
 	loadProjects: () => Promise<void>;
 	addProject: (project: ProjectData) => Promise<{ success: boolean; error?: string }>;
 	openProject: (project: ProjectData) => Promise<{ success: boolean; error?: string }>;
 	removeProject: (path: string) => Promise<boolean>;
+	setCurrentProject: (project: ProjectData | null) => void;
 }
 
 export const useProjectStore = create<ProjectStore>((set) => ({
 	projects: [],
+	currentProject: null,
 	isLoading: false,
+
+	setCurrentProject: (project) => set({ currentProject: project }),
 
 	loadProjects: async () => {
 		set({ isLoading: true });

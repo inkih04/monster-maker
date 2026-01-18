@@ -78,6 +78,9 @@ function createWindow() {
 	} else {
 		win.loadFile(path.join(RENDERER_DIST, 'index.html'));
 	}
+
+	setupProjectConfigHandlers(win);
+	setupMapHandlers();
 }
 
 app.whenReady().then(() => {
@@ -117,9 +120,6 @@ app.whenReady().then(() => {
 
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 });
-
-setupProjectConfigHandlers();
-setupMapHandlers();
 
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') app.quit();
