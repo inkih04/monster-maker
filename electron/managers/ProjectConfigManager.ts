@@ -1,35 +1,95 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import { ProjectsConfig } from '../../global/types/projectConfig';
 import { ProjectData } from '../../global/types/projectData';
 import { log } from 'console';
+import FolderNode from '../../global/types/folderNode';
+import { BrowserWindow } from 'electron';
+import { FileSystemWatcher } from './FileSystemWatcher';
+import { FileSystemService } from './FileSystemService';
 
 export class ProjectConfigManager {
-	private configPath: string;
+	private readonly configPath: string;
 	private config: ProjectsConfig;
+	private readonly fileSystemWatcher: FileSystemWatcher;
+	private readonly fileSystemService: FileSystemService;
+	private currentWatchedFolder: { pd: ProjectData; folder: FolderNode } | null = null;
 
 	constructor() {
 		this.configPath = this.getConfigPath();
+		this.fileSystemWatcher = new FileSystemWatcher();
+		this.fileSystemService = new FileSystemService();
 		this.config = this.loadConfig();
+	}
+
+	public setMainWindow(window: BrowserWindow): void {
+		this.fileSystemWatcher.setMainWindow(window);
 	}
 
 	private getConfigPath(): string {
 		if (process.env.NODE_ENV === 'development') {
 			return path.join(process.cwd(), 'src', 'assets', 'projects.json');
 		}
-
 		return path.join(process.resourcesPath, 'assets', 'projects.json');
 	}
 
+
+	public validateProjectPath(pd: ProjectData): boolean {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+
+			if (!this.fileSystemService.exists(projectPath)) {
+				console.log(`Project invalid: ${pd.name} - Path does not exist: ${projectPath}`);
+				return false;
+			}
+
+			if (!this.fileSystemService.isDirectory(projectPath)) {
+				console.log(`Project invalid: ${pd.name} - Path is not a directory: ${projectPath}`);
+				return false;
+			}
+
+			const requiredPaths = this.fileSystemService.getRequiredProjectPaths();
+			const isValid = this.fileSystemService.validateRequiredDirectories(
+				projectPath,
+				requiredPaths
+			);
+
+			if (!isValid) {
+				console.log(`Project invalid: ${pd.name} - Missing required directories`);
+				return false;
+			}
+
+			return true;
+		} catch (error) {
+			console.log(`Project invalid: ${pd.name} - Error validating: ${error}`);
+			return false;
+		}
+	}
+
+
 	public loadConfig(): ProjectsConfig {
 		try {
-			if (fs.existsSync(this.configPath)) {
-				const data = fs.readFileSync(this.configPath, 'utf-8');
-				return JSON.parse(data);
+			const config = this.fileSystemService.readJSON<ProjectsConfig>(this.configPath);
+
+			if (config) {
+				const validProjects = config.projects.filter((project) =>
+					this.validateProjectPath(project)
+				);
+
+				if (validProjects.length !== config.projects.length) {
+					const validatedConfig: ProjectsConfig = { projects: validProjects };
+					this.config = validatedConfig;
+					this.saveProjectConfiguration();
+					console.log(
+						`Cleaned up ${config.projects.length - validProjects.length} invalid projects`
+					);
+					return validatedConfig;
+				}
+
+				return config;
 			} else {
-				const configToSave: ProjectsConfig = { projects: [] };
-				fs.writeFileSync(this.configPath, JSON.stringify(configToSave, null, 2), 'utf-8');
-				return configToSave;
+				const defaultConfig: ProjectsConfig = { projects: [] };
+				this.fileSystemService.writeJSON(this.configPath, defaultConfig);
+				return defaultConfig;
 			}
 		} catch (error) {
 			console.log(error + ' (fail while loading projects)');
@@ -38,16 +98,10 @@ export class ProjectConfigManager {
 		return { projects: [] };
 	}
 
-	public saveProjectConfiguration() {
-		if (fs.existsSync(this.configPath)) {
-			fs.writeFileSync(this.configPath, JSON.stringify(this.config, null, 2), 'utf-8');
-		} else {
-			let configToSave: ProjectsConfig = { projects: [] };
-			if (this.config) configToSave = this.config;
-			else this.config = configToSave;
-			fs.writeFileSync(this.configPath, JSON.stringify(configToSave, null, 2), 'utf-8');
-		}
+	public saveProjectConfiguration(): void {
+		this.fileSystemService.writeJSON(this.configPath, this.config);
 	}
+
 
 	public removeProject(pd: ProjectData): void {
 		this.config.projects = this.config.projects.filter((p) => p.path !== pd.path);
@@ -56,10 +110,11 @@ export class ProjectConfigManager {
 
 	private addProjectData(pd: ProjectData): void {
 		try {
-			const projectPath = path.join(pd.path, pd.name);
+			const projectPath = this.fileSystemService.getProjectPath(pd);
 			const existingIndex = this.config.projects.findIndex(
-				(p) => path.join(p.path, p.name) === projectPath
+				(p) => this.fileSystemService.getProjectPath(p) === projectPath
 			);
+
 			if (existingIndex === -1) {
 				pd.color = this.getRandomColor();
 				this.config.projects.push(pd);
@@ -72,33 +127,12 @@ export class ProjectConfigManager {
 
 	public openProjectDirectory(pd: ProjectData): boolean {
 		try {
-			const projectPath = path.join(pd.path, pd.name);
-
-			if (!fs.existsSync(projectPath)) {
-				return false;
-			}
-
-			const requiredPaths = [
-				path.join(projectPath, 'fonts'),
-				path.join(projectPath, 'maps'),
-				path.join(projectPath, 'maps', 'data'),
-				path.join(projectPath, 'maps', 'tileset'),
-				path.join(projectPath, 'sprites'),
-				path.join(projectPath, 'scripts'),
-			];
-
-			const isValid = requiredPaths.every((p) => {
-				return fs.existsSync(p) && fs.statSync(p).isDirectory();
-			});
-
-			if (!isValid) {
-				log("falso")
+			if (!this.validateProjectPath(pd)) {
 				return false;
 			}
 
 			this.addProjectData(pd);
 			return true;
-
 		} catch (error) {
 			log(error + ' (fail while opening project directory)');
 			return false;
@@ -107,22 +141,16 @@ export class ProjectConfigManager {
 
 	public createProjectDirectory(pd: ProjectData): boolean {
 		try {
-			const projectPath = path.join(pd.path, pd.name);
+			const projectPath = this.fileSystemService.getProjectPath(pd);
 
-			if (fs.existsSync(projectPath)) {
+			if (this.fileSystemService.exists(projectPath)) {
 				return false;
 			}
 
-			fs.mkdirSync(projectPath, { recursive: true });
-
-			fs.mkdirSync(path.join(projectPath, 'fonts'), { recursive: true });
-			fs.mkdirSync(path.join(projectPath, 'maps', 'data'), { recursive: true });
-			fs.mkdirSync(path.join(projectPath, 'maps', 'tileset'), { recursive: true });
-			fs.mkdirSync(path.join(projectPath, 'sprites'), { recursive: true });
-			fs.mkdirSync(path.join(projectPath, 'scripts'), { recursive: true });
+			const requiredPaths = this.fileSystemService.getRequiredProjectPaths();
+			this.fileSystemService.createDirectories(projectPath, requiredPaths);
 
 			this.addProjectData(pd);
-
 			return true;
 		} catch (error) {
 			log(error + ' (fail while creating project directory)');
@@ -130,19 +158,69 @@ export class ProjectConfigManager {
 		}
 	}
 
-	public getRandomColor(): string {
-		const colors = [
-			'#FF6B6B',
-			'#4ECDC4',
-			'#45B7D1',
-			'#FFA07A',
-			'#98D8C8',
-			'#F7DC6F',
-			'#BB8FCE',
-			'#85C1E2',
-			'#F8B195',
-			'#C06C84',
-		];
+
+
+	private getRandomColor(): string {
+		const colors = ['#45B7D1', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B195'];
 		return colors[Math.floor(Math.random() * colors.length)];
+	}
+
+	public getDirectoryStructure(pd: ProjectData): FolderNode[] {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			return this.fileSystemService.readDirectoryStructure(projectPath);
+		} catch (error) {
+			log(error + ' (fail while reading directory structure)');
+			return [];
+		}
+	}
+
+	public getFilesInFolder(pd: ProjectData, folder: FolderNode): string[] {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const fullFolderPath = path.join(projectPath, folder.path);
+			return this.fileSystemService.readFilesInFolder(fullFolderPath);
+		} catch (error) {
+			log(error + ' (fail while reading files in folder)');
+			return [];
+		}
+	}
+
+	public startWatching(pd: ProjectData): void {
+		const projectPath = this.fileSystemService.getProjectPath(pd);
+
+		if (!this.fileSystemService.exists(projectPath)) {
+			return;
+		}
+
+		this.fileSystemWatcher.watchDirectory('directory-structure', projectPath, () => {
+			const structure = this.getDirectoryStructure(pd);
+			this.fileSystemWatcher.notifyMainWindow('directory-structure-changed', structure);
+		});
+	}
+
+	public stopWatching(): void {
+		this.fileSystemWatcher.stopWatcher('directory-structure');
+	}
+
+	public startWatchingFiles(pd: ProjectData, folder: FolderNode): void {
+		const projectPath = this.fileSystemService.getProjectPath(pd);
+		const fullFolderPath = path.join(projectPath, folder.path);
+
+		if (!this.fileSystemService.exists(fullFolderPath)) {
+			return;
+		}
+
+		this.currentWatchedFolder = { pd, folder };
+
+		this.fileSystemWatcher.watchFiles('files-in-folder', fullFolderPath, () => {
+			const files = this.getFilesInFolder(pd, folder);
+			this.fileSystemWatcher.notifyMainWindow('files-changed', files);
+		});
+	}
+
+	public stopWatchingFiles(): void {
+		this.fileSystemWatcher.stopWatcher('files-in-folder');
+		this.currentWatchedFolder = null;
 	}
 }

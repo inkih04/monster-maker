@@ -42,15 +42,24 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 	const isButtonDisabled = isDisabled || !isNameValid;
 
 	return (
-		<Dialog.Root open={open} onOpenChange={onOpenChange}>
+		<Dialog.Root
+			open={open}
+			onOpenChange={(isOpen) => {
+				if (!isOpen) {
+					handleClose();
+				} else {
+					onOpenChange(isOpen);
+				}
+			}}
+		>
 			<Dialog.Portal>
-				<Dialog.Overlay className="create--overlay" />
-				<Dialog.Content className="create--wrapper">
+				<Dialog.Overlay className="create--overlay" onClick={handleClose} />
+				<Dialog.Content className="create--wrapper" onEscapeKeyDown={handleClose}>
 					<div className="create--header">
 						<Dialog.Title className="create--title">{t('newProject')}</Dialog.Title>
 
 						<Dialog.Close asChild>
-							<button className="create--close" aria-label="Close">
+							<button className="create--close" aria-label="Close" onClick={handleClose}>
 								×
 							</button>
 						</Dialog.Close>

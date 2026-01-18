@@ -21,6 +21,7 @@
 	border: none;
 	transition: all 0.2s;
 	font-size: var(--font-md);
+	cursor: pointer;
 }
 
 .layer-button:hover {
