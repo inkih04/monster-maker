@@ -10,5 +10,9 @@
 	"openProject": "Open Project",
 	"invalidDirectory": "This directory is not a valid project",
 	"opening": "Opening...",
-	"open": "Open"
+	"open": "Open",
+	"deleteConfirmTitle": "Confirm Deletion",
+	"deleteConfirmMessage": "Are you sure you want to delete \"{{item}}\"? This action cannot be undone.",
+	"deleteConfirm": "Delete",
+	"deleteCancel": "Cancel"
 }
