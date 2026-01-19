@@ -3,6 +3,12 @@ import FolderNode from '../global/types/folderNode';
 
 export {};
 
+interface FileData {
+	name: string;
+	path: string;
+	type: string;
+}
+
 declare global {
 	interface Window {
 		api: {
@@ -31,6 +37,13 @@ declare global {
 			) => Promise<{ success: boolean; error?: string }>;
 			stopWatchingFiles: () => Promise<{ success: boolean; error?: string }>;
 			onFilesChanged: (callback: (files: string[]) => void) => () => void;
+			showFileContextMenu: (fileData: FileData) => void;
+			onFileAction: (callback: (action: string, fileData: FileData) => void) => () => void;
+			deleteFile: (
+				fileRelativePath: string,
+				folderPath: string,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

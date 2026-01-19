@@ -72,6 +72,31 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
+	ipcMain.handle(
+		'config:deleteFile',
+		async (_event, fileRelativePath: string, folderPath: string, pd: ProjectData) => {
+			try {
+				const success = configManager.deleteFile(fileRelativePath, folderPath, pd);
+
+				if (success) {
+					return {
+						success: true,
+					};
+				} else {
+					return {
+						success: false,
+						error: 'File does not exist or could not be deleted',
+					};
+				}
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
+
 	ipcMain.handle('config:selectFolder', async () => {
 		try {
 			const result = await dialog.showOpenDialog({

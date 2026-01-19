@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');
 	},
-	exportMap: (mapData: string) => ipcRenderer.invoke('map:export', mapData),
+	exportMap: (mapData: string) => ipcRenderer.invoke('export-map', mapData),
 	onExportMapRequest: (callback: () => void) => {
 		ipcRenderer.on('export-map-request', callback);
 		return () => ipcRenderer.removeAllListeners('export-map-request');
@@ -37,4 +37,19 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('files-changed', (_event, files) => callback(files));
 		return () => ipcRenderer.removeAllListeners('files-changed');
 	},
+	showFileContextMenu: (fileData: { name: string; path: string; type: string }) =>
+		ipcRenderer.send('show-file-context-menu', fileData),
+	onFileAction: (
+		callback: (action: string, fileData: { name: string; path: string; type: string }) => void
+	) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			action: string,
+			fileData: { name: string; path: string; type: string }
+		) => callback(action, fileData);
+		ipcRenderer.on('file-action', subscription);
+		return () => ipcRenderer.removeListener('file-action', subscription);
+	},
+	deleteFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:deleteFile', fileRelativePath, folderPath, pd),
 });

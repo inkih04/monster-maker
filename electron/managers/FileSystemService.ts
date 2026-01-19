@@ -8,11 +8,9 @@ export class FileSystemService {
 		return path.join(pd.path, pd.name);
 	}
 
-
 	public exists(filePath: string): boolean {
 		return fs.existsSync(filePath);
 	}
-
 
 	public isDirectory(filePath: string): boolean {
 		try {
@@ -29,7 +27,6 @@ export class FileSystemService {
 		});
 	}
 
-
 	public getRequiredProjectPaths(): string[] {
 		return [
 			'resources',
@@ -42,6 +39,25 @@ export class FileSystemService {
 		];
 	}
 
+	public deleteFile(filePath: string): boolean {
+		try {
+			if (!this.exists(filePath)) {
+				console.error(`Cannot delete file: ${filePath} does not exist`);
+				return false;
+			}
+
+			if (this.isDirectory(filePath)) {
+				console.error(`Cannot delete: ${filePath} is a directory, not a file`);
+				return false;
+			}
+
+			fs.unlinkSync(filePath);
+			return true;
+		} catch (error) {
+			console.error(`Error deleting file ${filePath}:`, error);
+			return false;
+		}
+	}
 
 	public createDirectories(basePath: string, directories: string[]): void {
 		directories.forEach((dir) => {
@@ -49,7 +65,6 @@ export class FileSystemService {
 			fs.mkdirSync(fullPath, { recursive: true });
 		});
 	}
-
 
 	public readDirectoryStructure(basePath: string): FolderNode[] {
 		if (!this.exists(basePath)) {
@@ -81,7 +96,6 @@ export class FileSystemService {
 		return buildStructure(basePath, basePath);
 	}
 
-
 	public readFilesInFolder(folderPath: string): string[] {
 		if (!this.exists(folderPath)) {
 			return [];
@@ -109,7 +123,6 @@ export class FileSystemService {
 		return files;
 	}
 
-
 	public readJSON<T>(filePath: string): T | null {
 		try {
 			if (!this.exists(filePath)) {
@@ -122,7 +135,6 @@ export class FileSystemService {
 			return null;
 		}
 	}
-
 
 	public writeJSON<T>(filePath: string, data: T): boolean {
 		try {

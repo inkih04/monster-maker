@@ -5,6 +5,7 @@ import path from 'node:path';
 import { setupMapHandlers } from './ipc/mapHandlers';
 import { setupProjectConfigHandlers } from './ipc/projectConfigHandlers';
 import defaultMenu from 'electron-default-menu';
+import { setupContextMenuHandlers } from './ipc/contextMenuHandlers';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -85,6 +86,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
 	createWindow();
+	setupContextMenuHandlers();
 	const menu = defaultMenu(app, require('electron').shell);
 
 	const editMenuIndex = menu.findIndex((item) => item.label === 'Edit');

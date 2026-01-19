@@ -5,6 +5,7 @@ import { getFileNameWithoutExtension, getFileType } from '../utils/filesUtils';
 
 interface FileItem {
 	name: string;
+	path: string;
 	type: 'script' | 'tilemap' | 'tileset';
 }
 
@@ -17,6 +18,7 @@ const transformToFileItems = (fileNames: string[]): FileItem[] => {
 		.map((fileName) => ({
 			name: getFileNameWithoutExtension(fileName),
 			type: getFileType(fileName),
+			path: fileName,
 		}));
 };
 

@@ -21,6 +21,41 @@ export class ProjectConfigManager {
 		this.config = this.loadConfig();
 	}
 
+	public deleteFile(fileRelativePath: string, folderPath: string, pd: ProjectData): boolean {
+		try {
+			log('Deleting File');
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
+
+			log(completePath);
+
+			if (!this.fileSystemService.exists(completePath)) {
+				console.log(`File does not exist: ${completePath}`);
+				return false;
+			}
+
+			this.fileSystemService.deleteFile(completePath);
+
+			if (this.currentWatchedFolder) {
+				const folderPath = path.dirname(fileRelativePath);
+				const watchedFolderPath = this.currentWatchedFolder.folder.path;
+
+				if (folderPath === watchedFolderPath) {
+					const files = this.getFilesInFolder(
+						this.currentWatchedFolder.pd,
+						this.currentWatchedFolder.folder
+					);
+					this.fileSystemWatcher.notifyMainWindow('files-changed', files);
+				}
+			}
+
+			return true;
+		} catch (error) {
+			console.log(`Error deleting file: ${error}`);
+			return false;
+		}
+	}
+
 	public setMainWindow(window: BrowserWindow): void {
 		this.fileSystemWatcher.setMainWindow(window);
 	}
@@ -31,7 +66,6 @@ export class ProjectConfigManager {
 		}
 		return path.join(process.resourcesPath, 'assets', 'projects.json');
 	}
-
 
 	public validateProjectPath(pd: ProjectData): boolean {
 		try {
@@ -65,9 +99,9 @@ export class ProjectConfigManager {
 		}
 	}
 
-
 	public loadConfig(): ProjectsConfig {
 		try {
+			log('loading Configuration');
 			const config = this.fileSystemService.readJSON<ProjectsConfig>(this.configPath);
 
 			if (config) {
@@ -101,7 +135,6 @@ export class ProjectConfigManager {
 	public saveProjectConfiguration(): void {
 		this.fileSystemService.writeJSON(this.configPath, this.config);
 	}
-
 
 	public removeProject(pd: ProjectData): void {
 		this.config.projects = this.config.projects.filter((p) => p.path !== pd.path);
@@ -157,8 +190,6 @@ export class ProjectConfigManager {
 			return false;
 		}
 	}
-
-
 
 	private getRandomColor(): string {
 		const colors = ['#45B7D1', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B195'];
