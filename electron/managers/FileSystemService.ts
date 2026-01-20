@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ProjectData } from '../../global/types/projectData';
 import FolderNode from '../../global/types/folderNode';
+import { log } from 'console';
 
 export class FileSystemService {
 	public getProjectPath(pd: ProjectData): string {
@@ -66,6 +67,21 @@ export class FileSystemService {
 
 	public readFile(filePath: string): string {
 		return fs.readFileSync(filePath, 'utf-8');
+	}
+
+	public saveFile(path: string, content: string): boolean {
+		try {
+			if (this.isDirectory(path)) {
+				return false;
+			}
+
+			fs.writeFileSync(path, content, 'utf-8');
+
+			return true;
+		} catch (error) {
+			log(error);
+			return false;
+		}
 	}
 
 	public deleteFile(filePath: string): boolean {

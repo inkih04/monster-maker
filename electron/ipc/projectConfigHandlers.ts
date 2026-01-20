@@ -253,4 +253,24 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			}
 		}
 	);
+
+	ipcMain.handle(
+		'config:saveFile',
+		async (_event, fileRelativePath: string, content: string, pd: ProjectData) => {
+			try {
+				const result = configManager.saveFile(fileRelativePath, content, pd);
+
+				if (result.success) {
+					return { success: true };
+				} else {
+					return { success: false, error: result.error };
+				}
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
 }

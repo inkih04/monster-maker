@@ -14,5 +14,9 @@
 	"deleteConfirmTitle": "Confirm Deletion",
 	"deleteConfirmMessage": "Are you sure you want to delete \"{{item}}\"? This action cannot be undone.",
 	"deleteConfirm": "Delete",
-	"deleteCancel": "Cancel"
+	"deleteCancel": "Cancel",
+	"saveConfirmTitle": "Confirm Save",
+	"saveConfirmMessage": "You have unsaved changes. Do you want to save them before continuing?",
+	"saveConfirm": "Save",
+	"saveCancel": "Cancel"
 }

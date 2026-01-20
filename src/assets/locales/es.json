@@ -14,5 +14,9 @@
 	"deleteConfirmTitle": "Confirmar Eliminación",
 	"deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{item}}\"? Esta acción no se puede deshacer.",
 	"deleteConfirm": "Eliminar",
-	"deleteCancel": "Cancelar"
+	"deleteCancel": "Cancelar",
+	"saveConfirmTitle": "Confirmar Guardado",
+	"saveConfirmMessage": "Tienes cambios sin guardar. ¿Deseas guardarlos antes de continuar?",
+	"saveConfirm": "Guardar",
+	"saveCancel": "Cancelar"
 }

@@ -1,13 +1,9 @@
 import { ProjectData } from '../global/types/projectData';
 import FolderNode from '../global/types/folderNode';
+import { FileData } from '../global/types/fileData';
+import { ProjectFile } from '../global/types/projectFile';
 
 export {};
-
-interface FileData {
-	name: string;
-	path: string;
-	type: string;
-}
 
 declare global {
 	interface Window {
@@ -55,7 +51,13 @@ declare global {
 				fileRelativePath: string,
 				folderPath: string,
 				pd: ProjectData
-			) => Promise<{ success: boolean; content?: string; error?: string }>;
+			) => Promise<{ success: boolean; content?: ProjectFile; error?: string }>;
+
+			saveFile: (
+				fileRelativePath: string,
+				content: string,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

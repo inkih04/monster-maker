@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { ProjectsConfig } from '../../global/types/projectConfig';
 import { ProjectData } from '../../global/types/projectData';
+import { ProjectFile } from '../../global/types/projectFile';
 import { log } from 'console';
 import FolderNode from '../../global/types/folderNode';
 import { BrowserWindow } from 'electron';
@@ -55,11 +56,36 @@ export class ProjectConfigManager {
 		}
 	}
 
+	public saveFile(
+		fileRelativePath: string,
+		content: string,
+		pd: ProjectData
+	): { success: boolean; error?: string } {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const completePath = path.join(projectPath, fileRelativePath);
+
+			const dirPath = path.dirname(completePath);
+			if (!this.fileSystemService.exists(dirPath)) {
+				return { success: false, error: `Directory does not exist: ${dirPath}` };
+			}
+
+			if (this.fileSystemService.saveFile(completePath, content)) {
+				return { success: true };
+			}
+			else {
+				return { success: false};
+			}
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public getFile(
 		fileRelativePath: string,
 		folderPath: string,
 		pd: ProjectData
-	): { success: boolean; content?: string; error?: string } {
+	): { success: boolean; content?: ProjectFile; error?: string } {
 		try {
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
@@ -74,9 +100,10 @@ export class ProjectConfigManager {
 				return { success: false, error: 'Path is a directory' };
 			}
 
-			const content = this.fileSystemService.readFile(completePath);
+			const cont = this.fileSystemService.readFile(completePath);
+			const relativeP = path.join(folderPath, fileRelativePath);
 
-			return { success: true, content };
+			return { success: true, content: { relativePath: relativeP, content: cont } };
 		} catch (error) {
 			console.log(`Error getting file: ${error}`);
 			return { success: false, error: String(error) };

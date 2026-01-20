@@ -1,13 +1,16 @@
 import { create } from 'zustand';
 import { ComponentMap, ComponentType } from '../domain/ecs/componentMap';
 import { Layer } from '../domain/ecs/layer';
-import { Tag } from '../domain/ecs/tags';
+import { createTileEntity } from './mapUtils';
+import Entity from '../domain/ecs/entity';
 
-export interface Entity {
-	id: string;
-	tag?: Tag;
+export interface PaintedTile {
+	x: number;
+	y: number;
+	tilesetX: number;
+	tilesetY: number;
+	entityId: string;
 	layer: Layer;
-	components: Partial<ComponentMap>;
 }
 
 export interface MapData {
@@ -20,11 +23,13 @@ export interface MapData {
 
 interface MapStore {
 	map: MapData | null;
+	paintedTiles: PaintedTile[];
 	selectedEntityId: string | null;
+	mapRelativePath: string | null;
 	zoom: number;
 	activeLayer: Layer;
 	isDirty: boolean;
-
+	setMapRelativePath: (relativePath: string) => void;
 	setIsDirty: (isDirty: boolean) => void;
 	setZoom: (zoom: number) => void;
 	setActiveLayer: (layer: Layer) => void;
@@ -47,6 +52,24 @@ interface MapStore {
 	removeComponent(entityId: string, type: ComponentType): void;
 
 	selectEntity(id: string | null): void;
+
+	clearPaintedTiles(): void;
+
+	paintTiles(
+		tiles: Array<{
+			mapX: number;
+			mapY: number;
+			tilesetX: number;
+			tilesetY: number;
+			entityId: string;
+			layer: Layer;
+			tileSize: number;
+			spriteSheetPath: string;
+		}>
+	): void;
+
+	clearMapTiles(): void;
+
 	exportToEngineFormat(): string;
 }
 
@@ -58,10 +81,16 @@ export const useMapStore = create<MapStore>((set, get) => ({
 		tileSize: 16,
 		entities: {},
 	},
+	mapRelativePath: null,
+	paintedTiles: [],
 	isDirty: false,
 	selectedEntityId: null,
 	zoom: 1,
 	activeLayer: 'ground',
+
+	setMapRelativePath: (relativePath: string) => {
+		set({ mapRelativePath: relativePath });
+	},
 
 	setIsDirty: (isDirty) => {
 		set({ isDirty });
@@ -84,12 +113,34 @@ export const useMapStore = create<MapStore>((set, get) => ({
 				tileSize,
 				entities: {},
 			},
+			paintedTiles: [],
 			selectedEntityId: null,
 		});
 	},
 
 	loadMap: (map) => {
-		set({ map, selectedEntityId: null, isDirty: false });
+		const tiles: PaintedTile[] = [];
+		const tileSize = map.tileSize;
+
+		Object.values(map.entities).forEach((entity) => {
+			if (entity.tag !== 'TILEMAP') return;
+
+			const positionComponent = entity.components.POSITION;
+			const renderComponent = entity.components.RENDER;
+
+			if (positionComponent && renderComponent) {
+				tiles.push({
+					x: positionComponent.x / tileSize,
+					y: positionComponent.y / tileSize,
+					tilesetX: renderComponent.x / tileSize,
+					tilesetY: renderComponent.y / tileSize,
+					entityId: entity.id,
+					layer: entity.layer,
+				});
+			}
+		});
+
+		set({ map, paintedTiles: tiles, selectedEntityId: null, isDirty: false });
 	},
 
 	addEntity: (entity) => {
@@ -119,6 +170,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
 					...state.map,
 					entities: rest,
 				},
+				paintedTiles: state.paintedTiles.filter((tile) => tile.entityId !== id),
 				selectedEntityId: state.selectedEntityId === id ? null : state.selectedEntityId,
 			};
 		});
@@ -222,6 +274,89 @@ export const useMapStore = create<MapStore>((set, get) => ({
 
 	selectEntity: (id) => {
 		set({ selectedEntityId: id });
+	},
+
+	clearPaintedTiles: () => {
+		set({ paintedTiles: [] });
+	},
+
+	clearMapTiles: () => {
+		set((state) => {
+			if (!state.map) return state;
+
+			const tileEntityIds = Object.values(state.map.entities)
+				.filter((entity) => entity.tag === 'TILEMAP')
+				.map((entity) => entity.id);
+
+			const newEntities = { ...state.map.entities };
+			tileEntityIds.forEach((id) => {
+				delete newEntities[id];
+			});
+
+			return {
+				map: {
+					...state.map,
+					entities: newEntities,
+				},
+				paintedTiles: [],
+			};
+		});
+	},
+
+	paintTiles: (tiles) => {
+		set((state) => {
+			if (!state.map) return state;
+
+			const newEntities = { ...state.map.entities };
+			const newPaintedTiles: PaintedTile[] = [];
+
+			const tilesToRemove = state.paintedTiles.filter((existing) =>
+				tiles.some(
+					(nt) => nt.mapX === existing.x && nt.mapY === existing.y && nt.layer === existing.layer
+				)
+			);
+
+			tilesToRemove.forEach((tile) => {
+				delete newEntities[tile.entityId];
+			});
+
+			const filteredPaintedTiles = state.paintedTiles.filter(
+				(existing) =>
+					!tiles.some(
+						(nt) => nt.mapX === existing.x && nt.mapY === existing.y && nt.layer === existing.layer
+					)
+			);
+
+			tiles.forEach((tile) => {
+				newEntities[tile.entityId] = createTileEntity(
+					tile.entityId,
+					tile.layer,
+					tile.mapX,
+					tile.mapY,
+					tile.tilesetX,
+					tile.tilesetY,
+					tile.tileSize,
+					tile.spriteSheetPath
+				);
+
+				newPaintedTiles.push({
+					x: tile.mapX,
+					y: tile.mapY,
+					tilesetX: tile.tilesetX,
+					tilesetY: tile.tilesetY,
+					entityId: tile.entityId,
+					layer: tile.layer,
+				});
+			});
+
+			return {
+				map: {
+					...state.map,
+					entities: newEntities,
+				},
+				paintedTiles: [...filteredPaintedTiles, ...newPaintedTiles],
+			};
+		});
 	},
 
 	exportToEngineFormat: () => {

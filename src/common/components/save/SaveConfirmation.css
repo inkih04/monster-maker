@@ -1,4 +1,4 @@
-.delete--overlay {
+.save--overlay {
 	background-color: rgba(0, 0, 0, 0.5);
 	position: fixed;
 	inset: 0;
@@ -14,7 +14,7 @@
 	}
 }
 
-.delete--content {
+.save--content {
 	background-color: var(--color-1);
 	border-radius: var(--radius);
 	box-shadow:
@@ -42,7 +42,7 @@
 	}
 }
 
-.delete--title {
+.save--title {
 	margin: 0;
 	font-weight: 700;
 	color: var(--color-9);
@@ -50,7 +50,7 @@
 	margin-bottom: var(--space-md);
 }
 
-.delete--description {
+.save--description {
 	margin: 0;
 	color: var(--color-7);
 	font-size: var(--font-md);
@@ -58,13 +58,13 @@
 	margin-bottom: var(--space-lg);
 }
 
-.delete--buttons {
+.save--buttons {
 	display: flex;
 	gap: var(--space-ms);
 	justify-content: flex-end;
 }
 
-.delete--btn {
+.save--btn {
 	all: unset;
 	display: inline-flex;
 	align-items: center;
@@ -77,25 +77,24 @@
 	transition: background-color 150ms ease;
 }
 
-.delete--btn-cancel {
+.save--btn-cancel {
 	background-color: var(--color-3);
 	color: var(--color-9);
 }
 
-.delete--btn-cancel:hover {
+.save--btn-cancel:hover {
 	background-color: var(--color-4);
 }
 
-.delete--btn-confirm {
-	background-color: #dc2626;
-	color: white;
+.save--btn-confirm {
+	background-color: #16a34a;
+	color: var(--color-1);
 }
 
-.delete--btn-confirm:hover {
-	background-color: #b91c1c;
+.save--btn-confirm:hover {
+	background-color: #15803d;
 }
-
-.delete--btn:focus-visible {
+.save--btn:focus-visible {
 	outline: 2px solid var(--color-6);
 	outline-offset: 2px;
 }
