@@ -50,6 +50,12 @@ declare global {
 				folderPath: string,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string }>;
+
+			getFile: (
+				fileRelativePath: string,
+				folderPath: string,
+				pd: ProjectData
+			) => Promise<{ success: boolean; content?: string; error?: string }>;
 		};
 	}
 }

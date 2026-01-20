@@ -55,6 +55,34 @@ export class ProjectConfigManager {
 		}
 	}
 
+	public getFile(
+		fileRelativePath: string,
+		folderPath: string,
+		pd: ProjectData
+	): { success: boolean; content?: string; error?: string } {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
+
+			if (!this.fileSystemService.exists(completePath)) {
+				console.log(`File does not exist: ${completePath}`);
+				return { success: false, error: 'File does not exist' };
+			}
+
+			if (this.fileSystemService.isDirectory(completePath)) {
+				console.log(`Path is a directory, not a file: ${completePath}`);
+				return { success: false, error: 'Path is a directory' };
+			}
+
+			const content = this.fileSystemService.readFile(completePath);
+
+			return { success: true, content };
+		} catch (error) {
+			console.log(`Error getting file: ${error}`);
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public renameFile(
 		oldFileRelativePath: string,
 		newFileName: string,

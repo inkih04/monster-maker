@@ -22,6 +22,7 @@ export class FileSystemWatcher {
 			this.mainWindow = mainWindow;
 		}
 	}
+	
 
 	public setMainWindow(window: BrowserWindow): void {
 		this.mainWindow = window;

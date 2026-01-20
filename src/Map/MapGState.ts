@@ -23,7 +23,9 @@ interface MapStore {
 	selectedEntityId: string | null;
 	zoom: number;
 	activeLayer: Layer;
+	isDirty: boolean;
 
+	setIsDirty: (isDirty: boolean) => void;
 	setZoom: (zoom: number) => void;
 	setActiveLayer: (layer: Layer) => void;
 	createMap(mapId: string, width: number, height: number, tileSize: number): void;
@@ -50,19 +52,22 @@ interface MapStore {
 
 export const useMapStore = create<MapStore>((set, get) => ({
 	map: {
-		mapId: "1",
+		mapId: '1',
 		width: 100,
 		height: 100,
 		tileSize: 16,
-		entities: {}
+		entities: {},
 	},
+	isDirty: false,
 	selectedEntityId: null,
 	zoom: 1,
 	activeLayer: 'ground',
 
-	setActiveLayer: (layer) => {
-		console.log(layer);
+	setIsDirty: (isDirty) => {
+		set({ isDirty });
+	},
 
+	setActiveLayer: (layer) => {
 		set({ activeLayer: layer });
 	},
 
@@ -84,7 +89,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
 	},
 
 	loadMap: (map) => {
-		set({ map, selectedEntityId: null });
+		set({ map, selectedEntityId: null, isDirty: false });
 	},
 
 	addEntity: (entity) => {

@@ -238,4 +238,19 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			}
 		}
 	);
+
+	ipcMain.handle(
+		'config:getFile',
+		async (_event, fileRelativePath: string, folderPath: string, pd: ProjectData) => {
+			try {
+				const result = configManager.getFile(fileRelativePath, folderPath, pd);
+				return result;
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
 }

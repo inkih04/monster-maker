@@ -32,6 +32,7 @@ export function useTilePainter(): UseTilePainterResult {
 	const addEntity = useMapStore((state) => state.addEntity);
 	const removeEntity = useMapStore((state) => state.removeEntity);
 	const addComponent = useMapStore((state) => state.addComponent);
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	const tileSets = useTileSetStore((state) => state.tilemaps);
 	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
@@ -67,6 +68,8 @@ export function useTilePainter(): UseTilePainterResult {
 
 						const mapX = tileX + offsetX;
 						const mapY = tileY + offsetY;
+
+						setIsDirty(true);
 
 						const entityId = generateEntityId();
 

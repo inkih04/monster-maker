@@ -5,11 +5,15 @@ import { useFileWatcher } from '../common/customHooks/useFileWatcher';
 import { useProjectStore } from '../Project/ProjectConfigGState';
 import { useFolderStore } from '../common/globalStores/useFolderStore';
 import DeleteConfirmation from '../common/components/delete/DeleteConfirmation';
+import { useMapStore } from '../Map/MapGState';
+import type { Entity, MapData } from '../Map/MapGState';
 
 export default function FileList() {
 	const { files, isLoading } = useFileWatcher();
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const currentProject = useProjectStore((state) => state.currentProject);
+	const isDirty = useMapStore((state) => state.isDirty);
+	const loadMap = useMapStore((state) => state.loadMap);
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [fileToDelete, setFileToDelete] = useState<{
 		name: string;
@@ -29,6 +33,61 @@ export default function FileList() {
 					setRenamingFile(fileData.path);
 					setNewFileName(fileData.name);
 					break;
+
+				case 'open':
+					if (!selectedFolder?.path || !currentProject) {
+						console.error('Cannot open file: missing folder or project');
+						return;
+					}
+
+					// TODO: Si isDirty === true, mostrar modal para guardar antes de abrir nuevo mapa
+					if (isDirty) {
+						console.warn('Map has unsaved changes - TODO: show save dialog');
+						// return;
+					}
+
+					try {
+						const result = await window.api.getFile(
+							fileData.path,
+							selectedFolder.path,
+							currentProject
+						);
+
+						if (!result.success || !result.content) {
+							console.error('Error loading file:', result.error);
+							return;
+						}
+
+						const parsedMap = JSON.parse(result.content);
+
+						if (!parsedMap.mapId || !parsedMap.entities) {
+							console.error('Invalid map format: missing required fields');
+							return;
+						}
+
+						const mapData: MapData = {
+							mapId: parsedMap.mapId,
+							width: parsedMap.width || 100,
+							height: parsedMap.height || 100,
+							tileSize: parsedMap.tileSize || 16,
+							entities: Array.isArray(parsedMap.entities)
+								? parsedMap.entities.reduce(
+										(acc: Record<string, Entity>, entity: Entity) => {
+											acc[entity.id] = entity;
+											return acc;
+										},
+										{} as Record<string, Entity>
+									)
+								: parsedMap.entities,
+						};
+
+						loadMap(mapData);
+						console.log('Map loaded successfully:', mapData.mapId);
+					} catch (error) {
+						console.error('Error opening map file:', error);
+					}
+					break;
+
 				case 'copy':
 					console.log('Copy file:', fileData.name);
 					break;
@@ -40,7 +99,7 @@ export default function FileList() {
 		});
 
 		return cleanup;
-	}, [selectedFolder, currentProject]);
+	}, [selectedFolder, currentProject, isDirty, loadMap]);
 
 	const handleConfirmDelete = async () => {
 		if (fileToDelete && selectedFolder?.path && currentProject) {

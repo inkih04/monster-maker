@@ -6,7 +6,7 @@ export function setupContextMenuHandlers(): void {
 			{
 				label: 'Open',
 				click: () => {
-					event.sender.send('file-action', 'rename', fileData);
+					event.sender.send('file-action', 'open', fileData);
 				},
 			},
 			{

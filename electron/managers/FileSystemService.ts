@@ -64,6 +64,10 @@ export class FileSystemService {
 		];
 	}
 
+	public readFile(filePath: string): string {
+		return fs.readFileSync(filePath, 'utf-8');
+	}
+
 	public deleteFile(filePath: string): boolean {
 		try {
 			if (!this.exists(filePath)) {

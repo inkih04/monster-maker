@@ -58,4 +58,6 @@ contextBridge.exposeInMainWorld('api', {
 		folderPath: string,
 		pd: ProjectData
 	) => ipcRenderer.invoke('config:renameFile', oldFileRelativePath, newFileName, folderPath, pd),
+	getFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:getFile', fileRelativePath, folderPath, pd),
 });
