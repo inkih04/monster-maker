@@ -44,6 +44,12 @@ declare global {
 				folderPath: string,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string }>;
+			renameFile: (
+				oldFileRelativePath: string,
+				newFileName: string,
+				folderPath: string,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

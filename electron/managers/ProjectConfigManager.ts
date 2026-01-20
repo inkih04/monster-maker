@@ -23,7 +23,6 @@ export class ProjectConfigManager {
 
 	public deleteFile(fileRelativePath: string, folderPath: string, pd: ProjectData): boolean {
 		try {
-			log('Deleting File');
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
 
@@ -38,6 +37,52 @@ export class ProjectConfigManager {
 
 			if (this.currentWatchedFolder) {
 				const folderPath = path.dirname(fileRelativePath);
+				const watchedFolderPath = this.currentWatchedFolder.folder.path;
+
+				if (folderPath === watchedFolderPath) {
+					const files = this.getFilesInFolder(
+						this.currentWatchedFolder.pd,
+						this.currentWatchedFolder.folder
+					);
+					this.fileSystemWatcher.notifyMainWindow('files-changed', files);
+				}
+			}
+
+			return true;
+		} catch (error) {
+			console.log(`Error deleting file: ${error}`);
+			return false;
+		}
+	}
+
+	public renameFile(
+		oldFileRelativePath: string,
+		newFileName: string,
+		folderPath: string,
+		pd: ProjectData
+	): boolean {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const oldCompletePath = path.join(projectPath, path.join(folderPath, oldFileRelativePath));
+
+			if (!this.fileSystemService.exists(oldCompletePath)) {
+				console.log(`File does not exist: ${oldCompletePath}`);
+				return false;
+			}
+
+			const directory = path.dirname(oldCompletePath);
+			const extension = path.extname(oldCompletePath);
+			const newCompletePath = path.join(directory, newFileName + extension);
+
+			if (this.fileSystemService.exists(newCompletePath)) {
+				console.log(`File already exists: ${newCompletePath}`);
+				return false;
+			}
+
+			this.fileSystemService.renameFile(oldCompletePath, newCompletePath);
+
+			if (this.currentWatchedFolder) {
+				const folderPath = path.dirname(oldFileRelativePath);
 				const watchedFolderPath = this.currentWatchedFolder.folder.path;
 
 				if (folderPath === watchedFolderPath) {

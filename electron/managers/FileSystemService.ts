@@ -27,6 +27,31 @@ export class FileSystemService {
 		});
 	}
 
+	public renameFile(oldPath: string, newPath: string): boolean {
+		try {
+			if (!this.exists(oldPath)) {
+				console.error(`Cannot rename file: ${oldPath} does not exist`);
+				return false;
+			}
+
+			if (this.exists(newPath)) {
+				console.error(`Cannot rename file: ${newPath} already exists`);
+				return false;
+			}
+
+			if (this.isDirectory(oldPath)) {
+				console.error(`Cannot rename: ${oldPath} is a directory, not a file`);
+				return false;
+			}
+
+			fs.renameSync(oldPath, newPath);
+			return true;
+		} catch (error) {
+			console.error(`Error renaming file from ${oldPath} to ${newPath}:`, error);
+			return false;
+		}
+	}
+
 	public getRequiredProjectPaths(): string[] {
 		return [
 			'resources',

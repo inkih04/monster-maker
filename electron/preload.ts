@@ -52,4 +52,10 @@ contextBridge.exposeInMainWorld('api', {
 	},
 	deleteFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
 		ipcRenderer.invoke('config:deleteFile', fileRelativePath, folderPath, pd),
+	renameFile: (
+		oldFileRelativePath: string,
+		newFileName: string,
+		folderPath: string,
+		pd: ProjectData
+	) => ipcRenderer.invoke('config:renameFile', oldFileRelativePath, newFileName, folderPath, pd),
 });

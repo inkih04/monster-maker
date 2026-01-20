@@ -207,4 +207,35 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			};
 		}
 	});
+
+	ipcMain.handle(
+		'config:renameFile',
+		async (
+			_event,
+			oldFileRelativePath: string,
+			newFileName: string,
+			folderPath: string,
+			pd: ProjectData
+		) => {
+			try {
+				const success = configManager.renameFile(oldFileRelativePath, newFileName, folderPath, pd);
+
+				if (success) {
+					return {
+						success: true,
+					};
+				} else {
+					return {
+						success: false,
+						error: 'File does not exist or could not be renamed',
+					};
+				}
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
 }

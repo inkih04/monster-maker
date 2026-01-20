@@ -16,6 +16,8 @@ export default function FileList() {
 		path: string;
 		type: string;
 	} | null>(null);
+	const [renamingFile, setRenamingFile] = useState<string | null>(null);
+	const [newFileName, setNewFileName] = useState('');
 
 	useEffect(() => {
 		const cleanup = window.api.onFileAction(async (action, fileData) => {
@@ -24,6 +26,8 @@ export default function FileList() {
 			switch (action) {
 				case 'rename':
 					console.log('Rename file:', fileData.name);
+					setRenamingFile(fileData.path);
+					setNewFileName(fileData.name);
 					break;
 				case 'copy':
 					console.log('Copy file:', fileData.name);
@@ -54,14 +58,28 @@ export default function FileList() {
 		setFileToDelete(null);
 	};
 
+	const handleRenameKeyDown = async (
+		e: React.KeyboardEvent<HTMLTextAreaElement>,
+		file: { name: string; path: string; type: string }
+	) => {
+		if (e.key === 'Enter' && selectedFolder?.path && currentProject) {
+			e.preventDefault();
+			await window.api.renameFile(file.path, newFileName, selectedFolder.path, currentProject);
+			console.log('Renombrar archivo:', file.path, 'a:', newFileName);
+			setRenamingFile(null);
+			setNewFileName('');
+		} else if (e.key === 'Escape') {
+			setRenamingFile(null);
+			setNewFileName('');
+		}
+	};
+
 	const handleFileContextMenu = (
 		e: React.MouseEvent,
 		file: { name: string; path: string; type: string }
 	) => {
 		e.preventDefault();
 		e.stopPropagation();
-
-		console.log('Mostrando menú contextual para:', file);
 
 		window.api.showFileContextMenu({
 			name: file.name,
@@ -85,7 +103,22 @@ export default function FileList() {
 							onContextMenu={(e) => handleFileContextMenu(e, file)}
 						>
 							<div className="files--icon">{getFileIcon(file.type)}</div>
-							<span className="files--name">{file.name}</span>
+							{renamingFile === file.path ? (
+								<textarea
+									className="files--name files--rename-input"
+									value={newFileName}
+									onChange={(e) => setNewFileName(e.target.value)}
+									onKeyDown={(e) => handleRenameKeyDown(e, file)}
+									onBlur={() => {
+										setRenamingFile(null);
+										setNewFileName('');
+									}}
+									autoFocus
+									rows={1}
+								/>
+							) : (
+								<span className="files--name">{file.name}</span>
+							)}
 						</div>
 					))}
 				</div>
