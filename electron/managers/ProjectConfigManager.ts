@@ -80,6 +80,31 @@ export class ProjectConfigManager {
 			return { success: false, error: String(error) };
 		}
 	}
+		public saveFileCompletePath(
+		name:string,
+		completePath: string,
+		content: string,
+	): { success: boolean; error?: string } {
+		try {
+			const dirPath = path.dirname(completePath);
+			if (!this.fileSystemService.exists(dirPath)) {
+				return { success: false, error: `Directory does not exist: ${dirPath}` };
+			}
+			completePath = path.join(completePath, name);
+
+			if (this.fileSystemService.saveFile(completePath, content)) {
+				log("completado")
+				return { success: true };
+			}
+			else {
+				log("fallo2")
+				return { success: false};
+			}
+		} catch (error) {
+			log("catch")
+			return { success: false, error: String(error) };
+		}
+	}
 
 	public getFile(
 		fileRelativePath: string,

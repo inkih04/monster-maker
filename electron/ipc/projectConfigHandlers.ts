@@ -273,4 +273,24 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			}
 		}
 	);
+
+	ipcMain.handle(
+		'config:saveFileCompletePath',
+		async (_event, name: string, completePath: string, content: string) => {
+			try {
+				const result = configManager.saveFileCompletePath(name, completePath, content);
+
+				if (result.success) {
+					return { success: true };
+				} else {
+					return { success: false, error: result.error };
+				}
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
 }

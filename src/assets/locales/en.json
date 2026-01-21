@@ -18,5 +18,10 @@
 	"saveConfirmTitle": "Confirm Save",
 	"saveConfirmMessage": "You have unsaved changes. Do you want to save them before continuing?",
 	"saveConfirm": "Save",
-	"saveCancel": "Cancel"
+	"saveCancel": "Cancel",
+	"saveFileTitle": "Save file",
+	"fileName": "File name",
+	"fileAlreadyExists": "A file with that name already exists",
+	"saving": "Saving...",
+	"save": "Save"
 }

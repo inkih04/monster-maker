@@ -62,4 +62,7 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.invoke('config:getFile', fileRelativePath, folderPath, pd),
 	saveFile: (fileRelativePath: string, content: string, pd: ProjectData) =>
 		ipcRenderer.invoke('config:saveFile', fileRelativePath, content, pd),
+
+	saveFileCompletePath: (name:string ,completePath: string, content: string) =>
+		ipcRenderer.invoke('config:saveFileCompletePath', name,completePath, content),
 });

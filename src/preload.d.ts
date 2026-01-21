@@ -58,6 +58,12 @@ declare global {
 				content: string,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string }>;
+
+			saveFileCompletePath: (
+				name: string,
+				completePath: string,
+				content: string
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }
