@@ -102,6 +102,10 @@ app.whenReady().then(() => {
 				},
 			}
 		);
+
+		editSubmenu.push({
+			label: 'Export Current Map to PNG',
+		});
 	}
 
 	menu.splice(-1, 0, {
@@ -115,6 +119,40 @@ app.whenReady().then(() => {
 			{
 				label: 'Español',
 				type: 'radio',
+				click: () => win?.webContents.send('change-language', 'es'),
+			},
+		],
+	});
+
+	menu.splice(1, 0, {
+		label: 'File',
+		submenu: [
+			{
+				label: 'Create New File',
+				type: 'submenu',
+				submenu: [
+					{
+						label: 'Map',
+						type: 'normal',
+					},
+					{
+						label: 'Prefab',
+						type: 'normal',
+					},
+					{
+						label: 'Script',
+						type: 'normal',
+					},
+				],
+			},
+			{
+				label: 'Add New File',
+				type: 'normal'
+			},
+			{
+				label: 'Save',
+				type: 'normal',
+				accelerator: 'CmdOrCtrl+S',
 				click: () => win?.webContents.send('change-language', 'es'),
 			},
 		],

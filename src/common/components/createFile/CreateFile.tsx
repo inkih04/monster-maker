@@ -1,21 +1,21 @@
 import * as Dialog from '@radix-ui/react-dialog';
-import './SaveFile.css';
+import './CreateFile.css';
 import { useProjectForm } from '../../customHooks/useProjectForm';
 import { Folder } from 'iconoir-react';
 import checkInvalidChars from '../../../../global/checks/checkInvalidChars';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMapStore } from '../../../Map/MapGState';
+import { useFileToBeCreatedStore } from '../../globalStores/useFileToBeCreated';
 
-interface SaveFileProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
-function SaveFile({ open, onOpenChange }: Readonly<SaveFileProps>) {
+function CreateFile() {
 	const [hasError, setHasError] = useState(false);
-	const contentMap = useMapStore((get) => get.exportToEngineFormat());
 	const { t } = useTranslation();
+
+	const open = useFileToBeCreatedStore((state) => state.isOpen);
+	const setOpen = useFileToBeCreatedStore((state) => state.setOpen);
+	const onOpenChange = useFileToBeCreatedStore((state) => state.onOpenChange);
+	const createFile = useFileToBeCreatedStore((state) => state.createFile);
+	const resetStore = useFileToBeCreatedStore((state) => state.reset);
 
 	const {
 		name,
@@ -28,12 +28,17 @@ function SaveFile({ open, onOpenChange }: Readonly<SaveFileProps>) {
 		isSubmitting,
 		isSelecting,
 	} = useProjectForm({
-		onSuccess: () => onOpenChange(false),
+		onSuccess: () => {
+			setOpen(false);
+			onOpenChange(false);
+		},
 	});
 
 	const handleClose = () => {
 		reset();
 		setHasError(false);
+		resetStore();
+		setOpen(false);
 		onOpenChange(false);
 	};
 
@@ -44,16 +49,15 @@ function SaveFile({ open, onOpenChange }: Readonly<SaveFileProps>) {
 
 		console.log(path);
 
-		const result = await window.api.saveFileCompletePath(name+".json", path, contentMap);
-		if (!result.success && result.error === 'File with that name already exists') {
-			console.log(result.error);
-			console.log('error');
+		const result = await createFile(name, path);
 
+		if (result.success) {
+			reset();
+			setOpen(false);
+			onOpenChange(false);
+		} else {
 			setHasError(true);
-			return;
 		}
-		reset();
-		onOpenChange(false);
 	};
 
 	const isNameValid = name.trim() !== '' && checkInvalidChars(name);
@@ -66,7 +70,7 @@ function SaveFile({ open, onOpenChange }: Readonly<SaveFileProps>) {
 				if (!isOpen) {
 					handleClose();
 				} else {
-					onOpenChange(isOpen);
+					setOpen(isOpen);
 				}
 			}}
 		>
@@ -145,4 +149,4 @@ function SaveFile({ open, onOpenChange }: Readonly<SaveFileProps>) {
 	);
 }
 
-export default SaveFile;
+export default CreateFile;

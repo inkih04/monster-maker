@@ -3,8 +3,7 @@ import { useTranslation } from 'react-i18next';
 import './SaveConfirmation.css';
 import { useMapStore } from '../../../Map/MapGState';
 import { useProjectStore } from '../../../Project/ProjectConfigGState';
-import SaveFile from '../saveFile/SaveFile';
-import { useState } from 'react';
+import { useFileToBeCreatedStore } from '../../globalStores/useFileToBeCreated';
 
 interface ConfirmDialogProps {
 	open: boolean;
@@ -16,7 +15,11 @@ function SaveConfirmation({ open, onOpenChange, onConfirm }: Readonly<ConfirmDia
 	const mapRelativePath = useMapStore((get) => get.mapRelativePath);
 	const currentProject = useProjectStore((get) => get.currentProject);
 	const contentMap = useMapStore((get) => get.exportToEngineFormat());
-	const [showSaveFile, setShowSaveFile] = useState(false);
+
+	const openFileCreation = useFileToBeCreatedStore((get) => get.setOpen);
+	const setFileExtension = useFileToBeCreatedStore((get) => get.setExtension);
+	const setContent = useFileToBeCreatedStore((get) => get.setContent);
+	const setOnOpenChange = useFileToBeCreatedStore((get) => get.setOnOpenChange);
 
 	const { t } = useTranslation();
 
@@ -36,48 +39,38 @@ function SaveConfirmation({ open, onOpenChange, onConfirm }: Readonly<ConfirmDia
 			onConfirm();
 			onOpenChange(false);
 		} else {
+			setFileExtension('.json');
+			setContent(contentMap);
+			setOnOpenChange((isOpen: boolean) => {
+				if (!isOpen) {
+					onConfirm();
+				}
+			});
 			onOpenChange(false);
-			setShowSaveFile(true);
+			openFileCreation(true);
 		}
 	};
 
-	const handleSaveFileSuccess = () => {
-		setShowSaveFile(false);
-		onConfirm();
-	};
-
 	return (
-		<>
-			<Dialog.Root open={open} onOpenChange={onOpenChange}>
-				<Dialog.Portal>
-					<Dialog.Overlay className="save--overlay" />
-					<Dialog.Content className="save--content">
-						<Dialog.Title className="save--title">{t('saveConfirmTitle')}</Dialog.Title>
-						<Dialog.Description className="save--description">
-							{t('saveConfirmMessage')}
-						</Dialog.Description>
-						<div className="save--buttons">
-							<button className="save--btn save--btn-cancel" onClick={handleCancel}>
-								{t('saveCancel')}
-							</button>
-							<button className="save--btn save--btn-confirm" onClick={handleConfirm}>
-								{t('saveConfirm')}
-							</button>
-						</div>
-					</Dialog.Content>
-				</Dialog.Portal>
-			</Dialog.Root>
-
-			<SaveFile
-				open={showSaveFile}
-				onOpenChange={(isOpen) => {
-					setShowSaveFile(isOpen);
-					if (!isOpen) {
-						onConfirm();
-					}
-				}}
-			/>
-		</>
+		<Dialog.Root open={open} onOpenChange={onOpenChange}>
+			<Dialog.Portal>
+				<Dialog.Overlay className="save--overlay" />
+				<Dialog.Content className="save--content">
+					<Dialog.Title className="save--title">{t('saveConfirmTitle')}</Dialog.Title>
+					<Dialog.Description className="save--description">
+						{t('saveConfirmMessage')}
+					</Dialog.Description>
+					<div className="save--buttons">
+						<button className="save--btn save--btn-cancel" onClick={handleCancel}>
+							{t('saveCancel')}
+						</button>
+						<button className="save--btn save--btn-confirm" onClick={handleConfirm}>
+							{t('saveConfirm')}
+						</button>
+					</div>
+				</Dialog.Content>
+			</Dialog.Portal>
+		</Dialog.Root>
 	);
 }
 

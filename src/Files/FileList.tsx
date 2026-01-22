@@ -1,129 +1,42 @@
-import { useEffect, useState } from 'react';
 import './FileList.css';
 import { getFileIcon } from '../common/utils/filesUtils';
 import { useFileWatcher } from '../common/customHooks/useFileWatcher';
-import { useProjectStore } from '../Project/ProjectConfigGState';
-import { useFolderStore } from '../common/globalStores/useFolderStore';
 import DeleteConfirmation from '../common/components/delete/DeleteConfirmation';
-import { useMapStore } from '../Map/MapGState';
-import type { MapData } from '../Map/MapGState';
-import Entity from '../domain/ecs/entity';
 import SaveConfirmation from '../common/components/save/SaveConfirmation';
+import { useFileActions } from './customHooks/useFileActions';
+import { useFileRename } from './customHooks/useFileRename';
+import { useFileEventListener } from './customHooks/useFileEventListener';
+
 
 export default function FileList() {
 	const { files, isLoading } = useFileWatcher();
-	const selectedFolder = useFolderStore((state) => state.selectedFolder);
-	const currentProject = useProjectStore((state) => state.currentProject);
-	const isDirty = useMapStore((state) => state.isDirty);
-	const loadMap = useMapStore((state) => state.loadMap);
-	const setMapRelativePath = useMapStore((state) => state.setMapRelativePath);
 
-	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
+	const {
+		showDeleteConfirm,
+		showSaveConfirm,
+		fileToDelete,
+		setShowDeleteConfirm,
+		setShowSaveConfirm,
+		tryOpenFile,
+		handleOpenFile,
+		handleConfirmDelete,
+		handleDeleteRequest,
+	} = useFileActions();
 
-	const [fileToDelete, setFileToDelete] = useState<{
-		name: string;
-		path: string;
-		type: string;
-	} | null>(null);
+	const {
+		renamingFile,
+		newFileName,
+		setNewFileName,
+		startRename,
+		cancelRename,
+		handleRenameKeyDown,
+	} = useFileRename();
 
-	const [fileToOpen, setFileToOpen] = useState<{
-		name: string;
-		path: string;
-		type: string;
-	} | null>(null);
-
-	const [renamingFile, setRenamingFile] = useState<string | null>(null);
-	const [newFileName, setNewFileName] = useState('');
-
-	const tryOpenFile = (file: { name: string; path: string; type: string }) => {
-		if (!selectedFolder?.path || !currentProject) return;
-
-		setFileToOpen(file);
-
-		if (isDirty) {
-			setShowSaveConfirm(true);
-		} else {
-			handleOpenFile(file);
-		}
-	};
-
-	useEffect(() => {
-		const cleanup = window.api.onFileAction((action, fileData) => {
-			switch (action) {
-				case 'rename':
-					setRenamingFile(fileData.path);
-					setNewFileName(fileData.name);
-					break;
-
-				case 'open':
-					tryOpenFile(fileData);
-					break;
-
-				case 'delete':
-					setFileToDelete(fileData);
-					setShowDeleteConfirm(true);
-					break;
-			}
-		});
-
-		return cleanup;
-	}, [selectedFolder, currentProject, isDirty]);
-
-	const handleConfirmDelete = async () => {
-		if (!fileToDelete || !selectedFolder?.path || !currentProject) return;
-
-		await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
-
-		setFileToDelete(null);
-	};
-
-	const handleOpenFile = async (file = fileToOpen) => {
-		if (!file || !selectedFolder?.path || !currentProject) return;
-
-		const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
-
-		if (!result.success || !result.content) return;
-
-		const parsedMap = JSON.parse(result.content.content);
-
-		if (!parsedMap.mapId || !parsedMap.entities) return;
-
-		const mapData: MapData = {
-			mapId: parsedMap.mapId,
-			width: parsedMap.width || 100,
-			height: parsedMap.height || 100,
-			tileSize: parsedMap.tileSize || 16,
-			entities: Array.isArray(parsedMap.entities)
-				? parsedMap.entities.reduce(
-						(acc: Record<string, Entity>, entity: Entity) => {
-							acc[entity.id] = entity;
-							return acc;
-						},
-						{} as Record<string, Entity>
-					)
-				: parsedMap.entities,
-		};
-
-		loadMap(mapData);
-		setMapRelativePath(result.content.relativePath);
-		setShowSaveConfirm(false);
-	};
-
-	const handleRenameKeyDown = async (
-		e: React.KeyboardEvent<HTMLTextAreaElement>,
-		file: { name: string; path: string; type: string }
-	) => {
-		if (e.key === 'Enter' && selectedFolder?.path && currentProject) {
-			e.preventDefault();
-			await window.api.renameFile(file.path, newFileName, selectedFolder.path, currentProject);
-			setRenamingFile(null);
-			setNewFileName('');
-		} else if (e.key === 'Escape') {
-			setRenamingFile(null);
-			setNewFileName('');
-		}
-	};
+	useFileEventListener({
+		onRename: startRename,
+		onOpen: tryOpenFile,
+		onDelete: handleDeleteRequest,
+	});
 
 	const handleFileContextMenu = (
 		e: React.MouseEvent,
@@ -162,10 +75,7 @@ export default function FileList() {
 									value={newFileName}
 									onChange={(e) => setNewFileName(e.target.value)}
 									onKeyDown={(e) => handleRenameKeyDown(e, file)}
-									onBlur={() => {
-										setRenamingFile(null);
-										setNewFileName('');
-									}}
+									onBlur={cancelRename}
 									autoFocus
 									rows={1}
 								/>
