@@ -20,6 +20,7 @@ function SaveConfirmation({ open, onOpenChange, onConfirm }: Readonly<ConfirmDia
 	const setFileExtension = useFileToBeCreatedStore((get) => get.setExtension);
 	const setContent = useFileToBeCreatedStore((get) => get.setContent);
 	const setOnOpenChange = useFileToBeCreatedStore((get) => get.setOnOpenChange);
+	const reset = useFileToBeCreatedStore((get) => get.reset);
 
 	const { t } = useTranslation();
 
@@ -39,6 +40,7 @@ function SaveConfirmation({ open, onOpenChange, onConfirm }: Readonly<ConfirmDia
 			onConfirm();
 			onOpenChange(false);
 		} else {
+			reset();
 			setFileExtension('.json');
 			setContent(contentMap);
 			setOnOpenChange((isOpen: boolean) => {

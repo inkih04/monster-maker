@@ -89,6 +89,8 @@ export const useMapStore = create<MapStore>((set, get) => ({
 	activeLayer: 'ground',
 
 	setMapRelativePath: (relativePath: string) => {
+		console.log(relativePath);
+
 		set({ mapRelativePath: relativePath });
 	},
 

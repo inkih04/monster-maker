@@ -134,26 +134,30 @@ app.whenReady().then(() => {
 					{
 						label: 'Map',
 						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'map'),
 					},
 					{
 						label: 'Prefab',
 						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'prefab'),
 					},
 					{
 						label: 'Script',
 						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'script'),
 					},
 				],
 			},
 			{
 				label: 'Add New File',
-				type: 'normal'
+				type: 'normal',
+				click: () => win?.webContents.send('add-new-file'),
 			},
 			{
 				label: 'Save',
 				type: 'normal',
 				accelerator: 'CmdOrCtrl+S',
-				click: () => win?.webContents.send('change-language', 'es'),
+				click: () => win?.webContents.send('save-file'),
 			},
 		],
 	});

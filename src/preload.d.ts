@@ -64,6 +64,10 @@ declare global {
 				completePath: string,
 				content: string
 			) => Promise<{ success: boolean; error?: string }>;
+
+			onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => () => void;
+			onAddNewFile: (callback: () => void) => () => void;
+			onSaveFile: (callback: () => void) => () => void;
 		};
 	}
 }

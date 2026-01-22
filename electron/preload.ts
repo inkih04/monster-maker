@@ -63,6 +63,25 @@ contextBridge.exposeInMainWorld('api', {
 	saveFile: (fileRelativePath: string, content: string, pd: ProjectData) =>
 		ipcRenderer.invoke('config:saveFile', fileRelativePath, content, pd),
 
-	saveFileCompletePath: (name:string ,completePath: string, content: string) =>
-		ipcRenderer.invoke('config:saveFileCompletePath', name,completePath, content),
+	saveFileCompletePath: (name: string, completePath: string, content: string) =>
+		ipcRenderer.invoke('config:saveFileCompletePath', name, completePath, content),
+
+	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			fileType: 'map' | 'prefab' | 'script'
+		) => callback(fileType);
+		ipcRenderer.on('create-new-file', subscription);
+		return () => ipcRenderer.removeListener('create-new-file', subscription);
+	},
+
+	onAddNewFile: (callback: () => void) => {
+		ipcRenderer.on('add-new-file', callback);
+		return () => ipcRenderer.removeAllListeners('add-new-file');
+	},
+
+	onSaveFile: (callback: () => void) => {
+		ipcRenderer.on('save-file', callback);
+		return () => ipcRenderer.removeAllListeners('save-file');
+	},
 });

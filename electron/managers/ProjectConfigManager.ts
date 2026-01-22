@@ -72,18 +72,17 @@ export class ProjectConfigManager {
 
 			if (this.fileSystemService.saveFile(completePath, content)) {
 				return { success: true };
-			}
-			else {
-				return { success: false};
+			} else {
+				return { success: false };
 			}
 		} catch (error) {
 			return { success: false, error: String(error) };
 		}
 	}
-		public saveFileCompletePath(
-		name:string,
+	public saveFileCompletePath(
+		name: string,
 		completePath: string,
-		content: string,
+		content: string
 	): { success: boolean; error?: string } {
 		try {
 			const dirPath = path.dirname(completePath);
@@ -93,15 +92,14 @@ export class ProjectConfigManager {
 			completePath = path.join(completePath, name);
 
 			if (this.fileSystemService.saveFile(completePath, content)) {
-				log("completado")
+				log('completado');
 				return { success: true };
-			}
-			else {
-				log("fallo2")
-				return { success: false};
+			} else {
+				log('fallo2');
+				return { success: false };
 			}
 		} catch (error) {
-			log("catch")
+			log('catch');
 			return { success: false, error: String(error) };
 		}
 	}
