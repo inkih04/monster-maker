@@ -11,27 +11,21 @@ import { Layer } from '../domain/ecs/layer';
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
 	const setZoom = useMapStore((state) => state.setZoom);
+	const paintedTiles = useMapStore((state) => state.paintedTiles); 
+	const setActiveLayer = useMapStore((state) => state.setActiveLayer);
+	const activeLayer = useMapStore((state) => state.activeLayer);
+	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
 
 	const tileSets = useTileSetStore((state) => state.tilemaps);
 	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
 	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
 	const tileSize = useMapStore((state) => state.map?.tileSize ?? 16);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
-	const setActiveLayer = useMapStore((state) => state.setActiveLayer);
-	const activeLayer = useMapStore((state) => state.activeLayer);
-	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
 
 	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
 
-	const {
-		paintedTiles,
-		isDrawing,
-		previewPosition,
-		setIsDrawing,
-		setPreviewPosition,
-		paintTile,
-		clearMap,
-	} = useTilePainter();
+	const { isDrawing, previewPosition, setIsDrawing, setPreviewPosition, paintTile, clearMap } =
+		useTilePainter();
 
 	const tilesetImageRef = useTileSetImage(currentTileSet, setTileMapLoaded);
 

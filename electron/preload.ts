@@ -22,7 +22,7 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');
 	},
-	exportMap: (mapData: string) => ipcRenderer.invoke('map:export', mapData),
+	exportMap: (mapData: string) => ipcRenderer.invoke('export-map', mapData),
 	onExportMapRequest: (callback: () => void) => {
 		ipcRenderer.on('export-map-request', callback);
 		return () => ipcRenderer.removeAllListeners('export-map-request');
@@ -36,5 +36,52 @@ contextBridge.exposeInMainWorld('api', {
 	onFilesChanged: (callback: (files: string[]) => void) => {
 		ipcRenderer.on('files-changed', (_event, files) => callback(files));
 		return () => ipcRenderer.removeAllListeners('files-changed');
+	},
+	showFileContextMenu: (fileData: { name: string; path: string; type: string }) =>
+		ipcRenderer.send('show-file-context-menu', fileData),
+	onFileAction: (
+		callback: (action: string, fileData: { name: string; path: string; type: string }) => void
+	) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			action: string,
+			fileData: { name: string; path: string; type: string }
+		) => callback(action, fileData);
+		ipcRenderer.on('file-action', subscription);
+		return () => ipcRenderer.removeListener('file-action', subscription);
+	},
+	deleteFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:deleteFile', fileRelativePath, folderPath, pd),
+	renameFile: (
+		oldFileRelativePath: string,
+		newFileName: string,
+		folderPath: string,
+		pd: ProjectData
+	) => ipcRenderer.invoke('config:renameFile', oldFileRelativePath, newFileName, folderPath, pd),
+	getFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:getFile', fileRelativePath, folderPath, pd),
+	saveFile: (fileRelativePath: string, content: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:saveFile', fileRelativePath, content, pd),
+
+	saveFileCompletePath: (name: string, completePath: string, content: string) =>
+		ipcRenderer.invoke('config:saveFileCompletePath', name, completePath, content),
+
+	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			fileType: 'map' | 'prefab' | 'script'
+		) => callback(fileType);
+		ipcRenderer.on('create-new-file', subscription);
+		return () => ipcRenderer.removeListener('create-new-file', subscription);
+	},
+
+	onAddNewFile: (callback: () => void) => {
+		ipcRenderer.on('add-new-file', callback);
+		return () => ipcRenderer.removeAllListeners('add-new-file');
+	},
+
+	onSaveFile: (callback: () => void) => {
+		ipcRenderer.on('save-file', callback);
+		return () => ipcRenderer.removeAllListeners('save-file');
 	},
 });

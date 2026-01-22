@@ -5,6 +5,7 @@ import path from 'node:path';
 import { setupMapHandlers } from './ipc/mapHandlers';
 import { setupProjectConfigHandlers } from './ipc/projectConfigHandlers';
 import defaultMenu from 'electron-default-menu';
+import { setupContextMenuHandlers } from './ipc/contextMenuHandlers';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -85,6 +86,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
 	createWindow();
+	setupContextMenuHandlers();
 	const menu = defaultMenu(app, require('electron').shell);
 
 	const editMenuIndex = menu.findIndex((item) => item.label === 'Edit');
@@ -100,6 +102,10 @@ app.whenReady().then(() => {
 				},
 			}
 		);
+
+		editSubmenu.push({
+			label: 'Export Current Map to PNG',
+		});
 	}
 
 	menu.splice(-1, 0, {
@@ -114,6 +120,44 @@ app.whenReady().then(() => {
 				label: 'Español',
 				type: 'radio',
 				click: () => win?.webContents.send('change-language', 'es'),
+			},
+		],
+	});
+
+	menu.splice(1, 0, {
+		label: 'File',
+		submenu: [
+			{
+				label: 'Create New File',
+				type: 'submenu',
+				submenu: [
+					{
+						label: 'Map',
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'map'),
+					},
+					{
+						label: 'Prefab',
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'prefab'),
+					},
+					{
+						label: 'Script',
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'script'),
+					},
+				],
+			},
+			{
+				label: 'Add New File',
+				type: 'normal',
+				click: () => win?.webContents.send('add-new-file'),
+			},
+			{
+				label: 'Save',
+				type: 'normal',
+				accelerator: 'CmdOrCtrl+S',
+				click: () => win?.webContents.send('save-file'),
 			},
 		],
 	});

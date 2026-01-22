@@ -72,6 +72,31 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
+	ipcMain.handle(
+		'config:deleteFile',
+		async (_event, fileRelativePath: string, folderPath: string, pd: ProjectData) => {
+			try {
+				const success = configManager.deleteFile(fileRelativePath, folderPath, pd);
+
+				if (success) {
+					return {
+						success: true,
+					};
+				} else {
+					return {
+						success: false,
+						error: 'File does not exist or could not be deleted',
+					};
+				}
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
+
 	ipcMain.handle('config:selectFolder', async () => {
 		try {
 			const result = await dialog.showOpenDialog({
@@ -182,4 +207,90 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			};
 		}
 	});
+
+	ipcMain.handle(
+		'config:renameFile',
+		async (
+			_event,
+			oldFileRelativePath: string,
+			newFileName: string,
+			folderPath: string,
+			pd: ProjectData
+		) => {
+			try {
+				const success = configManager.renameFile(oldFileRelativePath, newFileName, folderPath, pd);
+
+				if (success) {
+					return {
+						success: true,
+					};
+				} else {
+					return {
+						success: false,
+						error: 'File does not exist or could not be renamed',
+					};
+				}
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
+
+	ipcMain.handle(
+		'config:getFile',
+		async (_event, fileRelativePath: string, folderPath: string, pd: ProjectData) => {
+			try {
+				const result = configManager.getFile(fileRelativePath, folderPath, pd);
+				return result;
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
+
+	ipcMain.handle(
+		'config:saveFile',
+		async (_event, fileRelativePath: string, content: string, pd: ProjectData) => {
+			try {
+				const result = configManager.saveFile(fileRelativePath, content, pd);
+
+				if (result.success) {
+					return { success: true };
+				} else {
+					return { success: false, error: result.error };
+				}
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
+
+	ipcMain.handle(
+		'config:saveFileCompletePath',
+		async (_event, name: string, completePath: string, content: string) => {
+			try {
+				const result = configManager.saveFileCompletePath(name, completePath, content);
+
+				if (result.success) {
+					return { success: true };
+				} else {
+					return { success: false, error: result.error };
+				}
+			} catch (error) {
+				return {
+					success: false,
+					error: String(error),
+				};
+			}
+		}
+	);
 }

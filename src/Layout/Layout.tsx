@@ -6,11 +6,13 @@ import Map from '../Map/Map';
 import ModalProject from '../Project/ModalProject';
 import FolderTree from '../Files/FolderTree';
 import FileList from '../Files/FileList';
+import CreateFile from '../common/components/createFile/CreateFile';
 
 function Layout() {
 	return (
 		<>
 			<ModalProject />
+			<CreateFile/>
 			<div className="content">
 				<ToolBar />
 				<main className="main">

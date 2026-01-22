@@ -10,5 +10,18 @@
 	"openProject": "Abrir Proyecto",
 	"invalidDirectory": "Ese directorio no es un proyecto válido",
 	"opening": "Abriendo...",
-    "open": "Abrir"
+	"open": "Abrir",
+	"deleteConfirmTitle": "Confirmar Eliminación",
+	"deleteConfirmMessage": "¿Estás seguro de que deseas eliminar \"{{item}}\"? Esta acción no se puede deshacer.",
+	"deleteConfirm": "Eliminar",
+	"deleteCancel": "Cancelar",
+	"saveConfirmTitle": "Confirmar Guardado",
+	"saveConfirmMessage": "Tienes cambios sin guardar. ¿Deseas guardarlos antes de continuar?",
+	"saveConfirm": "Guardar",
+	"saveCancel": "Cancelar",
+	"saveFileTitle": "Guardar archivo",
+	"fileName": "Nombre del archivo",
+	"fileAlreadyExists": "Ya existe un archivo con ese nombre",
+	"saving": "Guardando...",
+	"save": "Guardar"
 }

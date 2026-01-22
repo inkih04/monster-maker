@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from 'react';
 import './ModalProject.css';
 import SearchBar from '../common/components/searchBar/SearchBar';
 import Project from './Project';
-import Create from '../common/components/create/Create';
+import Create from '../common/components/createProject/Create';
 import { useProjectStore } from './ProjectConfigGState';
 import OpenProject from '../common/components/openProject/OpenProject';
 import { useTranslation } from 'react-i18next';

@@ -2,15 +2,15 @@ import { ipcMain, dialog } from 'electron';
 import fs from 'fs';
 
 export function setupMapHandlers(): void {
-	ipcMain.handle('map:export', async (_event, mapData: string) => {
+	ipcMain.handle('export-map', async (_event, mapData: string) => {
 		try {
 			const result = await dialog.showSaveDialog({
 				title: 'Export Map',
 				defaultPath: 'map.json',
 				filters: [
 					{ name: 'JSON Files', extensions: ['json'] },
-					{ name: 'All Files', extensions: ['*'] }
-				]
+					{ name: 'All Files', extensions: ['*'] },
+				],
 			});
 
 			if (result.canceled || !result.filePath) {
@@ -21,12 +21,12 @@ export function setupMapHandlers(): void {
 
 			return {
 				success: true,
-				path: result.filePath
+				path: result.filePath,
 			};
 		} catch (error) {
 			return {
 				success: false,
-				error: String(error)
+				error: String(error),
 			};
 		}
 	});

@@ -2,17 +2,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ProjectData } from '../../global/types/projectData';
 import FolderNode from '../../global/types/folderNode';
+import { log } from 'console';
 
 export class FileSystemService {
 	public getProjectPath(pd: ProjectData): string {
 		return path.join(pd.path, pd.name);
 	}
 
-
 	public exists(filePath: string): boolean {
 		return fs.existsSync(filePath);
 	}
-
 
 	public isDirectory(filePath: string): boolean {
 		try {
@@ -29,6 +28,30 @@ export class FileSystemService {
 		});
 	}
 
+	public renameFile(oldPath: string, newPath: string): boolean {
+		try {
+			if (!this.exists(oldPath)) {
+				console.error(`Cannot rename file: ${oldPath} does not exist`);
+				return false;
+			}
+
+			if (this.exists(newPath)) {
+				console.error(`Cannot rename file: ${newPath} already exists`);
+				return false;
+			}
+
+			if (this.isDirectory(oldPath)) {
+				console.error(`Cannot rename: ${oldPath} is a directory, not a file`);
+				return false;
+			}
+
+			fs.renameSync(oldPath, newPath);
+			return true;
+		} catch (error) {
+			console.error(`Error renaming file from ${oldPath} to ${newPath}:`, error);
+			return false;
+		}
+	}
 
 	public getRequiredProjectPaths(): string[] {
 		return [
@@ -42,6 +65,44 @@ export class FileSystemService {
 		];
 	}
 
+	public readFile(filePath: string): string {
+		return fs.readFileSync(filePath, 'utf-8');
+	}
+
+	public saveFile(path: string, content: string): boolean {
+		try {
+			if (this.isDirectory(path)) {
+				return false;
+			}
+
+			fs.writeFileSync(path, content, 'utf-8');
+
+			return true;
+		} catch (error) {
+			log(error);
+			return false;
+		}
+	}
+
+	public deleteFile(filePath: string): boolean {
+		try {
+			if (!this.exists(filePath)) {
+				console.error(`Cannot delete file: ${filePath} does not exist`);
+				return false;
+			}
+
+			if (this.isDirectory(filePath)) {
+				console.error(`Cannot delete: ${filePath} is a directory, not a file`);
+				return false;
+			}
+
+			fs.unlinkSync(filePath);
+			return true;
+		} catch (error) {
+			console.error(`Error deleting file ${filePath}:`, error);
+			return false;
+		}
+	}
 
 	public createDirectories(basePath: string, directories: string[]): void {
 		directories.forEach((dir) => {
@@ -49,7 +110,6 @@ export class FileSystemService {
 			fs.mkdirSync(fullPath, { recursive: true });
 		});
 	}
-
 
 	public readDirectoryStructure(basePath: string): FolderNode[] {
 		if (!this.exists(basePath)) {
@@ -81,7 +141,6 @@ export class FileSystemService {
 		return buildStructure(basePath, basePath);
 	}
 
-
 	public readFilesInFolder(folderPath: string): string[] {
 		if (!this.exists(folderPath)) {
 			return [];
@@ -109,7 +168,6 @@ export class FileSystemService {
 		return files;
 	}
 
-
 	public readJSON<T>(filePath: string): T | null {
 		try {
 			if (!this.exists(filePath)) {
@@ -122,7 +180,6 @@ export class FileSystemService {
 			return null;
 		}
 	}
-
 
 	public writeJSON<T>(filePath: string, data: T): boolean {
 		try {

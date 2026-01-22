@@ -3,22 +3,12 @@ import { useMapStore } from '../../Map/MapGState';
 import { useTileSetStore } from '../../Tileset/TileSetGState';
 import { Layer } from '../../domain/ecs/layer';
 
-export interface PaintedTile {
-	x: number;
-	y: number;
-	tilesetX: number;
-	tilesetY: number;
-	entityId: string;
-	layer: Layer;
-}
-
 interface PreviewPosition {
 	x: number;
 	y: number;
 }
 
 interface UseTilePainterResult {
-	paintedTiles: PaintedTile[];
 	isDrawing: boolean;
 	previewPosition: PreviewPosition | null;
 	setIsDrawing: (value: boolean) => void;
@@ -29,9 +19,9 @@ interface UseTilePainterResult {
 
 export function useTilePainter(): UseTilePainterResult {
 	const activeLayer = useMapStore((state) => state.activeLayer);
-	const addEntity = useMapStore((state) => state.addEntity);
-	const removeEntity = useMapStore((state) => state.removeEntity);
-	const addComponent = useMapStore((state) => state.addComponent);
+	const paintTiles = useMapStore((state) => state.paintTiles);
+	const clearMapTiles = useMapStore((state) => state.clearMapTiles);
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	const tileSets = useTileSetStore((state) => state.tilemaps);
 	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
@@ -39,7 +29,6 @@ export function useTilePainter(): UseTilePainterResult {
 
 	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
 
-	const [paintedTiles, setPaintedTiles] = useState<PaintedTile[]>([]);
 	const [isDrawing, setIsDrawing] = useState(false);
 	const [previewPosition, setPreviewPosition] = useState<PreviewPosition | null>(null);
 
@@ -52,7 +41,16 @@ export function useTilePainter(): UseTilePainterResult {
 			if (!currentTileSet || !currentTileSet.pathImg) return;
 
 			const tileSize = currentTileSet.tileSizeX;
-			const newTiles: PaintedTile[] = [];
+			const tilesToPaint: Array<{
+				mapX: number;
+				mapY: number;
+				tilesetX: number;
+				tilesetY: number;
+				entityId: string;
+				layer: Layer;
+				tileSize: number;
+				spriteSheetPath: string;
+			}> = [];
 
 			if (selectedArea) {
 				const minTilesetX = Math.min(selectedArea.startX, selectedArea.endX);
@@ -68,106 +66,42 @@ export function useTilePainter(): UseTilePainterResult {
 						const mapX = tileX + offsetX;
 						const mapY = tileY + offsetY;
 
-						const entityId = generateEntityId();
-
-						newTiles.push({
-							x: mapX,
-							y: mapY,
+						tilesToPaint.push({
+							mapX,
+							mapY,
 							tilesetX,
 							tilesetY,
-							entityId,
+							entityId: generateEntityId(),
 							layer: activeLayer,
-						});
-
-						addEntity({
-							id: entityId,
-							tag: 'TILEMAP',
-							layer: activeLayer,
-							components: {},
-						});
-
-						addComponent(entityId, 'POSITION', {
-							x: mapX * tileSize,
-							y: mapY * tileSize,
-							rotation: 0,
-						});
-
-						addComponent(entityId, 'RENDER', {
+							tileSize,
 							spriteSheetPath: currentTileSet.pathImg,
-							x: tilesetX * tileSize,
-							y: tilesetY * tileSize,
-							w: tileSize,
-							h: tileSize,
-							width: tileSize,
-							height: tileSize,
 						});
 					}
 				}
 			} else {
-				const entityId = generateEntityId();
-
-				newTiles.push({
-					x: tileX,
-					y: tileY,
+				tilesToPaint.push({
+					mapX: tileX,
+					mapY: tileY,
 					tilesetX: 0,
 					tilesetY: 0,
-					entityId,
+					entityId: generateEntityId(),
 					layer: activeLayer,
-				});
-
-				addEntity({
-					id: entityId,
-					tag: 'TILEMAP',
-					layer: activeLayer,
-					components: {},
-				});
-
-				addComponent(entityId, 'POSITION', {
-					x: tileX * tileSize,
-					y: tileY * tileSize,
-					rotation: 0,
-				});
-
-				addComponent(entityId, 'RENDER', {
+					tileSize,
 					spriteSheetPath: currentTileSet.pathImg,
-					x: 0,
-					y: 0,
-					w: tileSize,
-					h: tileSize,
-					width: tileSize,
-					height: tileSize,
 				});
 			}
 
-			setPaintedTiles((prev) => {
-				const tilesToRemove = prev.filter((existing) =>
-					newTiles.some(
-						(nt) => nt.x === existing.x && nt.y === existing.y && nt.layer === existing.layer
-					)
-				);
-
-				tilesToRemove.forEach((tile) => removeEntity(tile.entityId));
-
-				const filtered = prev.filter(
-					(existing) =>
-						!newTiles.some(
-							(nt) => nt.x === existing.x && nt.y === existing.y && nt.layer === existing.layer
-						)
-				);
-
-				return [...filtered, ...newTiles];
-			});
+			setIsDirty(true);
+			paintTiles(tilesToPaint);
 		},
-		[activeLayer, addComponent, addEntity, currentTileSet, removeEntity, selectedArea]
+		[activeLayer, currentTileSet, paintTiles, selectedArea, setIsDirty]
 	);
 
 	const clearMap = useCallback(() => {
-		paintedTiles.forEach((tile) => removeEntity(tile.entityId));
-		setPaintedTiles([]);
-	}, [paintedTiles, removeEntity]);
+		clearMapTiles();
+	}, [clearMapTiles]);
 
 	return {
-		paintedTiles,
 		isDrawing,
 		previewPosition,
 		setIsDrawing,

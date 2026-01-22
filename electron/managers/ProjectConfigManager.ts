@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { ProjectsConfig } from '../../global/types/projectConfig';
 import { ProjectData } from '../../global/types/projectData';
+import { ProjectFile } from '../../global/types/projectFile';
 import { log } from 'console';
 import FolderNode from '../../global/types/folderNode';
 import { BrowserWindow } from 'electron';
@@ -21,6 +22,163 @@ export class ProjectConfigManager {
 		this.config = this.loadConfig();
 	}
 
+	public deleteFile(fileRelativePath: string, folderPath: string, pd: ProjectData): boolean {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
+
+			log(completePath);
+
+			if (!this.fileSystemService.exists(completePath)) {
+				console.log(`File does not exist: ${completePath}`);
+				return false;
+			}
+
+			this.fileSystemService.deleteFile(completePath);
+
+			if (this.currentWatchedFolder) {
+				const folderPath = path.dirname(fileRelativePath);
+				const watchedFolderPath = this.currentWatchedFolder.folder.path;
+
+				if (folderPath === watchedFolderPath) {
+					const files = this.getFilesInFolder(
+						this.currentWatchedFolder.pd,
+						this.currentWatchedFolder.folder
+					);
+					this.fileSystemWatcher.notifyMainWindow('files-changed', files);
+				}
+			}
+
+			return true;
+		} catch (error) {
+			console.log(`Error deleting file: ${error}`);
+			return false;
+		}
+	}
+
+	public saveFile(
+		fileRelativePath: string,
+		content: string,
+		pd: ProjectData
+	): { success: boolean; error?: string } {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const completePath = path.join(projectPath, fileRelativePath);
+
+			const dirPath = path.dirname(completePath);
+			if (!this.fileSystemService.exists(dirPath)) {
+				return { success: false, error: `Directory does not exist: ${dirPath}` };
+			}
+
+			if (this.fileSystemService.saveFile(completePath, content)) {
+				return { success: true };
+			} else {
+				return { success: false };
+			}
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+	public saveFileCompletePath(
+		name: string,
+		completePath: string,
+		content: string
+	): { success: boolean; error?: string } {
+		try {
+			const dirPath = path.dirname(completePath);
+			if (!this.fileSystemService.exists(dirPath)) {
+				return { success: false, error: `Directory does not exist: ${dirPath}` };
+			}
+			completePath = path.join(completePath, name);
+
+			if (this.fileSystemService.saveFile(completePath, content)) {
+				log('completado');
+				return { success: true };
+			} else {
+				log('fallo2');
+				return { success: false };
+			}
+		} catch (error) {
+			log('catch');
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public getFile(
+		fileRelativePath: string,
+		folderPath: string,
+		pd: ProjectData
+	): { success: boolean; content?: ProjectFile; error?: string } {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
+
+			if (!this.fileSystemService.exists(completePath)) {
+				console.log(`File does not exist: ${completePath}`);
+				return { success: false, error: 'File does not exist' };
+			}
+
+			if (this.fileSystemService.isDirectory(completePath)) {
+				console.log(`Path is a directory, not a file: ${completePath}`);
+				return { success: false, error: 'Path is a directory' };
+			}
+
+			const cont = this.fileSystemService.readFile(completePath);
+			const relativeP = path.join(folderPath, fileRelativePath);
+
+			return { success: true, content: { relativePath: relativeP, content: cont } };
+		} catch (error) {
+			console.log(`Error getting file: ${error}`);
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public renameFile(
+		oldFileRelativePath: string,
+		newFileName: string,
+		folderPath: string,
+		pd: ProjectData
+	): boolean {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const oldCompletePath = path.join(projectPath, path.join(folderPath, oldFileRelativePath));
+
+			if (!this.fileSystemService.exists(oldCompletePath)) {
+				console.log(`File does not exist: ${oldCompletePath}`);
+				return false;
+			}
+
+			const directory = path.dirname(oldCompletePath);
+			const extension = path.extname(oldCompletePath);
+			const newCompletePath = path.join(directory, newFileName + extension);
+
+			if (this.fileSystemService.exists(newCompletePath)) {
+				console.log(`File already exists: ${newCompletePath}`);
+				return false;
+			}
+
+			this.fileSystemService.renameFile(oldCompletePath, newCompletePath);
+
+			if (this.currentWatchedFolder) {
+				const folderPath = path.dirname(oldFileRelativePath);
+				const watchedFolderPath = this.currentWatchedFolder.folder.path;
+
+				if (folderPath === watchedFolderPath) {
+					const files = this.getFilesInFolder(
+						this.currentWatchedFolder.pd,
+						this.currentWatchedFolder.folder
+					);
+					this.fileSystemWatcher.notifyMainWindow('files-changed', files);
+				}
+			}
+
+			return true;
+		} catch (error) {
+			console.log(`Error deleting file: ${error}`);
+			return false;
+		}
+	}
+
 	public setMainWindow(window: BrowserWindow): void {
 		this.fileSystemWatcher.setMainWindow(window);
 	}
@@ -31,7 +189,6 @@ export class ProjectConfigManager {
 		}
 		return path.join(process.resourcesPath, 'assets', 'projects.json');
 	}
-
 
 	public validateProjectPath(pd: ProjectData): boolean {
 		try {
@@ -65,9 +222,9 @@ export class ProjectConfigManager {
 		}
 	}
 
-
 	public loadConfig(): ProjectsConfig {
 		try {
+			log('loading Configuration');
 			const config = this.fileSystemService.readJSON<ProjectsConfig>(this.configPath);
 
 			if (config) {
@@ -101,7 +258,6 @@ export class ProjectConfigManager {
 	public saveProjectConfiguration(): void {
 		this.fileSystemService.writeJSON(this.configPath, this.config);
 	}
-
 
 	public removeProject(pd: ProjectData): void {
 		this.config.projects = this.config.projects.filter((p) => p.path !== pd.path);
@@ -157,8 +313,6 @@ export class ProjectConfigManager {
 			return false;
 		}
 	}
-
-
 
 	private getRandomColor(): string {
 		const colors = ['#45B7D1', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B195'];
