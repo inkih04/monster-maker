@@ -15,7 +15,11 @@ module.exports = {
     'react-refresh',
   ],
 
-  ignorePatterns: ['dist', 'dist-electron', '.eslintrc.cjs'],
+  ignorePatterns: ['dist', 'dist-electron', '.eslintrc.cjs',     "engine/**",
+    "engine/*",
+    "engine/**/**/*.ts",
+    "cmake-build-default/",
+    "**/cmake-build-default/**"],
 
   rules: {
     // --- Siguen reglas útiles ---

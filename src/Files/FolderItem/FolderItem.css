@@ -1,0 +1,68 @@
+.folders--item {
+	margin-top: 0;
+	margin-left: 10px;
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+	padding: var(--space-xs) var(--space-sm);
+	cursor: pointer;
+	border-radius: var(--radius);
+	transition: background-color 0.15s ease;
+	user-select: none;
+	background: none;
+	border: none;
+	width: 100%;
+	text-align: left;
+	font-family: inherit;
+	color: inherit;
+}
+
+.folders--item:hover {
+	background-color: var(--color-3);
+}
+
+.folders--item:focus {
+	outline: none;
+}
+
+.folders--item:focus-visible {
+	outline: 2px solid var(--color-6);
+	outline-offset: -2px;
+}
+
+.folders--icon {
+	flex-shrink: 0;
+	color: var(--color-6);
+}
+
+.folders--name {
+	font-weight: 400;
+	font-size: var(--font-md);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.folders--selected {
+	background-color: var(--color-3);
+}
+
+.folders--level-0 {
+	padding-left: var(--space-sm);
+}
+
+.folders--level-1 {
+	padding-left: calc(var(--space-sm) + 10px);
+}
+
+.folders--level-2 {
+	padding-left: calc(var(--space-sm) + 20px);
+}
+
+.folders--level-3 {
+	padding-left: calc(var(--space-sm) + 30px);
+}
+
+.folders--level-4 {
+	padding-left: calc(var(--space-sm) + 40px);
+}

@@ -1,0 +1,140 @@
+.Dialog-overlay {
+	background-color: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
+	animation: overlayShow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes overlayShow {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.dialog-options-bar {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+	gap: 20px;
+}
+
+.dialog-buttons {
+	display: flex;
+	justify-content: right;
+	flex-grow: 1;
+	flex-shrink: 0;
+	gap: var(--space-ms);
+	margin-right: var(--space-ms);
+}
+
+.dialog-content {
+	display: flex;
+	height: 100%;
+	flex-direction: column;
+	position: relative;
+}
+.dialog-content::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: url('/src/assets/img/MonsterMaker.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+	opacity: 0.15;
+	z-index: -1;
+	pointer-events: none;
+}
+
+.dialog-btn {
+	padding: 10px;
+	background-color: var(--color-2);
+	color: var(--color-10);
+	border: none;
+	transition: all 0.2s;
+	font-size: var(--font-md);
+	border-radius: var(--radius);
+	box-shadow: 0 3px 4px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+}
+
+.dialog-btn:hover {
+	background-color: var(--color-4);
+}
+
+.dialog-projects {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	align-items: center;
+	justify-content: flex-start;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 10px;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	margin-bottom: 20px;
+}
+
+.dialog-projects::-webkit-scrollbar {
+	display: none;
+}
+
+.dialog-searchbar {
+	display: flex;
+	flex-direction: row;
+	justify-content: left;
+	align-items: center;
+	flex-grow: 1;
+}
+
+.Dialog-wrapper {
+	background-color: var(--color-3);
+	border-radius: 8px;
+	box-shadow:
+		0 10px 38px -10px rgba(0, 0, 0, 0.35),
+		0 10px 20px -15px rgba(0, 0, 0, 0.2);
+	position: fixed;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 45vw;
+	height: 50vh;
+	min-width: 600px;
+	min-height: 400px;
+	max-width: 800px;
+	max-height: 85vh;
+	padding: 25px;
+	z-index: 1001;
+	animation: contentShow 200ms cubic-bezier(0.16, 1, 0.3, 1);
+	overflow: hidden;
+}
+
+@keyframes contentShow {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -48%) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+.Dialog-wrapper [role='heading'] {
+	margin: 0;
+}
+
+.dialog-content {
+	margin-top: var(--space-xs);
+	gap: 35px;
+}

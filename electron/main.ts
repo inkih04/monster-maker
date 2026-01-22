@@ -1,68 +1,174 @@
-import { app, BrowserWindow } from 'electron'
-import { createRequire } from 'node:module'
-import { fileURLToPath } from 'node:url'
-import path from 'node:path'
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from 'electron';
+import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import { setupMapHandlers } from './ipc/mapHandlers';
+import { setupProjectConfigHandlers } from './ipc/projectConfigHandlers';
+import defaultMenu from 'electron-default-menu';
+import { setupContextMenuHandlers } from './ipc/contextMenuHandlers';
 
-const require = createRequire(import.meta.url)
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const require = createRequire(import.meta.url);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// The built directory structure
-//
-// ├─┬─┬ dist
-// │ │ └── index.html
-// │ │
-// │ ├─┬ dist-electron
-// │ │ ├── main.js
-// │ │ └── preload.mjs
-// │
-process.env.APP_ROOT = path.join(__dirname, '..')
+process.env.APP_ROOT = path.join(__dirname, '..');
 
-// 🚧 Use ['ENV_NAME'] avoid vite:define plugin - Vite@2.x
-export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
-export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron')
-export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist')
+export const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL'];
+export const MAIN_DIST = path.join(process.env.APP_ROOT, 'dist-electron');
+export const RENDERER_DIST = path.join(process.env.APP_ROOT, 'dist');
 
-process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 'public') : RENDERER_DIST
+process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
+	? path.join(process.env.APP_ROOT, 'public')
+	: RENDERER_DIST;
 
-let win: BrowserWindow | null
+let win: BrowserWindow | null = null;
 
 function createWindow() {
-  win = new BrowserWindow({
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs'),
-    },
-  })
+	win = new BrowserWindow({
+		icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+		show: false,
+		minHeight: 600,
+		minWidth: 800,
+		webPreferences: {
+			preload: path.join(__dirname, 'preload.mjs'),
+			contextIsolation: true,
+			nodeIntegration: false,
+			sandbox: true,
+			webSecurity: true,
+		},
+	});
 
-  // Test active push message to Renderer-process.
-  win.webContents.on('did-finish-load', () => {
-    win?.webContents.send('main-process-message', (new Date).toLocaleString())
-  })
+	win.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+		const csp = VITE_DEV_SERVER_URL
+			? [
+					"default-src 'self' http://localhost:5173 ws://localhost:5173;",
+					"script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173;",
+					"style-src 'self' 'unsafe-inline' http://localhost:5173;",
+					"img-src 'self' data: blob:;",
+					"font-src 'self' data:;",
+				].join(' ')
+			: [
+					"default-src 'self';",
+					"script-src 'self';",
+					"style-src 'self' 'unsafe-inline';",
+					"img-src 'self' data:;",
+					"font-src 'self';",
+				].join(' ');
 
-  if (VITE_DEV_SERVER_URL) {
-    win.loadURL(VITE_DEV_SERVER_URL)
-  } else {
-    // win.loadFile('dist/index.html')
-    win.loadFile(path.join(RENDERER_DIST, 'index.html'))
-  }
+		callback({
+			responseHeaders: {
+				...details.responseHeaders,
+				'Content-Security-Policy': [csp],
+			},
+		});
+	});
+
+	win.webContents.on('did-finish-load', () => {
+		win?.webContents.send('main-process-message', new Date().toLocaleString());
+	});
+
+	win.once('ready-to-show', () => {
+		if (VITE_DEV_SERVER_URL) {
+			win?.showInactive();
+		} else {
+			win?.show();
+		}
+	});
+
+	if (VITE_DEV_SERVER_URL) {
+		win.loadURL(VITE_DEV_SERVER_URL);
+	} else {
+		win.loadFile(path.join(RENDERER_DIST, 'index.html'));
+	}
+
+	setupProjectConfigHandlers(win);
+	setupMapHandlers();
 }
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+app.whenReady().then(() => {
+	createWindow();
+	setupContextMenuHandlers();
+	const menu = defaultMenu(app, require('electron').shell);
+
+	const editMenuIndex = menu.findIndex((item) => item.label === 'Edit');
+	if (editMenuIndex !== -1 && menu[editMenuIndex].submenu) {
+		const editSubmenu = menu[editMenuIndex].submenu as MenuItemConstructorOptions[];
+		editSubmenu.push(
+			{ type: 'separator' },
+			{
+				label: 'Export Current Map to JSON',
+				accelerator: 'CmdOrCtrl+E',
+				click: () => {
+					win?.webContents.send('export-map-request');
+				},
+			}
+		);
+
+		editSubmenu.push({
+			label: 'Export Current Map to PNG',
+		});
+	}
+
+	menu.splice(-1, 0, {
+		label: 'Language',
+		submenu: [
+			{
+				label: 'English',
+				type: 'radio',
+				click: () => win?.webContents.send('change-language', 'en'),
+			},
+			{
+				label: 'Español',
+				type: 'radio',
+				click: () => win?.webContents.send('change-language', 'es'),
+			},
+		],
+	});
+
+	menu.splice(1, 0, {
+		label: 'File',
+		submenu: [
+			{
+				label: 'Create New File',
+				type: 'submenu',
+				submenu: [
+					{
+						label: 'Map',
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'map'),
+					},
+					{
+						label: 'Prefab',
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'prefab'),
+					},
+					{
+						label: 'Script',
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'script'),
+					},
+				],
+			},
+			{
+				label: 'Add New File',
+				type: 'normal',
+				click: () => win?.webContents.send('add-new-file'),
+			},
+			{
+				label: 'Save',
+				type: 'normal',
+				accelerator: 'CmdOrCtrl+S',
+				click: () => win?.webContents.send('save-file'),
+			},
+		],
+	});
+
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+});
+
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-    win = null
-  }
-})
+	if (process.platform !== 'darwin') app.quit();
+});
 
 app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow()
-  }
-})
-
-app.whenReady().then(createWindow)
+	if (BrowserWindow.getAllWindows().length === 0) createWindow();
+});

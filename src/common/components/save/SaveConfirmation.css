@@ -1,0 +1,100 @@
+.save--overlay {
+	background-color: rgba(0, 0, 0, 0.5);
+	position: fixed;
+	inset: 0;
+	animation: overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes overlayShow {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.save--content {
+	background-color: var(--color-1);
+	border-radius: var(--radius);
+	box-shadow:
+		0 10px 38px -10px rgba(0, 0, 0, 0.35),
+		0 10px 20px -15px rgba(0, 0, 0, 0.2);
+	position: fixed;
+	top: 45%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90vw;
+	max-width: 450px;
+	max-height: 85vh;
+	padding: var(--space-lg);
+	animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes contentShow {
+	from {
+		opacity: 0;
+		transform: translate(-50%, -48%) scale(0.96);
+	}
+	to {
+		opacity: 1;
+		transform: translate(-50%, -50%) scale(1);
+	}
+}
+
+.save--title {
+	margin: 0;
+	font-weight: 700;
+	color: var(--color-9);
+	font-size: var(--font-lg);
+	margin-bottom: var(--space-md);
+}
+
+.save--description {
+	margin: 0;
+	color: var(--color-7);
+	font-size: var(--font-md);
+	line-height: 1.5;
+	margin-bottom: var(--space-lg);
+}
+
+.save--buttons {
+	display: flex;
+	gap: var(--space-ms);
+	justify-content: flex-end;
+}
+
+.save--btn {
+	all: unset;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--radius);
+	padding: var(--space-sm) var(--space-md);
+	font-size: var(--font-md);
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 150ms ease;
+}
+
+.save--btn-cancel {
+	background-color: var(--color-3);
+	color: var(--color-9);
+}
+
+.save--btn-cancel:hover {
+	background-color: var(--color-4);
+}
+
+.save--btn-confirm {
+	background-color: #16a34a;
+	color: var(--color-1);
+}
+
+.save--btn-confirm:hover {
+	background-color: #15803d;
+}
+.save--btn:focus-visible {
+	outline: 2px solid var(--color-6);
+	outline-offset: 2px;
+}

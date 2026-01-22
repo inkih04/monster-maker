@@ -1,24 +1,87 @@
-import { ipcRenderer, contextBridge } from 'electron'
+import { ipcRenderer, contextBridge } from 'electron';
+import { ProjectData } from '../global/types/projectData';
+import FolderNode from '../global/types/folderNode';
 
-// --------- Expose some API to the Renderer process ---------
-contextBridge.exposeInMainWorld('ipcRenderer', {
-  on(...args: Parameters<typeof ipcRenderer.on>) {
-    const [channel, listener] = args
-    return ipcRenderer.on(channel, (event, ...args) => listener(event, ...args))
-  },
-  off(...args: Parameters<typeof ipcRenderer.off>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.off(channel, ...omit)
-  },
-  send(...args: Parameters<typeof ipcRenderer.send>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.send(channel, ...omit)
-  },
-  invoke(...args: Parameters<typeof ipcRenderer.invoke>) {
-    const [channel, ...omit] = args
-    return ipcRenderer.invoke(channel, ...omit)
-  },
+contextBridge.exposeInMainWorld('api', {
+	getProjects: () => ipcRenderer.invoke('config:getAll'),
+	addProject: (pd: ProjectData) => ipcRenderer.invoke('config:add', pd),
+	removeProject: (pd: ProjectData) => ipcRenderer.invoke('config:remove', pd),
+	selectFolder: () => ipcRenderer.invoke('config:selectFolder'),
+	openProject: (pd: ProjectData) => ipcRenderer.invoke('config:open', pd),
+	validateProjectPath: (pd: ProjectData) => ipcRenderer.invoke('validate-project-path', pd),
+	getDirectoryStructure: (pd: ProjectData) =>
+		ipcRenderer.invoke('config:getDirectoryStructure', pd),
 
-  // You can expose other APTs you need here.
-  // ...
-})
+	startWatchingDirectory: (pd: ProjectData) => ipcRenderer.invoke('config:startWatching', pd),
+	stopWatchingDirectory: () => ipcRenderer.invoke('config:stopWatching'),
+	onDirectoryStructureChanged: (callback: (structure: FolderNode[]) => void) => {
+		ipcRenderer.on('directory-structure-changed', (_event, structure) => callback(structure));
+		return () => ipcRenderer.removeAllListeners('directory-structure-changed');
+	},
+	onLanguageChange: (callback: (lng: string) => void) => {
+		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
+		return () => ipcRenderer.removeAllListeners('change-language');
+	},
+	exportMap: (mapData: string) => ipcRenderer.invoke('export-map', mapData),
+	onExportMapRequest: (callback: () => void) => {
+		ipcRenderer.on('export-map-request', callback);
+		return () => ipcRenderer.removeAllListeners('export-map-request');
+	},
+	getFilesInFolder: (pd: ProjectData, folder: FolderNode) =>
+		ipcRenderer.invoke('config:getFilesInFolder', pd, folder),
+
+	startWatchingFiles: (pd: ProjectData, folder: FolderNode) =>
+		ipcRenderer.invoke('config:startWatchingFiles', pd, folder),
+	stopWatchingFiles: () => ipcRenderer.invoke('config:stopWatchingFiles'),
+	onFilesChanged: (callback: (files: string[]) => void) => {
+		ipcRenderer.on('files-changed', (_event, files) => callback(files));
+		return () => ipcRenderer.removeAllListeners('files-changed');
+	},
+	showFileContextMenu: (fileData: { name: string; path: string; type: string }) =>
+		ipcRenderer.send('show-file-context-menu', fileData),
+	onFileAction: (
+		callback: (action: string, fileData: { name: string; path: string; type: string }) => void
+	) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			action: string,
+			fileData: { name: string; path: string; type: string }
+		) => callback(action, fileData);
+		ipcRenderer.on('file-action', subscription);
+		return () => ipcRenderer.removeListener('file-action', subscription);
+	},
+	deleteFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:deleteFile', fileRelativePath, folderPath, pd),
+	renameFile: (
+		oldFileRelativePath: string,
+		newFileName: string,
+		folderPath: string,
+		pd: ProjectData
+	) => ipcRenderer.invoke('config:renameFile', oldFileRelativePath, newFileName, folderPath, pd),
+	getFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:getFile', fileRelativePath, folderPath, pd),
+	saveFile: (fileRelativePath: string, content: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:saveFile', fileRelativePath, content, pd),
+
+	saveFileCompletePath: (name: string, completePath: string, content: string) =>
+		ipcRenderer.invoke('config:saveFileCompletePath', name, completePath, content),
+
+	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			fileType: 'map' | 'prefab' | 'script'
+		) => callback(fileType);
+		ipcRenderer.on('create-new-file', subscription);
+		return () => ipcRenderer.removeListener('create-new-file', subscription);
+	},
+
+	onAddNewFile: (callback: () => void) => {
+		ipcRenderer.on('add-new-file', callback);
+		return () => ipcRenderer.removeAllListeners('add-new-file');
+	},
+
+	onSaveFile: (callback: () => void) => {
+		ipcRenderer.on('save-file', callback);
+		return () => ipcRenderer.removeAllListeners('save-file');
+	},
+});
