@@ -27,6 +27,8 @@ private:
     GLFWwindow* m_window{};
     void setUpShaders() const;
     void setUpCamera(int width, int height);
+    static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+    void onResize(int width, int height);
 
     int m_width;
     int m_height;
