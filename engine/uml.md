@@ -117,6 +117,7 @@ classDiagram
       -int m_width
       -int m_height
       -string m_title
+      -std::unique_ptr<Camera> m_camera
       -GLFWwindow m_window
       -void setUpShaders()
       -void setUpCamera()

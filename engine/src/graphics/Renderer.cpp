@@ -89,8 +89,10 @@ void Renderer::draw(  glm::vec2 position, glm::vec2 size, float rotate, glm::vec
     }
     m_currentShader->use();
 
+    glm::vec2 snappedPos = glm::vec2(std::floor(position.x), std::floor(position.y));
+
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(position, 0.0f));
+    model = glm::translate(model, glm::vec3(snappedPos, 0.0f));
     model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));
@@ -118,8 +120,10 @@ void Renderer::drawSprite(
 
     m_currentShader->use();
 
+    glm::vec2 snappedPos = glm::vec2(std::floor(position.x), std::floor(position.y));
+
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(position, 0.0f));
+    model = glm::translate(model, glm::vec3(snappedPos, 0.0f));
     model = glm::translate(model, glm::vec3(0.5f * size.x, 0.5f * size.y, 0.0f));
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f));

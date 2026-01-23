@@ -26,7 +26,7 @@ void ExplorationState::update(int deltaTime) {
 
 void ExplorationState::setEntityManager() {
     m_entityManager = std::make_unique<EntityManager>();
-    EntityLoader::loadEntitiesFromFile("../resources/maps/data/test_map.json", *m_entityManager);
+    EntityLoader::loadEntitiesFromFile("../resources/maps/data/map32.json", *m_entityManager);
 
 }
 
