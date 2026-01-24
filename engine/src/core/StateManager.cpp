@@ -33,9 +33,13 @@ void StateManager::updateCurrentState(int deltaTime) {
 void StateManager::pushState(std::unique_ptr<State> state) {
     state->setStateManager(this);
     m_states.push(std::move(state));
+    m_states.top()->onEnter();
 }
 
 void StateManager::popState() {
     if (!m_states.empty())
         m_states.pop();
+    if (!m_states.empty()) {
+        m_states.top()->onEnter();
+    }
 }

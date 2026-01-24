@@ -95,6 +95,7 @@ void AnimationComponent::updateRenderComponent() {
         return;
     }
 
+    //todo:Lo mismo puedo guardar el puntero en una variable miembro para no tener que buscarlo cada vez
     auto* renderComp = dynamic_cast<RenderComponent*>(renderCompBase);
 
     if (!renderComp) {

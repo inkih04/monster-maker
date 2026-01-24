@@ -34,6 +34,7 @@ class Renderer {
             return instance;
         };
 
+        const Camera* getWorldCamera() const { return m_activeCamera; }
         void loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
         void setShader(const std::string& name);
         void setCamera(const Camera &camera);

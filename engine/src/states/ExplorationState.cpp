@@ -11,11 +11,16 @@
 #include "InputManager.h"
 #include "MovementComponent.h"
 #include "PositionComponent.h"
+#include "ScriptEngine.h"
 
 
 ExplorationState::ExplorationState() {
     setEntityManager();
 
+}
+void ExplorationState::applyScriptContext()  {
+    if (m_entityManager)
+        ScriptEngine::getInstance().setupBindingsDynamic(Renderer::getInstance().getWorldCamera(), *m_entityManager);
 }
 
 
@@ -26,7 +31,7 @@ void ExplorationState::update(int deltaTime) {
 
 void ExplorationState::setEntityManager() {
     m_entityManager = std::make_unique<EntityManager>();
-    EntityLoader::loadEntitiesFromFile("../resources/maps/data/map32.json", *m_entityManager);
+    EntityLoader::loadEntitiesFromFile("../resources/maps/data/map32-super.json", *m_entityManager);
 
 }
 

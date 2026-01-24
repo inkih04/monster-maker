@@ -16,8 +16,6 @@ void MovementComponent::update(int deltaTime) {
 }
 
 void MovementComponent::move(Position pos) {
-
-
     PositionComponent* positionComponent = getPosition();
     if (!positionComponent) return;
 
@@ -68,6 +66,7 @@ bool MovementComponent::checkDirectionLeft(Position newPos, Position oldPos) con
     return newPos.x < oldPos.x;
 }
 
+//todo: guardar estos punteros en variables miembro para no tener que buscarlos cada vez
 AnimationComponent* MovementComponent::getAnimation() const {
     auto component = m_entity->getComponent(ComponentsType::ANIMATION);
     return dynamic_cast<AnimationComponent*>(component);
@@ -77,6 +76,7 @@ PositionComponent* MovementComponent::getPosition() const {
     auto component = m_entity->getComponent(ComponentsType::POSITION);
     return dynamic_cast<PositionComponent*>(component);
 }
+//todo:------------------------------------------------------------------------------
 
 std::string MovementComponent::getStandAnimation() const {
     if (m_lastDirection == Direction::BOTTOM) return animationToString(BasicAnimation::STANDDOWN);

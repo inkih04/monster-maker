@@ -5,13 +5,14 @@
 #include <memory>
 
 #include "ExplorationState.h"
-#include "GLFW/glfw3.h"
+#include "ScriptEngine.h"
 
 class Engine;
 
 Application::Application(const char* title, int width, int height) {
     m_engine = std::make_unique<Engine>(width, height, title);
     m_stateManager = StateManager();
+    ScriptEngine::getInstance().setupBindingsStatic();
     m_stateManager.pushState( std::make_unique<ExplorationState>());
 }
 
