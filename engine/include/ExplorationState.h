@@ -19,6 +19,8 @@ class ExplorationState : public State{
 
     protected:
         void setEntityManager() override;
+        void applyScriptContext() override;
+
 
     private:
 

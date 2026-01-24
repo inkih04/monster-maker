@@ -16,6 +16,8 @@ classDiagram
     EntityManager "1"-- * State
     EntityManager "*"--"*" Entity
     Entity "*"--"*" Component
+    Application "1"-- "1" ScriptEngine
+    ScriptBindings "1"-- "1" ScriptEngine
     State -- EntityLoader
     
     
@@ -26,6 +28,26 @@ classDiagram
         -createPositionComponent(json data) unique_ptr~Component~
         -createRenderComponent(json data) unique_ptr~Component~
         -createColliderComponent(json data) unique_ptr~Component~
+    }
+    
+    class ScriptEngine {
+        <<singleton>>
+        -sol::state m_lua
+        +getInstance()$ ScriptEngine&
+        +init() void
+        +setupBindingsStatic() void
+        +setupBindingsDynamic(Camera* cam, EntityManager& em) void
+        +runScript(string filePath) bool
+        +getState() sol::state&
+    }
+
+    class ScriptBindings {
+        <<static>>
+        +registerStatic(sol::state& lua)$ void
+        +registerDynamic(sol::state& lua, Camera* cam, EntityManager& em)$ void
+        -registerKeys(sol::state& lua)
+        -registerEntity(sol::state& lua)
+        -registerComponents(sol::state& lua)
     }
     
     class Component {
@@ -72,6 +94,7 @@ classDiagram
         -StateManager* m_stateManager
         -EntityManager* m_entityManager
         -setEntityManager()*
+        +onEnter() void*
         +render()*
         +update(int deltaTime)*
         +setStateManager(StateManager* stateManager) void*

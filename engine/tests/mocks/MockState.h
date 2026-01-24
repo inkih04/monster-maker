@@ -15,6 +15,8 @@ public:
     void update(int deltaTime) override { updateCalled = true; }
     void render() override { renderCalled = true; }
     void setEntityManager() override {}
+    void applyScriptContext() override {
+    }
 };
 
 
