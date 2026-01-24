@@ -29,8 +29,6 @@ class ExplorationState : public State{
         void renderEntities() const;
         void renderShadows() const;
         void renderForeground() const;
-
-        void updatePlayerMovement(int deltaTime);
 };
 
 #endif //POKEMONGAMEENGINE_EXPLORATIONSTATE_H

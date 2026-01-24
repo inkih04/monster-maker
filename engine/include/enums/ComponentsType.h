@@ -11,6 +11,7 @@ enum class ComponentsType {
     COLLIDER,
     ANIMATION,
     MOVEMENT,
+    SCRIPT,
 };
 
 #endif //POKEMONGAMEENGINE_COMPONENTSTYPE_H

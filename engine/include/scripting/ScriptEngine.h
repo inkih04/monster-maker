@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <sol/state.hpp>
+#include "Camera.h"
 
 class EntityManager;
 

@@ -12,6 +12,7 @@
 #include <stdexcept>
 
 #include "MovementComponent.h"
+#include "ScriptComponet.h"
 
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
     std::ifstream file(filePath);
@@ -95,7 +96,10 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
         entity->addComponent(ComponentsType::MOVEMENT, std::move(std::make_unique<MovementComponent>()));
     }
 
-
+    if (components.contains("SCRIPT")) {
+        auto scriptComponent = createScriptComponent(components["SCRIPT"]);
+        entity->addComponent(ComponentsType::SCRIPT, std::move(scriptComponent));
+    }
 }
 
 std::unique_ptr<Component> EntityLoader::createPositionComponent(const json& data) {
@@ -104,6 +108,15 @@ std::unique_ptr<Component> EntityLoader::createPositionComponent(const json& dat
     float rotation = data.value("rotation", 0.0f);
 
     return std::make_unique<PositionComponent>(x, y, rotation);
+}
+
+std::unique_ptr<Component> EntityLoader::createScriptComponent(const json& data) {
+    if (!data.contains("path")) {
+        throw std::runtime_error("ScriptComponent requiere un campo 'path' con la ruta al archivo .lua");
+    }
+
+    std::string path = data["path"];
+    return std::make_unique<ScriptComponent>(path);
 }
 
 std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data) {
