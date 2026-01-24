@@ -14,6 +14,7 @@ Texture::Texture(const std::string& path)
     }
 
     GLenum format = GL_RGB;
+    GLenum internalFormat = GL_RGB;
     if (m_channels == 1)
         format = GL_RED;
     else if (m_channels == 3)
@@ -29,7 +30,8 @@ Texture::Texture(const std::string& path)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, format, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_width, m_height, 0, format, GL_UNSIGNED_BYTE, data);
 
     stbi_image_free(data);
     glBindTexture(GL_TEXTURE_2D, 0);

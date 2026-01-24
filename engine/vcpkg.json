@@ -10,5 +10,12 @@
     "nlohmann-json",
     "lua",
     "sol2"
-  ]
+  ],
+  "overrides": [
+    {
+      "name": "lua",
+      "version": "5.4.6"
+    }
+  ],
+  "builtin-baseline": "4e39a8622e56a113c89228e4e13944dce8654da7"
 }
