@@ -75,6 +75,8 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         src/ui/TextRenderer.cpp
         include/enums/GameConfig.h
         src/ui/DialogBox.cpp
+        include/components/ScriptComponet.h
+        src/entities/components/ScriptComponent.cpp
 )
 
 target_link_libraries(PokemonGameEngine
@@ -123,6 +125,7 @@ set(TEST_SOURCES
         include/components/ColliderComponent.h
         include/enums/Direction.h
         tests/unitary/DialogBoxTest.cpp
+        include/components/ScriptComponet.h
 )
 
 add_executable(UnitTests ${TEST_SOURCES})

@@ -22,7 +22,7 @@ void ScriptEngine::setupBindingsStatic() {
     ScriptBindings::registerStatic(m_lua);
 }
 
-void ScriptEngine::setupBindingsDynamic(const Camera* camera, EntityManager& entityManager) {
+void ScriptEngine::setupBindingsDynamic(Camera* camera, EntityManager& entityManager) {
     ScriptBindings::registerDynamic(m_lua, camera, entityManager);
 }
 

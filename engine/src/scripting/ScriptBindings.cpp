@@ -1,9 +1,5 @@
-//
-// Created by inkih on 13/12/25.
-//
 #include "scripting/ScriptBindings.h"
 #include <GLFW/glfw3.h>
-
 #include "Camera.h"
 #include "EntityManager.h"
 #include "EntityTag.h"
@@ -22,16 +18,15 @@ void ScriptBindings::registerStatic(sol::state& lua) {
     registerCamera(lua);
 }
 
-void ScriptBindings::registerDynamic(sol::state& lua, const Camera* camera, EntityManager& entityManager) {
+void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityManager& entityManager) {
     lua["World"] = &entityManager;
-    lua["MainCamera"] = const_cast<Camera*>(camera);
+    lua["MainCamera"] = camera;
 
     lua.set_function("GetEntity", [&entityManager](EntityTag tag) -> Entity* {
         auto entities = entityManager.getEntitiesByTag(tag);
         return entities.empty() ? nullptr : entities[0];
     });
 }
-
 
 void ScriptBindings::registerEntity(sol::state& lua) {
     lua.new_usertype<Entity>("Entity",
@@ -64,7 +59,6 @@ void ScriptBindings::registerCamera(sol::state& lua) {
         "setZoom", &Camera::setZoom,
         "getPosition", &Camera::getPosition
     );
-
 }
 
 void ScriptBindings::registerTags(sol::state& lua) {
@@ -134,6 +128,10 @@ void ScriptBindings::registerKeys(sol::state& lua) {
     keys["X"] = GLFW_KEY_X;
     keys["Y"] = GLFW_KEY_Y;
     keys["Z"] = GLFW_KEY_Z;
+    keys["UP"] = GLFW_KEY_UP;
+    keys["DOWN"] = GLFW_KEY_DOWN;
+    keys["LEFT"] = GLFW_KEY_LEFT;
+    keys["RIGHT"] = GLFW_KEY_RIGHT;
 
     lua["Keys"] = keys;
 }
@@ -160,32 +158,9 @@ void ScriptBindings::registerPositionComponent(sol::state& lua) {
     );
 
     lua.new_usertype<PositionComponent>("PositionComponent",
-        "x", sol::property(
-            [](PositionComponent& p) { return p.getPosition().x; },
-            [](PositionComponent& p, float x) {
-                Position current = p.getPosition();
-                p.setPosition(x, current.y, current.rotation);
-            }
-        ),
-        "y", sol::property(
-            [](PositionComponent& p) { return p.getPosition().y; },
-            [](PositionComponent& p, float y) {
-                Position current = p.getPosition();
-                p.setPosition(current.x, y, current.rotation);
-            }
-        ),
-        "rotation", sol::property(
-            [](PositionComponent& p) { return p.getPosition().rotation; },
-            [](PositionComponent& p, float rot) {
-                Position current = p.getPosition();
-                p.setPosition(current.x, current.y, rot);
-            }
-        ),
-
-        "set", sol::overload(
-            static_cast<void(PositionComponent::*)(float, float, float)>(&PositionComponent::setPosition),
-            static_cast<void(PositionComponent::*)(const Position&)>(&PositionComponent::setPosition)
-        ),
+        "x", sol::readonly_property([](PositionComponent& p) { return p.getPosition().x; }),
+        "y", sol::readonly_property([](PositionComponent& p) { return p.getPosition().y; }),
+        "rotation", sol::readonly_property([](PositionComponent& p) { return p.getPosition().rotation; }),
         "get", &PositionComponent::getPosition
     );
 }

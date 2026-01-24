@@ -41,7 +41,7 @@ void Renderer::setShader(const std::string& name) {
     }
 }
 
-void Renderer::setCamera(const Camera& camera) {
+void Renderer::setCamera( Camera& camera) {
     m_activeCamera = &camera;
     if (m_currentShader) {
         updateCameraUniforms();

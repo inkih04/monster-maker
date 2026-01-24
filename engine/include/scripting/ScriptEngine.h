@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <sol/state.hpp>
+#include "Camera.h"
 
 class EntityManager;
 
@@ -17,7 +18,7 @@ public:
 
     void init();
     void setupBindingsStatic();
-    void setupBindingsDynamic(const Camera* camera, EntityManager& entityManager);
+    void setupBindingsDynamic(Camera* camera, EntityManager& entityManager);
     bool runScript(const std::string& filePath);
 
     sol::state& getState() { return m_lua; }

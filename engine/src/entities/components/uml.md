@@ -7,6 +7,22 @@ Component <|-- RenderComponent
 Component <|-- ColliderComponent
 Component <|-- MovementComponent
 Component <|-- AnimationComponent
+Component <|-- ScriptComponent
+
+class ScriptComponent {
+    - std::string m_scriptPath
+    - sol::protected_function m_luaStart
+    - sol::protected_function m_luaUpdate
+    - sol::protected_function m_luaDestroy
+    - bool m_initialized
+    - bool m_startCalled
+
+    + ScriptComponent(std::string path)
+    + ~ScriptComponent()
+    + void init()
+    + void update(int deltaTime)
+    + void render()
+}
 
 class AnimationComponent {
         -unordered_map<string, Animation> m_animations
@@ -70,6 +86,7 @@ class AnimationComponent {
         COLLIDER
         ANIMATION
         MOVEMENT
+        SCRIPT
     }
 
     class Component {

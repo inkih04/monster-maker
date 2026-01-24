@@ -29,7 +29,7 @@ class MovementComponent : public Component {
 
     public:
         MovementComponent() {};
-        void move(Position pos);
+        void move(const Position& pos);
 
 
 

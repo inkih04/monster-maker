@@ -15,7 +15,7 @@ void MovementComponent::update(int deltaTime) {
     //todo: ejecutar un script de lua y/o dejar algo preecho en c++ para comprobar cuando la entity debe desplazarse
 }
 
-void MovementComponent::move(Position pos) {
+void MovementComponent::move(const Position& pos) {
     PositionComponent* positionComponent = getPosition();
     if (!positionComponent) return;
 

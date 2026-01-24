@@ -25,7 +25,6 @@ void ExplorationState::applyScriptContext()  {
 
 
 void ExplorationState::update(int deltaTime) {
-    updatePlayerMovement(deltaTime);
     m_entityManager->updateEntities(deltaTime);
 }
 
@@ -79,40 +78,4 @@ void ExplorationState::renderForeground() const {
     for (auto* enity : entities) {
         enity->render();
     }
-}
-
-void ExplorationState::updatePlayerMovement(int deltaTime) {
-    auto playerEntity = m_entityManager->getEntitiesByTag(EntityTag::PLAYER)[0];
-    auto& input = InputManager::getInstance();
-
-    if (!playerEntity) return;
-
-    Component* pc = playerEntity->getComponent(ComponentsType::POSITION);
-    PositionComponent* positionComponent = dynamic_cast<PositionComponent*>(pc);
-    if (!positionComponent) return;
-
-    float playerSpeed = 2;
-    Position position = positionComponent->getPosition();
-
-    auto mc = playerEntity->getComponent(ComponentsType::MOVEMENT);
-    auto movementComponent = dynamic_cast<MovementComponent*>(mc);
-
-    if (!movementComponent) return;
-
-
-    if (input.isKeyDown(GLFW_KEY_W) || input.isKeyDown(GLFW_KEY_UP)) {
-        position.y -= playerSpeed;
-    }
-    else if (input.isKeyDown(GLFW_KEY_S) || input.isKeyDown(GLFW_KEY_DOWN)) {
-        position.y += playerSpeed;
-    }
-    else if (input.isKeyDown(GLFW_KEY_A) || input.isKeyDown(GLFW_KEY_LEFT)) {
-        position.x -= playerSpeed;
-    }
-    else if (input.isKeyDown(GLFW_KEY_D) || input.isKeyDown(GLFW_KEY_RIGHT)) {
-        position.x += playerSpeed;
-
-    }
-    movementComponent->move(position);
-
 }
