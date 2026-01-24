@@ -18,7 +18,7 @@ public:
 
     void init();
     void setupBindingsStatic();
-    void setupBindingsDynamic(const Camera* camera, EntityManager& entityManager);
+    void setupBindingsDynamic(Camera* camera, EntityManager& entityManager);
     bool runScript(const std::string& filePath);
 
     sol::state& getState() { return m_lua; }

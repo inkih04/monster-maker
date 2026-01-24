@@ -37,10 +37,8 @@ void Camera::setZoom(float zoom) {
 
 void Camera::updateViewMatrix() {
     glm::mat4 transform = glm::mat4(1.0f);
-
     transform = glm::translate(transform, glm::vec3(m_width / 2.0f, m_height / 2.0f, 0.0f));
     transform = glm::scale(transform, glm::vec3(m_zoom, m_zoom, 1.0f));
-    transform = glm::translate(transform, glm::vec3(-m_width / 2.0f, -m_height / 2.0f, 0.0f));
     transform = glm::translate(transform, glm::vec3(-m_position.x, -m_position.y, 0.0f));
     m_view = transform;
 }

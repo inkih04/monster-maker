@@ -18,9 +18,9 @@ void ScriptBindings::registerStatic(sol::state& lua) {
     registerCamera(lua);
 }
 
-void ScriptBindings::registerDynamic(sol::state& lua, const Camera* camera, EntityManager& entityManager) {
+void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityManager& entityManager) {
     lua["World"] = &entityManager;
-    lua["MainCamera"] = const_cast<Camera*>(camera);
+    lua["MainCamera"] = camera;
 
     lua.set_function("GetEntity", [&entityManager](EntityTag tag) -> Entity* {
         auto entities = entityManager.getEntitiesByTag(tag);
