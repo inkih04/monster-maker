@@ -82,6 +82,7 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
         float height = colliderData.value("height", 0.0f);
 
         if (width > 0 && height > 0) {
+            entityManager.setCollisionEntity(entity);
             auto colliderComponent = createColliderComponent(colliderData);
             entity->addComponent(ComponentsType::COLLIDER, std::move(colliderComponent));
         }

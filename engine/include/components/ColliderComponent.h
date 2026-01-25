@@ -8,13 +8,15 @@
 
 class CollisionComponent: public Component {
     private:
-        float m_width;
-        float m_height;
+        int m_width;
+        int m_height;
 
     public:
-        CollisionComponent(const float width, const float height): m_width(width), m_height(height) {};
+        CollisionComponent(const int width, const int height): m_width(width), m_height(height) {};
         void update(int deltaTime) override {};
         void render() override {};
+        [[nodiscard]] int getWidth() const {return m_width;};
+        [[nodiscard]] int getHeight() const {return m_height;};
 
 };
 

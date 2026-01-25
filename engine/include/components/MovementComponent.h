@@ -7,6 +7,7 @@
 #include "AnimationComponent.h"
 #include "Component.h"
 #include "Direction.h"
+#include "EntityManager.h"
 #include "Position.h"
 #include "PositionComponent.h"
 #include "enums/BasicAnimation.h"
@@ -17,23 +18,22 @@ class MovementComponent : public Component {
         bool checkDirectionDown(Position newPos, Position oldPos) const;
         bool checkDirectionRight(Position newPos, Position oldPos) const;
         bool checkDirectionLeft(Position newPos, Position oldPos) const;
-
         Direction m_lastDirection = Direction::UNKNOWN;
-
         AnimationComponent *getAnimation() const;
-
         PositionComponent *getPosition() const;
-
         std::string getStandAnimation() const;
+        AnimationComponent* m_animationComponent;
+        PositionComponent *m_positionComponent;
+        EntityManager* m_entityManager;
 
 
     public:
-        MovementComponent() {};
+        MovementComponent();
         void move(const Position& pos);
 
 
 
-        void update(int deltaTime) override;
+        void update(int deltaTime) override {};
         void render() override {};
 };
 
