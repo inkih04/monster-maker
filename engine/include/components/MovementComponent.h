@@ -7,7 +7,6 @@
 #include "AnimationComponent.h"
 #include "Component.h"
 #include "Direction.h"
-#include "EntityManager.h"
 #include "Position.h"
 #include "PositionComponent.h"
 #include "enums/BasicAnimation.h"
@@ -24,11 +23,10 @@ class MovementComponent : public Component {
         std::string getStandAnimation() const;
         AnimationComponent* m_animationComponent;
         PositionComponent *m_positionComponent;
-        EntityManager* m_entityManager;
 
 
     public:
-        MovementComponent();
+        MovementComponent():m_animationComponent(nullptr), m_positionComponent(nullptr){};
         void move(const Position& pos);
 
 

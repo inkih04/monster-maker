@@ -2,6 +2,8 @@
 // Created by inkih on 6/12/25.
 //
 #pragma once
+#include <cmath>
+#include <functional>
 #include "GameConfig.h"
 
 struct Position {
