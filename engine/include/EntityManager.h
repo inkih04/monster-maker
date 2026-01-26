@@ -7,6 +7,8 @@
 
 #include <memory>
 #include <vector>
+
+#include "CollisionService.h"
 #include "ComponentsType.h"
 #include "enums/EntityLayer.h"
 #include "enums/EntityTag.h"
@@ -20,23 +22,21 @@ class EntityManager {
         std::unordered_map<EntityTag, std::vector<Entity*>> m_entitiesByTag;
         std::unordered_map<EntityLayer, std::vector<Entity*>> m_entitiesByLayer;
         std::vector<Entity*> m_rawCollisionEntities;
-        std::unordered_map<Position, Entity*> m_collisionEntities;
         void initCollisionCache();
+        bool isCacheStarted;
+        std::unique_ptr<CollisionService> m_collisionService;
 
     public:
-        EntityManager() = default;
+        EntityManager();
         Entity* createEntity(EntityTag tag, EntityLayer layer);
         Entity* createEntity();
 
         void destroyEntity(Entity* entity);
         std::vector<Entity*> getEntitiesByTag(EntityTag tag) const;
         std::vector<Entity*> getEntitiesByLayer(EntityLayer layer) const;
-        ~EntityManager() = default;
-        void updateEntities(int deltaTime) ;
+        ~EntityManager();
+        void updateEntities(int deltaTime);
         void renderEntities() const;
-        void updatePositionCollisionCache(const Position& oldPos, const Position& newPos, Entity* entity);
-
-        bool isAreaFree(const Position &targetPos, int width, int height, const Entity *source);
 
         void setCollisionEntity(Entity* entity) {m_rawCollisionEntities.push_back(entity);};
         std::vector<Entity*> getEntitiesByComponent(ComponentsType type) const;

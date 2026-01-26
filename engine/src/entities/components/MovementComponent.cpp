@@ -11,21 +11,15 @@
 #include "PositionComponent.h"
 #include <string>
 
+#include "ColliderComponent.h"
+#include "CollisionService.h"
 
 
-void MovementComponent::move(const Position& pos) {
-    if (!m_positionComponent) m_positionComponent = getPosition();
-    if (!m_animationComponent) m_animationComponent = getAnimation();
-
-    if (!m_positionComponent || !m_animationComponent) return;
-
-    Position oldPos = m_positionComponent->getPosition();
-
+void MovementComponent::updateAnimation(const Position &pos, CollisionService *collisionService, Position oldPos) {
     if (checkDirectionUp(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVEUP));
         m_lastDirection = Direction::TOP;
     }
-
     else if (checkDirectionDown(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVEDOWN));
         m_lastDirection = Direction::BOTTOM;
@@ -37,13 +31,41 @@ void MovementComponent::move(const Position& pos) {
     else if (checkDirectionLeft(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVELEFT));
         m_lastDirection = Direction::LEFT;
+
+        collisionService->updatePositionCollisionCache(oldPos, pos, m_entity);
+        m_positionComponent->setPosition(pos);
     }
     else {
         if (m_animationComponent) m_animationComponent->play(getStandAnimation());
     }
+}
 
-    m_positionComponent->setPosition(pos);
+void MovementComponent::move(const Position& pos) {
+    if (!m_entity) return;
 
+    if (!m_positionComponent) m_positionComponent = getPosition();
+    if (!m_animationComponent) m_animationComponent = getAnimation();
+    if (!m_positionComponent) return;
+
+    auto* collisionService = m_entity->getCollisionService();
+    if (!collisionService) return;
+
+    Position oldPos = m_positionComponent->getPosition();
+    auto* collider = static_cast<CollisionComponent*>(m_entity->getComponent(ComponentsType::COLLIDER));
+    bool canMove = true;
+
+    if (collider) {
+        canMove = collisionService->isAreaFree(pos, collider->getWidth(), collider->getHeight(), m_entity);
+    }
+
+    if (canMove) {
+        updateAnimation(pos, collisionService, oldPos);
+        collisionService->updatePositionCollisionCache(oldPos, pos, m_entity);
+        m_positionComponent->setPosition(pos);
+    }
+    else {
+        if (m_animationComponent) m_animationComponent->play(getStandAnimation());
+    }
 }
 
 bool MovementComponent::checkDirectionUp(Position newPos, Position oldPos) const {

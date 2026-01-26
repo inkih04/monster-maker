@@ -5,6 +5,7 @@
 #ifndef POKEMONGAMEENGINE_MOVEMENTCOMPONENT_H
 #define POKEMONGAMEENGINE_MOVEMENTCOMPONENT_H
 #include "AnimationComponent.h"
+#include "CollisionService.h"
 #include "Component.h"
 #include "Direction.h"
 #include "Position.h"
@@ -27,6 +28,9 @@ class MovementComponent : public Component {
 
     public:
         MovementComponent():m_animationComponent(nullptr), m_positionComponent(nullptr){};
+
+        void updateAnimation(const Position &pos, CollisionService *collisionService, Position oldPos);
+
         void move(const Position& pos);
 
 

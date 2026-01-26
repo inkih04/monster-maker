@@ -5,20 +5,23 @@
 
 #include <algorithm>
 #include <cmath>
+#include "CollisionService.h"
 
-#include "ColliderComponent.h"
-#include "GameConfig.h"
-#include "PositionComponent.h"
+
+EntityManager::EntityManager(): isCacheStarted(false) {
+    m_collisionService = std::make_unique<CollisionService>();
+}
+
 
 Entity* EntityManager::createEntity() {
-    auto entity = std::make_unique<Entity>();
+    auto entity = std::make_unique<Entity>(m_collisionService.get());
     Entity* entityPtr = entity.get();
     m_entities.push_back(std::move(entity));
     return entityPtr;
 }
 
 Entity* EntityManager::createEntity(EntityTag tag, EntityLayer layer) {
-    auto entity = std::make_unique<Entity>();
+    auto entity = std::make_unique<Entity>(m_collisionService.get());
     Entity* entityPtr = entity.get();
     m_entities.push_back(std::move(entity));
     m_entitiesByTag[tag].push_back(entityPtr);
@@ -56,6 +59,11 @@ std::vector<Entity*> EntityManager::getEntitiesByLayer(EntityLayer layer) const 
 }
 
 void EntityManager::updateEntities(int deltaTime) {
+    if (!isCacheStarted) {
+        initCollisionCache();
+        isCacheStarted = true;
+    }
+
     for (const auto& entity : m_entities) {
         entity->update(deltaTime);
     }
@@ -78,69 +86,15 @@ std::vector<Entity*> EntityManager::getEntitiesByComponent(ComponentsType type) 
 
 
 void EntityManager::initCollisionCache() {
-    m_collisionEntities.clear();
-
-    for (const auto& entity : m_rawCollisionEntities) {
-        auto* posComp = dynamic_cast<PositionComponent*>(entity->getComponent(ComponentsType::POSITION));
-        auto* collComp = dynamic_cast<CollisionComponent*>(entity->getComponent(ComponentsType::COLLIDER));
-
-        if (posComp && collComp) {
-            Position basePos = posComp->getPosition();
-            int numCellsX = std::ceil(collComp->getWidth() / static_cast<float>(GameConfig::GridSize));
-            int numCellsY = std::ceil(collComp->getHeight() / static_cast<float>(GameConfig::GridSize));
-
-            for (int x = 0; x < numCellsX; ++x) {
-                for (int y = 0; y < numCellsY; ++y) {
-                    Position cellPos(
-                        basePos.x + (x * GameConfig::GridSize),
-                        basePos.y + (y * GameConfig::GridSize)
-                    );
-                    m_collisionEntities[cellPos] = entity;
-                }
-            }
-        }
-    }
+    m_collisionService->initCollisionCache(m_rawCollisionEntities);
 }
 
-void EntityManager::updatePositionCollisionCache(const Position& oldPos, const Position& newPos, Entity* entity) {
-    auto* collComp = dynamic_cast<CollisionComponent*>(entity->getComponent(ComponentsType::COLLIDER));
-    if (!collComp) return;
 
-    int numCellsX = std::ceil(collComp->getWidth() / static_cast<float>(GameConfig::GridSize));
-    int numCellsY = std::ceil(collComp->getHeight() / static_cast<float>(GameConfig::GridSize));
+EntityManager::~EntityManager() {
+    m_entities.clear();
+    m_entitiesByTag.clear();
+    m_entitiesByLayer.clear();
+    m_rawCollisionEntities.clear();
 
-    for (int x = 0; x < numCellsX; ++x) {
-        for (int y = 0; y < numCellsY; ++y) {
-            Position oldCell(oldPos.x + (x * GameConfig::GridSize), oldPos.y + (y * GameConfig::GridSize));
-
-            auto it = m_collisionEntities.find(oldCell);
-            if (it != m_collisionEntities.end() && it->second == entity) {
-                m_collisionEntities.erase(it);
-            }
-        }
-    }
-
-    for (int x = 0; x < numCellsX; ++x) {
-        for (int y = 0; y < numCellsY; ++y) {
-            Position newCell(newPos.x + (x * GameConfig::GridSize), newPos.y + (y * GameConfig::GridSize));
-            m_collisionEntities[newCell] = entity;
-        }
-    }
 }
 
-bool EntityManager::isAreaFree(const Position& targetPos, const int width, const int height, const Entity* source) {
-    int numCellsX = std::ceil(width / static_cast<float>(GameConfig::GridSize));
-    int numCellsY = std::ceil(height / static_cast<float>(GameConfig::GridSize));
-
-    for (int x = 0; x < numCellsX; ++x) {
-        for (int y = 0; y < numCellsY; ++y) {
-            Position checkPos(targetPos.x + (x * GameConfig::GridSize), targetPos.y + (y * GameConfig::GridSize));
-
-            auto it = m_collisionEntities.find(checkPos);
-            if (it != m_collisionEntities.end() && it->second != source) {
-                return false;
-            }
-        }
-    }
-    return true;
-}

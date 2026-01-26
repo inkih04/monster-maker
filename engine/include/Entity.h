@@ -9,12 +9,19 @@
 #include <memory>
 #include "components/Component.h"
 
+class CollisionService;
+
 class Entity {
     private:
         std::unordered_map<ComponentsType, std::unique_ptr<Component>> components;
+        CollisionService* m_collisionService;
+        bool isActive;
     public:
+        Entity(CollisionService* collisionService): m_collisionService(collisionService), isActive(true) {};
+        void disableEntity();
         void addComponent(ComponentsType type, std::unique_ptr<Component> component);
         Component* getComponent(ComponentsType type);
+        CollisionService* getCollisionService();
         bool hasComponent(ComponentsType type) const;
         void update(int deltaTime);
         void render();
