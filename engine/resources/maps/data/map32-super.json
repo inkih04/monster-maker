@@ -11409,6 +11409,10 @@
       "tag": "TILEMAP",
       "layer": "decoration",
       "components": {
+        "COLLIDER": {
+          "width": 32,
+          "height": 32
+        },
         "POSITION": {
           "x": 672,
           "y": 352,
@@ -14596,6 +14600,12 @@
           "h": 32.0,
           "width": 32.0,
           "height": 32.0
+        },
+        "COLLIDER": {
+          "width": 28.0,
+          "height": 16.0,
+          "offsetX": 0.0,
+          "offsetY": 16.0
         },
         "MOVEMENT" : {},
         "ANIMATION": {

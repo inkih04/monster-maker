@@ -6,6 +6,7 @@
 #include "InputManager.h"
 #include "MovementComponent.h"
 #include "PositionComponent.h"
+#include "RenderComponent.h"
 
 void ScriptBindings::registerStatic(sol::state& lua) {
     registerKeys(lua);
@@ -31,6 +32,7 @@ void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityMana
 void ScriptBindings::registerEntity(sol::state& lua) {
     lua.new_usertype<Entity>("Entity",
         "hasComponent", &Entity::hasComponent,
+        "disable", &Entity::disableEntity,
         "getPos", [](Entity& e) -> PositionComponent* {
             auto* comp = e.getComponent(ComponentsType::POSITION);
             return static_cast<PositionComponent*>(comp);
@@ -147,6 +149,14 @@ void ScriptBindings::registerInputManager(sol::state& lua) {
 void ScriptBindings::registerComponents(sol::state& lua) {
     registerPositionComponent(lua);
     registerMovementComponent(lua);
+    registerRenderComponent(lua);
+}
+
+void ScriptBindings::registerRenderComponent(sol::state& lua) {
+    lua.new_usertype<RenderComponent>("RenderComponent",
+        "setIsActive", &RenderComponent::setIsActive,
+        "getIsActive", &RenderComponent::getIsActive
+    );
 }
 
 void ScriptBindings::registerPositionComponent(sol::state& lua) {

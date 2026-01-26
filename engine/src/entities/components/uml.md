@@ -59,8 +59,10 @@ class AnimationComponent {
     }
     
     class ColliderComponent {
-        -float m_width
-        -float m_height
+        -int m_width
+        -int m_height
+        -int m_offsetX
+        -int m_offsetY
         +ColliderComponent(float width, float height)
         +update(int deltaTime) override
         +render() override

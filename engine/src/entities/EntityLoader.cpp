@@ -78,10 +78,11 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
 
     if (components.contains("COLLIDER")) {
         const auto& colliderData = components["COLLIDER"];
-        float width = colliderData.value("width", 0.0f);
-        float height = colliderData.value("height", 0.0f);
+        int width = colliderData.value("width", 0.0f);
+        int height = colliderData.value("height", 0.0f);
 
         if (width > 0 && height > 0) {
+            entityManager.setCollisionEntity(entity);
             auto colliderComponent = createColliderComponent(colliderData);
             entity->addComponent(ComponentsType::COLLIDER, std::move(colliderComponent));
         }
@@ -138,10 +139,12 @@ std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data)
 }
 
 std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& data) {
-    float width = data.value("width", 0.0f);
-    float height = data.value("height", 0.0f);
+    int width = data.value("width", 0.0f);
+    int height = data.value("height", 0.0f);
+    int offsetX = data.value("offsetX", 0.0f);
+    int offsetY = data.value("offsetY", 0.0f);
 
-    return std::make_unique<CollisionComponent>(width, height);
+    return std::make_unique<CollisionComponent>(width, height, offsetX, offsetY);
 }
 
 std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& data) {
