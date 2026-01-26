@@ -29,7 +29,7 @@ class MovementComponent : public Component {
     public:
         MovementComponent():m_animationComponent(nullptr), m_positionComponent(nullptr){};
 
-        void updateAnimation(const Position &pos, CollisionService *collisionService, Position oldPos);
+        void updateAnimation(const Position &pos, Position oldPos);
 
         void move(const Position& pos);
 

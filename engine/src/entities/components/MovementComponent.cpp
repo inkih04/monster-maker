@@ -15,7 +15,7 @@
 #include "CollisionService.h"
 
 
-void MovementComponent::updateAnimation(const Position &pos, CollisionService *collisionService, Position oldPos) {
+void MovementComponent::updateAnimation(const Position &pos, Position oldPos) {
     if (checkDirectionUp(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVEUP));
         m_lastDirection = Direction::TOP;
@@ -31,9 +31,6 @@ void MovementComponent::updateAnimation(const Position &pos, CollisionService *c
     else if (checkDirectionLeft(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVELEFT));
         m_lastDirection = Direction::LEFT;
-
-        collisionService->updatePositionCollisionCache(oldPos, pos, m_entity);
-        m_positionComponent->setPosition(pos);
     }
     else {
         if (m_animationComponent) m_animationComponent->play(getStandAnimation());
@@ -59,7 +56,7 @@ void MovementComponent::move(const Position& pos) {
     }
 
     if (canMove) {
-        updateAnimation(pos, collisionService, oldPos);
+        updateAnimation(pos, oldPos);
         collisionService->updatePositionCollisionCache(oldPos, pos, m_entity);
         m_positionComponent->setPosition(pos);
     }

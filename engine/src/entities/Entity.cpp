@@ -31,10 +31,6 @@ CollisionService* Entity::getCollisionService() {
 void Entity::disableEntity() {
     isActive = false;
     m_collisionService->removeEntity(this);
-    auto component = dynamic_cast<RenderComponent*>(getComponent(ComponentsType::RENDER));
-    if (component) {
-        component->setIsActive(false);
-    }
 }
 
 bool Entity::hasComponent(ComponentsType type) const {

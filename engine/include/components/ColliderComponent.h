@@ -10,11 +10,15 @@ class CollisionComponent: public Component {
     private:
         int m_width;
         int m_height;
+        int m_offsetX;
+        int m_offsetY;
 
     public:
-        CollisionComponent(const int width, const int height): m_width(width), m_height(height) {};
+        CollisionComponent(const int width, const int height, int ofX = 0, int ofY = 0): m_width(width), m_height(height), m_offsetX(ofX), m_offsetY(ofY) {};
         void update(int deltaTime) override {};
         void render() override {};
+        [[nodiscard]] int getOffsetX() const {return m_offsetX;};
+        [[nodiscard]] int getOffsetY() const {return m_offsetY;};
         [[nodiscard]] int getWidth() const {return m_width;};
         [[nodiscard]] int getHeight() const {return m_height;};
 

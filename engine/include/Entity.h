@@ -17,6 +17,7 @@ class Entity {
         CollisionService* m_collisionService;
         bool isActive;
     public:
+        Entity(): m_collisionService(nullptr), isActive(true) {};
         Entity(CollisionService* collisionService): m_collisionService(collisionService), isActive(true) {};
         void disableEntity();
         void addComponent(ComponentsType type, std::unique_ptr<Component> component);
