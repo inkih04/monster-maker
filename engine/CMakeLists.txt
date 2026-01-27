@@ -1,11 +1,36 @@
 cmake_minimum_required(VERSION 3.14)
-project(PokemonGameEngine CXX)
+project(PokemonGameEngine C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-include_directories(include include/enums include/components include/structs include/scripting )
+include_directories(include include/enums include/components include/structs include/scripting)
+
+include(FetchContent)
+FetchContent_Declare(
+        soloud
+        GIT_REPOSITORY https://github.com/jarikomppa/soloud.git
+        GIT_TAG        master
+)
+FetchContent_MakeAvailable(soloud)
+
+file(GLOB SOLOUD_CORE_SOURCES "${soloud_SOURCE_DIR}/src/core/*.cpp")
+file(GLOB SOLOUD_WAV_SOURCES
+        "${soloud_SOURCE_DIR}/src/audiosource/wav/*.cpp"
+        "${soloud_SOURCE_DIR}/src/audiosource/wav/*.c"
+)
+file(GLOB SOLOUD_BACKEND_SOURCES "${soloud_SOURCE_DIR}/src/backend/miniaudio/*.cpp")
+
+set(SOLOUD_ALL_SOURCES
+        ${SOLOUD_CORE_SOURCES}
+        ${SOLOUD_WAV_SOURCES}
+        ${SOLOUD_BACKEND_SOURCES}
+)
+
+add_library(SoloudStatic STATIC ${SOLOUD_ALL_SOURCES})
+target_include_directories(SoloudStatic PUBLIC ${soloud_SOURCE_DIR}/include)
+target_compile_definitions(SoloudStatic PUBLIC WITH_MINIAUDIO)
 
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
@@ -78,6 +103,8 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         include/components/ScriptComponet.h
         src/entities/components/ScriptComponent.cpp
         src/entities/CollisionService.cpp
+        include/AudioService.h
+        src/audio/AudioService.cpp
 )
 
 target_link_libraries(PokemonGameEngine
@@ -89,6 +116,7 @@ target_link_libraries(PokemonGameEngine
         nlohmann_json::nlohmann_json
         lua
         Freetype::Freetype
+        SoloudStatic
 )
 
 enable_testing()
