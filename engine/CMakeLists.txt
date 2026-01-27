@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(PokemonGameEngine C CXX)
+project(MonsterMakerEngine C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -53,7 +53,7 @@ endif()
 
 file(GLOB_RECURSE GAME_SOURCES "src/*.cpp")
 
-add_executable(PokemonGameEngine ${GAME_SOURCES}
+add_executable(MonsterMakerEngine ${GAME_SOURCES}
         include/EntityManager.h
         src/entities/EntityManager.cpp
         include/Entity.h
@@ -107,7 +107,7 @@ add_executable(PokemonGameEngine ${GAME_SOURCES}
         src/audio/AudioService.cpp
 )
 
-target_link_libraries(PokemonGameEngine
+target_link_libraries(MonsterMakerEngine
         PRIVATE
         glfw
         GLEW::GLEW
