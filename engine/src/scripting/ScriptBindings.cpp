@@ -7,6 +7,7 @@
 #include "MovementComponent.h"
 #include "PositionComponent.h"
 #include "RenderComponent.h"
+#include "AudioService.h"
 
 void ScriptBindings::registerStatic(sol::state& lua) {
     registerKeys(lua);
@@ -17,6 +18,26 @@ void ScriptBindings::registerStatic(sol::state& lua) {
     registerEntity(lua);
     registerEntityManager(lua);
     registerCamera(lua);
+    registerAudioService(lua);
+}
+
+void ScriptBindings::registerAudioService(sol::state& lua) {
+    lua.new_usertype<AudioService>("AudioService",
+        sol::no_constructor,
+
+        "playMusic", [](AudioService& self, const std::string& path, sol::optional<bool> loop) {
+            self.playMusic(path, loop.value_or(true));
+        },
+        "playSound", &AudioService::playSound,
+        "stopMusic", &AudioService::stopMusic,
+        "pauseMusic", &AudioService::pauseMusic,
+
+        "setMasterVolume", &AudioService::setMasterVolume,
+        "setMusicVolume", &AudioService::setMusicVolume,
+        "setSfxVolume", &AudioService::setSfxVolume
+    );
+
+    lua["Audio"] = &AudioService::getInstance();
 }
 
 void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityManager& entityManager) {

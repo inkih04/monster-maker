@@ -12,9 +12,9 @@ ScriptEngine& ScriptEngine::getInstance() {
 void ScriptEngine::init() {
     try {
         m_lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math, sol::lib::table);
-        std::cout << "ScriptEngine inicializado correctamente." << std::endl;
+        std::cout << "ScriptEngine init" << std::endl;
     } catch (const std::exception& e) {
-        std::cerr << "ScriptEngine Error al inicializar Lua: " << e.what() << std::endl;
+        std::cerr << "ScriptEngine Error while loadin lua " << e.what() << std::endl;
     }
 }
 
