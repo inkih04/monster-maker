@@ -41,6 +41,10 @@ void Engine::initGLFW() {
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) exit(-1);
+
+    int bufferWidth, bufferHeight;
+    glfwGetFramebufferSize(m_window, &bufferWidth, &bufferHeight);
+    onResize(bufferWidth, bufferHeight);
 }
 
 void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()> gameRender) {
