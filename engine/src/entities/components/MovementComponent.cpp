@@ -41,11 +41,15 @@ void MovementComponent::updateAnimation(const Position &pos, Position oldPos) {
 void MovementComponent::handleCollision(const Position &pos, CollisionService *collisionService, CollisionComponent *collider, bool &canMove) {
     if (collider && collider->getIsTrigger()) {
         Entity *entityAtPos = collisionService->getEntityAtArea(pos, collider->getWidth(), collider->getHeight(), m_entity);
-        if (entityAtPos) {
+        if (entityAtPos && entityAtPos != m_lastCollidedEntity) {
             auto* script = static_cast<ScriptComponent*>(entityAtPos->getComponent(ComponentsType::SCRIPT));
             if (script) {
                 script->executeOnTriggerEnter(m_entity);
             }
+            m_lastCollidedEntity = entityAtPos;
+        }
+        else {
+            m_lastCollidedEntity = nullptr;
         }
     }
     else if (collider) {
@@ -54,12 +58,16 @@ void MovementComponent::handleCollision(const Position &pos, CollisionService *c
         if (!canMove) {
             Entity *entityAtPos = collisionService->getEntityAtArea(pos, collider->getWidth(), collider->getHeight(), m_entity);
             auto* entityCollisionedScript = static_cast<ScriptComponent*>(entityAtPos->getComponent(ComponentsType::SCRIPT));
-            if (script && entityAtPos) {
+            if (script && entityAtPos && entityAtPos != m_lastCollidedEntity) {
                 script->executeOnCollision(entityAtPos);
             }
-            if (entityAtPos && entityCollisionedScript) {
+            if (entityAtPos && entityCollisionedScript && entityAtPos != m_lastCollidedEntity) {
                 entityCollisionedScript->executeOnCollision(m_entity);
             }
+            m_lastCollidedEntity = entityAtPos;
+        }
+        else {
+            m_lastCollidedEntity = nullptr;
         }
     }
 }

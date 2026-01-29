@@ -25,6 +25,7 @@ class MovementComponent : public Component {
         std::string getStandAnimation() const;
         AnimationComponent* m_animationComponent;
         PositionComponent *m_positionComponent;
+        Entity* m_lastCollidedEntity = nullptr;
 
 
     public:
