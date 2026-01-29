@@ -13,6 +13,7 @@
 
 #include "ColliderComponent.h"
 #include "CollisionService.h"
+#include "ScriptComponet.h"
 
 
 void MovementComponent::updateAnimation(const Position &pos, Position oldPos) {
@@ -37,6 +38,32 @@ void MovementComponent::updateAnimation(const Position &pos, Position oldPos) {
     }
 }
 
+void MovementComponent::handleCollision(const Position &pos, CollisionService *collisionService, CollisionComponent *collider, bool &canMove) {
+    if (collider && collider->getIsTrigger()) {
+        Entity *entityAtPos = collisionService->getEntityAtArea(pos, collider->getWidth(), collider->getHeight(), m_entity);
+        if (entityAtPos) {
+            auto* script = static_cast<ScriptComponent*>(entityAtPos->getComponent(ComponentsType::SCRIPT));
+            if (script) {
+                script->executeOnTriggerEnter(m_entity);
+            }
+        }
+    }
+    else if (collider) {
+        canMove = collisionService->isAreaFree(pos, collider->getWidth(), collider->getHeight(), m_entity);
+        auto* script = static_cast<ScriptComponent*>(m_entity->getComponent(ComponentsType::SCRIPT));
+        if (!canMove) {
+            Entity *entityAtPos = collisionService->getEntityAtArea(pos, collider->getWidth(), collider->getHeight(), m_entity);
+            auto* entityCollisionedScript = static_cast<ScriptComponent*>(entityAtPos->getComponent(ComponentsType::SCRIPT));
+            if (script && entityAtPos) {
+                script->executeOnCollision(entityAtPos);
+            }
+            if (entityAtPos && entityCollisionedScript) {
+                entityCollisionedScript->executeOnCollision(m_entity);
+            }
+        }
+    }
+}
+
 void MovementComponent::move(const Position& pos) {
     if (!m_entity) return;
 
@@ -51,9 +78,7 @@ void MovementComponent::move(const Position& pos) {
     auto* collider = static_cast<CollisionComponent*>(m_entity->getComponent(ComponentsType::COLLIDER));
     bool canMove = true;
 
-    if (collider) {
-        canMove = collisionService->isAreaFree(pos, collider->getWidth(), collider->getHeight(), m_entity);
-    }
+    handleCollision(pos, collisionService, collider, canMove);
 
     if (canMove) {
         updateAnimation(pos, oldPos);

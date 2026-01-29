@@ -15,6 +15,8 @@ class ScriptComponent : public Component {
         sol::protected_function m_luaStart;
         sol::protected_function m_luaUpdate;
         sol::protected_function m_luaDestroy;
+        sol::protected_function m_luaOnCollision;
+        sol::protected_function m_luaOnTriggerEnter;
 
         bool m_initialized = false;
         bool m_startCalled = false;
@@ -22,6 +24,9 @@ class ScriptComponent : public Component {
     public:
         explicit ScriptComponent(std::string path);
         ~ScriptComponent() override;
+
+        void executeOnCollision(Entity* other);
+        void executeOnTriggerEnter(Entity* other);
 
         void init();
         void update(int deltaTime) override;

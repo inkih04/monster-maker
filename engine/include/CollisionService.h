@@ -19,6 +19,7 @@ class CollisionService {
     public:
         CollisionService() = default;
         bool isAreaFree(const Position &targetPos, int width, int height, const Entity *source);
+        Entity* getEntityAtArea(const Position &targetPos, int width, int height, const Entity *source);
         void removeEntity(Entity *entity);
         void updatePositionCollisionCache(const Position& oldPos, const Position& newPos, Entity* entity);
         void initCollisionCache(const std::vector<Entity*>& collisionEntities);

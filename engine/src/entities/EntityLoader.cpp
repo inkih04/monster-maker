@@ -143,6 +143,7 @@ std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& dat
     int height = data.value("height", 0.0f);
     int offsetX = data.value("offsetX", 0.0f);
     int offsetY = data.value("offsetY", 0.0f);
+//    bool isTrigger = data.value("isTrigger", false);
 
     return std::make_unique<CollisionComponent>(width, height, offsetX, offsetY);
 }

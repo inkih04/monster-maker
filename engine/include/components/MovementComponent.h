@@ -5,6 +5,7 @@
 #ifndef POKEMONGAMEENGINE_MOVEMENTCOMPONENT_H
 #define POKEMONGAMEENGINE_MOVEMENTCOMPONENT_H
 #include "AnimationComponent.h"
+#include "ColliderComponent.h"
 #include "CollisionService.h"
 #include "Component.h"
 #include "Direction.h"
@@ -31,10 +32,10 @@ class MovementComponent : public Component {
 
         void updateAnimation(const Position &pos, Position oldPos);
 
+        void handleCollision(const Position &pos, CollisionService *collisionService, CollisionComponent *collider,
+                             bool &canMove);
+
         void move(const Position& pos);
-
-
-
         void update(int deltaTime) override {};
         void render() override {};
 };
