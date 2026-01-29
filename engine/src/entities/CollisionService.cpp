@@ -102,6 +102,35 @@ bool CollisionService::isAreaFree(const Position& targetPos, const int width, co
     return isFree;
 }
 
+
+Entity* CollisionService::getEntityAtArea(const Position& targetPos, const int width, const int height, const Entity* source) {
+    int checkX = targetPos.x;
+    int checkY = targetPos.y;
+
+    if (source) {
+        auto* collComp = static_cast<CollisionComponent*>(const_cast<Entity*>(source)->getComponent(ComponentsType::COLLIDER));
+        if (collComp) {
+            checkX += collComp->getOffsetX();
+            checkY += collComp->getOffsetY();
+        }
+    }
+
+    Entity* foundEntity = nullptr;
+
+    forEachGridCell(checkX, checkY, width, height,
+        [&](const Position& key) {
+            auto it = m_collisionEntities.find(key);
+            if (it != m_collisionEntities.end() && it->second != source) {
+                foundEntity = it->second;
+                return false;
+            }
+            return true;
+        }
+    );
+
+    return foundEntity;
+}
+
 void CollisionService::removeEntity(Entity* entity) {
     if (!entity) return;
 

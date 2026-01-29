@@ -2,6 +2,11 @@ local speed = 2
 local cameraSmoothing = 0.15
 
 
+
+function onCollision(collidedEntity)
+    print("OnCollision called in player move component")
+end
+
 function onStart(entity)
     Audio:setMusicVolume(0.2)
     Audio:setMasterVolume(0.2)

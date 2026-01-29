@@ -35,8 +35,32 @@ void ScriptComponent::init() {
     m_luaStart = lua["onStart"];
     m_luaUpdate = lua["onUpdate"];
     m_luaDestroy = lua["onDestroy"];
+    m_luaOnCollision = lua["onCollision"];
+    m_luaOnTriggerEnter = lua["onTriggerEnter"];
 
     m_initialized = true;
+}
+
+void ScriptComponent::executeOnCollision(Entity *other) {
+    if (!m_initialized) init();
+    if (m_luaOnCollision.valid()) {
+        auto result = m_luaOnCollision(getOwner(), other);
+        if (!result.valid()) {
+            sol::error err = result;
+            std::cerr << "LUA Error (onCollision): " << err.what() << std::endl;
+        }
+    }
+}
+
+void ScriptComponent::executeOnTriggerEnter(Entity *other) {
+    if (!m_initialized) init();
+    if (m_luaOnTriggerEnter.valid()) {
+        auto result = m_luaOnTriggerEnter(getOwner(), other);
+        if (!result.valid()) {
+            sol::error err = result;
+            std::cerr << "LUA Error (onTriggerEnter): " << err.what() << std::endl;
+        }
+    }
 }
 
 void ScriptComponent::update(int deltaTime) {
