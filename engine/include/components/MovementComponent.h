@@ -6,7 +6,7 @@
 #define POKEMONGAMEENGINE_MOVEMENTCOMPONENT_H
 #include "AnimationComponent.h"
 #include "ColliderComponent.h"
-#include "CollisionService.h"
+#include "../service/CollisionService.h"
 #include "Component.h"
 #include "Direction.h"
 #include "Position.h"

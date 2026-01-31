@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-#include "CollisionService.h"
+#include "../../include/service/CollisionService.h"
 #include "Entity.h"
 #include "PositionComponent.h"
 #include "ColliderComponent.h"

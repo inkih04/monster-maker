@@ -12,7 +12,7 @@
 #include <string>
 
 #include "ColliderComponent.h"
-#include "CollisionService.h"
+#include "../../../include/service/CollisionService.h"
 #include "ScriptComponet.h"
 
 

@@ -11409,9 +11409,13 @@
       "tag": "TILEMAP",
       "layer": "decoration",
       "components": {
+        "INTERACTION": {},
         "COLLIDER": {
           "width": 32,
           "height": 32
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/items/item.lua"
         },
         "POSITION": {
           "x": 672,

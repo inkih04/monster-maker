@@ -71,6 +71,9 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         src/entities/EntityManager.cpp
         include/AudioService.h
         src/audio/AudioService.cpp
+        include/service/InteractionService.h
+        src/entities/service/InteractionService.cpp
+        include/components/InteractionComponent.h
 )
 
 
@@ -121,7 +124,7 @@ add_executable(UnitTests
         src/entities/Entity.cpp
         src/entities/EntityManager.cpp
         src/ui/DialogBox.cpp
-        src/entities/CollisionService.cpp
+        src/entities/service/CollisionService.cpp
         tests/unitary/InputManagerTest.cpp
         tests/mocks/MockGLFW.cpp
         tests/unitary/StateManagerTest.cpp

@@ -1,7 +1,7 @@
 //
 // Created by inkih on 26/1/26.
 //
-#include "CollisionService.h"
+#include "../../../include/service/CollisionService.h"
 #include <functional>
 
 #include "ColliderComponent.h"

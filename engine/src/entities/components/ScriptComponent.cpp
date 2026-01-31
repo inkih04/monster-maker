@@ -37,6 +37,7 @@ void ScriptComponent::init() {
     m_luaDestroy = lua["onDestroy"];
     m_luaOnCollision = lua["onCollision"];
     m_luaOnTriggerEnter = lua["onTriggerEnter"];
+    m_luaOnInteract = lua["onInteract"];
 
     m_initialized = true;
 }
@@ -48,6 +49,17 @@ void ScriptComponent::executeOnCollision(Entity *other) {
         if (!result.valid()) {
             sol::error err = result;
             std::cerr << "LUA Error (onCollision): " << err.what() << std::endl;
+        }
+    }
+}
+
+void ScriptComponent::executeOnInteract(Entity *other) {
+    if (!m_initialized) init();
+    if (m_luaOnInteract.valid()) {
+        auto result = m_luaOnInteract(getOwner(), other);
+        if (!result.valid()) {
+            sol::error err = result;
+            std::cerr << "LUA Error (onInteract): " << err.what() << std::endl;
         }
     }
 }

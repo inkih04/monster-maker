@@ -11,6 +11,7 @@
 #include "components/AnimationComponent.h"
 #include <stdexcept>
 
+#include "InteractionComponent.h"
 #include "MovementComponent.h"
 #include "ScriptComponet.h"
 
@@ -87,6 +88,9 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
             entity->addComponent(ComponentsType::COLLIDER, std::move(colliderComponent));
         }
     }
+    if (components.contains("INTERACTION")) {
+        entity->addComponent(ComponentsType::INTERACTION, std::move(std::make_unique<InteractionComponent>()));
+    }
 
     if (components.contains("ANIMATION")) {
         auto animationComponent = createAnimationComponent(components["ANIMATION"]);
@@ -142,9 +146,9 @@ std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& dat
     int height = data.value("height", 0.0f);
     int offsetX = data.value("offsetX", 0.0f);
     int offsetY = data.value("offsetY", 0.0f);
-//    bool isTrigger = data.value("isTrigger", false);
+    bool isTrigger = data.value("isTrigger", false);
 
-    return std::make_unique<CollisionComponent>(width, height, offsetX, offsetY);
+    return std::make_unique<CollisionComponent>(width, height, offsetX, offsetY, isTrigger);
 }
 
 std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& data) {
