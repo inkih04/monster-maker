@@ -2,7 +2,7 @@
 // Created by inkih on 30/11/25.
 //
 #include "Entity.h"
-#include "CollisionService.h"
+#include "../../include/service/CollisionService.h"
 #include "RenderComponent.h"
 
 void Entity::addComponent(ComponentsType type, std::unique_ptr<Component> component) {
@@ -26,6 +26,10 @@ void Entity::update(int deltaTime) {
 
 CollisionService* Entity::getCollisionService() {
     return m_collisionService;
+}
+
+InteractionService* Entity::getInteractionService() {
+    return m_interactionService;
 }
 
 void Entity::disableEntity() {

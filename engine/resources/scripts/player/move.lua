@@ -29,16 +29,21 @@ function onUpdate(entity)
     local newX = posComp.x
     local newY = posComp.y
 
-    if Input:isKeyDown(Keys.W) then
+    if Input:isKeyDown(Keys.UP) or Input:isKeyDown(Keys.W) then
         newY = newY - speed
-    elseif Input:isKeyDown(Keys.S) then
+    elseif Input:isKeyDown(Keys.DOWN) or Input:isKeyDown(Keys.S) then
         newY = newY + speed
-    elseif Input:isKeyDown(Keys.A) then
+    elseif Input:isKeyDown(Keys.LEFT) or Input:isKeyDown(Keys.A) then
         newX = newX - speed
-    elseif Input:isKeyDown(Keys.D) then
+    elseif Input:isKeyDown(Keys.RIGHT) or Input:isKeyDown(Keys.D) then
         newX = newX + speed
     end
-    moveComp:move(Position.new(newX, newY, posComp.rotation))
+    moveComp:move(Position.new(newX, newY))
+
+    if Input:isKeyPressed(Keys.Z) then
+            print("Player: Interactuando")
+            entity:interact()
+        end
 
     if MainCamera then
         MainCamera:lerpTo(newX, newY, cameraSmoothing)

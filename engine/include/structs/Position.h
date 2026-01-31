@@ -9,11 +9,9 @@
 struct Position {
     int x;
     int y;
-    float rotation;
 
-    Position(int x, int y): x(x), y(y), rotation(0.0f) {};
-    Position(): x(0), y(0), rotation(0.0f) {};
-    Position(int x, int y, float rotation) : x(x), y(y), rotation(rotation) {};
+    Position(int x, int y): x(x), y(y) {};
+    Position(): x(0), y(0) {};
 
     bool operator==(const Position& other) const {
         return x == other.x && y == other.y;

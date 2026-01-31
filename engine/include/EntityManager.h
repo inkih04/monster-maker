@@ -8,13 +8,12 @@
 #include <memory>
 #include <vector>
 
-#include "CollisionService.h"
+#include "service/CollisionService.h"
 #include "ComponentsType.h"
 #include "enums/EntityLayer.h"
 #include "enums/EntityTag.h"
-
 #include "Entity.h"
-#include "Position.h"
+#include "service/InteractionService.h"
 
 class EntityManager {
     private:
@@ -25,6 +24,7 @@ class EntityManager {
         void initCollisionCache();
         bool isCacheStarted;
         std::unique_ptr<CollisionService> m_collisionService;
+        std::unique_ptr<InteractionService> m_interactionService;
 
     public:
         EntityManager();
@@ -37,6 +37,7 @@ class EntityManager {
         ~EntityManager();
         void updateEntities(int deltaTime);
         void renderEntities() const;
+
 
         void setCollisionEntity(Entity* entity) {m_rawCollisionEntities.push_back(entity);};
         std::vector<Entity*> getEntitiesByComponent(ComponentsType type) const;

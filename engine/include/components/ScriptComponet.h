@@ -17,6 +17,7 @@ class ScriptComponent : public Component {
         sol::protected_function m_luaDestroy;
         sol::protected_function m_luaOnCollision;
         sol::protected_function m_luaOnTriggerEnter;
+        sol::protected_function m_luaOnInteract;
 
         bool m_initialized = false;
         bool m_startCalled = false;
@@ -26,6 +27,9 @@ class ScriptComponent : public Component {
         ~ScriptComponent() override;
 
         void executeOnCollision(Entity* other);
+
+        void executeOnInteract(Entity *other);
+
         void executeOnTriggerEnter(Entity* other);
 
         void init();

@@ -12,26 +12,26 @@
 #include <string>
 
 #include "ColliderComponent.h"
-#include "CollisionService.h"
+#include "../../../include/service/CollisionService.h"
 #include "ScriptComponet.h"
 
 
 void MovementComponent::updateAnimation(const Position &pos, Position oldPos) {
     if (checkDirectionUp(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVEUP));
-        m_lastDirection = Direction::TOP;
+        m_positionComponent->setDirection(Direction::TOP);
     }
     else if (checkDirectionDown(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVEDOWN));
-        m_lastDirection = Direction::BOTTOM;
+        m_positionComponent->setDirection(Direction::BOTTOM);
     }
     else if (checkDirectionRight(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVERIGHT));
-        m_lastDirection = Direction::RIGHT;
+        m_positionComponent->setDirection(Direction::RIGHT);
     }
     else if (checkDirectionLeft(pos, oldPos)) {
         if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVELEFT));
-        m_lastDirection = Direction::LEFT;
+        m_positionComponent->setDirection(Direction::LEFT);
     }
     else {
         if (m_animationComponent) m_animationComponent->play(getStandAnimation());
@@ -138,9 +138,9 @@ PositionComponent* MovementComponent::getPosition() const {;
 
 
 std::string MovementComponent::getStandAnimation() const {
-    if (m_lastDirection == Direction::BOTTOM) return animationToString(BasicAnimation::STANDDOWN);
-    else if (m_lastDirection == Direction::LEFT) return animationToString(BasicAnimation::STANDLEFT);
-    else if (m_lastDirection == Direction::RIGHT) return animationToString(BasicAnimation::STANDRIGHT);
-    else if (m_lastDirection == Direction::TOP) return animationToString(BasicAnimation::STANDUP);
+    if (m_positionComponent->getDirection() == Direction::BOTTOM) return animationToString(BasicAnimation::STANDDOWN);
+    else if (m_positionComponent->getDirection() == Direction::LEFT) return animationToString(BasicAnimation::STANDLEFT);
+    else if (m_positionComponent->getDirection() == Direction::RIGHT) return animationToString(BasicAnimation::STANDRIGHT);
+    else if (m_positionComponent->getDirection() == Direction::TOP) return animationToString(BasicAnimation::STANDUP);
     return animationToString(BasicAnimation::STANDDOWN);
 }

@@ -8,6 +8,7 @@
 #include "PositionComponent.h"
 #include "RenderComponent.h"
 #include "AudioService.h"
+#include "InteractionComponent.h"
 
 void ScriptBindings::registerStatic(sol::state& lua) {
     registerKeys(lua);
@@ -20,6 +21,8 @@ void ScriptBindings::registerStatic(sol::state& lua) {
     registerCamera(lua);
     registerAudioService(lua);
 }
+
+
 
 void ScriptBindings::registerAudioService(sol::state& lua) {
     lua.new_usertype<AudioService>("AudioService",
@@ -61,6 +64,12 @@ void ScriptBindings::registerEntity(sol::state& lua) {
         "getMove", [](Entity& e) -> MovementComponent* {
             auto* comp = e.getComponent(ComponentsType::MOVEMENT);
             return static_cast<MovementComponent*>(comp);
+        },
+        "interact", [](Entity& e) {
+            auto* service = e.getInteractionService();
+            if (service) {
+                service->tryInteract(&e);
+            }
         }
     );
 }
@@ -171,6 +180,11 @@ void ScriptBindings::registerComponents(sol::state& lua) {
     registerPositionComponent(lua);
     registerMovementComponent(lua);
     registerRenderComponent(lua);
+    registerInteractionComponent(lua);
+}
+
+void ScriptBindings::registerInteractionComponent(sol::state& lua) {
+    lua.new_usertype<InteractionComponent>("InteractionComponent");
 }
 
 void ScriptBindings::registerRenderComponent(sol::state& lua) {
@@ -181,17 +195,24 @@ void ScriptBindings::registerRenderComponent(sol::state& lua) {
 }
 
 void ScriptBindings::registerPositionComponent(sol::state& lua) {
+    lua.new_enum<Direction>("Direction", {
+        {"TOP",    Direction::TOP},
+        {"BOTTOM", Direction::BOTTOM},
+        {"LEFT",   Direction::LEFT},
+        {"RIGHT",  Direction::RIGHT},
+        {"UNKNOWN", Direction::UNKNOWN}
+    });
+
     lua.new_usertype<Position>("Position",
-        sol::constructors<Position(), Position(float, float, float)>(),
+        sol::constructors<Position(), Position(float, float)>(),
         "x", &Position::x,
-        "y", &Position::y,
-        "rotation", &Position::rotation
+        "y", &Position::y
     );
 
     lua.new_usertype<PositionComponent>("PositionComponent",
         "x", sol::readonly_property([](PositionComponent& p) { return p.getPosition().x; }),
         "y", sol::readonly_property([](PositionComponent& p) { return p.getPosition().y; }),
-        "rotation", sol::readonly_property([](PositionComponent& p) { return p.getPosition().rotation; }),
+        "direction", sol::property(&PositionComponent::getDirection, &PositionComponent::setDirection),
         "get", &PositionComponent::getPosition
     );
 }
