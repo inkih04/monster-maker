@@ -17,10 +17,10 @@ protected:
     std::vector<std::unique_ptr<Entity>> entitiesManager;
 
     Entity* createObstacle(int x, int y, int w, int h, int ox = 0, int oy = 0) {
-        auto entity = std::make_unique<Entity>(nullptr);
+        auto entity = std::make_unique<Entity>();
 
         entity->addComponent(ComponentsType::POSITION,
-            std::make_unique<PositionComponent>(x, y, 0.0f));
+            std::make_unique<PositionComponent>(x, y));
 
         entity->addComponent(ComponentsType::COLLIDER,
             std::make_unique<CollisionComponent>(w, h, ox, oy));

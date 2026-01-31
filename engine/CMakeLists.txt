@@ -15,13 +15,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(soloud)
 
-
 file(GLOB SOLOUD_CORE_SOURCES "${soloud_SOURCE_DIR}/src/core/*.cpp")
 file(GLOB SOLOUD_WAV_SOURCES
         "${soloud_SOURCE_DIR}/src/audiosource/wav/*.cpp"
         "${soloud_SOURCE_DIR}/src/audiosource/wav/*.c"
 )
-
 
 if(APPLE)
     file(GLOB SOLOUD_BACKEND_SOURCES "${soloud_SOURCE_DIR}/src/backend/coreaudio/*.cpp")
@@ -42,7 +40,6 @@ target_include_directories(SoloudStatic PUBLIC ${soloud_SOURCE_DIR}/include)
 target_compile_definitions(SoloudStatic PUBLIC ${SOLOUD_BACKEND_DEF})
 target_compile_options(SoloudStatic PRIVATE -w)
 
-
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -62,7 +59,6 @@ elseif(UNIX)
     set(OPENGL_LIBRARIES OpenGL::GL)
 endif()
 
-
 file(GLOB_RECURSE GAME_SOURCES "src/*.cpp")
 
 add_executable(MonsterMakerEngine ${GAME_SOURCES}
@@ -74,7 +70,6 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         src/entities/service/InteractionService.cpp
         include/components/InteractionComponent.h
 )
-
 
 target_link_libraries(MonsterMakerEngine
         PRIVATE
@@ -119,7 +114,6 @@ if(APPLE)
     )
 endif()
 
-
 enable_testing()
 include(FetchContent)
 FetchContent_Declare(
@@ -161,6 +155,7 @@ target_link_libraries(UnitTests
         nlohmann_json::nlohmann_json
         lua
         Freetype::Freetype
+        SoloudStatic
 )
 
 if(UNIX AND NOT APPLE)
