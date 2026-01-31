@@ -24,6 +24,9 @@ classDiagram
     class ResourceManager {
         <<static>>
         -unordered_map~string, unique_ptr~Wav~~ m_sounds
+        -unordered_map<std::string, std::unique_ptr<Texture>> m_textures;
+        -unordered_map<ShaderPath, std::unique_ptr<Shader>> m_shaders;
+        -unordered_map<std::string, std::unique_ptr<TextRenderer>> m_fonts;
         +loadTexture(string path)$ Texture*
         +loadSound(string path)$ Wav*
         +loadFont(string path, int size)$ TextRenderer*
