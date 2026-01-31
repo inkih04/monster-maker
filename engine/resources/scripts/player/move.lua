@@ -38,7 +38,7 @@ function onUpdate(entity)
     elseif Input:isKeyDown(Keys.D) then
         newX = newX + speed
     end
-    moveComp:move(Position.new(newX, newY, posComp.rotation))
+    moveComp:move(Position.new(newX, newY))
 
     if MainCamera then
         MainCamera:lerpTo(newX, newY, cameraSmoothing)

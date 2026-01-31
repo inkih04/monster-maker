@@ -106,9 +106,8 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
 std::unique_ptr<Component> EntityLoader::createPositionComponent(const json& data) {
     float x = data.value("x", 0.0f);
     float y = data.value("y", 0.0f);
-    float rotation = data.value("rotation", 0.0f);
 
-    return std::make_unique<PositionComponent>(x, y, rotation);
+    return std::make_unique<PositionComponent>(x, y);
 }
 
 std::unique_ptr<Component> EntityLoader::createScriptComponent(const json& data) {

@@ -19,7 +19,6 @@ class MovementComponent : public Component {
         bool checkDirectionDown(Position newPos, Position oldPos) const;
         bool checkDirectionRight(Position newPos, Position oldPos) const;
         bool checkDirectionLeft(Position newPos, Position oldPos) const;
-        Direction m_lastDirection = Direction::UNKNOWN;
         AnimationComponent *getAnimation() const;
         PositionComponent *getPosition() const;
         std::string getStandAnimation() const;

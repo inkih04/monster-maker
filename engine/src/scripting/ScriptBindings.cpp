@@ -182,16 +182,14 @@ void ScriptBindings::registerRenderComponent(sol::state& lua) {
 
 void ScriptBindings::registerPositionComponent(sol::state& lua) {
     lua.new_usertype<Position>("Position",
-        sol::constructors<Position(), Position(float, float, float)>(),
+        sol::constructors<Position(), Position(float, float)>(),
         "x", &Position::x,
-        "y", &Position::y,
-        "rotation", &Position::rotation
+        "y", &Position::y
     );
 
     lua.new_usertype<PositionComponent>("PositionComponent",
         "x", sol::readonly_property([](PositionComponent& p) { return p.getPosition().x; }),
         "y", sol::readonly_property([](PositionComponent& p) { return p.getPosition().y; }),
-        "rotation", sol::readonly_property([](PositionComponent& p) { return p.getPosition().rotation; }),
         "get", &PositionComponent::getPosition
     );
 }
