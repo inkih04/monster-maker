@@ -26,7 +26,6 @@ file(GLOB SOLOUD_WAV_SOURCES
 if(APPLE)
     file(GLOB SOLOUD_BACKEND_SOURCES "${soloud_SOURCE_DIR}/src/backend/coreaudio/*.cpp")
     set(SOLOUD_BACKEND_DEF WITH_COREAUDIO)
-    message(STATUS "Mac M-Series detectado: Usando backend CoreAudio Nativo")
 else()
     file(GLOB SOLOUD_BACKEND_SOURCES "${soloud_SOURCE_DIR}/src/backend/miniaudio/*.cpp")
     set(SOLOUD_BACKEND_DEF WITH_MINIAUDIO)
@@ -89,6 +88,21 @@ target_link_libraries(MonsterMakerEngine
         SoloudStatic
 )
 
+if(UNIX AND NOT APPLE)
+    target_link_options(MonsterMakerEngine PRIVATE -static-libgcc -static-libstdc++)
+    target_link_libraries(MonsterMakerEngine
+            PRIVATE
+            pthread
+            dl
+            m
+            rt
+            X11
+            Xrandr
+            Xinerama
+            Xcursor
+            Xi
+    )
+endif()
 
 if(APPLE)
     find_library(COREAUDIO_FRAMEWORK CoreAudio)
@@ -148,6 +162,22 @@ target_link_libraries(UnitTests
         lua
         Freetype::Freetype
 )
+
+if(UNIX AND NOT APPLE)
+    target_link_options(UnitTests PRIVATE -static-libgcc -static-libstdc++)
+    target_link_libraries(UnitTests
+            PRIVATE
+            pthread
+            dl
+            m
+            rt
+            X11
+            Xrandr
+            Xinerama
+            Xcursor
+            Xi
+    )
+endif()
 
 include(GoogleTest)
 gtest_discover_tests(UnitTests)
