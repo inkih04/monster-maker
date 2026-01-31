@@ -29,13 +29,13 @@ function onUpdate(entity)
     local newX = posComp.x
     local newY = posComp.y
 
-    if Input:isKeyDown(Keys.UP) then
+    if Input:isKeyDown(Keys.UP) or Input:isKeyDown(Keys.W) then
         newY = newY - speed
-    elseif Input:isKeyDown(Keys.DOWN) then
+    elseif Input:isKeyDown(Keys.DOWN) or Input:isKeyDown(Keys.S) then
         newY = newY + speed
-    elseif Input:isKeyDown(Keys.LEFT) then
+    elseif Input:isKeyDown(Keys.LEFT) or Input:isKeyDown(Keys.A) then
         newX = newX - speed
-    elseif Input:isKeyDown(Keys.RIGHT) then
+    elseif Input:isKeyDown(Keys.RIGHT) or Input:isKeyDown(Keys.D) then
         newX = newX + speed
     end
     moveComp:move(Position.new(newX, newY))

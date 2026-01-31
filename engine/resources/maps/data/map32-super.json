@@ -10805,6 +10805,14 @@
           "y": 416,
           "rotation": 0
         },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
+        },
         "RENDER": {
           "spriteSheetPath": "../resources/maps/tilesets/tileset32.png",
           "x": 0,
@@ -10825,6 +10833,14 @@
           "x": 288,
           "y": 416,
           "rotation": 0
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
         },
         "RENDER": {
           "spriteSheetPath": "../resources/maps/tilesets/tileset32.png",
@@ -10855,6 +10871,14 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
         }
       }
     },
@@ -10876,6 +10900,14 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
         }
       }
     },
@@ -10897,6 +10929,14 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
         }
       }
     },
@@ -10918,6 +10958,14 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
         }
       }
     },
@@ -10939,6 +10987,14 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
         }
       }
     },
@@ -10960,6 +11016,14 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
         }
       }
     },
@@ -10981,6 +11045,14 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "isTrigger": true
+        },
+        "SCRIPT": {
+          "path": "../resources/scripts/trigger/trigger.lua"
         }
       }
     },
