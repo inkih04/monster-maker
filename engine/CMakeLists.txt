@@ -40,6 +40,11 @@ target_include_directories(SoloudStatic PUBLIC ${soloud_SOURCE_DIR}/include)
 target_compile_definitions(SoloudStatic PUBLIC ${SOLOUD_BACKEND_DEF})
 target_compile_options(SoloudStatic PRIVATE -w)
 
+if(APPLE)
+    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+    add_compile_definitions(GLEW_STATIC)
+endif()
+
 find_package(glfw3 CONFIG REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -104,6 +109,9 @@ if(APPLE)
     find_library(AUDIOTOOLBOX_FRAMEWORK AudioToolbox)
     find_library(COREFOUNDATION_FRAMEWORK CoreFoundation)
     find_library(AUDIOUNIT_FRAMEWORK AudioUnit)
+    find_library(IOKIT_FRAMEWORK IOKit)
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(QUARTZ_FRAMEWORK QuartzCore)
 
     target_link_libraries(MonsterMakerEngine
             PRIVATE
@@ -111,6 +119,9 @@ if(APPLE)
             ${AUDIOTOOLBOX_FRAMEWORK}
             ${COREFOUNDATION_FRAMEWORK}
             ${AUDIOUNIT_FRAMEWORK}
+            ${IOKIT_FRAMEWORK}
+            ${COCOA_FRAMEWORK}
+            ${QUARTZ_FRAMEWORK}
     )
 endif()
 
@@ -171,6 +182,19 @@ if(UNIX AND NOT APPLE)
             Xinerama
             Xcursor
             Xi
+    )
+endif()
+
+if(APPLE)
+    target_link_libraries(UnitTests
+            PRIVATE
+            ${COREAUDIO_FRAMEWORK}
+            ${AUDIOTOOLBOX_FRAMEWORK}
+            ${COREFOUNDATION_FRAMEWORK}
+            ${AUDIOUNIT_FRAMEWORK}
+            ${IOKIT_FRAMEWORK}
+            ${COCOA_FRAMEWORK}
+            ${QUARTZ_FRAMEWORK}
     )
 endif()
 
