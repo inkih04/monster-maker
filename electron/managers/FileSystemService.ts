@@ -62,6 +62,7 @@ export class FileSystemService {
 			'resources/maps/tileset',
 			'resources/sprites',
 			'resources/scripts',
+			'resources/music',
 		];
 	}
 
