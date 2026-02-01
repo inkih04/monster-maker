@@ -7,20 +7,22 @@ import { useEffect, useMemo } from 'react';
 import { useTilePainter } from './customHooks/useTilePainter';
 import { useCanvasMouse } from './customHooks/useCanvasMouse';
 import { Layer } from '../domain/ecs/layer';
+import { useProjectStore } from '../Project/ProjectConfigGState';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
 	const setZoom = useMapStore((state) => state.setZoom);
-	const paintedTiles = useMapStore((state) => state.paintedTiles); 
+	const paintedTiles = useMapStore((state) => state.paintedTiles);
 	const setActiveLayer = useMapStore((state) => state.setActiveLayer);
 	const activeLayer = useMapStore((state) => state.activeLayer);
 	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
-
+	const currentProject = useProjectStore((state) => state.currentProject);
 	const tileSets = useTileSetStore((state) => state.tilemaps);
 	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
 	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
 	const tileSize = useMapStore((state) => state.map?.tileSize ?? 16);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
+	const createMap = useMapStore((state) => state.createMap);
 
 	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
 
@@ -152,6 +154,13 @@ function Map() {
 	const handleZoomOut = () => {
 		setZoom(Math.max(zoom - 0.5, 0.5));
 	};
+
+	useEffect(() => {
+		if (currentProject) {
+			console.log('Sincronizando TileSize desde el proyecto:', currentProject.defaultTilesize);
+			createMap(currentProject.name, 100, 100, currentProject.defaultTilesize);
+		}
+	}, [currentProject, createMap]); 
 
 	return (
 		<div className="tilemap-wrapper">

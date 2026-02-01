@@ -17,7 +17,7 @@
 	width: 35vw;
 	height: 33vh;
 	min-width: 500px;
-	min-height: 350px;
+	min-height: 400px;
 	max-width: 800px;
 	max-height: 83vh;
 	padding: var(--space-xl);
@@ -38,7 +38,7 @@
 }
 
 .create--label {
-	text-align: right;
+	text-align: left;
 	white-space: nowrap;
 	color: var(--color-9);
 	font-weight: 500;

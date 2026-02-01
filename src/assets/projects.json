@@ -2,13 +2,9 @@
   "projects": [
     {
       "path": "/home/inkih/Desktop/test",
-      "name": "Test1",
-      "color": "#45B7D1"
-    },
-    {
-      "path": "/home/inkih/Desktop/test",
-      "name": "Test2",
-      "color": "#45B7D1"
+      "name": "22",
+      "color": "#98D8C8",
+      "defaultTilesize": 32
     }
   ]
 }

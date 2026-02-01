@@ -4,11 +4,11 @@ import { ProjectData } from '../../../global/types/projectData';
 
 interface UseProjectFormOptions {
 	onSuccess?: () => void;
-	generateColor?: () => string;
 }
 
 export const useProjectForm = (options: UseProjectFormOptions = {}) => {
 	const [name, setName] = useState('');
+	const [tileSize, setTileSize] = useState(32);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const { path, setPath, selectFolder, isSelecting, reset: resetPath } = useFolderPicker();
@@ -20,6 +20,7 @@ export const useProjectForm = (options: UseProjectFormOptions = {}) => {
 	const reset = useCallback(() => {
 		setName('');
 		resetPath();
+		setTileSize(32);
 		setIsSubmitting(false);
 	}, [resetPath]);
 
@@ -29,12 +30,13 @@ export const useProjectForm = (options: UseProjectFormOptions = {}) => {
 
 			setIsSubmitting(true);
 
-			const color = options.generateColor?.() || '#000000';
+			const color = '#000000';
 
 			const result = await addProjectFn({
 				path,
 				name: name.trim(),
 				color,
+				defaultTilesize: tileSize,
 			});
 
 			setIsSubmitting(false);
@@ -52,6 +54,8 @@ export const useProjectForm = (options: UseProjectFormOptions = {}) => {
 	return {
 		name,
 		setName,
+		tileSize,
+		setTileSize,
 		path,
 		setPath,
 		selectFolder,

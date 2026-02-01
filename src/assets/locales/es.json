@@ -23,5 +23,6 @@
 	"fileName": "Nombre del archivo",
 	"fileAlreadyExists": "Ya existe un archivo con ese nombre",
 	"saving": "Guardando...",
-	"save": "Guardar"
+	"save": "Guardar",
+	"defaultTileSize": "Tamaño de  tiles"
 }
