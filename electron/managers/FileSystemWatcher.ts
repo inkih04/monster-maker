@@ -39,8 +39,8 @@ export class FileSystemWatcher {
 		const watcher = chokidar.watch(watchPath, config);
 
 		watcher
-			.on('addDir', () => onDataChange(this.getData<T>(key)))
-			.on('unlinkDir', () => onDataChange(this.getData<T>(key)))
+			.on('addDir', () => onDataChange(this.getData<T>()))
+			.on('unlinkDir', () => onDataChange(this.getData<T>()))
 			.on('error', (error) => console.error(`Watcher error (${key}):`, error));
 
 		this.watchers.set(key, watcher);
@@ -58,9 +58,9 @@ export class FileSystemWatcher {
 		const watcher = chokidar.watch(watchPath, config);
 
 		watcher
-			.on('add', () => onDataChange(this.getData<T>(key)))
-			.on('unlink', () => onDataChange(this.getData<T>(key)))
-			.on('change', () => onDataChange(this.getData<T>(key)))
+			.on('add', () => onDataChange(this.getData<T>()))
+			.on('unlink', () => onDataChange(this.getData<T>()))
+			.on('change', () => onDataChange(this.getData<T>()))
 			.on('error', (error) => console.error(`Watcher error (${key}):`, error));
 
 		this.watchers.set(key, watcher);
@@ -104,7 +104,7 @@ export class FileSystemWatcher {
 		};
 	}
 
-	private getData<T>(key: string): T {
+	private getData<T>(): T {
 		return null as T;
 	}
 }

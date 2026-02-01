@@ -23,5 +23,6 @@
 	"fileName": "File name",
 	"fileAlreadyExists": "A file with that name already exists",
 	"saving": "Saving...",
-	"save": "Save"
+	"save": "Save",
+	"defaultTileSize": "Default tile size"
 }
