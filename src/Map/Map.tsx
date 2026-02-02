@@ -8,6 +8,7 @@ import { useTilePainter } from './customHooks/useTilePainter';
 import { useCanvasMouse } from './customHooks/useCanvasMouse';
 import { Layer } from '../domain/ecs/layer';
 import { useProjectStore } from '../Project/ProjectConfigGState';
+import { useMapCapture } from './customHooks/useMapCapture';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
@@ -49,27 +50,6 @@ function Map() {
 		};
 	}, [paintedTiles, zoom, tileSize]);
 
-	useEffect(() => {
-		const handleExport = async () => {
-			const mapJson = exportToEngineFormat();
-
-			try {
-				const result = await window.api.exportMap(mapJson);
-
-				if (result.success) {
-					console.log('Mapa exportado exitosamente a:', result.path);
-				} else {
-					console.error('Error al exportar:', result.error);
-				}
-			} catch (error) {
-				console.error('Error al exportar:', error);
-			}
-		};
-
-		const cleanup = window.api.onExportMapRequest(handleExport);
-
-		return cleanup;
-	}, [exportToEngineFormat]);
 
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
 		const tilesetImage = tilesetImageRef.current;
@@ -137,6 +117,12 @@ function Map() {
 		minHeight,
 		redrawTrigger: [paintedTiles, currentTileSet?.isLoaded, previewPosition],
 	});
+
+	useMapCapture({
+		canvasRef,
+		drawBackground,
+	});
+
 
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
 		zoom,
