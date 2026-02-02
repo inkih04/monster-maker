@@ -26,7 +26,7 @@ export function FileListener() {
 							mapId: crypto.randomUUID(),
 							width: 100,
 							height: 100,
-							tileSize: 16,
+							tileSize: currentProject?.defaultTilesize || 16,
 							entities: {},
 						},
 						null,
