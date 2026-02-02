@@ -14,6 +14,28 @@ export function FileListener() {
 	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	useEffect(() => {
+		const handleExport = async () => {
+			const mapJson = exportToEngineFormat();
+
+			try {
+				const result = await window.api.exportMap(mapJson);
+
+				if (result.success) {
+					console.log('Map exported successfully to:', result.path);
+				} else {
+					console.error('Export error:', result.error);
+				}
+			} catch (error) {
+				console.error('Export error:', error);
+			}
+		};
+
+		const cleanup = window.api.onExportMapRequest(handleExport);
+
+		return cleanup;
+	}, [exportToEngineFormat]);
+
+	useEffect(() => {
 		const cleanupCreate = window.api.onCreateNewFile((fileType) => {
 			let extension = '';
 			let defaultContent = '';

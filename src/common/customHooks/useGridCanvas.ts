@@ -10,6 +10,7 @@ interface UseGridCanvasProps {
 	minWidth?: number;
 	minHeight?: number;
 	redrawTrigger?: unknown;
+	hideGridAndSelection?: boolean;
 }
 
 export function useGridCanvas({
@@ -20,6 +21,7 @@ export function useGridCanvas({
 	minWidth = 0,
 	minHeight = 0,
 	redrawTrigger,
+	hideGridAndSelection = false,
 }: UseGridCanvasProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -40,39 +42,39 @@ export function useGridCanvas({
 			canvas.height = Math.max(containerHeight, minHeight);
 
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
-
 			drawBackground?.(ctx);
+			if (!hideGridAndSelection) {
+				const scaledTileSize = tileSize * zoom;
 
-			const scaledTileSize = tileSize * zoom;
-
-			drawGrid({
-				ctx,
-				width: canvas.width,
-				height: canvas.height,
-				tileSize: scaledTileSize,
-				color: 'white',
-				opacity: 0.3,
-				lineWidth: 1,
-			});
-
-			if (selectedArea) {
-				const minX = Math.min(selectedArea.startX, selectedArea.endX);
-				const maxX = Math.max(selectedArea.startX, selectedArea.endX);
-				const minY = Math.min(selectedArea.startY, selectedArea.endY);
-				const maxY = Math.max(selectedArea.startY, selectedArea.endY);
-
-				drawSelection({
+				drawGrid({
 					ctx,
-					minX,
-					minY,
-					width: maxX - minX + 1,
-					height: maxY - minY + 1,
+					width: canvas.width,
+					height: canvas.height,
 					tileSize: scaledTileSize,
-					fillColor: '0,255,0',
-					fillOpacity: 0.2,
-					strokeColor: '#00ff00',
-					strokeWidth: 2,
+					color: 'white',
+					opacity: 0.3,
+					lineWidth: 1,
 				});
+
+				if (selectedArea) {
+					const minX = Math.min(selectedArea.startX, selectedArea.endX);
+					const maxX = Math.max(selectedArea.startX, selectedArea.endX);
+					const minY = Math.min(selectedArea.startY, selectedArea.endY);
+					const maxY = Math.max(selectedArea.startY, selectedArea.endY);
+
+					drawSelection({
+						ctx,
+						minX,
+						minY,
+						width: maxX - minX + 1,
+						height: maxY - minY + 1,
+						tileSize: scaledTileSize,
+						fillColor: '0,255,0',
+						fillOpacity: 0.2,
+						strokeColor: '#00ff00',
+						strokeWidth: 2,
+					});
+				}
 			}
 		};
 
@@ -87,7 +89,7 @@ export function useGridCanvas({
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [zoom, tileSize, selectedArea, drawBackground, minWidth, minHeight, redrawTrigger]);
+	}, [zoom, tileSize, selectedArea, drawBackground, minWidth, minHeight, redrawTrigger, hideGridAndSelection]);
 
 	return { canvasRef, containerRef };
 }

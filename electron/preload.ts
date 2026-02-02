@@ -27,6 +27,11 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('export-map-request', callback);
 		return () => ipcRenderer.removeAllListeners('export-map-request');
 	},
+	onExportMapPNGRequest: (callback: () => void) => {
+		ipcRenderer.on('export-map-PNG-request', callback);
+		return () => ipcRenderer.removeAllListeners('export-map-PNG-request');
+	},
+	saveImage: (base64Data: string) => ipcRenderer.invoke('save-image', base64Data),
 	getFilesInFolder: (pd: ProjectData, folder: FolderNode) =>
 		ipcRenderer.invoke('config:getFilesInFolder', pd, folder),
 

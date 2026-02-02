@@ -30,4 +30,19 @@ export function setupMapHandlers(): void {
 			};
 		}
 	});
+
+	ipcMain.handle('save-image', async (event, base64Data) => {
+		const { filePath } = await dialog.showSaveDialog({
+			title: 'Export Map to PNG',
+			defaultPath: 'map.png',
+			filters: [{ name: 'Images', extensions: ['png'] }],
+		});
+
+		if (filePath) {
+			const base64Image = base64Data.split(';base64,').pop();
+			fs.writeFileSync(filePath, base64Image, { encoding: 'base64' });
+			return { success: true, path: filePath };
+		}
+		return { success: false };
+	});
 }

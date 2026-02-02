@@ -105,6 +105,9 @@ app.whenReady().then(() => {
 
 		editSubmenu.push({
 			label: 'Export Current Map to PNG',
+			click: () => {
+				win?.webContents.send('export-map-PNG-request');
+			},
 		});
 	}
 
