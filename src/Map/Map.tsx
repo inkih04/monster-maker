@@ -157,8 +157,7 @@ function Map() {
 
 	useEffect(() => {
 		if (currentProject) {
-			console.log('Sincronizando TileSize desde el proyecto:', currentProject.defaultTilesize);
-			createMap(currentProject.name, 100, 100, currentProject.defaultTilesize);
+			createMap(crypto.randomUUID(), 100, 100, currentProject.defaultTilesize || 16);
 		}
 	}, [currentProject, createMap]); 
 

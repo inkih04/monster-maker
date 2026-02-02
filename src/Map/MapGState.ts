@@ -117,6 +117,10 @@ export const useMapStore = create<MapStore>((set, get) => ({
 			},
 			paintedTiles: [],
 			selectedEntityId: null,
+			mapRelativePath: null,
+			isDirty: false,
+			zoom: 1,
+			activeLayer: 'ground',
 		});
 	},
 

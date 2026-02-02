@@ -18,6 +18,7 @@ export function useFileActions() {
 	const isDirty = useMapStore((state) => state.isDirty);
 	const loadMap = useMapStore((state) => state.loadMap);
 	const setMapRelativePath = useMapStore((state) => state.setMapRelativePath);
+	const createMap = useMapStore((state) => state.createMap);
 
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
@@ -51,7 +52,7 @@ export function useFileActions() {
 			mapId: parsedMap.mapId,
 			width: parsedMap.width || 100,
 			height: parsedMap.height || 100,
-			tileSize: parsedMap.tileSize || 16,
+			tileSize: parsedMap.tileSize || currentProject.defaultTilesize || 16,
 			entities: Array.isArray(parsedMap.entities)
 				? parsedMap.entities.reduce(
 						(acc: Record<string, Entity>, entity: Entity) => {
@@ -72,6 +73,7 @@ export function useFileActions() {
 		if (!fileToDelete || !selectedFolder?.path || !currentProject) return;
 
 		await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
+		createMap(crypto.randomUUID(), 100, 100, currentProject.defaultTilesize || 16);
 		setFileToDelete(null);
 	};
 
@@ -81,7 +83,6 @@ export function useFileActions() {
 	};
 
 	return {
-
 		showDeleteConfirm,
 		showSaveConfirm,
 		fileToDelete,
