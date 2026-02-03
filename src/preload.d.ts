@@ -42,6 +42,7 @@ declare global {
 				folderPath: string,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string }>;
+			pathUnion: (path1: string, path2: string) => Promise<string>;
 			renameFile: (
 				oldFileRelativePath: string,
 				newFileName: string,

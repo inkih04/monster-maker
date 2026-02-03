@@ -1,13 +1,9 @@
 import { useState } from 'react';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
 import { useFolderStore } from '../../common/globalStores/useFolderStore';
+import { FileItem } from '../../../global/types/fileItem';
 
 
-interface FileData {
-	name: string;
-	path: string;
-	type: string;
-}
 
 export function useFileRename() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -16,7 +12,7 @@ export function useFileRename() {
 	const [renamingFile, setRenamingFile] = useState<string | null>(null);
 	const [newFileName, setNewFileName] = useState('');
 
-	const startRename = (file: FileData) => {
+	const startRename = (file: FileItem) => {
 		setRenamingFile(file.path);
 		setNewFileName(file.name);
 	};
@@ -28,7 +24,7 @@ export function useFileRename() {
 
 	const handleRenameKeyDown = async (
 		e: React.KeyboardEvent<HTMLTextAreaElement>,
-		file: FileData
+		file: FileItem
 	) => {
 		if (e.key === 'Enter' && selectedFolder?.path && currentProject) {
 			e.preventDefault();

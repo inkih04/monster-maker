@@ -23,11 +23,11 @@ export function useTilePainter(): UseTilePainterResult {
 	const clearMapTiles = useMapStore((state) => state.clearMapTiles);
 	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
-	const tileSets = useTileSetStore((state) => state.tilemaps);
-	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
+	const tileSets = useTileSetStore((state) => state.tilesets);
+	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
 
-	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
+	const currentTileSet = tileSets[currentTileSetPath || ''];
 
 	const [isDrawing, setIsDrawing] = useState(false);
 	const [previewPosition, setPreviewPosition] = useState<PreviewPosition | null>(null);

@@ -2,12 +2,7 @@ import { useState, useEffect } from 'react';
 import { useFolderStore } from '../globalStores/useFolderStore';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
 import { getFileNameWithoutExtension, getFileType } from '../utils/filesUtils';
-
-interface FileItem {
-	name: string;
-	path: string;
-	type: 'script' | 'tilemap' | 'tileset';
-}
+import { FileItem } from '../../../global/types/fileItem';
 
 const transformToFileItems = (fileNames: string[]): FileItem[] => {
 	return fileNames

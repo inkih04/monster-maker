@@ -1,77 +1,76 @@
 import { create } from 'zustand';
 
 export interface TileSetData {
-	id: string;
-	pathImg: string;
-	pathTileMapConfig: string;
-	tileSizeX: number;
-	tileSizeY: number;
-	isLoaded: boolean;
+  id: string;
+  pathImg: string;
+  pathTileMapConfig: string;
+  tileSizeX: number;
+  tileSizeY: number;
+  isLoaded: boolean;
 }
 
 export interface TileSelection {
-	startX: number;
-	startY: number;
-	endX: number;
-	endY: number;
+  startX: number;
+  startY: number;
+  endX: number;
+  endY: number;
 }
 
 export interface TileSetStore {
-	tilemaps: TileSetData[];
-	currentTileMapId: string | null;
-	selectedArea: TileSelection | null;
-	zoom: number;
+  tilesets: Record<string, TileSetData>;
+  currentTileSetPath: string | null;
+  selectedArea: TileSelection | null;
+  zoom: number;
 
-	setSelectedArea: (area: TileSelection | null) => void;
-	setZoom: (zoom: number) => void;
-	setCurrentTileMap: (id: string) => void;
-	addTileMap: (tilemap: TileSetData) => void;
-	setTileMapLoaded: (id: string, loaded: boolean) => void;
+  setSelectedArea: (area: TileSelection | null) => void;
+  setZoom: (zoom: number) => void;
+  setCurrentTileSet: (path: string) => void;
+  addTileSet: (tilemap: TileSetData) => void;
+  setTileSetLoaded: (path: string, loaded: boolean) => void;
 }
 
 export const useTileSetStore = create<TileSetStore>((set, get) => {
-	return {
-		tilemaps: [
-			{
-				id: 'tilemap-1',
-				pathImg: '../../engine/resources/maps/tilesets/TileMap2.png',
-				pathTileMapConfig: '../../engine/resources/maps/tilesets/TileMap2.json',
-				tileSizeX: 16,
-				tileSizeY: 16,
-				isLoaded: false,
-			},
-		],
-		currentTileMapId: 'tilemap-1',
-		selectedArea: null,
-		zoom: 1,
+  return {
+    tilesets: {},
+    currentTileSetPath: null,
+    selectedArea: null,
+    zoom: 1,
 
-		setSelectedArea: (area) => {
-			set({ selectedArea: area });
-		},
+    setSelectedArea: (area) => {
+      set({ selectedArea: area });
+    },
 
-		setZoom: (zoom) => {
-			set({ zoom });
-		},
+    setZoom: (zoom) => {
+      set({ zoom });
+    },
 
-		setCurrentTileMap: (id) => {
-			const exists = get().tilemaps.some((tm) => tm.id === id);
-			if (exists) {
-				set({ currentTileMapId: id });
-			} else {
-				console.warn(`TileMap con id "${id}" no existe`);
-			}
-		},
+    setCurrentTileSet: (path) => {
+      const tilesets = get().tilesets;
+      if (tilesets[path]) {
+        set({ currentTileSetPath: path });
+      } else {
+        console.warn(`TileSet with "${path}" does not exist`);
+      }
+    },
 
-		addTileMap: (tilemap) => {
-			set((state) => ({
-				tilemaps: [...state.tilemaps, tilemap],
-			}));
-		},
+    addTileSet: (tilemap) => {
+      set((state) => ({
+        tilesets: { ...state.tilesets, [tilemap.pathTileMapConfig]: tilemap },
+      }));
+    },
 
-		setTileMapLoaded: (id, loaded) => {
-			set((state) => ({
-				tilemaps: state.tilemaps.map((tm) => (tm.id === id ? { ...tm, isLoaded: loaded } : tm)),
-			}));
-		},
-	};
+    setTileSetLoaded: (path, loaded) => {
+      set((state) => {
+        const tileSet = state.tilesets[path];
+        if (!tileSet) return state;
+
+        return {
+          tilesets: {
+            ...state.tilesets,
+            [path]: { ...tileSet, isLoaded: loaded },
+          },
+        };
+      });
+    },
+  };
 });

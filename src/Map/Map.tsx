@@ -18,14 +18,14 @@ function Map() {
 	const activeLayer = useMapStore((state) => state.activeLayer);
 	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
 	const currentProject = useProjectStore((state) => state.currentProject);
-	const tileSets = useTileSetStore((state) => state.tilemaps);
-	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
-	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
+	const tileSets = useTileSetStore((state) => state.tilesets);
+	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
+	const setTileMapLoaded = useTileSetStore((state) => state.setTileSetLoaded);
 	const tileSize = useMapStore((state) => state.map?.tileSize ?? 16);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
 	const createMap = useMapStore((state) => state.createMap);
 
-	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
+	const currentTileSet = tileSets[currentTileSetPath || ''];
 
 	const { isDrawing, previewPosition, setIsDrawing, setPreviewPosition, paintTile, clearMap } =
 		useTilePainter();
@@ -49,7 +49,6 @@ function Map() {
 			minHeight: maxY * tileSize * zoom,
 		};
 	}, [paintedTiles, zoom, tileSize]);
-
 
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
 		const tilesetImage = tilesetImageRef.current;
@@ -123,7 +122,6 @@ function Map() {
 		drawBackground,
 	});
 
-
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
 		zoom,
 		tileSize: tileSize,
@@ -145,7 +143,7 @@ function Map() {
 		if (currentProject) {
 			createMap(crypto.randomUUID(), 100, 100, currentProject.defaultTilesize || 16);
 		}
-	}, [currentProject, createMap]); 
+	}, [currentProject, createMap]);
 
 	return (
 		<div className="tilemap-wrapper">

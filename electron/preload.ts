@@ -12,6 +12,9 @@ contextBridge.exposeInMainWorld('api', {
 	getDirectoryStructure: (pd: ProjectData) =>
 		ipcRenderer.invoke('config:getDirectoryStructure', pd),
 
+	pathUnion: (path1: string, path2: string) => 
+        ipcRenderer.invoke('config:pathUnion', path1, path2),
+
 	startWatchingDirectory: (pd: ProjectData) => ipcRenderer.invoke('config:startWatching', pd),
 	stopWatchingDirectory: () => ipcRenderer.invoke('config:stopWatching'),
 	onDirectoryStructureChanged: (callback: (structure: FolderNode[]) => void) => {

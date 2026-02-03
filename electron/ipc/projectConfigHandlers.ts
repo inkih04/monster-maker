@@ -97,6 +97,11 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle('config:pathUnion', async (_event, path1: string, path2: string) => {
+		return configManager.pathUnion(path1, path2);
+
+	});
+
 	ipcMain.handle('config:selectFolder', async () => {
 		try {
 			const result = await dialog.showOpenDialog({
