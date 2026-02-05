@@ -2,7 +2,7 @@ import './Map.css';
 import { useMapStore } from './MapGState';
 import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSetStore } from '../Tileset/TileSetGState';
-import { useTileSetImage } from '../common/customHooks/useTileSetImage';
+import { useTileSetImages } from '../common/customHooks/useTileSetImages';
 import { useEffect, useMemo } from 'react';
 import { useTilePainter } from './customHooks/useTilePainter';
 import { useCanvasMouse } from './customHooks/useCanvasMouse';
@@ -29,7 +29,7 @@ function Map() {
 	const { isDrawing, previewPosition, setIsDrawing, setPreviewPosition, paintTile, clearMap } =
 		useTilePainter();
 
-	const tilesetImageRef = useTileSetImage(currentTileSet, setTileMapLoaded);
+	const tilesetImages = useTileSetImages(tileSets, setTileMapLoaded);
 
 	const { minWidth, minHeight } = useMemo(() => {
 		const baseMapWidthInTiles = 50;
@@ -50,26 +50,26 @@ function Map() {
 	}, [paintedTiles, zoom, tileSize]);
 
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
-		const tilesetImage = tilesetImageRef.imageRef.current;
-		if (!tilesetImage || !currentTileSet) return;
-
-		if (!tilesetImageRef) return;
-
-		const tileSize = currentTileSet.tileSizeX;
-		const scaledTileSize = tileSize * zoom;
-
 		const layerOrder: Layer[] = ['ground', 'decoration', 'entities', 'shadows', 'foreground'];
 
 		layerOrder.forEach((layer) => {
 			const tilesInLayer = paintedTiles.filter((tile) => tile.layer === layer);
 
 			tilesInLayer.forEach((tile) => {
+				const tileTileset = tileSets[tile.spriteSheetPath];
+				const tilesetImage = tilesetImages[tile.spriteSheetPath];
+				
+				if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
+
+				const tileTileSize = tileTileset.tileSizeX;
+				const scaledTileSize = tileTileSize * zoom;
+
 				ctx.drawImage(
 					tilesetImage,
-					tile.tilesetX * tileSize,
-					tile.tilesetY * tileSize,
-					tileSize,
-					tileSize,
+					tile.tilesetX * tileTileSize,
+					tile.tilesetY * tileTileSize,
+					tileTileSize,
+					tileTileSize,
 					tile.x * scaledTileSize,
 					tile.y * scaledTileSize,
 					scaledTileSize,
@@ -78,7 +78,13 @@ function Map() {
 			});
 		});
 
-		if (previewPosition && !isDrawing) {
+		if (previewPosition && !isDrawing && currentTileSet) {
+			const currentTilesetImage = tilesetImages[currentTileSetPath || ''];
+			if (!currentTilesetImage) return;
+
+			const tileSize = currentTileSet.tileSizeX;
+			const scaledTileSize = tileSize * zoom;
+
 			ctx.globalAlpha = 0.5;
 
 			if (selectedArea) {
@@ -90,7 +96,7 @@ function Map() {
 				for (let y = minY; y <= maxY; y++) {
 					for (let x = minX; x <= maxX; x++) {
 						ctx.drawImage(
-							tilesetImage,
+							currentTilesetImage,
 							x * tileSize,
 							y * tileSize,
 							tileSize,
@@ -115,7 +121,7 @@ function Map() {
 		drawBackground,
 		minWidth,
 		minHeight,
-		redrawTrigger: [paintedTiles, currentTileSet?.isLoaded, previewPosition],
+		redrawTrigger: [paintedTiles, tilesetImages, previewPosition],
 	});
 
 	useMapCapture({

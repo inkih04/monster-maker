@@ -55,16 +55,16 @@ export function useFileActions() {
 			const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
 			const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
 			const configurationPath = await window.api.pathUnion(selectedFolder.path, jsonPath);
+			const completeRelativePath = await window.api.pathUnion(selectedFolder.path, file.path);
 
-			const existingTileSet = useTileSetStore.getState().tilesets[configurationPath];
+			const existingTileSet = useTileSetStore.getState().tilesets[completeRelativePath];
 			if (existingTileSet) {
-				setCurrentTileSet(configurationPath);
+				setCurrentTileSet(completeRelativePath);
 				return;
 			}
 
 			const result = await window.api.getFile(jsonPath, selectedFolder.path, currentProject);
 
-			const completeRelativePath = await window.api.pathUnion(selectedFolder.path, file.path);
 			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
 			const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
 			console.log(completePath);
@@ -85,7 +85,7 @@ export function useFileActions() {
 						};
 
 						addTileSet(newTileSet);
-						setCurrentTileSet(configurationPath);
+						setCurrentTileSet(completeRelativePath);
 						console.log('TileSet puest');
 					}
 				} catch (parseError) {
@@ -103,7 +103,7 @@ export function useFileActions() {
 				};
 
 				addTileSet(newTileSet);
-				setCurrentTileSet(configurationPath);
+				setCurrentTileSet(completeRelativePath);
 			}
 		} catch (error) {
 			console.error('Error while tileset:', error);

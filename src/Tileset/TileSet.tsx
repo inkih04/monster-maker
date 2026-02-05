@@ -1,5 +1,5 @@
 import { useTileSetStore } from './TileSetGState';
-import { useTileSetImage } from '../common/customHooks/useTileSetImage';
+import { useTileSetImages } from '../common/customHooks/useTileSetImages';
 import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSelection } from '../common/customHooks/useTileSelection';
 import { getSelectionInfo, getFileNameFromPath } from './TileSetUtils';
@@ -14,7 +14,6 @@ function TileSet() {
 	const setSelectedArea = useTileSetStore((state) => state.setSelectedArea);
 	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
 	const tilesets = useTileSetStore((state) => state.tilesets);
-	const setTileSetLoaded = useTileSetStore((state) => state.setTileSetLoaded);
 	const currentProject = useProjectStore((state) => state.currentProject);
 
 	const currentTileMap = tilesets[currentTileSetPath || ''];
@@ -22,10 +21,11 @@ function TileSet() {
 
 	const TILE_SIZE = (currentTileMap?.tileSizeX ?? currentProject?.defaultTilesize) || 16;
 
-	const { imageRef, dimensions } = useTileSetImage(
-		hasTileMap ? currentTileMap : null,
-		setTileSetLoaded
-	);
+	const tilesetImages = useTileSetImages(tilesets);
+	const currentImage = currentTileSetPath ? tilesetImages[currentTileSetPath] : null;
+	const dimensions = currentImage 
+		? { width: currentImage.width, height: currentImage.height }
+		: { width: 0, height: 0 };
 
 	const DEFAULT_GRID_SIZE = 20 * TILE_SIZE * zoom;
 
@@ -39,16 +39,16 @@ function TileSet() {
 		minWidth: scaledWidth,
 		minHeight: scaledHeight,
 		drawBackground: (ctx) => {
-			if (!hasTileMap || !imageRef.current) return;
+			if (!hasTileMap || !currentImage) return;
 
-			if (imageRef.current.width > 0) {
+			if (currentImage.width > 0) {
 				ctx.imageSmoothingEnabled = false;
 				ctx.drawImage(
-					imageRef.current,
+					currentImage,
 					0,
 					0,
-					imageRef.current.width * zoom,
-					imageRef.current.height * zoom
+					currentImage.width * zoom,
+					currentImage.height * zoom
 				);
 			}
 		},

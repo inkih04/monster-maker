@@ -29,7 +29,7 @@ export interface TileSetStore {
 	addTileSet: (tilemap: TileSetData) => void;
 	setTileSetLoaded: (path: string, loaded: boolean) => void;
 	updateTileSet: (path: string, updates: Partial<TileSetData>) => void;
-	removeTileSet: (path: string) => void; 
+	removeTileSet: (path: string) => void;
 }
 
 export const useTileSetStore = create<TileSetStore>((set, get) => {
@@ -58,7 +58,7 @@ export const useTileSetStore = create<TileSetStore>((set, get) => {
 
 		addTileSet: (tilemap) => {
 			set((state) => ({
-				tilesets: { ...state.tilesets, [tilemap.pathTileMapConfig]: tilemap },
+				tilesets: { ...state.tilesets, [tilemap.relativePath]: tilemap },
 			}));
 		},
 

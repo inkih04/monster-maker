@@ -53,6 +53,7 @@ export function useTilePainter(): UseTilePainterResult {
 			}> = [];
 
 			if (selectedArea) {
+
 				const minTilesetX = Math.min(selectedArea.startX, selectedArea.endX);
 				const maxTilesetX = Math.max(selectedArea.startX, selectedArea.endX);
 				const minTilesetY = Math.min(selectedArea.startY, selectedArea.endY);

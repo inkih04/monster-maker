@@ -11,6 +11,7 @@ export interface PaintedTile {
 	tilesetY: number;
 	entityId: string;
 	layer: Layer;
+	spriteSheetPath: string;
 }
 
 export interface MapData {
@@ -142,6 +143,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
 					tilesetY: renderComponent.y / tileSize,
 					entityId: entity.id,
 					layer: entity.layer,
+					spriteSheetPath: renderComponent.spriteSheetPath || '',
 				});
 			}
 		});
@@ -352,6 +354,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
 					tilesetY: tile.tilesetY,
 					entityId: tile.entityId,
 					layer: tile.layer,
+					spriteSheetPath: tile.spriteSheetPath,
 				});
 			});
 
