@@ -1,31 +1,36 @@
 import { useTileSetStore } from './TileSetGState';
-import { useTileSetImage } from '../common/customHooks/useTileSetImage';
+import { useTileSetImages } from '../common/customHooks/useTileSetImages';
 import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSelection } from '../common/customHooks/useTileSelection';
 import { getSelectionInfo, getFileNameFromPath } from './TileSetUtils';
 import './TileSet.css';
+import { useProjectStore } from '../Project/ProjectConfigGState';
+import TileSize from '../common/components/tileSize/TileSize';
 
 function TileSet() {
 	const zoom = useTileSetStore((state) => state.zoom);
 	const setZoom = useTileSetStore((state) => state.setZoom);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
 	const setSelectedArea = useTileSetStore((state) => state.setSelectedArea);
-	const currentTileMapId = useTileSetStore((state) => state.currentTileMapId);
-	const tilemaps = useTileSetStore((state) => state.tilemaps);
-	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
+	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
+	const tilesets = useTileSetStore((state) => state.tilesets);
+	const currentProject = useProjectStore((state) => state.currentProject);
 
-	const currentTileMap = tilemaps.find((tm) => tm.id === currentTileMapId);
+	const currentTileMap = tilesets[currentTileSetPath || ''];
 	const hasTileMap = Boolean(currentTileMap);
 
-	const TILE_SIZE = currentTileMap?.tileSizeX ?? 16;
+	const TILE_SIZE = (currentTileMap?.tileSizeX ?? currentProject?.defaultTilesize) || 16;
 
-	const imageRef = useTileSetImage(hasTileMap ? currentTileMap : null, setTileMapLoaded);
+	const tilesetImages = useTileSetImages(tilesets);
+	const currentImage = currentTileSetPath ? tilesetImages[currentTileSetPath] : null;
+	const dimensions = currentImage 
+		? { width: currentImage.width, height: currentImage.height }
+		: { width: 0, height: 0 };
 
 	const DEFAULT_GRID_SIZE = 20 * TILE_SIZE * zoom;
 
-	const scaledWidth = imageRef.current ? imageRef.current.width * zoom : DEFAULT_GRID_SIZE;
-
-	const scaledHeight = imageRef.current ? imageRef.current.height * zoom : DEFAULT_GRID_SIZE;
+	const scaledWidth = dimensions.width > 0 ? dimensions.width * zoom : DEFAULT_GRID_SIZE;
+	const scaledHeight = dimensions.height > 0 ? dimensions.height * zoom : DEFAULT_GRID_SIZE;
 
 	const { canvasRef, containerRef } = useGridCanvas({
 		zoom,
@@ -34,11 +39,18 @@ function TileSet() {
 		minWidth: scaledWidth,
 		minHeight: scaledHeight,
 		drawBackground: (ctx) => {
-			if (!hasTileMap || !imageRef.current) return;
+			if (!hasTileMap || !currentImage) return;
 
-			const img = imageRef.current;
-			ctx.imageSmoothingEnabled = false;
-			ctx.drawImage(img, 0, 0, img.width * zoom, img.height * zoom);
+			if (currentImage.width > 0) {
+				ctx.imageSmoothingEnabled = false;
+				ctx.drawImage(
+					currentImage,
+					0,
+					0,
+					currentImage.width * zoom,
+					currentImage.height * zoom
+				);
+			}
 		},
 	});
 
@@ -55,6 +67,7 @@ function TileSet() {
 	const selectionInfo = getSelectionInfo(selectedArea);
 
 	return (
+		<>
 		<div className="tilemap-wrapper">
 			<div className="tilemap-viewport" ref={containerRef}>
 				<canvas
@@ -87,6 +100,8 @@ function TileSet() {
 				</div>
 			</div>
 		</div>
+		<TileSize/>
+		</>
 	);
 }
 

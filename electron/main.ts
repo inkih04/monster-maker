@@ -1,6 +1,6 @@
-import { app, BrowserWindow, Menu, MenuItemConstructorOptions } from 'electron';
+import { app, BrowserWindow, Menu, MenuItemConstructorOptions, net, protocol } from 'electron'; 
 import { createRequire } from 'node:module';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url'; 
 import path from 'node:path';
 import { setupMapHandlers } from './ipc/mapHandlers';
 import { setupProjectConfigHandlers } from './ipc/projectConfigHandlers';
@@ -43,14 +43,14 @@ function createWindow() {
 					"default-src 'self' http://localhost:5173 ws://localhost:5173;",
 					"script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173;",
 					"style-src 'self' 'unsafe-inline' http://localhost:5173;",
-					"img-src 'self' data: blob:;",
+					"img-src 'self' data: blob: project-file:;", 
 					"font-src 'self' data:;",
 				].join(' ')
 			: [
 					"default-src 'self';",
 					"script-src 'self';",
 					"style-src 'self' 'unsafe-inline';",
-					"img-src 'self' data:;",
+					"img-src 'self' data: project-file:;", 
 					"font-src 'self';",
 				].join(' ');
 
@@ -85,6 +85,12 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+	protocol.handle('project-file', (request) => {
+		const url = request.url.replace('project-file://', '');
+		const decodedPath = decodeURIComponent(url);
+		return net.fetch(pathToFileURL(decodedPath).toString());
+	});
+
 	createWindow();
 	setupContextMenuHandlers();
 	const menu = defaultMenu(app, require('electron').shell);

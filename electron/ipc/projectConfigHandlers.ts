@@ -39,7 +39,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-	ipcMain.handle('config:open', async (_event, pd: ProjectData) => {
+	ipcMain.handle('config:open', async (_event, pd: ProjectData, defaultTileSize: number) => {
 		try {
 			const directoryHasBeenOpened: boolean = configManager.openProjectDirectory(pd);
 			if (directoryHasBeenOpened) {
@@ -96,6 +96,11 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			}
 		}
 	);
+
+	ipcMain.handle('config:pathUnion', async (_event, path1: string, path2: string) => {
+		return configManager.pathUnion(path1, path2);
+
+	});
 
 	ipcMain.handle('config:selectFolder', async () => {
 		try {
