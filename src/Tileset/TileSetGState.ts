@@ -3,6 +3,7 @@ import { create } from 'zustand';
 export interface TileSetData {
 	id: string;
 	pathImg: string;
+	relativePath: string;
 	pathTileMapConfig: string;
 	tileSizeX: number;
 	tileSizeY: number;
@@ -28,7 +29,7 @@ export interface TileSetStore {
 	addTileSet: (tilemap: TileSetData) => void;
 	setTileSetLoaded: (path: string, loaded: boolean) => void;
 	updateTileSet: (path: string, updates: Partial<TileSetData>) => void;
-	removeTileSet: (path: string) => void; // Nueva función
+	removeTileSet: (path: string) => void; 
 }
 
 export const useTileSetStore = create<TileSetStore>((set, get) => {

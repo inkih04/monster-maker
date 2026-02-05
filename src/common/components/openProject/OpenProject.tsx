@@ -5,6 +5,7 @@ import { useProjectForm } from '../../customHooks/useProjectForm';
 import { Folder } from 'iconoir-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ProjectData } from '../../../../global/types/projectData';
 
 interface OpenProjectProps {
 	open: boolean;
@@ -17,9 +18,12 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 	const [isSubmittingLocal, setIsSubmittingLocal] = useState(false);
 	const { t } = useTranslation();
 
-	const { setPath, path, selectFolder, reset, isSelecting } = useProjectForm({
-		onSuccess: () => onOpenChange(false),
-	});
+	const { setPath, path, tileSize, setTileSize, selectFolder, reset, isSelecting } = useProjectForm(
+		{
+			onSuccess: () => onOpenChange(false),
+		}
+	);
+	const isTileSizeValid = Number(tileSize) > 0 && Number(tileSize) % 16 === 0;
 
 	const handleClose = () => {
 		reset();
@@ -43,7 +47,7 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 		setHasError(false);
 		if (path.trim() === '') return;
 		const { dir, name } = splitPathIntoDirAndName(path);
-		const projectData = { path: dir, name: name };
+		const projectData: ProjectData = { path: dir, name: name, defaultTilesize: tileSize };
 		try {
 			setIsSubmittingLocal(true);
 			const result = await openProject(projectData);
@@ -61,7 +65,8 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 		}
 	};
 
-	const isButtonDisabled = path.trim() === '' || isSubmittingLocal || isSelecting;
+	const isButtonDisabled =
+		path.trim() === '' || isSubmittingLocal || isSelecting || !isTileSizeValid;
 
 	return (
 		<Dialog.Root
@@ -86,6 +91,21 @@ function OpenProject({ open, onOpenChange }: Readonly<OpenProjectProps>) {
 						</Dialog.Close>
 					</div>
 					<div className="open--form">
+						<div className="open--section">
+							<label htmlFor="projectDefaultTileSize" className="opne--label">
+								{t('defaultTileSize')}
+							</label>
+							<input
+								id="projectDefaultTileSize"
+								type="number"
+								step="16"
+								min="16"
+								className={`open--input ${!isTileSizeValid || hasError ? 'open--input-invalid' : ''}`}
+								value={tileSize}
+								onChange={(e) => setTileSize(Number(e.target.value))}
+								autoFocus
+							/>
+						</div>
 						<div className="open--section">
 							<label htmlFor="projectLocation" className="open--label">
 								{t('location')}

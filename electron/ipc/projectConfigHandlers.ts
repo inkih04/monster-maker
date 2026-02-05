@@ -39,7 +39,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-	ipcMain.handle('config:open', async (_event, pd: ProjectData) => {
+	ipcMain.handle('config:open', async (_event, pd: ProjectData, defaultTileSize: number) => {
 		try {
 			const directoryHasBeenOpened: boolean = configManager.openProjectDirectory(pd);
 			if (directoryHasBeenOpened) {

@@ -16,7 +16,6 @@ function Map() {
 	const paintedTiles = useMapStore((state) => state.paintedTiles);
 	const setActiveLayer = useMapStore((state) => state.setActiveLayer);
 	const activeLayer = useMapStore((state) => state.activeLayer);
-	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const tileSets = useTileSetStore((state) => state.tilesets);
 	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
@@ -51,8 +50,10 @@ function Map() {
 	}, [paintedTiles, zoom, tileSize]);
 
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
-		const tilesetImage = tilesetImageRef.current;
+		const tilesetImage = tilesetImageRef.imageRef.current;
 		if (!tilesetImage || !currentTileSet) return;
+
+		if (!tilesetImageRef) return;
 
 		const tileSize = currentTileSet.tileSizeX;
 		const scaledTileSize = tileSize * zoom;

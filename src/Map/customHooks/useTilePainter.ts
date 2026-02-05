@@ -74,7 +74,7 @@ export function useTilePainter(): UseTilePainterResult {
 							entityId: generateEntityId(),
 							layer: activeLayer,
 							tileSize,
-							spriteSheetPath: currentTileSet.pathImg,
+							spriteSheetPath: currentTileSet.relativePath,
 						});
 					}
 				}
@@ -87,7 +87,7 @@ export function useTilePainter(): UseTilePainterResult {
 					entityId: generateEntityId(),
 					layer: activeLayer,
 					tileSize,
-					spriteSheetPath: currentTileSet.pathImg,
+					spriteSheetPath: currentTileSet.relativePath,
 				});
 			}
 
