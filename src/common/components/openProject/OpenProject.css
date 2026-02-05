@@ -17,7 +17,7 @@
 	width: 35vw;
 	height: 30vh;
 	min-width: 500px;
-	min-height: 320px;
+	min-height: 380px;
 	max-width: 800px;
 	max-height: 75vh;
 	padding: var(--space-xl);
@@ -38,7 +38,7 @@
 }
 
 .open--label {
-	text-align: right;
+	text-align: left;
 	white-space: nowrap;
 	color: var(--color-9);
 	font-weight: 500;

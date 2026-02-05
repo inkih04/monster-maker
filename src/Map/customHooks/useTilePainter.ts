@@ -53,6 +53,7 @@ export function useTilePainter(): UseTilePainterResult {
 			}> = [];
 
 			if (selectedArea) {
+
 				const minTilesetX = Math.min(selectedArea.startX, selectedArea.endX);
 				const maxTilesetX = Math.max(selectedArea.startX, selectedArea.endX);
 				const minTilesetY = Math.min(selectedArea.startY, selectedArea.endY);
@@ -74,7 +75,7 @@ export function useTilePainter(): UseTilePainterResult {
 							entityId: generateEntityId(),
 							layer: activeLayer,
 							tileSize,
-							spriteSheetPath: currentTileSet.pathImg,
+							spriteSheetPath: currentTileSet.relativePath,
 						});
 					}
 				}
@@ -87,7 +88,7 @@ export function useTilePainter(): UseTilePainterResult {
 					entityId: generateEntityId(),
 					layer: activeLayer,
 					tileSize,
-					spriteSheetPath: currentTileSet.pathImg,
+					spriteSheetPath: currentTileSet.relativePath,
 				});
 			}
 

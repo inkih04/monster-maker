@@ -17,6 +17,7 @@ export function useFileActions() {
 	const createMap = useMapStore((state) => state.createMap);
 	const addTileSet = useTileSetStore((state) => state.addTileSet);
 	const setCurrentTileSet = useTileSetStore((state) => state.setCurrentTileSet);
+	const removeTileSet = useTileSetStore((state) => state.removeTileSet);
 
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
@@ -53,41 +54,38 @@ export function useFileActions() {
 
 			const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
 			const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
+			const configurationPath = await window.api.pathUnion(selectedFolder.path, jsonPath);
+			const completeRelativePath = await window.api.pathUnion(selectedFolder.path, file.path);
 
-			const existingTileSet = useTileSetStore.getState().tilesets[jsonPath];
+			const existingTileSet = useTileSetStore.getState().tilesets[completeRelativePath];
 			if (existingTileSet) {
-				setCurrentTileSet(jsonPath);
+				setCurrentTileSet(completeRelativePath);
 				return;
 			}
 
 			const result = await window.api.getFile(jsonPath, selectedFolder.path, currentProject);
 
-			console.log(result);
+			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
+			const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
+			console.log(completePath);
 
 			if (result.success) {
 				try {
 					if (result.content?.content) {
 						const config = JSON.parse(result.content?.content);
 
-						const completeRelativePath = await window.api.pathUnion(selectedFolder.path, file.path);
-						const fullProjectPath = await window.api.pathUnion(
-							currentProject.path,
-							currentProject.name
-						);
-						const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
-						console.log(completePath);
-
 						const newTileSet: TileSetData = {
 							id: crypto.randomUUID(),
 							pathImg: completePath,
-							pathTileMapConfig: jsonPath,
+							pathTileMapConfig: configurationPath,
+							relativePath: completeRelativePath,
 							tileSizeX: config.tileSizeX || 16,
 							tileSizeY: config.tileSizeY || 16,
 							isLoaded: true,
 						};
 
 						addTileSet(newTileSet);
-						setCurrentTileSet(jsonPath);
+						setCurrentTileSet(completeRelativePath);
 						console.log('TileSet puest');
 					}
 				} catch (parseError) {
@@ -96,18 +94,19 @@ export function useFileActions() {
 			} else {
 				const newTileSet: TileSetData = {
 					id: crypto.randomUUID(),
-					pathImg: file.path,
-					pathTileMapConfig: jsonPath,
+					pathImg: completePath,
+					pathTileMapConfig: configurationPath,
+					relativePath: completeRelativePath,
 					tileSizeX: currentProject?.defaultTilesize || 16,
 					tileSizeY: currentProject?.defaultTilesize || 16,
 					isLoaded: false,
 				};
 
 				addTileSet(newTileSet);
-				setCurrentTileSet(jsonPath);
+				setCurrentTileSet(completeRelativePath);
 			}
 		} catch (error) {
-			console.error('Error al cargar tileset:', error);
+			console.error('Error while tileset:', error);
 		}
 	};
 
@@ -146,8 +145,27 @@ export function useFileActions() {
 	const handleConfirmDelete = async () => {
 		if (!fileToDelete || !selectedFolder?.path || !currentProject) return;
 
-		await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
-		createMap(crypto.randomUUID(), 100, 100, currentProject.defaultTilesize || 16);
+		if (fileToDelete.type == 'tilemap') {
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
+			createMap(crypto.randomUUID(), 100, 100, currentProject.defaultTilesize || 16);
+		} else if (fileToDelete.type == 'tileset') {
+			const lastSlashIndex = Math.max(
+				fileToDelete.path.lastIndexOf('/'),
+				fileToDelete.path.lastIndexOf('\\')
+			);
+			const directory = fileToDelete.path.substring(0, lastSlashIndex + 1);
+			const fileName = fileToDelete.path.substring(lastSlashIndex + 1);
+
+			const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
+			const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
+			const configurationPath = await window.api.pathUnion(selectedFolder.path, jsonPath);
+
+			removeTileSet(configurationPath);
+
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
+			await window.api.deleteFile(jsonPath, selectedFolder.path, currentProject);
+		}
+
 		setFileToDelete(null);
 	};
 
