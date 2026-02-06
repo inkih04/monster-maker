@@ -24,5 +24,8 @@
 	"fileAlreadyExists": "Ya existe un archivo con ese nombre",
 	"saving": "Guardando...",
 	"save": "Guardar",
-	"defaultTileSize": "Tamaño de  tiles"
+	"defaultTileSize": "Tamaño de  tiles",
+	"tileSizeTitle": "Definir tamaño de los tiles",
+	"tileSize": "Tamaño del tile",
+	"accept": "Aceptar"
 }
