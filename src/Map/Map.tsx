@@ -4,11 +4,13 @@ import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSetStore } from '../Tileset/TileSetGState';
 import { useTileSetImages } from '../common/customHooks/useTileSetImages';
 import { useEffect, useMemo } from 'react';
-import { useTilePainter } from './customHooks/useTilePainter';
 import { useCanvasMouse } from './customHooks/useCanvasMouse';
 import { Layer } from '../domain/ecs/layer';
 import { useProjectStore } from '../Project/ProjectConfigGState';
 import { useMapCapture } from './customHooks/useMapCapture';
+import { useActiveTool } from '../ToolBar/customHooks/useActiveTool';
+import { useToolsStore } from '../ToolBar/ToolBarGState';
+import { drawBrushPreview, drawEraserPreview } from './mapUtils';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
@@ -19,17 +21,17 @@ function Map() {
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const tileSets = useTileSetStore((state) => state.tilesets);
 	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
-	const setTileMapLoaded = useTileSetStore((state) => state.setTileSetLoaded);
 	const tileSize = useMapStore((state) => state.map?.tileSize ?? 16);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
 	const createMap = useMapStore((state) => state.createMap);
+	const activeTool = useToolsStore((state) => state.activeTool);
 
 	const currentTileSet = tileSets[currentTileSetPath || ''];
 
-	const { isDrawing, previewPosition, setIsDrawing, setPreviewPosition, paintTile, clearMap } =
-		useTilePainter();
+	const { isActive, previewPosition, setIsActive, setPreviewPosition, onTileClick, onTileDrag } =
+		useActiveTool();
 
-	const tilesetImages = useTileSetImages(tileSets, setTileMapLoaded);
+	const tilesetImages = useTileSetImages(tileSets);
 
 	const { minWidth, minHeight } = useMemo(() => {
 		const baseMapWidthInTiles = 50;
@@ -58,7 +60,7 @@ function Map() {
 			tilesInLayer.forEach((tile) => {
 				const tileTileset = tileSets[tile.spriteSheetPath];
 				const tilesetImage = tilesetImages[tile.spriteSheetPath];
-				
+
 				if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
 
 				const tileTileSize = tileTileset.tileSizeX;
@@ -78,39 +80,28 @@ function Map() {
 			});
 		});
 
-		if (previewPosition && !isDrawing && currentTileSet) {
-			const currentTilesetImage = tilesetImages[currentTileSetPath || ''];
-			if (!currentTilesetImage) return;
-
-			const tileSize = currentTileSet.tileSizeX;
-			const scaledTileSize = tileSize * zoom;
-
-			ctx.globalAlpha = 0.5;
-
-			if (selectedArea) {
-				const minX = Math.min(selectedArea.startX, selectedArea.endX);
-				const maxX = Math.max(selectedArea.startX, selectedArea.endX);
-				const minY = Math.min(selectedArea.startY, selectedArea.endY);
-				const maxY = Math.max(selectedArea.startY, selectedArea.endY);
-
-				for (let y = minY; y <= maxY; y++) {
-					for (let x = minX; x <= maxX; x++) {
-						ctx.drawImage(
-							currentTilesetImage,
-							x * tileSize,
-							y * tileSize,
-							tileSize,
-							tileSize,
-							(previewPosition.x + (x - minX)) * scaledTileSize,
-							(previewPosition.y + (y - minY)) * scaledTileSize,
-							scaledTileSize,
-							scaledTileSize
-						);
-					}
-				}
-			}
-
-			ctx.globalAlpha = 1;
+		if (activeTool === 'brush' && previewPosition) {
+			drawBrushPreview({
+				ctx,
+				previewPosition,
+				isActive,
+				currentTileSet,
+				currentTileSetPath,
+				tilesetImages,
+				selectedArea,
+				zoom,
+			});
+		} else if (activeTool === 'eraser' && previewPosition) {
+			drawEraserPreview({
+				ctx,
+				previewPosition,
+				isActive,
+				paintedTiles,
+				activeLayer,
+				tileSets,
+				tilesetImages,
+				zoom,
+			});
 		}
 	};
 
@@ -132,10 +123,10 @@ function Map() {
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
 		zoom,
 		tileSize: tileSize,
-		isDrawing,
-		setIsDrawing,
+		isDrawing: isActive,
+		setIsDrawing: setIsActive,
 		setPreviewPosition,
-		paintTile,
+		paintTile: onTileDrag,
 	});
 
 	const handleZoomIn = () => {
@@ -205,9 +196,6 @@ function Map() {
 						}}
 					>
 						Foreground
-					</button>
-					<button className="layer-button" onClick={clearMap}>
-						clean
 					</button>
 				</div>
 				<div className="map-controls-zoom">

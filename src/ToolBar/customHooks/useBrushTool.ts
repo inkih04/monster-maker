@@ -8,19 +8,20 @@ interface PreviewPosition {
 	y: number;
 }
 
-interface UseTilePainterResult {
-	isDrawing: boolean;
+interface UseBrushToolResult {
+	isActive: boolean;
 	previewPosition: PreviewPosition | null;
-	setIsDrawing: (value: boolean) => void;
+	
+	setIsActive: (value: boolean) => void;
 	setPreviewPosition: (pos: PreviewPosition | null) => void;
-	paintTile: (tileX: number, tileY: number) => void;
-	clearMap: () => void;
+	
+	onTileClick: (tileX: number, tileY: number) => void;
+	onTileDrag: (tileX: number, tileY: number) => void;
 }
 
-export function useTilePainter(): UseTilePainterResult {
+export function useBrushTool(): UseBrushToolResult {
 	const activeLayer = useMapStore((state) => state.activeLayer);
 	const paintTiles = useMapStore((state) => state.paintTiles);
-	const clearMapTiles = useMapStore((state) => state.clearMapTiles);
 	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	const tileSets = useTileSetStore((state) => state.tilesets);
@@ -29,7 +30,7 @@ export function useTilePainter(): UseTilePainterResult {
 
 	const currentTileSet = tileSets[currentTileSetPath || ''];
 
-	const [isDrawing, setIsDrawing] = useState(false);
+	const [isActive, setIsActive] = useState(false);
 	const [previewPosition, setPreviewPosition] = useState<PreviewPosition | null>(null);
 
 	const generateEntityId = (): string => {
@@ -53,7 +54,6 @@ export function useTilePainter(): UseTilePainterResult {
 			}> = [];
 
 			if (selectedArea) {
-
 				const minTilesetX = Math.min(selectedArea.startX, selectedArea.endX);
 				const maxTilesetX = Math.max(selectedArea.startX, selectedArea.endX);
 				const minTilesetY = Math.min(selectedArea.startY, selectedArea.endY);
@@ -98,16 +98,26 @@ export function useTilePainter(): UseTilePainterResult {
 		[activeLayer, currentTileSet, paintTiles, selectedArea, setIsDirty]
 	);
 
-	const clearMap = useCallback(() => {
-		clearMapTiles();
-	}, [clearMapTiles]);
+	const onTileClick = useCallback(
+		(tileX: number, tileY: number) => {
+			paintTile(tileX, tileY);
+		},
+		[paintTile]
+	);
+
+	const onTileDrag = useCallback(
+		(tileX: number, tileY: number) => {
+			paintTile(tileX, tileY);
+		},
+		[paintTile]
+	);
 
 	return {
-		isDrawing,
+		isActive,
 		previewPosition,
-		setIsDrawing,
+		setIsActive,
 		setPreviewPosition,
-		paintTile,
-		clearMap,
+		onTileClick,
+		onTileDrag,
 	};
 }

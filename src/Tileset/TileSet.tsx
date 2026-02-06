@@ -6,6 +6,8 @@ import { getSelectionInfo, getFileNameFromPath } from './TileSetUtils';
 import './TileSet.css';
 import { useProjectStore } from '../Project/ProjectConfigGState';
 import TileSize from '../common/components/tileSize/TileSize';
+import { useToolsStore } from '../ToolBar/ToolBarGState'; 
+import { useEffect } from 'react'; 
 
 function TileSet() {
 	const zoom = useTileSetStore((state) => state.zoom);
@@ -15,6 +17,9 @@ function TileSet() {
 	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
 	const tilesets = useTileSetStore((state) => state.tilesets);
 	const currentProject = useProjectStore((state) => state.currentProject);
+	
+	const activeTool = useToolsStore((state) => state.activeTool);
+	const isBrushActive = activeTool === 'brush';
 
 	const currentTileMap = tilesets[currentTileSetPath || ''];
 	const hasTileMap = Boolean(currentTileMap);
@@ -31,6 +36,12 @@ function TileSet() {
 
 	const scaledWidth = dimensions.width > 0 ? dimensions.width * zoom : DEFAULT_GRID_SIZE;
 	const scaledHeight = dimensions.height > 0 ? dimensions.height * zoom : DEFAULT_GRID_SIZE;
+
+	useEffect(() => {
+		if (!isBrushActive && selectedArea) {
+			setSelectedArea(null);
+		}
+	}, [isBrushActive, selectedArea, setSelectedArea]);
 
 	const { canvasRef, containerRef } = useGridCanvas({
 		zoom,
@@ -61,6 +72,11 @@ function TileSet() {
 		setSelectedArea,
 	});
 
+	const conditionalHandleMouseDown = isBrushActive ? handleMouseDown : () => {};
+	const conditionalHandleMouseMove = isBrushActive ? handleMouseMove : () => {};
+	const conditionalHandleMouseUp = isBrushActive ? handleMouseUp : () => {};
+	const conditionalHandleMouseLeave = isBrushActive ? handleMouseLeave : () => {};
+
 	const handleZoomIn = () => setZoom(Math.min(zoom + 0.5, 5));
 	const handleZoomOut = () => setZoom(Math.max(zoom - 0.5, 0.5));
 
@@ -73,10 +89,10 @@ function TileSet() {
 				<canvas
 					ref={canvasRef}
 					className="tilemap-canvas"
-					onMouseDown={handleMouseDown}
-					onMouseMove={handleMouseMove}
-					onMouseUp={handleMouseUp}
-					onMouseLeave={handleMouseLeave}
+					onMouseDown={conditionalHandleMouseDown}
+					onMouseMove={conditionalHandleMouseMove}
+					onMouseUp={conditionalHandleMouseUp}
+					onMouseLeave={conditionalHandleMouseLeave}
 				/>
 			</div>
 			<div className="tilemap-controls">
