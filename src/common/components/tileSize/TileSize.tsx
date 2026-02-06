@@ -63,7 +63,7 @@ function TileSize() {
 				<Dialog.Overlay className="tileSize--overlay" onClick={handleClose} />
 				<Dialog.Content className="tileSize--wrapper" onEscapeKeyDown={handleClose}>
 					<div className="tileSize--header">
-						<Dialog.Title className="tileSize--title">{t('tileSize')}</Dialog.Title>
+						<Dialog.Title className="tileSize--title">{t('tileSizeTitle')}</Dialog.Title>
 
 						<Dialog.Close asChild>
 							<button className="tileSize--close" aria-label="Close" onClick={handleClose}>
@@ -75,7 +75,7 @@ function TileSize() {
 					<div className="tileSize--form">
 						<div className="tileSize--section">
 							<label htmlFor="projectDefaultTileSize" className="tileSize--label">
-								{t('defaultTileSize')}
+								{t('tileSize')}
 							</label>
 							<input
 								id="projectDefaultTileSize"

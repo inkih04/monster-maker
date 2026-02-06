@@ -24,5 +24,8 @@
 	"fileAlreadyExists": "A file with that name already exists",
 	"saving": "Saving...",
 	"save": "Save",
-	"defaultTileSize": "Default tile size"
+	"defaultTileSize": "Default tile size",
+	"tileSizeTitle": "Define tile size",
+	"tileSize": "Tile size",
+	"accept": "Accept"
 }
