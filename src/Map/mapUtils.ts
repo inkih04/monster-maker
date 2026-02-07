@@ -1,6 +1,6 @@
 import Entity from '../domain/ecs/entity';
 import { Layer } from '../domain/ecs/layer';
-import { PaintedTile } from './MapGState';
+import { PaintedTile, SelectedTilePosition } from './MapGState';
 import { TileSetData, TileSelection } from '../Tileset/TileSetGState';
 
 interface PreviewPosition {
@@ -168,4 +168,28 @@ export function drawEraserPreview({
 	);
 
 	ctx.globalAlpha = 1;
+}
+
+
+interface DrawSelectionOverlayParams {
+	ctx: CanvasRenderingContext2D;
+	selectedTilePosition: SelectedTilePosition | null;
+	tileSize: number;
+	zoom: number;
+}
+
+export function drawSelectionOverlay({
+	ctx,
+	selectedTilePosition,
+	tileSize,
+	zoom,
+}: DrawSelectionOverlayParams): void {
+	if (!selectedTilePosition) return;
+
+	const scaledTileSize = tileSize * zoom;
+	const x = selectedTilePosition.x * scaledTileSize;
+	const y = selectedTilePosition.y * scaledTileSize;
+
+	ctx.fillStyle = 'rgba(0, 255, 0, 0.3)'; 
+	ctx.fillRect(x, y, scaledTileSize, scaledTileSize);
 }

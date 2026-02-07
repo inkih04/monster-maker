@@ -40,7 +40,6 @@ export function useFileActions() {
 		}
 
 		if (file.type == 'tileset') {
-			console.log('tileset');
 			handleOpenTileSet(file);
 		}
 	};
@@ -86,7 +85,6 @@ export function useFileActions() {
 
 						addTileSet(newTileSet);
 						setCurrentTileSet(completeRelativePath);
-						console.log('TileSet puest');
 					}
 				} catch (parseError) {
 					console.error('Configuration JSON is corrupted', parseError);

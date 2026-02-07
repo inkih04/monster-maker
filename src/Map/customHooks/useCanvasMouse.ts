@@ -8,19 +8,21 @@ interface Position {
 interface UseCanvasMouseParams {
 	zoom: number;
 	tileSize: number;
-	isDrawing: boolean;
-	setIsDrawing: (value: boolean) => void;
+	isToolActive: boolean; 
+	setIsToolActive: (value: boolean) => void; 
 	setPreviewPosition: (pos: Position | null) => void;
-	paintTile: (x: number, y: number) => void;
+	onTileClick: (x: number, y: number) => void; 
+	onTileDrag: (x: number, y: number) => void; 
 }
 
 export function useCanvasMouse({
 	zoom,
 	tileSize,
-	isDrawing,
-	setIsDrawing,
+	isToolActive,
+	setIsToolActive,
 	setPreviewPosition,
-	paintTile,
+	onTileClick,
+	onTileDrag,
 }: UseCanvasMouseParams) {
 	const getTileFromEvent = useCallback(
 		(e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -35,10 +37,10 @@ export function useCanvasMouse({
 	const handleMouseDown = useCallback(
 		(e: React.MouseEvent<HTMLCanvasElement>) => {
 			const { x, y } = getTileFromEvent(e);
-			setIsDrawing(true);
-			paintTile(x, y);
+			setIsToolActive(true);
+			onTileClick(x, y);
 		},
-		[getTileFromEvent, paintTile, setIsDrawing]
+		[getTileFromEvent, onTileClick, setIsToolActive]
 	);
 
 	const handleMouseMove = useCallback(
@@ -46,21 +48,21 @@ export function useCanvasMouse({
 			const { x, y } = getTileFromEvent(e);
 			setPreviewPosition({ x, y });
 
-			if (isDrawing) {
-				paintTile(x, y);
+			if (isToolActive) {
+				onTileDrag(x, y);
 			}
 		},
-		[getTileFromEvent, isDrawing, paintTile, setPreviewPosition]
+		[getTileFromEvent, isToolActive, onTileDrag, setPreviewPosition]
 	);
 
 	const handleMouseUp = useCallback(() => {
-		setIsDrawing(false);
-	}, [setIsDrawing]);
+		setIsToolActive(false);
+	}, [setIsToolActive]);
 
 	const handleMouseLeave = useCallback(() => {
-		setIsDrawing(false);
+		setIsToolActive(false);
 		setPreviewPosition(null);
-	}, [setIsDrawing, setPreviewPosition]);
+	}, [setIsToolActive, setPreviewPosition]);
 
 	return {
 		handleMouseDown,

@@ -71,7 +71,7 @@ export function useGridCanvas({
 						tileSize: scaledTileSize,
 						fillColor: '0,255,0',
 						fillOpacity: 0.2,
-						strokeColor: '#00ff00',
+						strokeColor: '#00ff0030',
 						strokeWidth: 2,
 					});
 				}
@@ -89,7 +89,16 @@ export function useGridCanvas({
 		return () => {
 			resizeObserver.disconnect();
 		};
-	}, [zoom, tileSize, selectedArea, drawBackground, minWidth, minHeight, redrawTrigger, hideGridAndSelection]);
+	}, [
+		zoom,
+		tileSize,
+		selectedArea,
+		drawBackground,
+		minWidth,
+		minHeight,
+		redrawTrigger,
+		hideGridAndSelection,
+	]);
 
 	return { canvasRef, containerRef };
 }

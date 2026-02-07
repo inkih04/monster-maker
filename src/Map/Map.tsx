@@ -10,7 +10,7 @@ import { useProjectStore } from '../Project/ProjectConfigGState';
 import { useMapCapture } from './customHooks/useMapCapture';
 import { useActiveTool } from '../ToolBar/customHooks/useActiveTool';
 import { useToolsStore } from '../ToolBar/ToolBarGState';
-import { drawBrushPreview, drawEraserPreview } from './mapUtils';
+import { drawBrushPreview, drawEraserPreview, drawSelectionOverlay } from './mapUtils';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
@@ -25,6 +25,7 @@ function Map() {
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
 	const createMap = useMapStore((state) => state.createMap);
 	const activeTool = useToolsStore((state) => state.activeTool);
+	const selectedTilePosition = useMapStore((state) => state.selectedTilePosition);
 
 	const currentTileSet = tileSets[currentTileSetPath || ''];
 
@@ -102,6 +103,13 @@ function Map() {
 				tilesetImages,
 				zoom,
 			});
+		} else if (activeTool === 'select') {
+			drawSelectionOverlay({
+				ctx,
+				selectedTilePosition,
+				tileSize,
+				zoom,
+			});
 		}
 	};
 
@@ -123,10 +131,11 @@ function Map() {
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
 		zoom,
 		tileSize: tileSize,
-		isDrawing: isActive,
-		setIsDrawing: setIsActive,
+		isToolActive: isActive,
+		setIsToolActive: setIsActive,
 		setPreviewPosition,
-		paintTile: onTileDrag,
+		onTileClick: onTileClick,
+		onTileDrag: onTileDrag,
 	});
 
 	const handleZoomIn = () => {
