@@ -1,5 +1,6 @@
 import { useBrushTool } from './useBrushTool';
 import { useEraserTool } from './useEraserTool';
+import { useSelectTool } from './useSelectTool';
 import { useToolsStore } from '../ToolBarGState';
 
 interface PreviewPosition {
@@ -21,15 +22,18 @@ export function useActiveTool(): UseActiveToolResult {
 
 	const brushTool = useBrushTool();
 	const eraserTool = useEraserTool();
+	const selectTool = useSelectTool();
 
 	switch (activeTool) {
 		case 'brush':
 			return brushTool;
-		
+
 		case 'eraser':
 			return eraserTool;
-		
+
 		case 'select':
+			return selectTool;
+
 		case 'area-copy':
 		case 'entity':
 			return {
@@ -40,7 +44,7 @@ export function useActiveTool(): UseActiveToolResult {
 				onTileClick: () => {},
 				onTileDrag: () => {},
 			};
-		
+
 		default:
 			return brushTool;
 	}

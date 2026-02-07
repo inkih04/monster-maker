@@ -22,6 +22,12 @@ export interface MapData {
 	entities: Record<string, Entity>;
 }
 
+export interface SelectedTilePosition {
+	x: number;
+	y: number;
+	layer: Layer;
+}
+
 interface MapStore {
 	map: MapData | null;
 	paintedTiles: PaintedTile[];
@@ -30,6 +36,8 @@ interface MapStore {
 	zoom: number;
 	activeLayer: Layer;
 	isDirty: boolean;
+	selectedTilePosition: SelectedTilePosition | null;
+	setSelectedTilePosition: (position: SelectedTilePosition | null) => void;
 	setMapRelativePath: (relativePath: string) => void;
 	setIsDirty: (isDirty: boolean) => void;
 	setZoom: (zoom: number) => void;
@@ -86,6 +94,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
 	paintedTiles: [],
 	isDirty: false,
 	selectedEntityId: null,
+	selectedTilePosition: null,
 	zoom: 1,
 	activeLayer: 'ground',
 
@@ -93,6 +102,10 @@ export const useMapStore = create<MapStore>((set, get) => ({
 		console.log(relativePath);
 
 		set({ mapRelativePath: relativePath });
+	},
+
+	setSelectedTilePosition: (position) => {
+		set({ selectedTilePosition: position });
 	},
 
 	setIsDirty: (isDirty) => {
@@ -122,6 +135,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
 			isDirty: false,
 			zoom: 1,
 			activeLayer: 'ground',
+			selectedTilePosition: null,
 		});
 	},
 
@@ -148,7 +162,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
 			}
 		});
 
-		set({ map, paintedTiles: tiles, selectedEntityId: null, isDirty: false });
+		set({ map, paintedTiles: tiles, selectedEntityId: null, isDirty: false, selectedTilePosition: null });
 	},
 
 	addEntity: (entity) => {
@@ -180,6 +194,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
 				},
 				paintedTiles: state.paintedTiles.filter((tile) => tile.entityId !== id),
 				selectedEntityId: state.selectedEntityId === id ? null : state.selectedEntityId,
+				selectedTilePosition: state.selectedEntityId === id ? null : state.selectedTilePosition,
 			};
 		});
 	},
