@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { temporal } from 'zundo';
 import { ComponentMap, ComponentType } from '../domain/ecs/componentMap';
 import { Layer } from '../domain/ecs/layer';
 import { createTileEntity } from './mapUtils';
@@ -37,33 +38,27 @@ interface MapStore {
 	activeLayer: Layer;
 	isDirty: boolean;
 	selectedTilePosition: SelectedTilePosition | null;
+
 	setSelectedTilePosition: (position: SelectedTilePosition | null) => void;
 	setMapRelativePath: (relativePath: string) => void;
 	setIsDirty: (isDirty: boolean) => void;
 	setZoom: (zoom: number) => void;
 	setActiveLayer: (layer: Layer) => void;
+
 	createMap(mapId: string, width: number, height: number, tileSize: number): void;
-
 	loadMap(map: MapData): void;
-
 	addEntity(entity: Entity): void;
 	removeEntity(id: string): void;
 	updateEntity(id: string, data: Partial<Pick<Entity, 'tag' | 'layer'>>): void;
-
 	addComponent<K extends ComponentType>(entityId: string, type: K, data: ComponentMap[K]): void;
-
 	updateComponent<K extends ComponentType>(
 		entityId: string,
 		type: K,
 		data: Partial<ComponentMap[K]>
 	): void;
-
 	removeComponent(entityId: string, type: ComponentType): void;
-
 	selectEntity(id: string | null): void;
-
 	clearPaintedTiles(): void;
-
 	paintTiles(
 		tiles: Array<{
 			mapX: number;
@@ -76,324 +71,346 @@ interface MapStore {
 			spriteSheetPath: string;
 		}>
 	): void;
-
 	clearMapTiles(): void;
-
 	exportToEngineFormat(): string;
 }
 
-export const useMapStore = create<MapStore>((set, get) => ({
-	map: {
-		mapId: '1',
-		width: 100,
-		height: 100,
-		tileSize: 16,
-		entities: {},
-	},
-	mapRelativePath: null,
-	paintedTiles: [],
-	isDirty: false,
-	selectedEntityId: null,
-	selectedTilePosition: null,
-	zoom: 1,
-	activeLayer: 'ground',
-
-	setMapRelativePath: (relativePath: string) => {
-		console.log(relativePath);
-
-		set({ mapRelativePath: relativePath });
-	},
-
-	setSelectedTilePosition: (position) => {
-		set({ selectedTilePosition: position });
-	},
-
-	setIsDirty: (isDirty) => {
-		set({ isDirty });
-	},
-
-	setActiveLayer: (layer) => {
-		set({ activeLayer: layer });
-	},
-
-	setZoom: (zoom) => {
-		set({ zoom });
-	},
-
-	createMap: (mapId, width, height, tileSize) => {
-		set({
+export const useMapStore = create<MapStore>()(
+	temporal(
+		(set, get) => ({
 			map: {
-				mapId,
-				width,
-				height,
-				tileSize,
+				mapId: '1',
+				width: 100,
+				height: 100,
+				tileSize: 16,
 				entities: {},
 			},
-			paintedTiles: [],
-			selectedEntityId: null,
 			mapRelativePath: null,
+			paintedTiles: [],
 			isDirty: false,
+			selectedEntityId: null,
+			selectedTilePosition: null,
 			zoom: 1,
 			activeLayer: 'ground',
-			selectedTilePosition: null,
-		});
-	},
 
-	loadMap: (map) => {
-		const tiles: PaintedTile[] = [];
-		const tileSize = map.tileSize;
+			setMapRelativePath: (relativePath: string) => {
+				console.log(relativePath);
+				set({ mapRelativePath: relativePath });
+			},
 
-		Object.values(map.entities).forEach((entity) => {
-			if (entity.tag !== 'TILEMAP') return;
+			setSelectedTilePosition: (position) => {
+				set({ selectedTilePosition: position });
+			},
 
-			const positionComponent = entity.components.POSITION;
-			const renderComponent = entity.components.RENDER;
+			setIsDirty: (isDirty) => {
+				set({ isDirty });
+			},
 
-			if (positionComponent && renderComponent) {
-				tiles.push({
-					x: positionComponent.x / tileSize,
-					y: positionComponent.y / tileSize,
-					tilesetX: renderComponent.x / tileSize,
-					tilesetY: renderComponent.y / tileSize,
-					entityId: entity.id,
-					layer: entity.layer,
-					spriteSheetPath: renderComponent.spriteSheetPath || '',
+			setActiveLayer: (layer) => {
+				set({ activeLayer: layer });
+			},
+
+			setZoom: (zoom) => {
+				set({ zoom });
+			},
+
+			createMap: (mapId, width, height, tileSize) => {
+				set({
+					map: {
+						mapId,
+						width,
+						height,
+						tileSize,
+						entities: {},
+					},
+					paintedTiles: [],
+					selectedEntityId: null,
+					mapRelativePath: null,
+					isDirty: false,
+					zoom: 1,
+					activeLayer: 'ground',
+					selectedTilePosition: null,
 				});
-			}
-		});
+			},
 
-		set({ map, paintedTiles: tiles, selectedEntityId: null, isDirty: false, selectedTilePosition: null });
-	},
+			loadMap: (map) => {
+				const tiles: PaintedTile[] = [];
+				const tileSize = map.tileSize;
 
-	addEntity: (entity) => {
-		set((state) => {
-			if (!state.map) return state;
+				Object.values(map.entities).forEach((entity) => {
+					if (entity.tag !== 'TILEMAP') return;
 
-			return {
-				map: {
-					...state.map,
-					entities: {
-						...state.map.entities,
-						[entity.id]: entity,
-					},
-				},
-			};
-		});
-	},
+					const positionComponent = entity.components.POSITION;
+					const renderComponent = entity.components.RENDER;
 
-	removeEntity: (id) => {
-		set((state) => {
-			if (!state.map) return state;
+					if (positionComponent && renderComponent) {
+						tiles.push({
+							x: positionComponent.x / tileSize,
+							y: positionComponent.y / tileSize,
+							tilesetX: renderComponent.x / tileSize,
+							tilesetY: renderComponent.y / tileSize,
+							entityId: entity.id,
+							layer: entity.layer,
+							spriteSheetPath: renderComponent.spriteSheetPath || '',
+						});
+					}
+				});
 
-			const { [id]: _, ...rest } = state.map.entities;
+				set({
+					map,
+					paintedTiles: tiles,
+					selectedEntityId: null,
+					isDirty: false,
+					selectedTilePosition: null,
+				});
+			},
 
-			return {
-				map: {
-					...state.map,
-					entities: rest,
-				},
-				paintedTiles: state.paintedTiles.filter((tile) => tile.entityId !== id),
-				selectedEntityId: state.selectedEntityId === id ? null : state.selectedEntityId,
-				selectedTilePosition: state.selectedEntityId === id ? null : state.selectedTilePosition,
-			};
-		});
-	},
+			addEntity: (entity) => {
+				set((state) => {
+					if (!state.map) return state;
 
-	updateEntity: (id, data) => {
-		set((state) => {
-			if (!state.map) return state;
-			const entity = state.map.entities[id];
-			if (!entity) return state;
-
-			return {
-				map: {
-					...state.map,
-					entities: {
-						...state.map.entities,
-						[id]: {
-							...entity,
-							...data,
-						},
-					},
-				},
-			};
-		});
-	},
-
-	addComponent: (entityId, type, data) => {
-		set((state) => {
-			if (!state.map) return state;
-			const entity = state.map.entities[entityId];
-			if (!entity) return state;
-
-			return {
-				map: {
-					...state.map,
-					entities: {
-						...state.map.entities,
-						[entityId]: {
-							...entity,
-							components: {
-								...entity.components,
-								[type]: data,
+					return {
+						map: {
+							...state.map,
+							entities: {
+								...state.map.entities,
+								[entity.id]: entity,
 							},
 						},
-					},
-				},
-			};
-		});
-	},
+					};
+				});
+			},
 
-	updateComponent: (entityId, type, data) => {
-		set((state) => {
-			if (!state.map) return state;
-			const entity = state.map.entities[entityId];
-			const component = entity?.components[type];
-			if (!entity || !component) return state;
+			removeEntity: (id) => {
+				set((state) => {
+					if (!state.map) return state;
 
-			return {
-				map: {
-					...state.map,
-					entities: {
-						...state.map.entities,
-						[entityId]: {
-							...entity,
-							components: {
-								...entity.components,
-								[type]: {
-									...component,
+					const { [id]: _, ...rest } = state.map.entities;
+
+					return {
+						map: {
+							...state.map,
+							entities: rest,
+						},
+						paintedTiles: state.paintedTiles.filter((tile) => tile.entityId !== id),
+						selectedEntityId: state.selectedEntityId === id ? null : state.selectedEntityId,
+						selectedTilePosition: state.selectedEntityId === id ? null : state.selectedTilePosition,
+					};
+				});
+			},
+
+			updateEntity: (id, data) => {
+				set((state) => {
+					if (!state.map) return state;
+					const entity = state.map.entities[id];
+					if (!entity) return state;
+
+					return {
+						map: {
+							...state.map,
+							entities: {
+								...state.map.entities,
+								[id]: {
+									...entity,
 									...data,
 								},
 							},
 						},
-					},
-				},
-			};
-		});
-	},
-
-	removeComponent: (entityId, type) => {
-		set((state) => {
-			if (!state.map) return state;
-			const entity = state.map.entities[entityId];
-			if (!entity) return state;
-
-			const { [type]: _, ...rest } = entity.components;
-
-			return {
-				map: {
-					...state.map,
-					entities: {
-						...state.map.entities,
-						[entityId]: {
-							...entity,
-							components: rest,
-						},
-					},
-				},
-			};
-		});
-	},
-
-	selectEntity: (id) => {
-		set({ selectedEntityId: id });
-	},
-
-	clearPaintedTiles: () => {
-		set({ paintedTiles: [] });
-	},
-
-	clearMapTiles: () => {
-		set((state) => {
-			if (!state.map) return state;
-
-			const tileEntityIds = Object.values(state.map.entities)
-				.filter((entity) => entity.tag === 'TILEMAP')
-				.map((entity) => entity.id);
-
-			const newEntities = { ...state.map.entities };
-			tileEntityIds.forEach((id) => {
-				delete newEntities[id];
-			});
-
-			return {
-				map: {
-					...state.map,
-					entities: newEntities,
-				},
-				paintedTiles: [],
-			};
-		});
-	},
-
-	paintTiles: (tiles) => {
-		set((state) => {
-			if (!state.map) return state;
-
-			const newEntities = { ...state.map.entities };
-			const newPaintedTiles: PaintedTile[] = [];
-
-			const tilesToRemove = state.paintedTiles.filter((existing) =>
-				tiles.some(
-					(nt) => nt.mapX === existing.x && nt.mapY === existing.y && nt.layer === existing.layer
-				)
-			);
-
-			tilesToRemove.forEach((tile) => {
-				delete newEntities[tile.entityId];
-			});
-
-			const filteredPaintedTiles = state.paintedTiles.filter(
-				(existing) =>
-					!tiles.some(
-						(nt) => nt.mapX === existing.x && nt.mapY === existing.y && nt.layer === existing.layer
-					)
-			);
-
-			tiles.forEach((tile) => {
-				newEntities[tile.entityId] = createTileEntity(
-					tile.entityId,
-					tile.layer,
-					tile.mapX,
-					tile.mapY,
-					tile.tilesetX,
-					tile.tilesetY,
-					tile.tileSize,
-					tile.spriteSheetPath
-				);
-
-				newPaintedTiles.push({
-					x: tile.mapX,
-					y: tile.mapY,
-					tilesetX: tile.tilesetX,
-					tilesetY: tile.tilesetY,
-					entityId: tile.entityId,
-					layer: tile.layer,
-					spriteSheetPath: tile.spriteSheetPath,
+					};
 				});
-			});
-
-			return {
-				map: {
-					...state.map,
-					entities: newEntities,
-				},
-				paintedTiles: [...filteredPaintedTiles, ...newPaintedTiles],
-			};
-		});
-	},
-
-	exportToEngineFormat: () => {
-		const state = get();
-		if (!state.map) return '{}';
-
-		return JSON.stringify(
-			{
-				mapId: state.map.mapId,
-				entities: Object.values(state.map.entities),
 			},
-			null,
-			2
-		);
-	},
-}));
+
+			addComponent: (entityId, type, data) => {
+				set((state) => {
+					if (!state.map) return state;
+					const entity = state.map.entities[entityId];
+					if (!entity) return state;
+
+					return {
+						map: {
+							...state.map,
+							entities: {
+								...state.map.entities,
+								[entityId]: {
+									...entity,
+									components: {
+										...entity.components,
+										[type]: data,
+									},
+								},
+							},
+						},
+					};
+				});
+			},
+
+			updateComponent: (entityId, type, data) => {
+				set((state) => {
+					if (!state.map) return state;
+					const entity = state.map.entities[entityId];
+					const component = entity?.components[type];
+					if (!entity || !component) return state;
+
+					return {
+						map: {
+							...state.map,
+							entities: {
+								...state.map.entities,
+								[entityId]: {
+									...entity,
+									components: {
+										...entity.components,
+										[type]: {
+											...component,
+											...data,
+										},
+									},
+								},
+							},
+						},
+					};
+				});
+			},
+
+			removeComponent: (entityId, type) => {
+				set((state) => {
+					if (!state.map) return state;
+					const entity = state.map.entities[entityId];
+					if (!entity) return state;
+
+					const { [type]: _, ...rest } = entity.components;
+
+					return {
+						map: {
+							...state.map,
+							entities: {
+								...state.map.entities,
+								[entityId]: {
+									...entity,
+									components: rest,
+								},
+							},
+						},
+					};
+				});
+			},
+
+			selectEntity: (id) => {
+				set({ selectedEntityId: id });
+			},
+
+			clearPaintedTiles: () => {
+				set({ paintedTiles: [] });
+			},
+
+			clearMapTiles: () => {
+				set((state) => {
+					if (!state.map) return state;
+
+					const tileEntityIds = Object.values(state.map.entities)
+						.filter((entity) => entity.tag === 'TILEMAP')
+						.map((entity) => entity.id);
+
+					const newEntities = { ...state.map.entities };
+					tileEntityIds.forEach((id) => {
+						delete newEntities[id];
+					});
+
+					return {
+						map: {
+							...state.map,
+							entities: newEntities,
+						},
+						paintedTiles: [],
+					};
+				});
+			},
+
+			paintTiles: (tiles) => {
+				set((state) => {
+					if (!state.map) return state;
+
+					const newEntities = { ...state.map.entities };
+					const newPaintedTiles: PaintedTile[] = [];
+
+					const tilesToRemove = state.paintedTiles.filter((existing) =>
+						tiles.some(
+							(nt) =>
+								nt.mapX === existing.x && nt.mapY === existing.y && nt.layer === existing.layer
+						)
+					);
+
+					tilesToRemove.forEach((tile) => {
+						delete newEntities[tile.entityId];
+					});
+
+					const filteredPaintedTiles = state.paintedTiles.filter(
+						(existing) =>
+							!tiles.some(
+								(nt) =>
+									nt.mapX === existing.x && nt.mapY === existing.y && nt.layer === existing.layer
+							)
+					);
+
+					tiles.forEach((tile) => {
+						newEntities[tile.entityId] = createTileEntity(
+							tile.entityId,
+							tile.layer,
+							tile.mapX,
+							tile.mapY,
+							tile.tilesetX,
+							tile.tilesetY,
+							tile.tileSize,
+							tile.spriteSheetPath
+						);
+
+						newPaintedTiles.push({
+							x: tile.mapX,
+							y: tile.mapY,
+							tilesetX: tile.tilesetX,
+							tilesetY: tile.tilesetY,
+							entityId: tile.entityId,
+							layer: tile.layer,
+							spriteSheetPath: tile.spriteSheetPath,
+						});
+					});
+
+					return {
+						map: {
+							...state.map,
+							entities: newEntities,
+						},
+						paintedTiles: [...filteredPaintedTiles, ...newPaintedTiles],
+					};
+				});
+			},
+
+			exportToEngineFormat: () => {
+				const state = get();
+				if (!state.map) return '{}';
+
+				return JSON.stringify(
+					{
+						mapId: state.map.mapId,
+						entities: Object.values(state.map.entities),
+					},
+					null,
+					2
+				);
+			},
+		}),
+
+		{
+			limit: 40,
+			partialize: (state) => ({
+				map: state.map,
+				paintedTiles: state.paintedTiles,
+			}),
+			equality: (pastState, currentState) => {
+				return JSON.stringify(pastState) === JSON.stringify(currentState);
+			},
+		}
+	)
+);
+
+
