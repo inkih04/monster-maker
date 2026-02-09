@@ -298,4 +298,16 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			}
 		}
 	);
+
+	ipcMain.handle('config:runEngine', async (_event, pd: ProjectData) => {
+		try {
+			const result = configManager.runEngine(pd);
+			return result;
+		} catch (error) {
+			return {
+				success: false,
+				error: String(error),
+			};
+		}
+	});
 }

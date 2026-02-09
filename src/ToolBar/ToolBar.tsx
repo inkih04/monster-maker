@@ -12,10 +12,12 @@ import './ToolBar.css';
 import { useToolsStore } from './ToolBarGState';
 import { useMapStore } from '../Map/MapGState';
 import { useEffect } from 'react';
+import { useProjectStore } from '../Project/ProjectConfigGState';
 
 function ToolBar() {
 	const activeTool = useToolsStore((state) => state.activeTool);
 	const setActiveTool = useToolsStore((state) => state.setActiveTool);
+	const currentProject = useProjectStore((state) => state.currentProject);
 	const { undo, redo } = useMapStore.temporal.getState();
 
 	useEffect(() => {
@@ -33,6 +35,24 @@ function ToolBar() {
 		return () => window.removeEventListener('keydown', handleKeyDown);
 	}, [undo, redo]);
 
+	const play = async () => {
+		if (!currentProject) {
+			console.error('No project selected');
+			return;
+		}
+
+		try {
+			const result = await window.api.runEngine(currentProject);
+
+			if (result.success) {
+				console.log('Engine started successfully');
+			} else {
+				console.error('Failed to start engine:', result.error);
+			}
+		} catch (error) {
+			console.error('Error running engine:', error);
+		}
+	};
 	return (
 		<div className="tools-container">
 			<div className="tools">
@@ -72,14 +92,13 @@ function ToolBar() {
 				</button>
 			</div>
 			<div className="play-button">
-				<button className="tool-button">
+				<button onClick={play} className="tool-button">
 					<Play className="play-button" />
 				</button>
 			</div>
 			<div className="other-tools">
 				<button
 					onClick={() => {
-						console.log('redo');
 						redo();
 					}}
 					className="tool-button"
@@ -89,7 +108,6 @@ function ToolBar() {
 				<button
 					onClick={() => {
 						undo();
-						console.log(undo);
 					}}
 					className="tool-button"
 				>

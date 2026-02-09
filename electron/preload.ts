@@ -92,4 +92,6 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('save-file', callback);
 		return () => ipcRenderer.removeAllListeners('save-file');
 	},
+
+	runEngine: (pd: ProjectData) => ipcRenderer.invoke('config:runEngine', pd),
 });
