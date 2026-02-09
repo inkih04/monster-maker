@@ -11,7 +11,9 @@
 #include "components/AnimationComponent.h"
 #include <stdexcept>
 
+#include "InteractionComponent.h"
 #include "MovementComponent.h"
+#include "ScriptComponet.h"
 
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
     std::ifstream file(filePath);
@@ -77,13 +79,17 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
 
     if (components.contains("COLLIDER")) {
         const auto& colliderData = components["COLLIDER"];
-        float width = colliderData.value("width", 0.0f);
-        float height = colliderData.value("height", 0.0f);
+        int width = colliderData.value("width", 0.0f);
+        int height = colliderData.value("height", 0.0f);
 
         if (width > 0 && height > 0) {
+            entityManager.setCollisionEntity(entity);
             auto colliderComponent = createColliderComponent(colliderData);
             entity->addComponent(ComponentsType::COLLIDER, std::move(colliderComponent));
         }
+    }
+    if (components.contains("INTERACTION")) {
+        entity->addComponent(ComponentsType::INTERACTION, std::move(std::make_unique<InteractionComponent>()));
     }
 
     if (components.contains("ANIMATION")) {
@@ -95,15 +101,26 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
         entity->addComponent(ComponentsType::MOVEMENT, std::move(std::make_unique<MovementComponent>()));
     }
 
-
+    if (components.contains("SCRIPT")) {
+        auto scriptComponent = createScriptComponent(components["SCRIPT"]);
+        entity->addComponent(ComponentsType::SCRIPT, std::move(scriptComponent));
+    }
 }
 
 std::unique_ptr<Component> EntityLoader::createPositionComponent(const json& data) {
     float x = data.value("x", 0.0f);
     float y = data.value("y", 0.0f);
-    float rotation = data.value("rotation", 0.0f);
 
-    return std::make_unique<PositionComponent>(x, y, rotation);
+    return std::make_unique<PositionComponent>(x, y);
+}
+
+std::unique_ptr<Component> EntityLoader::createScriptComponent(const json& data) {
+    if (!data.contains("path")) {
+        throw std::runtime_error("ScriptComponent requiere un campo 'path' con la ruta al archivo .lua");
+    }
+
+    std::string path = data["path"];
+    return std::make_unique<ScriptComponent>(path);
 }
 
 std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data) {
@@ -125,10 +142,13 @@ std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data)
 }
 
 std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& data) {
-    float width = data.value("width", 0.0f);
-    float height = data.value("height", 0.0f);
+    int width = data.value("width", 0.0f);
+    int height = data.value("height", 0.0f);
+    int offsetX = data.value("offsetX", 0.0f);
+    int offsetY = data.value("offsetY", 0.0f);
+    bool isTrigger = data.value("isTrigger", false);
 
-    return std::make_unique<CollisionComponent>(width, height);
+    return std::make_unique<CollisionComponent>(width, height, offsetX, offsetY, isTrigger);
 }
 
 std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& data) {

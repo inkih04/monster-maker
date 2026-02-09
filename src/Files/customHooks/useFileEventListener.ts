@@ -1,15 +1,12 @@
 import { useEffect } from 'react';
+import { FileItem } from '../../../global/types/fileItem';
 
-interface FileData {
-	name: string;
-	path: string;
-	type: string;
-}
+
 
 interface UseFileEventListenerProps {
-	onRename: (file: FileData) => void;
-	onOpen: (file: FileData) => void;
-	onDelete: (file: FileData) => void;
+	onRename: (file: FileItem) => void;
+	onOpen: (file: FileItem) => void;
+	onDelete: (file: FileItem) => void;
 }
 
 export function useFileEventListener({ onRename, onOpen, onDelete }: UseFileEventListenerProps) {

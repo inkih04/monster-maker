@@ -2,32 +2,37 @@ import './Map.css';
 import { useMapStore } from './MapGState';
 import { useGridCanvas } from '../common/customHooks/useGridCanvas';
 import { useTileSetStore } from '../Tileset/TileSetGState';
-import { useTileSetImage } from '../common/customHooks/useTileSetImage';
+import { useTileSetImages } from '../common/customHooks/useTileSetImages';
 import { useEffect, useMemo } from 'react';
-import { useTilePainter } from './customHooks/useTilePainter';
 import { useCanvasMouse } from './customHooks/useCanvasMouse';
 import { Layer } from '../domain/ecs/layer';
+import { useProjectStore } from '../Project/ProjectConfigGState';
+import { useMapCapture } from './customHooks/useMapCapture';
+import { useActiveTool } from '../ToolBar/customHooks/useActiveTool';
+import { useToolsStore } from '../ToolBar/ToolBarGState';
+import { drawBrushPreview, drawEraserPreview, drawSelectionOverlay } from './mapUtils';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
 	const setZoom = useMapStore((state) => state.setZoom);
-	const paintedTiles = useMapStore((state) => state.paintedTiles); 
+	const paintedTiles = useMapStore((state) => state.paintedTiles);
 	const setActiveLayer = useMapStore((state) => state.setActiveLayer);
 	const activeLayer = useMapStore((state) => state.activeLayer);
-	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
-
-	const tileSets = useTileSetStore((state) => state.tilemaps);
-	const currentTileSetId = useTileSetStore((state) => state.currentTileMapId);
-	const setTileMapLoaded = useTileSetStore((state) => state.setTileMapLoaded);
+	const currentProject = useProjectStore((state) => state.currentProject);
+	const tileSets = useTileSetStore((state) => state.tilesets);
+	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
 	const tileSize = useMapStore((state) => state.map?.tileSize ?? 16);
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
+	const createMap = useMapStore((state) => state.createMap);
+	const activeTool = useToolsStore((state) => state.activeTool);
+	const selectedTilePosition = useMapStore((state) => state.selectedTilePosition);
 
-	const currentTileSet = tileSets.find((tm) => tm.id === currentTileSetId);
+	const currentTileSet = tileSets[currentTileSetPath || ''];
 
-	const { isDrawing, previewPosition, setIsDrawing, setPreviewPosition, paintTile, clearMap } =
-		useTilePainter();
+	const { isActive, previewPosition, setIsActive, setPreviewPosition, onTileClick, onTileDrag } =
+		useActiveTool();
 
-	const tilesetImageRef = useTileSetImage(currentTileSet, setTileMapLoaded);
+	const tilesetImages = useTileSetImages(tileSets);
 
 	const { minWidth, minHeight } = useMemo(() => {
 		const baseMapWidthInTiles = 50;
@@ -47,47 +52,27 @@ function Map() {
 		};
 	}, [paintedTiles, zoom, tileSize]);
 
-	useEffect(() => {
-		const handleExport = async () => {
-			const mapJson = exportToEngineFormat();
-
-			try {
-				const result = await window.api.exportMap(mapJson);
-
-				if (result.success) {
-					console.log('Mapa exportado exitosamente a:', result.path);
-				} else {
-					console.error('Error al exportar:', result.error);
-				}
-			} catch (error) {
-				console.error('Error al exportar:', error);
-			}
-		};
-
-		const cleanup = window.api.onExportMapRequest(handleExport);
-
-		return cleanup;
-	}, [exportToEngineFormat]);
-
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
-		const tilesetImage = tilesetImageRef.current;
-		if (!tilesetImage || !currentTileSet) return;
-
-		const tileSize = currentTileSet.tileSizeX;
-		const scaledTileSize = tileSize * zoom;
-
 		const layerOrder: Layer[] = ['ground', 'decoration', 'entities', 'shadows', 'foreground'];
 
 		layerOrder.forEach((layer) => {
 			const tilesInLayer = paintedTiles.filter((tile) => tile.layer === layer);
 
 			tilesInLayer.forEach((tile) => {
+				const tileTileset = tileSets[tile.spriteSheetPath];
+				const tilesetImage = tilesetImages[tile.spriteSheetPath];
+
+				if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
+
+				const tileTileSize = tileTileset.tileSizeX;
+				const scaledTileSize = tileTileSize * zoom;
+
 				ctx.drawImage(
 					tilesetImage,
-					tile.tilesetX * tileSize,
-					tile.tilesetY * tileSize,
-					tileSize,
-					tileSize,
+					tile.tilesetX * tileTileSize,
+					tile.tilesetY * tileTileSize,
+					tileTileSize,
+					tileTileSize,
 					tile.x * scaledTileSize,
 					tile.y * scaledTileSize,
 					scaledTileSize,
@@ -96,33 +81,35 @@ function Map() {
 			});
 		});
 
-		if (previewPosition && !isDrawing) {
-			ctx.globalAlpha = 0.5;
-
-			if (selectedArea) {
-				const minX = Math.min(selectedArea.startX, selectedArea.endX);
-				const maxX = Math.max(selectedArea.startX, selectedArea.endX);
-				const minY = Math.min(selectedArea.startY, selectedArea.endY);
-				const maxY = Math.max(selectedArea.startY, selectedArea.endY);
-
-				for (let y = minY; y <= maxY; y++) {
-					for (let x = minX; x <= maxX; x++) {
-						ctx.drawImage(
-							tilesetImage,
-							x * tileSize,
-							y * tileSize,
-							tileSize,
-							tileSize,
-							(previewPosition.x + (x - minX)) * scaledTileSize,
-							(previewPosition.y + (y - minY)) * scaledTileSize,
-							scaledTileSize,
-							scaledTileSize
-						);
-					}
-				}
-			}
-
-			ctx.globalAlpha = 1;
+		if (activeTool === 'brush' && previewPosition) {
+			drawBrushPreview({
+				ctx,
+				previewPosition,
+				isActive,
+				currentTileSet,
+				currentTileSetPath,
+				tilesetImages,
+				selectedArea,
+				zoom,
+			});
+		} else if (activeTool === 'eraser' && previewPosition) {
+			drawEraserPreview({
+				ctx,
+				previewPosition,
+				isActive,
+				paintedTiles,
+				activeLayer,
+				tileSets,
+				tilesetImages,
+				zoom,
+			});
+		} else if (activeTool === 'select') {
+			drawSelectionOverlay({
+				ctx,
+				selectedTilePosition,
+				tileSize,
+				zoom,
+			});
 		}
 	};
 
@@ -133,16 +120,22 @@ function Map() {
 		drawBackground,
 		minWidth,
 		minHeight,
-		redrawTrigger: [paintedTiles, currentTileSet?.isLoaded, previewPosition],
+		redrawTrigger: [paintedTiles, tilesetImages, previewPosition],
+	});
+
+	useMapCapture({
+		canvasRef,
+		drawBackground,
 	});
 
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
 		zoom,
 		tileSize: tileSize,
-		isDrawing,
-		setIsDrawing,
+		isToolActive: isActive,
+		setIsToolActive: setIsActive,
 		setPreviewPosition,
-		paintTile,
+		onTileClick: onTileClick,
+		onTileDrag: onTileDrag,
 	});
 
 	const handleZoomIn = () => {
@@ -152,6 +145,12 @@ function Map() {
 	const handleZoomOut = () => {
 		setZoom(Math.max(zoom - 0.5, 0.5));
 	};
+
+	useEffect(() => {
+		if (currentProject) {
+			createMap(crypto.randomUUID(), 100, 100, currentProject.defaultTilesize || 16);
+		}
+	}, [currentProject, createMap]);
 
 	return (
 		<div className="tilemap-wrapper">
@@ -206,9 +205,6 @@ function Map() {
 						}}
 					>
 						Foreground
-					</button>
-					<button className="layer-button" onClick={clearMap}>
-						clean
 					</button>
 				</div>
 				<div className="map-controls-zoom">

@@ -27,6 +27,8 @@ declare global {
 			onLanguageChange: (callback: (lng: string) => void) => () => void;
 			exportMap: (mapData: string) => Promise<{ success: boolean; path?: string; error?: string }>;
 			onExportMapRequest: (callback: () => void) => () => void;
+			onExportMapPNGRequest: (callback: () => void) => () => void;
+			saveImage: (base64Data: string) => Promise<{success: boolean; path?: string;}>;
 			startWatchingFiles: (
 				pd: ProjectData,
 				folder: FolderNode
@@ -40,6 +42,7 @@ declare global {
 				folderPath: string,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string }>;
+			pathUnion: (path1: string, path2: string) => Promise<string>;
 			renameFile: (
 				oldFileRelativePath: string,
 				newFileName: string,

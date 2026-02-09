@@ -4,9 +4,20 @@
 #include "EntityManager.h"
 
 #include <algorithm>
+#include <cmath>
+#include "../../include/service/CollisionService.h"
+
+
+EntityManager::EntityManager(): isCacheStarted(false) {
+    m_collisionService = std::make_unique<CollisionService>();
+    m_interactionService = std::make_unique<InteractionService>(m_collisionService.get());
+}
+
 
 Entity* EntityManager::createEntity() {
     auto entity = std::make_unique<Entity>();
+    entity->setCollisionService(m_collisionService.get());
+    entity->setInteractionService(m_interactionService.get());
     Entity* entityPtr = entity.get();
     m_entities.push_back(std::move(entity));
     return entityPtr;
@@ -15,6 +26,8 @@ Entity* EntityManager::createEntity() {
 Entity* EntityManager::createEntity(EntityTag tag, EntityLayer layer) {
     auto entity = std::make_unique<Entity>();
     Entity* entityPtr = entity.get();
+    entity->setCollisionService(m_collisionService.get());
+    entity->setInteractionService(m_interactionService.get());
     m_entities.push_back(std::move(entity));
     m_entitiesByTag[tag].push_back(entityPtr);
     m_entitiesByLayer[layer].push_back(entityPtr);
@@ -51,6 +64,11 @@ std::vector<Entity*> EntityManager::getEntitiesByLayer(EntityLayer layer) const 
 }
 
 void EntityManager::updateEntities(int deltaTime) {
+    if (!isCacheStarted) {
+        initCollisionCache();
+        isCacheStarted = true;
+    }
+
     for (const auto& entity : m_entities) {
         entity->update(deltaTime);
     }
@@ -70,3 +88,18 @@ std::vector<Entity*> EntityManager::getEntitiesByComponent(ComponentsType type) 
     }
     return entitiesWithComponent;
 }
+
+
+void EntityManager::initCollisionCache() {
+    m_collisionService->initCollisionCache(m_rawCollisionEntities);
+}
+
+
+EntityManager::~EntityManager() {
+    m_entities.clear();
+    m_entitiesByTag.clear();
+    m_entitiesByLayer.clear();
+    m_rawCollisionEntities.clear();
+
+}
+

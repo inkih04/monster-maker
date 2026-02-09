@@ -104,6 +104,10 @@ export class ProjectConfigManager {
 		}
 	}
 
+	public pathUnion(path1:string, path2: string): string {
+		return path.join(path1, path2)
+	}
+
 	public getFile(
 		fileRelativePath: string,
 		folderPath: string,

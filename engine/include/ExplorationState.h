@@ -19,6 +19,8 @@ class ExplorationState : public State{
 
     protected:
         void setEntityManager() override;
+        void applyScriptContext() override;
+
 
     private:
 
@@ -27,8 +29,6 @@ class ExplorationState : public State{
         void renderEntities() const;
         void renderShadows() const;
         void renderForeground() const;
-
-        void updatePlayerMovement(int deltaTime);
 };
 
 #endif //POKEMONGAMEENGINE_EXPLORATIONSTATE_H

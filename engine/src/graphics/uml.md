@@ -35,6 +35,7 @@ Renderer "1"-- "*" Camera
     -void updateCameraUniforms()
     -Renderer()
     -~Renderer()
+    +Camera* getWorldCamera() const
     +Renderer* getInstance()
     +void loadShader(const string& name, const string& vertexPath, const string& fragmentPath)
     +void setShader(const string& name)
@@ -90,6 +91,7 @@ Renderer "1"-- "*" Camera
     +glm::vec2 getPosition()
     +void setZoom(float zoom)
     +float getZoom()
+    +void lerpTo(const glm::vec2& target, float alpha);
     -glm::mat4 m_view
     -glm::mat4 m_projection
     -glm::vec2 m_position

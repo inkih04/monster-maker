@@ -17,7 +17,7 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 	const [hasError, setHasError] = useState(false);
 	const { t } = useTranslation();
 
-	const { name, setPath, setName, path, selectFolder, submit, reset, isDisabled, isSubmitting } =
+	const { name, setPath, tileSize, setTileSize, setName, path, selectFolder, submit, reset, isDisabled, isSubmitting } =
 		useProjectForm({
 			onSuccess: () => onOpenChange(false),
 		});
@@ -25,7 +25,7 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 	const handleClose = () => {
 		reset();
 		setHasError(false);
-		onOpenChange(false);
+		onOpenChange(false)
 	};
 
 	const handleSubmit = async () => {
@@ -39,7 +39,8 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 	};
 
 	const isNameValid = name.trim() === '' || checkInvalidChars(name);
-	const isButtonDisabled = isDisabled || !isNameValid;
+	const isTileSizeValid = Number(tileSize) > 0 && Number(tileSize) % 16 === 0;
+	const isButtonDisabled = isDisabled || !isNameValid || !isTileSizeValid;
 
 	return (
 		<Dialog.Root
@@ -75,6 +76,21 @@ function Create({ open, onOpenChange }: Readonly<CreateProps>) {
 								className={`create--input ${!isNameValid || hasError ? 'create--input-invalid' : ''}`}
 								value={name}
 								onChange={(e) => setName(e.target.value)}
+								autoFocus
+							/>
+						</div>
+						<div className="create--section">
+							<label htmlFor="projectDefaultTileSize" className="create--label">
+								{t('defaultTileSize')}
+							</label>
+							<input
+								id="projectDefaultTileSize"
+								type="number"
+								step="16"
+								min="16"
+								className={`create--input ${!isTileSizeValid || hasError ? 'create--input-invalid' : ''}`}
+								value={tileSize}
+								onChange={(e) => setTileSize(Number(e.target.value))}
 								autoFocus
 							/>
 						</div>

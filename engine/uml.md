@@ -8,17 +8,30 @@ classDiagram
 
     State <|-- ExplorationState
     State <|-- CombatState
-    State <|-- MenuState
     State <|-- InventoryState
-    State <|-- MenuPokemonState
-    State <|-- PokemonState
+  
     
     EntityManager "1"-- * State
     EntityManager "*"--"*" Entity
     Entity "*"--"*" Component
+    Application "1"-- "1" ScriptEngine
+    ScriptBindings "1"-- "1" ScriptEngine
     State -- EntityLoader
     
-    
+
+
+
+    class ResourceManager {
+        <<static>>
+        -unordered_map~string, unique_ptr~Wav~~ m_sounds
+        -unordered_map<std::string, std::unique_ptr<Texture>> m_textures;
+        -unordered_map<ShaderPath, std::unique_ptr<Shader>> m_shaders;
+        -unordered_map<std::string, std::unique_ptr<TextRenderer>> m_fonts;
+        +loadTexture(string path)$ Texture*
+        +loadSound(string path)$ Wav*
+        +loadFont(string path, int size)$ TextRenderer*
+    }
+   
     class EntityLoader {
         <<static>>
         +loadEntitiesFromFile(string filePath, EntityManager& entityManager) void
@@ -26,6 +39,29 @@ classDiagram
         -createPositionComponent(json data) unique_ptr~Component~
         -createRenderComponent(json data) unique_ptr~Component~
         -createColliderComponent(json data) unique_ptr~Component~
+        -createScriptComponent(json data) unique_ptr~Component~
+        -createMocementComponent(json data) unique_ptr~Component~
+        -createInteractionComponent(json data) unique_ptr~Component~
+    }
+    
+    class ScriptEngine {
+        <<singleton>>
+        -sol::state m_lua
+        +getInstance()$ ScriptEngine&
+        +init() void
+        +setupBindingsStatic() void
+        +setupBindingsDynamic(Camera* cam, EntityManager& em) void
+        +runScript(string filePath) bool
+        +getState() sol::state&
+    }
+
+    class ScriptBindings {
+        <<static>>
+        +registerStatic(sol::state& lua)$ void
+        +registerDynamic(sol::state& lua, Camera* cam, EntityManager& em)$ void
+        -registerKeys(sol::state& lua)
+        -registerEntity(sol::state& lua)
+        -registerComponents(sol::state& lua)
     }
     
     class Component {
@@ -38,7 +74,12 @@ classDiagram
     }
     
     class EntityManager {
-    -vector~unique_ptr~Entity~~ m_entities
+       -vector~unique_ptr~Entity~~ m_entities
+       -std::unordered_map<EntityTag, std::vector<Entity*>> m_entitiesByTag
+       -std::unordered_map<EntityLayer, std::vector<Entity*>> m_entitiesByLayer
+       -std::unique_ptr<CollisionService> m_collisionService
+       -std::unique_ptr<InteractionService> m_interactionService
+       - void initCollisionCache();
        
        +EntityManager()
        +createEntity() Entity*
@@ -50,11 +91,17 @@ classDiagram
     
     class Entity {
        -unordered_map~ComponentsType, unique_ptr~Component~ m_components
-       
+       -CollisionService* m_collisionService;
+       -InteractionService* m_interactionService;
+       -bool isActive;
+       +void setCollisionService(CollisionService* collisionService)
+       +void setInteractionService(InteractionService* interactionService)
        +addComponent(unique_ptr~Component~, ComponentsType type) void
        +getComponent(ComponentsType type) Component*
        +update(int deltaTime)
        +hasComponent(ComponentsType type) bool
+       + CollisionService* getCollisionService()
+       +InteractionService* getInteractionService()
        +render() 
     }
 
@@ -72,6 +119,7 @@ classDiagram
         -StateManager* m_stateManager
         -EntityManager* m_entityManager
         -setEntityManager()*
+        +onEnter() void*
         +render()*
         +update(int deltaTime)*
         +setStateManager(StateManager* stateManager) void*
@@ -88,22 +136,10 @@ classDiagram
 
 
     }
-    class MenuState {
-
-
-    }
     class InventoryState {
 
     }
 
-    class MenuPokemonState {
-
-
-    }
-
-    class PokemonState {
-
-    }
 
 
     class Application{
@@ -117,6 +153,7 @@ classDiagram
       -int m_width
       -int m_height
       -string m_title
+      -std::unique_ptr<Camera> m_camera
       -GLFWwindow m_window
       -void setUpShaders()
       -void setUpCamera()

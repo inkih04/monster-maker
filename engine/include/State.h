@@ -13,6 +13,7 @@ class State {
         StateManager* m_stateManager = nullptr;
         std::unique_ptr<EntityManager> m_entityManager = nullptr;
         virtual void setEntityManager() = 0;
+        virtual void applyScriptContext() = 0;
 
     public:
         State() = default;
@@ -20,6 +21,10 @@ class State {
         virtual void render() = 0;
         virtual void update(int deltaTime) = 0;
         void setStateManager(StateManager* stateManager){ m_stateManager = stateManager;};
+        virtual void onEnter() {
+            applyScriptContext();
+        }
+
 
 
 };

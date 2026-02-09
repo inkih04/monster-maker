@@ -11,44 +11,101 @@
 #include "PositionComponent.h"
 #include <string>
 
-void MovementComponent::update(int deltaTime) {
-    //todo: ejecutar un script de lua y/o dejar algo preecho en c++ para comprobar cuando la entity debe desplazarse
-}
-
-void MovementComponent::move(Position pos) {
+#include "ColliderComponent.h"
+#include "../../../include/service/CollisionService.h"
+#include "ScriptComponet.h"
 
 
-    PositionComponent* positionComponent = getPosition();
-    if (!positionComponent) return;
-
-    Position oldPos = positionComponent->getPosition();
-    AnimationComponent* animation = getAnimation();
-
+void MovementComponent::updateAnimation(const Position &pos, Position oldPos) {
     if (checkDirectionUp(pos, oldPos)) {
-        //todo:Comprobar colisiones
-        if (animation) animation->play(animationToString(BasicAnimation::MOVEUP));
-        m_lastDirection = Direction::TOP;
+        if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVEUP));
+        m_positionComponent->setDirection(Direction::TOP);
     }
     else if (checkDirectionDown(pos, oldPos)) {
-        //todo:Comprobar colisiones
-        if (animation) animation->play(animationToString(BasicAnimation::MOVEDOWN));
-        m_lastDirection = Direction::BOTTOM;
+        if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVEDOWN));
+        m_positionComponent->setDirection(Direction::BOTTOM);
     }
     else if (checkDirectionRight(pos, oldPos)) {
-        //todo:Comprobar colisiones
-        if (animation) animation->play(animationToString(BasicAnimation::MOVERIGHT));
-        m_lastDirection = Direction::RIGHT;
+        if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVERIGHT));
+        m_positionComponent->setDirection(Direction::RIGHT);
     }
     else if (checkDirectionLeft(pos, oldPos)) {
-        //todo:Comprobar colisiones
-        if (animation) animation->play(animationToString(BasicAnimation::MOVELEFT));
-        m_lastDirection = Direction::LEFT;
+        if (m_animationComponent) m_animationComponent->play(animationToString(BasicAnimation::MOVELEFT));
+        m_positionComponent->setDirection(Direction::LEFT);
     }
     else {
-        if (animation) animation->play(getStandAnimation());
+        if (m_animationComponent) m_animationComponent->play(getStandAnimation());
+    }
+}
+
+void MovementComponent::handleCollision(const Position &pos, CollisionService *collisionService, CollisionComponent *collider, bool &canMove) {
+    if (!collider) return;
+
+    Entity *entityAtPos = collisionService->getEntityAtArea(pos, collider->getWidth(), collider->getHeight(), m_entity);
+    if (!entityAtPos) {
+        m_lastCollidedEntity = nullptr;
+        canMove = true;
+        return;
     }
 
-    positionComponent->setPosition(pos);
+    auto* otherCollider = static_cast<CollisionComponent*>(entityAtPos->getComponent(ComponentsType::COLLIDER));
+    bool isTrigger = false;
+
+    if (otherCollider) {
+        isTrigger = otherCollider->getIsTrigger();
+    }
+
+    if (isTrigger) {
+        canMove = true;
+
+        if (entityAtPos != m_lastCollidedEntity) {
+            auto* scriptOther = static_cast<ScriptComponent*>(entityAtPos->getComponent(ComponentsType::SCRIPT));
+            if (scriptOther) {
+                scriptOther->executeOnTriggerEnter(m_entity);
+            }
+            m_lastCollidedEntity = entityAtPos;
+        }
+    }
+    else {
+        canMove = false;
+        if (entityAtPos != m_lastCollidedEntity) {
+            auto* myScript = static_cast<ScriptComponent*>(m_entity->getComponent(ComponentsType::SCRIPT));
+            if (myScript) {
+                myScript->executeOnCollision(entityAtPos);
+            }
+            auto* otherScript = static_cast<ScriptComponent*>(entityAtPos->getComponent(ComponentsType::SCRIPT));
+            if (otherScript) {
+                otherScript->executeOnCollision(m_entity);
+            }
+            m_lastCollidedEntity = entityAtPos;
+        }
+    }
+}
+
+void MovementComponent::move(const Position& pos) {
+    if (!m_entity) return;
+
+    if (!m_positionComponent) m_positionComponent = getPosition();
+    if (!m_animationComponent) m_animationComponent = getAnimation();
+    if (!m_positionComponent) return;
+
+    auto* collisionService = m_entity->getCollisionService();
+    if (!collisionService) return;
+
+    Position oldPos = m_positionComponent->getPosition();
+    auto* collider = static_cast<CollisionComponent*>(m_entity->getComponent(ComponentsType::COLLIDER));
+    bool canMove = true;
+
+    handleCollision(pos, collisionService, collider, canMove);
+
+    if (canMove) {
+        updateAnimation(pos, oldPos);
+        collisionService->updatePositionCollisionCache(oldPos, pos, m_entity);
+        m_positionComponent->setPosition(pos);
+    }
+    else {
+        if (m_animationComponent) m_animationComponent->play(getStandAnimation());
+    }
 }
 
 bool MovementComponent::checkDirectionUp(Position newPos, Position oldPos) const {
@@ -68,20 +125,22 @@ bool MovementComponent::checkDirectionLeft(Position newPos, Position oldPos) con
     return newPos.x < oldPos.x;
 }
 
+
 AnimationComponent* MovementComponent::getAnimation() const {
     auto component = m_entity->getComponent(ComponentsType::ANIMATION);
     return dynamic_cast<AnimationComponent*>(component);
 }
 
-PositionComponent* MovementComponent::getPosition() const {
+PositionComponent* MovementComponent::getPosition() const {;
     auto component = m_entity->getComponent(ComponentsType::POSITION);
     return dynamic_cast<PositionComponent*>(component);
 }
 
+
 std::string MovementComponent::getStandAnimation() const {
-    if (m_lastDirection == Direction::BOTTOM) return animationToString(BasicAnimation::STANDDOWN);
-    else if (m_lastDirection == Direction::LEFT) return animationToString(BasicAnimation::STANDLEFT);
-    else if (m_lastDirection == Direction::RIGHT) return animationToString(BasicAnimation::STANDRIGHT);
-    else if (m_lastDirection == Direction::TOP) return animationToString(BasicAnimation::STANDUP);
+    if (m_positionComponent->getDirection() == Direction::BOTTOM) return animationToString(BasicAnimation::STANDDOWN);
+    else if (m_positionComponent->getDirection() == Direction::LEFT) return animationToString(BasicAnimation::STANDLEFT);
+    else if (m_positionComponent->getDirection() == Direction::RIGHT) return animationToString(BasicAnimation::STANDRIGHT);
+    else if (m_positionComponent->getDirection() == Direction::TOP) return animationToString(BasicAnimation::STANDUP);
     return animationToString(BasicAnimation::STANDDOWN);
 }

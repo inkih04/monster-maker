@@ -3,11 +3,7 @@
     {
       "path": "/home/inkih/Desktop/test",
       "name": "Test1",
-      "color": "#45B7D1"
-    },
-    {
-      "path": "/home/inkih/Desktop/test",
-      "name": "Test2",
+      "defaultTilesize": 32,
       "color": "#45B7D1"
     }
   ]

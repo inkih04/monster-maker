@@ -2,6 +2,8 @@
 // Created by inkih on 30/11/25.
 //
 #include "Entity.h"
+#include "../../include/service/CollisionService.h"
+#include "RenderComponent.h"
 
 void Entity::addComponent(ComponentsType type, std::unique_ptr<Component> component) {
     components[type] = std::move(component);
@@ -14,11 +16,25 @@ Component *Entity::getComponent(ComponentsType type) {
 }
 
 void Entity::update(int deltaTime) {
+    if (!isActive) return;
     for (auto& component: components) {
         if (component.second) {
             component.second->update(deltaTime);
         }
     }
+}
+
+CollisionService* Entity::getCollisionService() {
+    return m_collisionService;
+}
+
+InteractionService* Entity::getInteractionService() {
+    return m_interactionService;
+}
+
+void Entity::disableEntity() {
+    isActive = false;
+    m_collisionService->removeEntity(this);
 }
 
 bool Entity::hasComponent(ComponentsType type) const {
@@ -27,5 +43,6 @@ bool Entity::hasComponent(ComponentsType type) const {
 }
 
 void Entity::render() {
+    if (!isActive) return;
     components[ComponentsType::RENDER]->render();
 }

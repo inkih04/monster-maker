@@ -12,6 +12,9 @@ contextBridge.exposeInMainWorld('api', {
 	getDirectoryStructure: (pd: ProjectData) =>
 		ipcRenderer.invoke('config:getDirectoryStructure', pd),
 
+	pathUnion: (path1: string, path2: string) => 
+        ipcRenderer.invoke('config:pathUnion', path1, path2),
+
 	startWatchingDirectory: (pd: ProjectData) => ipcRenderer.invoke('config:startWatching', pd),
 	stopWatchingDirectory: () => ipcRenderer.invoke('config:stopWatching'),
 	onDirectoryStructureChanged: (callback: (structure: FolderNode[]) => void) => {
@@ -27,6 +30,11 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('export-map-request', callback);
 		return () => ipcRenderer.removeAllListeners('export-map-request');
 	},
+	onExportMapPNGRequest: (callback: () => void) => {
+		ipcRenderer.on('export-map-PNG-request', callback);
+		return () => ipcRenderer.removeAllListeners('export-map-PNG-request');
+	},
+	saveImage: (base64Data: string) => ipcRenderer.invoke('save-image', base64Data),
 	getFilesInFolder: (pd: ProjectData, folder: FolderNode) =>
 		ipcRenderer.invoke('config:getFilesInFolder', pd, folder),
 

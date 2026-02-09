@@ -4,11 +4,8 @@
 #include "Engine.h"
 #include <iostream>
 #include <memory>
-
 #include "InputManager.h"
 #include "Renderer.h"
-#include <iostream>
-
 #include "GameConfig.h"
 
 #define TARGET_FRAMERATE 60.0f
@@ -39,9 +36,15 @@ void Engine::initGLFW() {
         exit(-1);
     }
     glfwMakeContextCurrent(m_window);
+    glfwSetWindowUserPointer(m_window, this);
+    glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) exit(-1);
+
+    int bufferWidth, bufferHeight;
+    glfwGetFramebufferSize(m_window, &bufferWidth, &bufferHeight);
+    onResize(bufferWidth, bufferHeight);
 }
 
 void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()> gameRender) {
@@ -52,15 +55,17 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
         double currentTime = glfwGetTime();
         if (currentTime - timePreviousFrame >= timePerFrame) {
             int deltaTime = static_cast<int>(1000.0f * (currentTime - timePreviousFrame));
+
             InputManager::getInstance().update();
             if (gameUpdate) gameUpdate(deltaTime);
 
-            glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+            glViewport(0, 0, m_width, m_height);
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             int scaleX = m_width  / GameConfig::Width;
             int scaleY = m_height / GameConfig::Height;
-            int scale  = std::min(scaleX, scaleY);
+            int scale  = std::max(1, std::max(scaleX, scaleY));
 
             int viewportWidth  = GameConfig::Width  * scale;
             int viewportHeight = GameConfig::Height * scale;
@@ -69,7 +74,6 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
             int viewportY = (m_height - viewportHeight) / 2;
 
             glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
-
 
             if (gameRender) gameRender();
 
@@ -84,6 +88,22 @@ void Engine::setUpShaders() const {
     Renderer::getInstance().loadShader("sprite", "../src/graphics/Shader/sprite.vert", "../src/graphics/Shader/sprite.frag");
 
     Renderer::getInstance().setShader("sprite");
+}
+
+void Engine::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    auto* engine = static_cast<Engine*>(glfwGetWindowUserPointer(window));
+    if (engine) {
+        engine->onResize(width, height);
+    }
+}
+
+void Engine::onResize(int width, int height) {
+    m_width = width;
+    m_height = height;
+    if (m_camera) {
+        m_camera->setViewportSize(static_cast<float>(GameConfig::Width), static_cast<float>(GameConfig::Height));
+        Renderer::getInstance().setCamera(*m_camera);
+    }
 }
 
 void Engine::setUpCamera(int width, int height)  {

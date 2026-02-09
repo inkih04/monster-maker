@@ -3,6 +3,7 @@ import { create } from 'zustand';
 export interface TileSetData {
 	id: string;
 	pathImg: string;
+	relativePath: string;
 	pathTileMapConfig: string;
 	tileSizeX: number;
 	tileSizeY: number;
@@ -17,31 +18,24 @@ export interface TileSelection {
 }
 
 export interface TileSetStore {
-	tilemaps: TileSetData[];
-	currentTileMapId: string | null;
+	tilesets: Record<string, TileSetData>;
+	currentTileSetPath: string | null;
 	selectedArea: TileSelection | null;
 	zoom: number;
 
 	setSelectedArea: (area: TileSelection | null) => void;
 	setZoom: (zoom: number) => void;
-	setCurrentTileMap: (id: string) => void;
-	addTileMap: (tilemap: TileSetData) => void;
-	setTileMapLoaded: (id: string, loaded: boolean) => void;
+	setCurrentTileSet: (path: string) => void;
+	addTileSet: (tilemap: TileSetData) => void;
+	setTileSetLoaded: (path: string, loaded: boolean) => void;
+	updateTileSet: (path: string, updates: Partial<TileSetData>) => void;
+	removeTileSet: (path: string) => void;
 }
 
 export const useTileSetStore = create<TileSetStore>((set, get) => {
 	return {
-		tilemaps: [
-			{
-				id: 'tilemap-1',
-				pathImg: '../../engine/resources/maps/tilesets/TileMap2.png',
-				pathTileMapConfig: '../../engine/resources/maps/tilesets/TileMap2.json',
-				tileSizeX: 16,
-				tileSizeY: 16,
-				isLoaded: false,
-			},
-		],
-		currentTileMapId: 'tilemap-1',
+		tilesets: {},
+		currentTileSetPath: null,
 		selectedArea: null,
 		zoom: 1,
 
@@ -53,25 +47,61 @@ export const useTileSetStore = create<TileSetStore>((set, get) => {
 			set({ zoom });
 		},
 
-		setCurrentTileMap: (id) => {
-			const exists = get().tilemaps.some((tm) => tm.id === id);
-			if (exists) {
-				set({ currentTileMapId: id });
+		setCurrentTileSet: (path) => {
+			const tilesets = get().tilesets;
+			if (tilesets[path]) {
+				set({ currentTileSetPath: path });
 			} else {
-				console.warn(`TileMap con id "${id}" no existe`);
+				console.warn(`TileSet with "${path}" does not exist`);
 			}
 		},
 
-		addTileMap: (tilemap) => {
+		addTileSet: (tilemap) => {
 			set((state) => ({
-				tilemaps: [...state.tilemaps, tilemap],
+				tilesets: { ...state.tilesets, [tilemap.relativePath]: tilemap },
 			}));
 		},
 
-		setTileMapLoaded: (id, loaded) => {
-			set((state) => ({
-				tilemaps: state.tilemaps.map((tm) => (tm.id === id ? { ...tm, isLoaded: loaded } : tm)),
-			}));
+		setTileSetLoaded: (path, loaded) => {
+			set((state) => {
+				const tileSet = state.tilesets[path];
+				if (!tileSet) return state;
+
+				return {
+					tilesets: {
+						...state.tilesets,
+						[path]: { ...tileSet, isLoaded: loaded },
+					},
+				};
+			});
+		},
+
+		updateTileSet: (path, updates) => {
+			set((state) => {
+				const tileSet = state.tilesets[path];
+				if (!tileSet) {
+					console.warn(`TileSet with path "${path}" does not exist`);
+					return state;
+				}
+
+				return {
+					tilesets: {
+						...state.tilesets,
+						[path]: { ...tileSet, ...updates },
+					},
+				};
+			});
+		},
+
+		removeTileSet: (path) => {
+			set((state) => {
+				const { [path]: removed, ...remainingTilesets } = state.tilesets;
+
+				return {
+					tilesets: remainingTilesets,
+					currentTileSetPath: state.currentTileSetPath === path ? null : state.currentTileSetPath,
+				};
+			});
 		},
 	};
 });
