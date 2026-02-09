@@ -25,7 +25,6 @@ MonsterMaker es una herramienta completa de creación de fangames 2D estilo Pok�
 - [Uso](#uso)
 - [Documentación](#documentación)
 - [Testing](#testing)
-- [Roadmap](#roadmap)
 - [Contribuir](#contribuir)
 - [Licencia](#licencia)
 
@@ -542,36 +541,6 @@ cmake --build .
 ctest
 ```
 
----
-
-## Roadmap
-
-### Versión 0.1.0 (Actual)
-- ✅ Editor básico de tilemaps
-- ✅ Sistema ECS del motor
-- ✅ Renderizado OpenGL 2D
-- ✅ Gestión de estados del juego
-- ✅ Integración básica de Lua
-
-### Versión 0.2.0 (Próxima)
-- 🔲 Editor de animaciones
-- 🔲 Sistema de diálogos
-- 🔲 Editor de combates
-- 🔲 Mejoras en el sistema de eventos
-
-### Versión 0.3.0
-- 🔲 Sistema de inventario
-- 🔲 Editor de estadísticas de monstruos
-- 🔲 Sistema de guardado/carga
-
-### Versión 1.0.0 (Release TFG)
-- 🔲 Documentación completa
-- 🔲 Proyecto de ejemplo completo
-- 🔲 Optimizaciones de rendimiento
-- 🔲 Testing exhaustivo
-
----
-
 ## Contribuir
 
 Este proyecto es parte de un Trabajo de Fin de Grado (TFG) y actualmente no acepta contribuciones externas. Sin embargo, puedes:
@@ -587,3 +556,4 @@ Este proyecto es parte de un Trabajo de Fin de Grado (TFG) y actualmente no acep
 Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 
 **MonsterMaker** - Creando fangames con pasión y tecnología moderna.
+
