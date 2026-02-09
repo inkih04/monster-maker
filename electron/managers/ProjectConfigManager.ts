@@ -7,6 +7,7 @@ import FolderNode from '../../global/types/folderNode';
 import { BrowserWindow } from 'electron';
 import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
+import { spawn } from 'child_process';
 
 export class ProjectConfigManager {
 	private readonly configPath: string;
@@ -104,8 +105,8 @@ export class ProjectConfigManager {
 		}
 	}
 
-	public pathUnion(path1:string, path2: string): string {
-		return path.join(path1, path2)
+	public pathUnion(path1: string, path2: string): string {
+		return path.join(path1, path2);
 	}
 
 	public getFile(
@@ -192,6 +193,20 @@ export class ProjectConfigManager {
 			return path.join(process.cwd(), 'src', 'assets', 'projects.json');
 		}
 		return path.join(process.resourcesPath, 'assets', 'projects.json');
+	}
+
+	public getEngineSourcePath(): string {
+		if (process.env.NODE_ENV === 'development') {
+			return path.join(process.cwd(), 'engine', 'exe');
+		}
+		return path.join(process.resourcesPath, 'engine', 'exe');
+	}
+
+	public getShaderSourcePath(): string {
+		if (process.env.NODE_ENV === 'development') {
+			return path.join(process.cwd(), 'engine', 'shaders');
+		}
+		return path.join(process.resourcesPath, 'engine', 'shaders');
 	}
 
 	public validateProjectPath(pd: ProjectData): boolean {
@@ -310,6 +325,15 @@ export class ProjectConfigManager {
 			const requiredPaths = this.fileSystemService.getRequiredProjectPaths();
 			this.fileSystemService.createDirectories(projectPath, requiredPaths);
 
+			const enginePath = this.getEngineSourcePath();
+			this.fileSystemService.copyDirectoryContent(enginePath, path.join(projectPath, 'exe'));
+
+			const shadersPath = this.getShaderSourcePath();
+			this.fileSystemService.copyDirectoryContent(
+				shadersPath,
+				path.join(projectPath, path.join('resources', 'shaders'))
+			);
+
 			this.addProjectData(pd);
 			return true;
 		} catch (error) {
@@ -380,5 +404,50 @@ export class ProjectConfigManager {
 	public stopWatchingFiles(): void {
 		this.fileSystemWatcher.stopWatcher('files-in-folder');
 		this.currentWatchedFolder = null;
+	}
+
+	public runEngine(pd: ProjectData): { success: boolean; error?: string } {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const exePath = path.join(projectPath, 'exe');
+
+			if (!this.fileSystemService.exists(exePath)) {
+				return { success: false, error: 'Engine directory does not exist' };
+			}
+
+			const platform = process.platform;
+			let executableName: string;
+
+			switch (platform) {
+				case 'darwin':
+					executableName = 'MonsterMakerEngineMac';
+					break;
+				case 'linux':
+					executableName = 'MonsterMakerEngineLinux';
+					break;
+				default:
+					return { success: false, error: `Unsupported platform: ${platform}` };
+			}
+
+			const executablePath = path.join(exePath, executableName);
+
+			if (!this.fileSystemService.exists(executablePath)) {
+				return { success: false, error: `Executable not found: ${executablePath}` };
+			}
+
+			const child = spawn(executablePath, [], {
+				cwd: exePath,
+				detached: true,
+				stdio: 'ignore',
+			});
+
+			child.unref();
+
+			console.log(`Engine started: ${executablePath}`);
+			return { success: true };
+		} catch (error) {
+			console.error(`Error running engine: ${error}`);
+			return { success: false, error: String(error) };
+		}
 	}
 }

@@ -4,7 +4,13 @@
       "path": "/home/inkih/Desktop/test",
       "name": "Test1",
       "defaultTilesize": 32,
-      "color": "#45B7D1"
+      "color": "#F7DC6F"
+    },
+    {
+      "path": "/home/inkih/Desktop/test",
+      "name": "aa",
+      "defaultTilesize": 32,
+      "color": "#85C1E2"
     }
   ]
 }
