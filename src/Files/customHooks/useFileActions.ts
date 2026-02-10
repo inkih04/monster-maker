@@ -54,7 +54,9 @@ export function useFileActions() {
 			const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
 			const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
 			const configurationPath = await window.api.pathUnion(selectedFolder.path, jsonPath);
+			console.log(configurationPath);
 			const completeRelativePath = await window.api.pathUnion(selectedFolder.path, file.path);
+			console.log(completeRelativePath);
 
 			const existingTileSet = useTileSetStore.getState().tilesets[completeRelativePath];
 			if (existingTileSet) {

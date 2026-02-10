@@ -2,6 +2,7 @@ import Entity from '../domain/ecs/entity';
 import { Layer } from '../domain/ecs/layer';
 import { PaintedTile, SelectedTilePosition } from './MapGState';
 import { TileSetData, TileSelection } from '../Tileset/TileSetGState';
+import { ProjectData } from '../../global/types/projectData';
 
 interface PreviewPosition {
 	x: number;
@@ -159,7 +160,7 @@ export function drawEraserPreview({
 		scaledTileSize
 	);
 
-	ctx.fillStyle = 'rgba(255, 50, 50, 0.4)'; 
+	ctx.fillStyle = 'rgba(255, 50, 50, 0.4)';
 	ctx.fillRect(
 		tileUnderCursor.x * scaledTileSize,
 		tileUnderCursor.y * scaledTileSize,
@@ -169,7 +170,6 @@ export function drawEraserPreview({
 
 	ctx.globalAlpha = 1;
 }
-
 
 interface DrawSelectionOverlayParams {
 	ctx: CanvasRenderingContext2D;
@@ -190,6 +190,42 @@ export function drawSelectionOverlay({
 	const x = selectedTilePosition.x * scaledTileSize;
 	const y = selectedTilePosition.y * scaledTileSize;
 
-	ctx.fillStyle = 'rgba(0, 255, 0, 0.3)'; 
+	ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
 	ctx.fillRect(x, y, scaledTileSize, scaledTileSize);
+}
+
+export async function loadSingleTileset(
+	spriteSheetPath: string,
+	currentProject: ProjectData
+): Promise<TileSetData | null> {
+	try {
+		const lastSlashIndex = Math.max(
+			spriteSheetPath.lastIndexOf('/'),
+			spriteSheetPath.lastIndexOf('\\')
+		);
+		const directory = spriteSheetPath.substring(0, lastSlashIndex + 1);
+		const fileName = spriteSheetPath.substring(lastSlashIndex + 1);
+
+		const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
+		const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
+
+		const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
+		const completePath = await window.api.pathUnion(fullProjectPath, spriteSheetPath);
+		console.log(spriteSheetPath);
+
+		const newTileSet: TileSetData = {
+			id: crypto.randomUUID(),
+			pathImg: completePath,
+			pathTileMapConfig: jsonPath,
+			relativePath: spriteSheetPath,
+			tileSizeX: currentProject?.defaultTilesize || 16,
+			tileSizeY: currentProject?.defaultTilesize || 16,
+			isLoaded: true,
+		};
+
+		return newTileSet;
+	} catch (error) {
+		console.error(`Error loading tileset ${spriteSheetPath}:`, error);
+		return null;
+	}
 }

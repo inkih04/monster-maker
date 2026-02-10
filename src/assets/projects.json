@@ -11,6 +11,12 @@
       "name": "aa",
       "defaultTilesize": 32,
       "color": "#85C1E2"
+    },
+    {
+      "path": "/home/inkih/Desktop/test",
+      "name": "test2",
+      "color": "#F8B195",
+      "defaultTilesize": 32
     }
   ]
 }

@@ -197,9 +197,9 @@ export class ProjectConfigManager {
 
 	public getEngineSourcePath(): string {
 		if (process.env.NODE_ENV === 'development') {
-			return path.join(process.cwd(), 'engine', 'exe');
+			return path.join(process.cwd(), 'engine');
 		}
-		return path.join(process.resourcesPath, 'engine', 'exe');
+		return path.join(process.resourcesPath, 'engine');
 	}
 
 	public getShaderSourcePath(): string {
