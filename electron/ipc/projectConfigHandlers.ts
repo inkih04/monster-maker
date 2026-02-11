@@ -99,7 +99,6 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 
 	ipcMain.handle('config:pathUnion', async (_event, path1: string, path2: string) => {
 		return configManager.pathUnion(path1, path2);
-
 	});
 
 	ipcMain.handle('config:selectFolder', async () => {
@@ -299,9 +298,21 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
-	ipcMain.handle('config:runEngine', async (_event, pd: ProjectData) => {
+	ipcMain.handle('config:runEngine', async (_event, pd: ProjectData, mapPath?: string) => {
 		try {
-			const result = configManager.runEngine(pd);
+			const result = configManager.runEngine(pd, mapPath);
+			return result;
+		} catch (error) {
+			return {
+				success: false,
+				error: String(error),
+			};
+		}
+	});
+
+	ipcMain.handle('config:stopEngine', async () => {
+		try {
+			const result = configManager.stopEngine();
 			return result;
 		} catch (error) {
 			return {
