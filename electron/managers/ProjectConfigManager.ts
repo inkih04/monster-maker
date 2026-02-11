@@ -15,6 +15,7 @@ export class ProjectConfigManager {
 	private readonly fileSystemWatcher: FileSystemWatcher;
 	private readonly fileSystemService: FileSystemService;
 	private currentWatchedFolder: { pd: ProjectData; folder: FolderNode } | null = null;
+	private engineProcess: ReturnType<typeof spawn> | null = null;
 
 	constructor() {
 		this.configPath = this.getConfigPath();
@@ -406,8 +407,12 @@ export class ProjectConfigManager {
 		this.currentWatchedFolder = null;
 	}
 
-	public runEngine(pd: ProjectData): { success: boolean; error?: string } {
+	public runEngine(pd: ProjectData, mapPath?: string): { success: boolean; error?: string } {
 		try {
+			if (this.engineProcess && !this.engineProcess.killed) {
+				return { success: false, error: 'Engine is already running' };
+			}
+
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 
 			if (!this.fileSystemService.exists(projectPath)) {
@@ -434,18 +439,57 @@ export class ProjectConfigManager {
 				return { success: false, error: `Executable not found: ${executablePath}` };
 			}
 
-			const child = spawn(executablePath, [], {
+			const args: string[] = [];
+			if (mapPath) {
+				args.push('--map', mapPath);
+			}
+
+			const child = spawn(executablePath, args, {
 				cwd: projectPath,
-				detached: true,
+				detached: false, 
 				stdio: 'ignore',
 			});
 
-			child.unref();
+			this.engineProcess = child;
 
-			console.log(`Engine started: ${executablePath}`);
+
+			child.on('exit', (code, signal) => {
+				console.log(`Engine exited with code ${code} and signal ${signal}`);
+				this.engineProcess = null;
+				this.fileSystemWatcher.notifyMainWindow('engine-exited', {});
+			});
+
+			child.on('error', (error) => {
+				console.error(`Engine process error: ${error}`);
+				this.engineProcess = null;
+				this.fileSystemWatcher.notifyMainWindow('engine-exited', {});
+			});
+
+			console.log(`Engine started: ${executablePath}`, mapPath ? `with map: ${mapPath}` : '');
 			return { success: true };
 		} catch (error) {
 			console.error(`Error running engine: ${error}`);
+			this.engineProcess = null;
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public stopEngine(): { success: boolean; error?: string } {
+		try {
+			if (!this.engineProcess || this.engineProcess.killed) {
+				return { success: false, error: 'No engine process is running' };
+			}
+			const killed = this.engineProcess.kill();
+
+			if (killed) {
+				console.log('Engine process killed successfully');
+				this.engineProcess = null;
+				return { success: true };
+			} else {
+				return { success: false, error: 'Failed to kill engine process' };
+			}
+		} catch (error) {
+			console.error(`Error stopping engine: ${error}`);
 			return { success: false, error: String(error) };
 		}
 	}
