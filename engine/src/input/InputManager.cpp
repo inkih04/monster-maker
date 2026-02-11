@@ -43,6 +43,8 @@ void InputManager::updateKeyStates() {
     static const std::vector<int> keysToTrack = {
         GLFW_KEY_W, GLFW_KEY_A, GLFW_KEY_S, GLFW_KEY_D,
         GLFW_KEY_UP, GLFW_KEY_DOWN, GLFW_KEY_LEFT, GLFW_KEY_RIGHT,
+        GLFW_KEY_LEFT_CONTROL, GLFW_KEY_RIGHT_CONTROL,
+        GLFW_KEY_LEFT_SHIFT, GLFW_KEY_RIGHT_SHIFT,
         GLFW_KEY_Z, GLFW_KEY_X, GLFW_KEY_C,
         GLFW_KEY_SPACE, GLFW_KEY_ENTER, GLFW_KEY_ESCAPE,
         GLFW_KEY_E, GLFW_KEY_Q
