@@ -74,6 +74,7 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         include/service/InteractionService.h
         src/entities/service/InteractionService.cpp
         include/components/InteractionComponent.h
+        include/structs/DebugHelper.h
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD

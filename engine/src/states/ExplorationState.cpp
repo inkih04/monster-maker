@@ -6,17 +6,16 @@
 #include <iostream>
 
 #include "AnimationComponent.h"
+#include "DebugHelper.h"
 #include "Engine.h"
 #include "EntityLoader.h"
 #include "InputManager.h"
-#include "MovementComponent.h"
-#include "PositionComponent.h"
 #include "ScriptEngine.h"
 
 
 ExplorationState::ExplorationState() {
     setEntityManager();
-
+    debugMode = !DebugHelper::getInstance().getCurrentMap().empty();
 }
 void ExplorationState::applyScriptContext()  {
     if (m_entityManager)
@@ -26,12 +25,40 @@ void ExplorationState::applyScriptContext()  {
 
 void ExplorationState::update(int deltaTime) {
     m_entityManager->updateEntities(deltaTime);
+    if (debugMode) {
+        moveDebugCamera();
+    }
+}
+
+void ExplorationState::moveDebugCamera() {
+    Camera *camera = Renderer::getInstance().getWorldCamera();
+    if (!camera) return;
+
+    auto& input = InputManager::getInstance();
+
+    bool isControlDown = input.isKeyDown(GLFW_KEY_LEFT_CONTROL) ||
+                         input.isKeyDown(GLFW_KEY_RIGHT_CONTROL);
+
+    if (!isControlDown) return;
+    int speed = 16;
+    float smoothness = 0.15f;
+    glm::vec2 targetPos = camera->getPosition();
+
+    if (input.isKeyDown(GLFW_KEY_W) || input.isKeyDown(GLFW_KEY_UP))    targetPos.y -= speed;
+    if (input.isKeyDown(GLFW_KEY_S) || input.isKeyDown(GLFW_KEY_DOWN))  targetPos.y += speed;
+    if (input.isKeyDown(GLFW_KEY_A) || input.isKeyDown(GLFW_KEY_LEFT))  targetPos.x -= speed;
+    if (input.isKeyDown(GLFW_KEY_D) || input.isKeyDown(GLFW_KEY_RIGHT)) targetPos.x += speed;
+
+    camera->lerpTo(targetPos, smoothness);
 }
 
 void ExplorationState::setEntityManager() {
     m_entityManager = std::make_unique<EntityManager>();
-    EntityLoader::loadEntitiesFromFile("resources/maps/data/map32-super.json", *m_entityManager);
-
+    std::string debugMap = DebugHelper::getInstance().getCurrentMap();
+    if (debugMap.empty()) EntityLoader::loadEntitiesFromFile("resources/maps/data/map32-super.json", *m_entityManager);
+    else {
+        EntityLoader::loadEntitiesFromFile(debugMap, *m_entityManager);
+    }
 }
 
 void ExplorationState::render() {

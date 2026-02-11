@@ -441,7 +441,7 @@ export class ProjectConfigManager {
 
 			const args: string[] = [];
 			if (mapPath) {
-				args.push('--map', mapPath);
+				args.push(mapPath);
 			}
 
 			const child = spawn(executablePath, args, {
