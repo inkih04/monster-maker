@@ -11,6 +11,7 @@ import { useMapCapture } from './customHooks/useMapCapture';
 import { useActiveTool } from '../ToolBar/customHooks/useActiveTool';
 import { useToolsStore } from '../ToolBar/ToolBarGState';
 import { drawBrushPreview, drawEraserPreview, drawSelectionOverlay } from './mapUtils';
+import { MapLoadingOverlay } from './MapLoadingOverlay';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
@@ -153,6 +154,7 @@ function Map() {
 	}, [currentProject, createMap]);
 
 	return (
+		<>
 		<div className="tilemap-wrapper">
 			<div className="tilemap-viewport" ref={containerRef}>
 				<canvas
@@ -219,6 +221,8 @@ function Map() {
 				</div>
 			</div>
 		</div>
+		<MapLoadingOverlay/>
+		</>
 	);
 }
 export default Map;

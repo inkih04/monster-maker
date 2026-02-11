@@ -326,7 +326,7 @@ export class ProjectConfigManager {
 			this.fileSystemService.createDirectories(projectPath, requiredPaths);
 
 			const enginePath = this.getEngineSourcePath();
-			this.fileSystemService.copyDirectoryContent(enginePath, path.join(projectPath, 'exe'));
+			this.fileSystemService.copyDirectoryContent(enginePath, projectPath);
 
 			const shadersPath = this.getShaderSourcePath();
 			this.fileSystemService.copyDirectoryContent(
@@ -409,9 +409,8 @@ export class ProjectConfigManager {
 	public runEngine(pd: ProjectData): { success: boolean; error?: string } {
 		try {
 			const projectPath = this.fileSystemService.getProjectPath(pd);
-			const exePath = path.join(projectPath, 'exe');
 
-			if (!this.fileSystemService.exists(exePath)) {
+			if (!this.fileSystemService.exists(projectPath)) {
 				return { success: false, error: 'Engine directory does not exist' };
 			}
 
@@ -429,14 +428,14 @@ export class ProjectConfigManager {
 					return { success: false, error: `Unsupported platform: ${platform}` };
 			}
 
-			const executablePath = path.join(exePath, executableName);
+			const executablePath = path.join(projectPath, executableName);
 
 			if (!this.fileSystemService.exists(executablePath)) {
 				return { success: false, error: `Executable not found: ${executablePath}` };
 			}
 
 			const child = spawn(executablePath, [], {
-				cwd: exePath,
+				cwd: projectPath,
 				detached: true,
 				stdio: 'ignore',
 			});

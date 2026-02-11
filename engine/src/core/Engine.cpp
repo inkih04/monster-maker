@@ -85,7 +85,7 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
 }
 
 void Engine::setUpShaders() const {
-    Renderer::getInstance().loadShader("sprite", "../resources/shaders/sprite.vert", "../resources/shaders/sprite.frag");
+    Renderer::getInstance().loadShader("sprite", "resources/shaders/sprite.vert", "resources/shaders/sprite.frag");
 
     Renderer::getInstance().setShader("sprite");
 }
