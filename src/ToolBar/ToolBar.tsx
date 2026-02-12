@@ -16,18 +16,23 @@ import { useMapStore } from '../Map/MapGState';
 import { useEffect } from 'react';
 import { useProjectStore } from '../Project/ProjectConfigGState';
 import { useEngineStore } from './EngineGState';
+import { useNotify } from '../common/components/toast/ToastContext';
+import { useTranslation } from 'react-i18next';
 
 function ToolBar() {
 	const activeTool = useToolsStore((state) => state.activeTool);
 	const setActiveTool = useToolsStore((state) => state.setActiveTool);
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const currentMapPath = useMapStore((state) => state.mapRelativePath);
+	const isMapDirty = useMapStore((state) => state.isDirty);
 	const { undo, redo } = useMapStore.temporal.getState();
+	const { t } = useTranslation();
 
 	const isRunning = useEngineStore((state) => state.isRunning);
 	const runMode = useEngineStore((state) => state.runMode);
 	const setEngineRunning = useEngineStore((state) => state.setEngineRunning);
 	const resetEngineState = useEngineStore((state) => state.resetEngineState);
+	const { notify } = useNotify();
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -53,10 +58,6 @@ function ToolBar() {
 		return cleanup;
 	}, [resetEngineState]);
 
-	const shouldShowPause = (): boolean => {
-		return isRunning;
-	};
-
 	const shouldDisablePlay = (): boolean => {
 		return isRunning && runMode === 'debug';
 	};
@@ -73,6 +74,15 @@ function ToolBar() {
 		if (isRunning) {
 			return;
 		}
+		if (isMapDirty) {
+			notify(
+				t('engine.notifications.warning_title'),
+				t('engine.notifications.map_dirty'),
+				'error',
+				2000
+			);
+		}
+
 		try {
 			setEngineRunning(true);
 			useEngineStore.setState({ runMode: 'play' });
@@ -81,30 +91,39 @@ function ToolBar() {
 
 			if (result.success) {
 				console.log('Engine started successfully in PLAY mode');
+				notify(t('engine.notifications.title'), t('engine.notifications.success_play'), 'success');
 			} else {
 				console.error('Failed to start engine:', result.error);
+				notify(t('engine.notifications.title'), t('engine.notifications.fail_start'), 'error');
 				resetEngineState();
 			}
 		} catch (error) {
 			console.error('Error running engine:', error);
+			notify(t('engine.notifications.title'), t('engine.notifications.fail_start'), 'error');
 			resetEngineState();
 		}
 	};
 
 	const handleDebug = async () => {
 		if (!currentProject) {
-			console.error('No project selected');
 			return;
 		}
 
 		if (!currentMapPath) {
-			console.error('No map opened for debugging');
 			return;
 		}
 
 		if (isRunning) {
-			console.warn('Engine is already running');
 			return;
+		}
+
+		if (isMapDirty) {
+			notify(
+				t('engine.notifications.warning_title'),
+				t('engine.notifications.map_dirty'),
+				'error',
+				2000
+			);
 		}
 
 		try {
@@ -115,12 +134,18 @@ function ToolBar() {
 
 			if (result.success) {
 				console.log('Engine started successfully in DEBUG mode with map:', currentMapPath);
+				notify(
+					t('engine.notifications.title'),
+					t('engine.notifications.success_debug', { map: currentMapPath.split('/').pop() }),
+					'success'
+				);
 			} else {
-				console.error('Failed to start engine:', result.error);
+				notify(t('engine.notifications.title'), t('engine.notifications.fail_start'), 'error');
 				resetEngineState();
 			}
 		} catch (error) {
 			console.error('Error running engine:', error);
+			notify(t('engine.notifications.title'), t('engine.notifications.fail_start'), 'error');
 			resetEngineState();
 		}
 	};
