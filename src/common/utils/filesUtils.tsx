@@ -29,7 +29,7 @@ export function getFileType(
 
 	if (extension === 'lua') return 'script';
 	if (extension === 'tmx' || extension === 'json') return 'tilemap';
-	if (extension === 'tsx' || extension === 'png') return 'tileset';
+	if (extension === 'tsx' || extension === 'png' || extension === 'jpg') return 'tileset';
 	if (extension === 'vert') return 'vertex';
 	if (extension === 'frag') return 'fragment';
 

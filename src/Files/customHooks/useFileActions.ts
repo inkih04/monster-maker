@@ -183,12 +183,6 @@ export function useFileActions() {
 			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 			createMap(crypto.randomUUID(), 100, 100, currentProject.defaultTilesize || 16);
 		} else if (fileToDelete.type == 'tileset') {
-			notify(
-				t('engine.notifications.warning_title'),
-				t('engine.notifications.delete_map_warning'),
-				'error',
-				4000
-			);
 			const lastSlashIndex = Math.max(
 				fileToDelete.path.lastIndexOf('/'),
 				fileToDelete.path.lastIndexOf('\\')
@@ -219,6 +213,12 @@ export function useFileActions() {
 	const handleDeleteRequest = (file: FileItem) => {
 		setFileToDelete(file);
 		setShowDeleteConfirm(true);
+		notify(
+			t('engine.notifications.warning_title'),
+			t('engine.notifications.delete_map_warning'),
+			'error',
+			4000
+		);
 	};
 
 	return {
