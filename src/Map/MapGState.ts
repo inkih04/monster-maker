@@ -41,6 +41,10 @@ interface MapStore {
 	isDirty: boolean;
 	selectedTilePosition: SelectedTilePosition | null;
 	isLoadingMap: boolean;
+	showCollisions: boolean;
+	
+    setShowCollisions: (show: boolean) => void; 
+    toggleShowCollisions: () => void;
 
 	setSelectedTilePosition: (position: SelectedTilePosition | null) => void;
 	setMapRelativePath: (relativePath: string) => void;
@@ -97,6 +101,15 @@ export const useMapStore = create<MapStore>()(
 			zoom: 1,
 			activeLayer: 'ground',
 			isLoadingMap: false,
+			showCollisions: false,
+
+			setShowCollisions: (show) => {
+                set({ showCollisions: show });
+            },
+
+            toggleShowCollisions: () => {
+                set((state) => ({ showCollisions: !state.showCollisions }));
+            },
 
 			setMapRelativePath: (relativePath: string) => {
 				set({ mapRelativePath: relativePath });

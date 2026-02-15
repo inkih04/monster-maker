@@ -20,6 +20,12 @@ interface DrawBrushPreviewParams {
 	zoom: number;
 }
 
+interface DrawCollisionDebugParams {
+	ctx: CanvasRenderingContext2D;
+	entities: Record<string, Entity>;
+	zoom: number;
+}
+
 interface DrawEraserPreviewParams {
 	ctx: CanvasRenderingContext2D;
 	previewPosition: PreviewPosition;
@@ -78,6 +84,40 @@ export const createTileEntity = (
 		},
 	},
 });
+
+export function drawCollisionDebug({ ctx, entities, zoom }: DrawCollisionDebugParams): void {
+	Object.values(entities).forEach((entity) => {
+		const collider = entity.components.COLLIDER;
+		const position = entity.components.POSITION;
+
+		if (collider && position) {
+			const offX = collider.offsetX ?? 0;
+			const offY = collider.offsetY ?? 0;
+
+			const x = (position.x + offX) * zoom;
+			const y = (position.y + offY) * zoom;
+
+			const w = collider.width * zoom;
+			const h = collider.height * zoom;
+
+			ctx.save();
+
+			if (collider.isTrigger) {
+				ctx.fillStyle = 'rgba(255, 165, 0, 0.3)';
+				ctx.strokeStyle = 'rgba(255, 165, 0, 0.9)';
+			} else {
+				ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
+				ctx.strokeStyle = 'rgba(255, 255, 0, 0.9)';
+			}
+
+			ctx.lineWidth = 1;
+			ctx.fillRect(x, y, w, h);
+			ctx.strokeRect(x, y, w, h);
+
+			ctx.restore();
+		}
+	});
+}
 
 export function drawBrushPreview({
 	ctx,

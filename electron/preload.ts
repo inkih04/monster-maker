@@ -101,4 +101,8 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('engine-exited', callback);
 		return () => ipcRenderer.removeAllListeners('engine-exited');
 	},
+	onToggleCollisions: (callback: () => void) => {
+		ipcRenderer.on('toggle-collisions', callback);
+		return () => ipcRenderer.removeAllListeners('toggle-collisions');
+	},
 });

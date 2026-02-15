@@ -10,7 +10,13 @@ import { useProjectStore } from '../Project/ProjectConfigGState';
 import { useMapCapture } from './customHooks/useMapCapture';
 import { useActiveTool } from '../ToolBar/customHooks/useActiveTool';
 import { useToolsStore } from '../ToolBar/ToolBarGState';
-import { drawBrushPreview, drawEraserPreview, drawSelectionOverlay, drawSelectionPreview } from './mapUtils';
+import {
+	drawBrushPreview,
+	drawCollisionDebug,
+	drawEraserPreview,
+	drawSelectionOverlay,
+	drawSelectionPreview,
+} from './mapUtils';
 import { MapLoadingOverlay } from './MapLoadingOverlay';
 
 function Map() {
@@ -27,6 +33,19 @@ function Map() {
 	const createMap = useMapStore((state) => state.createMap);
 	const activeTool = useToolsStore((state) => state.activeTool);
 	const selectedTilePosition = useMapStore((state) => state.selectedTilePosition);
+	const toggleShowCollisions = useMapStore((state) => state.toggleShowCollisions);
+	const showCollisions = useMapStore((state) => state.showCollisions);
+
+	useEffect(() => {
+		const removeListener = window.api.onToggleCollisions(() => {
+			toggleShowCollisions();
+			console.log('Toggle collisions activado!');
+		});
+
+		return () => {
+			removeListener();
+		};
+	}, [toggleShowCollisions]);
 
 	const currentTileSet = tileSets[currentTileSetPath || ''];
 
@@ -66,22 +85,18 @@ function Map() {
 
 				if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
 
-
 				const entityData = mapState.map?.entities[tile.entityId];
 				const renderComponent = entityData?.components.RENDER;
 
 				if (!renderComponent) return;
-
 
 				const sourceX = renderComponent.x;
 				const sourceY = renderComponent.y;
 				const sourceWidth = renderComponent.w;
 				const sourceHeight = renderComponent.h;
 
-
 				const destWidth = renderComponent.width * zoom;
 				const destHeight = renderComponent.height * zoom;
-
 
 				const posX = Math.floor(tile.x) * tileSize * zoom;
 				const posY = Math.floor(tile.y) * tileSize * zoom;
@@ -146,6 +161,14 @@ function Map() {
 				zoom,
 			});
 		}
+
+		if (showCollisions) {
+			drawCollisionDebug({
+				ctx,
+				entities: mapState.map?.entities || {},
+				zoom,
+			});
+		}
 	};
 
 	const { canvasRef, containerRef } = useGridCanvas({
@@ -155,7 +178,7 @@ function Map() {
 		drawBackground,
 		minWidth,
 		minHeight,
-		redrawTrigger: [paintedTiles, tilesetImages, previewPosition],
+		redrawTrigger: [paintedTiles, tilesetImages, previewPosition, showCollisions],
 	});
 
 	useMapCapture({

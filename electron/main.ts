@@ -94,6 +94,23 @@ app.whenReady().then(() => {
 	createWindow();
 	setupContextMenuHandlers();
 	const menu = defaultMenu(app, require('electron').shell);
+	const viewMenuIndex = menu.findIndex((item) => item.label === 'View');
+
+	if (viewMenuIndex !== -1 && menu[viewMenuIndex].submenu) {
+		const viewSubmenu = menu[viewMenuIndex].submenu as MenuItemConstructorOptions[];
+		viewSubmenu.push(
+			{ type: 'separator' },
+			{
+				label: 'Show Collisions',
+				type: 'checkbox',
+				checked: false,
+				accelerator: 'CmdOrCtrl+K',
+				click: (menuItem) => {
+					win?.webContents.send('toggle-collisions');
+				},
+			}
+		);
+	}
 
 	const editMenuIndex = menu.findIndex((item) => item.label === 'Edit');
 	if (editMenuIndex !== -1 && menu[editMenuIndex].submenu) {
