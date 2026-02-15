@@ -42,4 +42,7 @@ export interface ScriptComponent {
 export interface CollisionComponent {
 	width: number;
 	height: number;
+	offsetY: number;
+	offsetX: number;
+	isTrigger: boolean
 }

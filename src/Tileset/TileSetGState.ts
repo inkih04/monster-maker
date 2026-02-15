@@ -95,11 +95,14 @@ export const useTileSetStore = create<TileSetStore>((set, get) => {
 
 		removeTileSet: (path) => {
 			set((state) => {
-				const { [path]: removed, ...remainingTilesets } = state.tilesets;
+				const { [path]: _, ...remainingTilesets } = state.tilesets;
+
+				const isCurrent = state.currentTileSetPath === path;
 
 				return {
 					tilesets: remainingTilesets,
-					currentTileSetPath: state.currentTileSetPath === path ? null : state.currentTileSetPath,
+					currentTileSetPath: isCurrent ? null : state.currentTileSetPath,
+					selectedArea: isCurrent ? null : state.selectedArea,
 				};
 			});
 		},

@@ -7,6 +7,7 @@
 #include "InputManager.h"
 #include "Renderer.h"
 #include "GameConfig.h"
+#include "Position.h"
 
 #define TARGET_FRAMERATE 60.0f
 
@@ -85,7 +86,7 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
 }
 
 void Engine::setUpShaders() const {
-    Renderer::getInstance().loadShader("sprite", "../src/graphics/Shader/sprite.vert", "../src/graphics/Shader/sprite.frag");
+    Renderer::getInstance().loadShader("sprite", "resources/shaders/sprite.vert", "resources/shaders/sprite.frag");
 
     Renderer::getInstance().setShader("sprite");
 }
@@ -108,5 +109,6 @@ void Engine::onResize(int width, int height) {
 
 void Engine::setUpCamera(int width, int height)  {
     m_camera = std::make_unique<Camera>(GameConfig::Width, GameConfig::Height);
+    m_camera->setPosition(glm::vec2(GameConfig::Width / 2.0f, GameConfig::Height / 2.0f));
     Renderer::getInstance().setCamera(*m_camera);
 }

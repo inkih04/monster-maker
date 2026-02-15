@@ -39,7 +39,6 @@
 	--color-6: #7f8496;
 	--color-7: #777c91;
 	--color-8: #63687c;
-	--color-9: #595e72;
 	--color-9: #2d2d22;
 
 	--font-sm: 0.875rem;
@@ -59,7 +58,6 @@
 	--bg-color: var(--color-2);
 }
 
-
 *,
 *::before,
 *::after {
@@ -78,3 +76,4 @@ body {
 
 	background-color: var(--bg-color);
 }
+

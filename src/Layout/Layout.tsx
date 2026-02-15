@@ -7,12 +7,13 @@ import ModalProject from '../Project/ModalProject';
 import FolderTree from '../Files/FolderTree';
 import FileList from '../Files/FileList';
 import CreateFile from '../common/components/createFile/CreateFile';
+import Entity from '../Entity/Entity';
 
 function Layout() {
 	return (
 		<>
 			<ModalProject />
-			<CreateFile/>
+			<CreateFile />
 			<div className="content">
 				<ToolBar />
 				<main className="main">
@@ -31,6 +32,9 @@ function Layout() {
 					</div>
 					<aside className="entity">
 						<Spacer direction="vertical" />
+						<div className='pre-entity'>
+							<Entity />
+						</div>
 					</aside>
 				</main>
 				<div className="files">

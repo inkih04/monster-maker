@@ -57,9 +57,10 @@ export class FileSystemService {
 		return [
 			'resources',
 			'resources/fonts',
+			'resources/shaders',
 			'resources/maps',
 			'resources/maps/data',
-			'resources/maps/tileset',
+			'resources/maps/tilesets',
 			'resources/sprites',
 			'resources/scripts',
 			'resources/music',
@@ -124,6 +125,10 @@ export class FileSystemService {
 			for (const item of items) {
 				const fullPath = path.join(dirPath, item);
 
+				if (item === 'exe' && dirPath === basePath) {
+					continue;
+				}
+
 				if (this.isDirectory(fullPath)) {
 					const relativePath = path.relative(base, fullPath);
 					const children = buildStructure(fullPath, base);
@@ -182,12 +187,52 @@ export class FileSystemService {
 		}
 	}
 
+	public copyFile(srcPath: string, destPath: string): boolean {
+		try {
+			fs.copyFileSync(srcPath, destPath);
+			return true;
+		} catch (error) {
+			console.error(`Error copying file from ${srcPath} to ${destPath}:`, error);
+			return false;
+		}
+	}
+
 	public writeJSON<T>(filePath: string, data: T): boolean {
 		try {
 			fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 			return true;
 		} catch (error) {
 			console.error(`Error writing JSON file ${filePath}:`, error);
+			return false;
+		}
+	}
+
+	public copyDirectoryContent(srcDir: string, destDir: string): boolean {
+		try {
+			if (!this.exists(srcDir)) {
+				console.error(`Source directory does not exist: ${srcDir}`);
+				return false;
+			}
+
+			if (!this.exists(destDir)) {
+				fs.mkdirSync(destDir, { recursive: true });
+			}
+
+			const items = fs.readdirSync(srcDir);
+
+			for (const item of items) {
+				const srcPath = path.join(srcDir, item);
+				const destPath = path.join(destDir, item);
+				const stats = fs.statSync(srcPath);
+
+				if (stats.isFile()) {
+					fs.copyFileSync(srcPath, destPath);
+					fs.chmodSync(destPath, 0o755);
+				}
+			}
+			return true;
+		} catch (error) {
+			console.error(`Error copying directory content:`, error);
 			return false;
 		}
 	}

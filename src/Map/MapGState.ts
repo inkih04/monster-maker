@@ -2,8 +2,10 @@ import { create } from 'zustand';
 import { temporal } from 'zundo';
 import { ComponentMap, ComponentType } from '../domain/ecs/componentMap';
 import { Layer } from '../domain/ecs/layer';
-import { createTileEntity } from './mapUtils';
+import { createTileEntity, loadSingleTileset } from './mapUtils';
 import Entity from '../domain/ecs/entity';
+import { useProjectStore } from '../Project/ProjectConfigGState';
+import { useTileSetStore } from '../Tileset/TileSetGState';
 
 export interface PaintedTile {
 	x: number;
@@ -38,18 +40,24 @@ interface MapStore {
 	activeLayer: Layer;
 	isDirty: boolean;
 	selectedTilePosition: SelectedTilePosition | null;
+	isLoadingMap: boolean;
+	showCollisions: boolean;
+	
+    setShowCollisions: (show: boolean) => void; 
+    toggleShowCollisions: () => void;
 
 	setSelectedTilePosition: (position: SelectedTilePosition | null) => void;
 	setMapRelativePath: (relativePath: string) => void;
 	setIsDirty: (isDirty: boolean) => void;
 	setZoom: (zoom: number) => void;
 	setActiveLayer: (layer: Layer) => void;
+	setIsLoadingMap: (loading: boolean) => void;
 
 	createMap(mapId: string, width: number, height: number, tileSize: number): void;
 	loadMap(map: MapData): void;
 	addEntity(entity: Entity): void;
 	removeEntity(id: string): void;
-	updateEntity(id: string, data: Partial<Pick<Entity, 'tag' | 'layer'>>): void;
+	updateEntity(id: string, data: Partial<Pick<Entity, 'tag' | 'layer' | 'name'>>): void;
 	addComponent<K extends ComponentType>(entityId: string, type: K, data: ComponentMap[K]): void;
 	updateComponent<K extends ComponentType>(
 		entityId: string,
@@ -92,14 +100,27 @@ export const useMapStore = create<MapStore>()(
 			selectedTilePosition: null,
 			zoom: 1,
 			activeLayer: 'ground',
+			isLoadingMap: false,
+			showCollisions: false,
+
+			setShowCollisions: (show) => {
+                set({ showCollisions: show });
+            },
+
+            toggleShowCollisions: () => {
+                set((state) => ({ showCollisions: !state.showCollisions }));
+            },
 
 			setMapRelativePath: (relativePath: string) => {
-				console.log(relativePath);
 				set({ mapRelativePath: relativePath });
 			},
 
 			setSelectedTilePosition: (position) => {
 				set({ selectedTilePosition: position });
+			},
+
+			setIsLoadingMap: (loading) => {
+				set({ isLoadingMap: loading });
 			},
 
 			setIsDirty: (isDirty) => {
@@ -133,36 +154,73 @@ export const useMapStore = create<MapStore>()(
 				});
 			},
 
-			loadMap: (map) => {
-				const tiles: PaintedTile[] = [];
-				const tileSize = map.tileSize;
+			loadMap: async (map) => {
+				set({ isLoadingMap: true });
 
-				Object.values(map.entities).forEach((entity) => {
-					if (entity.tag !== 'TILEMAP') return;
+				try {
+					const tiles: PaintedTile[] = [];
+					const tileSize = map.tileSize;
+					const usedTilesets = new Set<string>();
 
-					const positionComponent = entity.components.POSITION;
-					const renderComponent = entity.components.RENDER;
+					Object.values(map.entities).forEach((entity) => {
+						const positionComponent = entity.components.POSITION;
+						const renderComponent = entity.components.RENDER;
 
-					if (positionComponent && renderComponent) {
-						tiles.push({
-							x: positionComponent.x / tileSize,
-							y: positionComponent.y / tileSize,
-							tilesetX: renderComponent.x / tileSize,
-							tilesetY: renderComponent.y / tileSize,
-							entityId: entity.id,
-							layer: entity.layer,
-							spriteSheetPath: renderComponent.spriteSheetPath || '',
-						});
+						if (positionComponent && renderComponent) {
+							const spriteSheetPath = renderComponent.spriteSheetPath;
+							if (spriteSheetPath) {
+								usedTilesets.add(spriteSheetPath);
+							}
+
+							tiles.push({
+								x: Math.floor(positionComponent.x / tileSize),
+								y: Math.floor(positionComponent.y / tileSize),
+								tilesetX: renderComponent.x / tileSize,
+								tilesetY: renderComponent.y / tileSize,
+								entityId: entity.id,
+								layer: entity.layer,
+								spriteSheetPath: renderComponent.spriteSheetPath || '',
+							});
+						}
+					});
+
+					console.log('Tilesets detectados:', Array.from(usedTilesets));
+
+					const currentProject = useProjectStore.getState().currentProject;
+					const tileSetStore = useTileSetStore.getState();
+
+					if (!currentProject) {
+						return;
 					}
-				});
 
-				set({
-					map,
-					paintedTiles: tiles,
-					selectedEntityId: null,
-					isDirty: false,
-					selectedTilePosition: null,
-				});
+					for (const spriteSheetPath of usedTilesets) {
+						if (tileSetStore.tilesets[spriteSheetPath]) {
+							console.log(`Tileset already loaded: ${spriteSheetPath}`);
+							continue;
+						}
+						try {
+							const tilesetData = await loadSingleTileset(spriteSheetPath, currentProject);
+
+							if (tilesetData) {
+								tileSetStore.addTileSet(tilesetData);
+								console.log(`Tileset auto-loaded: ${spriteSheetPath}`);
+							} else {
+								console.warn(`Tilset couldn't be onpen: ${spriteSheetPath}`);
+							}
+						} catch (error) {
+							console.error(`Error while loading tileset ${spriteSheetPath}:`, error);
+						}
+					}
+					set({
+						map,
+						paintedTiles: tiles,
+						selectedEntityId: null,
+						isDirty: false,
+						selectedTilePosition: null,
+					});
+				} finally {
+					set({ isLoadingMap: false });
+				}
 			},
 
 			addEntity: (entity) => {
@@ -412,5 +470,3 @@ export const useMapStore = create<MapStore>()(
 		}
 	)
 );
-
-

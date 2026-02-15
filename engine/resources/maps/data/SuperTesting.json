@@ -1,0 +1,5843 @@
+{
+  "mapId": "1175a7f9-737e-415b-b970-e7000e99315b",
+  "entities": [
+    {
+      "id": "tile_1770828693321_mmkhuc7hi",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828693971_u7l4h6cmp",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828693971_z1ugwkjpu",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828693993_uercf5x09",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828693993_spstswpwq",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828696992_c0xc5bnkf",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828697019_a1jy6nrzs",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828697578_3t393hfp5",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828697578_9sitjigev",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828697595_h5hpbdtd9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828697610_4yggq4k57",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828698074_fd2a4twyv",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828698582_f10i8vrm9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699352_eqvespq1f",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699463_vrx4h60ha",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699471_axzjkwmtj",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699478_yl9x6eylh",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699485_mr3sqrqab",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699491_s6kahqv4t",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699505_flocn7zgm",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699505_542io7yub",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828699561_08w3wmzna",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828700651_mrm3tyig4",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828700784_ar4jixmao",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828700784_tdcykh48y",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828700845_aiqylsp3q",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828700845_lkv2msjec",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701061_m2an3mxl2",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701061_zonlgx4s3",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701095_e3rgvr2bz",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701095_mqhhf19zk",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701116_rkj6s3art",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701150_g1v9cmsve",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701692_dali2uudt",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701692_trkhli0sj",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701706_zmtt0s9wv",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701706_iepn1c4nl",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701713_8jk7ok9cx",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701713_1ym4prv9x",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701720_fic2fob2s",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701720_tp41pqnk9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701741_s1u8zsytk",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701741_j207scyno",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701956_bhk7hhelb",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828701956_cylr0h49m",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828702969_wppta508x",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828703087_426sh3ozm",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828703157_rsotf0ge9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828703235_gr85sgvh3",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828703235_q92b6akdm",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828703344_i6bnf6wzu",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828703344_ayk5e3nol",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828703386_y3cn6ju9j",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704159_d4gws0f7y",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704159_xjyjtt3jk",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704191_9bkiott0q",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704316_6hz80voqh",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704316_a2fcapscq",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704358_ugaezv4y2",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704358_4fz9tu042",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704455_f2tfj29mg",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704455_ycjibfm8h",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704567_jyn0wolty",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704567_dlza0jj4u",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704615_kpdro6suv",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704615_fnrwgd5mj",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704629_cncm35yb1",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704629_m3bzvudgc",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704643_apzyvjyq3",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828704872_asjn6w1uj",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828705142_nj2dy2zbn",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828705433_986hxien0",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828705433_n9zoakmgu",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2272,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828705433_grqdeoz6x",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770828705433_kaascntrw",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 512,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2304,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568303_a9fwewlfq",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568728_bao9toglx",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568796_xgd9dh9i1",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568831_qj18ogdt8",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568852_2arop03uu",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568858_1j0wzivrf",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568872_tnhf5gw40",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568976_k9dg71aw2",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829568983_puo7vjkcm",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829569033_k9xo37wbb",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829569054_0johxf2pa",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829569067_muxqsovze",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829569109_d7ntknfmr",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829569115_9aqj15fqb",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829569136_urrxmhcyk",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829569275_dsju0g43r",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829569384_4vqu6mo60",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570935_32e7h5yi6",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570935_ilj1498bh",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570949_7l2p62w71",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570949_3zveoadpq",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570949_d7v6vmdzv",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570970_onz0np1gb",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570970_v89vcuj83",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570997_32e6qf2up",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829570997_j7brkk4vv",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571074_wjbwzg13x",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571074_hmeuqhg6p",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571115_onoajbhwv",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571122_obowpnedi",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571226_eoh0jt8sq",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571483_8b1r7ov16",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571483_lazzsq6lg",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571608_c68s42jb9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571608_cjltks8dr",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571622_lzgox3wvj",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571636_4ea56k8ju",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571636_zlxx1wnne",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571636_u4bvu4q74",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571643_2xqt62fa1",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571664_e9ktezo6w",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571685_t2os5dcf3",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571692_b03hb8yml",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571692_hfx48uv11",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571692_bm10bhcmv",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571706_leuz214aw",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571713_k00g16i6x",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571713_cnr790u6f",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571713_u28d4q656",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571733_dflx48axi",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571733_s0zhjb8g9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571733_yiuo73w19",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571747_11kixedwq",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571782_4ux65ap55",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571789_u7ze6jh0g",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571810_etwklkiyp",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571838_q61avp24x",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571851_98p03gu43",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829571969_ilrjownag",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572212_5c1wayi76",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572359_0v9ecprkn",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572359_94s3y1800",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572359_5rdeeop1j",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572368_z5l89g56k",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572377_fqpg1b3vs",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572377_lw8m0786l",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572386_1vtclxpkn",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572401_sxd2c3w4k",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572441_1awj0x8zg",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572441_38l835s4k",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572441_zdh21vu03",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572483_p0rt613kt",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572483_wx9dby2d4",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572483_4kblhoc4f",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572511_4fykxn50y",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572511_ie0obr303",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572511_p6t3xzg77",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572532_t5cg3yv6q",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572532_v49jcfdv2",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572532_jjexpyi0x",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572539_uti6tqbym",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572560_42fed8t0d",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572560_dcib134o9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572560_sbxkkmzop",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572636_4yq18tdi3",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572643_v4c3a68lx",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572740_hnbhtyjhu",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572740_gnhgrfe8l",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572740_jndzpkzca",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572754_knjfxiq1g",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572754_0rm8npv6j",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572754_yln42ebp0",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572761_h18sayfpk",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572761_vg5kd5myv",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572761_alv6rqw4e",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572768_y1jfab3ho",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572768_iuiencw45",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572768_2dvvtj5om",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572788_ue1ltyjv3",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572788_amlelrpkd",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572788_wj9wrzsua",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572810_xtpfs2ffx",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572830_tjr5kfxsm",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572900_jhjsn6iwh",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572900_imzqpoc1m",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572907_raed8uq49",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829572941_hcvmpkpvi",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573039_l6exq63ci",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573039_zbou89vd4",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573039_lv7b2ig7j",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573067_rdkdnbcq0",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573067_k3e8xeh0d",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573067_1u50xg8l9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573101_qvbxt5k69",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573101_j7vol53r6",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573101_0gjtmtld4",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573136_4225yu72e",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573136_q1575scdo",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573240_bl2an6kec",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573254_ms2ent3qa",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573254_lefgm61nj",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573254_0q6t4n9n2",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573261_clt0rw6ke",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573268_vleq1j36r",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573275_6y751cs9w",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573282_i328910tz",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573296_7hz12cy0f",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573303_0kpcq5sbo",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573317_glhq4ceo9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 224,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573372_letapwt99",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573379_gcyaw01rp",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573379_4po42ddk6",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573400_sg4u62aa9",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573496_fqds03vlm",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573496_r3qmrys35",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573496_9oqscpwxc",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 416,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573510_t83pb3y30",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573524_mfn15gkce",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573524_lsocnjbud",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573524_guh36vert",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573532_3aizn1ivk",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573546_h7dyzs8n4",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573546_6y26va8l5",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573546_xtyta7kj2",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 128,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573559_y7fzm330n",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573559_8dxmlwk4y",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573559_gz9rnerjw",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573567_ndzuqy310",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573567_69lkyd83f",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829573567_4ne6m9y9d",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574239_7uvi2vm0w",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574239_tgtsfgbdw",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574239_ov91hce0q",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574303_d3967o4jy",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574303_m23rjeqou",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574303_aws7nhx8a",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574350_gx717p3h7",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 0,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574552_02fesm9ec",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574552_haondql4w",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574552_21obl1cmr",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574561_d3452oppp",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574561_3s01gcezm",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829574561_ubti2147q",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829582273_g9vuwmzjg",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2784,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829582536_n3osre2mm",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 2784,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829596803_tamwzxn90",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 5312,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829596803_89y7icrwj",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 5312,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829596803_6r4dl9bs3",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 5344,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829596803_2g7vxzis5",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 5344,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829596803_pyrvhfrcg",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 5376,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829596803_59muay32f",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 5376,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829596803_qq466hfkj",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 5376,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_dtz9i74ow",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 0,
+          "y": 7744,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_wqe3butgf",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 32,
+          "y": 7744,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_oeuth98wr",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 128,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 7744,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_flsxfs34r",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 0,
+          "y": 7776,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_r8ie8qv1j",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 32,
+          "y": 7776,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_xgspxt8n1",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 7776,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_r3hihbu4k",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 0,
+          "y": 7808,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_9u7uga2xo",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 32,
+          "y": 7808,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829607824_55q4luuab",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 7808,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829614756_70oi0hf11",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 0,
+          "y": 9088,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829614756_tt4lz68v1",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 32,
+          "y": 9088,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829614756_142bxyr4c",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 0,
+          "y": 9120,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829614756_a5n1zlqfk",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 480,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 32,
+          "y": 9120,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829617209_3z3d890wg",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 9088,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829617209_ao6klffjc",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 9088,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829617209_cba55ocjb",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 384,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 9120,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829617209_o12e18zkn",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 9120,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829618322_ex3gen7qa",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 9088,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829618322_akgbmmx4m",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 352,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 9088,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829618322_cihjdv1d4",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 9120,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829618322_96ffglzmw",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 96,
+          "y": 384,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 9120,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829622574_6pe43b26l",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 9312,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829622574_gaqyafpqp",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 9344,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829623122_fms2vdnb0",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 0,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 9312,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829623122_aafkjec1x",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 32,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 9344,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829624104_771lpj2tn",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 9312,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829624104_vmrq0ipbx",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 9344,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829627440_wkxgjml84",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 9344,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829627440_ejydr6pl7",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 9344,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829627440_vc70sdki2",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 416,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 9376,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1770829627440_1s67cdri4",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 448,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 9376,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    }
+  ]
+}
