@@ -21,6 +21,7 @@
 
 .entity--entity {
 	background-color: var(--color-3);
+	height: calc(100% - 50px);
 	margin-top: 30px;
 	margin-bottom: 20px;
 	margin-right: 15px;
