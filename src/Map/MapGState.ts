@@ -53,7 +53,7 @@ interface MapStore {
 	loadMap(map: MapData): void;
 	addEntity(entity: Entity): void;
 	removeEntity(id: string): void;
-	updateEntity(id: string, data: Partial<Pick<Entity, 'tag' | 'layer'>>): void;
+	updateEntity(id: string, data: Partial<Pick<Entity, 'tag' | 'layer' | 'name'>>): void;
 	addComponent<K extends ComponentType>(entityId: string, type: K, data: ComponentMap[K]): void;
 	updateComponent<K extends ComponentType>(
 		entityId: string,
@@ -160,8 +160,8 @@ export const useMapStore = create<MapStore>()(
 							}
 
 							tiles.push({
-								x: positionComponent.x / tileSize,
-								y: positionComponent.y / tileSize,
+								x: Math.floor(positionComponent.x / tileSize),
+								y: Math.floor(positionComponent.y / tileSize),
 								tilesetX: renderComponent.x / tileSize,
 								tilesetY: renderComponent.y / tileSize,
 								entityId: entity.id,
@@ -172,7 +172,6 @@ export const useMapStore = create<MapStore>()(
 					});
 
 					console.log('Tilesets detectados:', Array.from(usedTilesets));
-
 
 					const currentProject = useProjectStore.getState().currentProject;
 					const tileSetStore = useTileSetStore.getState();
@@ -187,10 +186,7 @@ export const useMapStore = create<MapStore>()(
 							continue;
 						}
 						try {
-							const tilesetData = await loadSingleTileset(
-								spriteSheetPath,
-								currentProject
-							);
+							const tilesetData = await loadSingleTileset(spriteSheetPath, currentProject);
 
 							if (tilesetData) {
 								tileSetStore.addTileSet(tilesetData);

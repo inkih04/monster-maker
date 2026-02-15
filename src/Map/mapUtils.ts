@@ -28,7 +28,22 @@ interface DrawEraserPreviewParams {
 	activeLayer: Layer;
 	tileSets: Record<string, TileSetData>;
 	tilesetImages: Record<string, HTMLImageElement>;
+	tileSize: number;
 	zoom: number;
+	entities: Record<string, Entity>;
+}
+
+interface DrawSelectionPreviewParams {
+	ctx: CanvasRenderingContext2D;
+	previewPosition: PreviewPosition;
+	isActive: boolean;
+	paintedTiles: PaintedTile[];
+	activeLayer: Layer;
+	tileSets: Record<string, TileSetData>;
+	tilesetImages: Record<string, HTMLImageElement>;
+	tileSize: number;
+	zoom: number;
+	entities: Record<string, Entity>;
 }
 
 export const createTileEntity = (
@@ -39,11 +54,13 @@ export const createTileEntity = (
 	tilesetX: number,
 	tilesetY: number,
 	tileSize: number,
-	spriteSheetPath: string
+	spriteSheetPath: string,
+	name?: string
 ): Entity => ({
 	id: entityId,
 	tag: 'TILEMAP',
 	layer,
+	name,
 	components: {
 		POSITION: {
 			x: mapX * tileSize,
@@ -128,7 +145,9 @@ export function drawEraserPreview({
 	activeLayer,
 	tileSets,
 	tilesetImages,
+	tileSize,
 	zoom,
+	entities,
 }: DrawEraserPreviewParams): void {
 	if (isActive || !previewPosition) return;
 
@@ -144,29 +163,98 @@ export function drawEraserPreview({
 
 	if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
 
-	const tileTileSize = tileTileset.tileSizeX;
-	const scaledTileSize = tileTileSize * zoom;
+	const entityData = entities[tileUnderCursor.entityId];
+	const renderComponent = entityData?.components.RENDER;
+
+	if (!renderComponent) return;
+
+	const sourceX = renderComponent.x;
+	const sourceY = renderComponent.y;
+	const sourceWidth = renderComponent.w;
+	const sourceHeight = renderComponent.h;
+
+	const destWidth = renderComponent.width * zoom;
+	const destHeight = renderComponent.height * zoom;
+
+	const posX = Math.floor(tileUnderCursor.x) * tileSize * zoom;
+	const posY = Math.floor(tileUnderCursor.y) * tileSize * zoom;
 
 	ctx.globalAlpha = 0.5;
 	ctx.drawImage(
 		tilesetImage,
-		tileUnderCursor.tilesetX * tileTileSize,
-		tileUnderCursor.tilesetY * tileTileSize,
-		tileTileSize,
-		tileTileSize,
-		tileUnderCursor.x * scaledTileSize,
-		tileUnderCursor.y * scaledTileSize,
-		scaledTileSize,
-		scaledTileSize
+		sourceX,
+		sourceY,
+		sourceWidth,
+		sourceHeight,
+		posX,
+		posY,
+		destWidth,
+		destHeight
 	);
 
 	ctx.fillStyle = 'rgba(255, 50, 50, 0.4)';
-	ctx.fillRect(
-		tileUnderCursor.x * scaledTileSize,
-		tileUnderCursor.y * scaledTileSize,
-		scaledTileSize,
-		scaledTileSize
+	ctx.fillRect(posX, posY, destWidth, destHeight);
+
+	ctx.globalAlpha = 1;
+}
+
+export function drawSelectionPreview({
+	ctx,
+	previewPosition,
+	isActive,
+	paintedTiles,
+	activeLayer,
+	tileSets,
+	tilesetImages,
+	tileSize,
+	zoom,
+	entities,
+}: DrawSelectionPreviewParams): void {
+	if (isActive || !previewPosition) return;
+
+	const tileUnderCursor = paintedTiles.find(
+		(tile) =>
+			tile.x === previewPosition.x && tile.y === previewPosition.y && tile.layer === activeLayer
 	);
+
+	if (!tileUnderCursor) return;
+
+	const tileTileset = tileSets[tileUnderCursor.spriteSheetPath];
+	const tilesetImage = tilesetImages[tileUnderCursor.spriteSheetPath];
+
+	if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
+
+	const entityData = entities[tileUnderCursor.entityId];
+	const renderComponent = entityData?.components.RENDER;
+
+	if (!renderComponent) return;
+
+	const sourceX = renderComponent.x;
+	const sourceY = renderComponent.y;
+	const sourceWidth = renderComponent.w;
+	const sourceHeight = renderComponent.h;
+
+	const destWidth = renderComponent.width * zoom;
+	const destHeight = renderComponent.height * zoom;
+
+	const posX = Math.floor(tileUnderCursor.x) * tileSize * zoom;
+	const posY = Math.floor(tileUnderCursor.y) * tileSize * zoom;
+
+	ctx.globalAlpha = 0.5;
+	ctx.drawImage(
+		tilesetImage,
+		sourceX,
+		sourceY,
+		sourceWidth,
+		sourceHeight,
+		posX,
+		posY,
+		destWidth,
+		destHeight
+	);
+
+	ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+	ctx.fillRect(posX, posY, destWidth, destHeight);
 
 	ctx.globalAlpha = 1;
 }

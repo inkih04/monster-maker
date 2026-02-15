@@ -1,0 +1,27 @@
+.Componet-input-row {
+	display: grid;
+	grid-template-columns: auto 90px;
+	column-gap: 10px;
+	align-items: center;
+	overflow: hidden;
+	margin-bottom: 5px;
+}
+
+.Componet-input-row:last-child {
+	margin-bottom: 0;
+}
+
+.Componet-input-row span {
+	justify-self: start;
+}
+
+.Componet-input-row div {
+	min-height: 30px;
+	padding: 5px 10px;
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	border-radius: var(--radius);
+	background-color: var(--color-3);
+	color: var(--color-9);
+}
