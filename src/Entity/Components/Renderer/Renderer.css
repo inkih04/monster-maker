@@ -15,13 +15,51 @@
 	justify-self: start;
 }
 
-.Componet-input-row div {
-	min-height: 30px;
+.render-input {
+	width: 100%;
+	height: 30px;
 	padding: 5px 10px;
-	display: flex;
-	align-items: center;
-	justify-content: left;
+	border: none;
 	border-radius: var(--radius);
 	background-color: var(--color-3);
 	color: var(--color-9);
+	font-size: 14px;
+	text-align: left;
+	outline: none;
+	transition: background-color 0.2s;
+}
+
+.render-input:hover {
+	background-color: var(--color-4);
+}
+
+.render-input:focus {
+	background-color: var(--color-4);
+	box-shadow: 0 0 0 2px var(--color-5);
+}
+
+.render-input[type='number'] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+
+/* Spinners visibles pero ocultos por defecto */
+.render-input::-webkit-inner-spin-button,
+.render-input::-webkit-outer-spin-button {
+	opacity: 0;
+	background: transparent;
+	transition: opacity 0.15s ease;
+}
+
+/* Mostrar solo al hover o focus */
+.render-input:hover::-webkit-inner-spin-button,
+.render-input:hover::-webkit-outer-spin-button,
+.render-input:focus::-webkit-inner-spin-button,
+.render-input:focus::-webkit-outer-spin-button {
+	opacity: 1;
+}
+
+.render-input:focus::-webkit-inner-spin-button,
+.render-input:focus::-webkit-outer-spin-button {
+	opacity: 0;
 }

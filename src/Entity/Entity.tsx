@@ -4,6 +4,7 @@ import Renderer from './Components/Renderer/Renderer';
 import './Entity.css';
 import { Tag } from '../domain/ecs/tags';
 import EntityHeader from './Components/basic/EntityHeader';
+import CollisionComponent from './Components/Collision/Collision';
 
 function Entity() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
@@ -35,8 +36,11 @@ function Entity() {
 							onUpdateTag={handleUpdateTag}
 						/>
 						<div className="entity--separator"></div>
+
 						<div className="entity--componentcontainer">
 							<Renderer />
+							<div className="entity--separator"></div>
+							<CollisionComponent />
 						</div>
 						<div className="entity--separator"></div>
 					</>
