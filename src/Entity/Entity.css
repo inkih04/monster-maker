@@ -11,22 +11,24 @@
 	background-color: inherit;
 	border-radius: var(--radius);
 	font-size: var(--font-sm);
-	overflow-y: auto;
+	overflow-y: hidden;
 	overflow-x: hidden;
-	scrollbar-width: none;
 	-ms-overflow-style: none;
 	margin-left: 15px;
+	height: 100%;
 	color: var(--color-9);
 }
 
 .entity--entity {
-	height: 91.8%;
 	background-color: var(--color-3);
 	margin-top: 30px;
 	margin-bottom: 20px;
 	margin-right: 15px;
 	border-radius: 8px;
 	padding: 20px;
+	overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
 	position: relative;
 }
 
