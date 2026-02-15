@@ -27,22 +27,5 @@
 	"defaultTileSize": "Tamaño de  tiles",
 	"tileSizeTitle": "Definir tamaño de los tiles",
 	"tileSize": "Tamaño del tile",
-	"accept": "Aceptar",
-	"engine": {
-		"notifications": {
-			"title": "Motor",
-			"warning_title": "Advertencia",
-			"map_dirty": "El mapa actual tiene cambios sin guardar. Guarda para ver los cambios en el motor.",
-			"success_debug": "Motor iniciado en modo DEBUG con el mapa: {{map}}",
-			"fail_start": "Error al iniciar el motor",
-			"stop_success": "Motor detenido correctamente",
-			"texture_too_large": "Esta textura podría ser demasiado grande para Mac. Al: {{height}}px An: {{width}}px",
-			"error_title": "Error",
-			"tileset_load_error": "Error al cargar el tileset",
-			"deleted_title": "Eliminado",
-			"file_deleted": "El archivo {{name}} ha sido eliminado",
-			"delete_map_warning": "Eliminar un mapa que está en uso puede causar errores",
-			"rename_map_warning": "Renombrar un mapa que está en uso puede causar errores"
-		}
-	}
+	"accept": "Aceptar"
 }

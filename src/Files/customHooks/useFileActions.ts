@@ -7,8 +7,6 @@ import Entity from '../../domain/ecs/entity';
 import { useFolderStore } from '../../common/globalStores/useFolderStore';
 import { FileItem } from '../../../global/types/fileItem';
 import { TileSetData, useTileSetStore } from '../../Tileset/TileSetGState';
-import { useNotify } from '../../common/components/toast/ToastContext';
-import { useTranslation } from 'react-i18next';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -21,28 +19,10 @@ export function useFileActions() {
 	const setCurrentTileSet = useTileSetStore((state) => state.setCurrentTileSet);
 	const removeTileSet = useTileSetStore((state) => state.removeTileSet);
 
-	const { notify } = useNotify();
-	const { t } = useTranslation();
-
 	const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 	const [showSaveConfirm, setShowSaveConfirm] = useState(false);
 	const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
 	const [fileToOpen, setFileToOpen] = useState<FileItem | null>(null);
-
-	const validateImageSize = (
-		path: string,
-		maxSize: number = 12000
-	): Promise<{ valid: boolean; w: number; h: number }> => {
-		return new Promise((resolve) => {
-			const img = new Image();
-			img.onload = () => {
-				const isTooBig = img.width > maxSize || img.height > maxSize;
-				resolve({ valid: !isTooBig, w: img.width, h: img.height });
-			};
-			img.onerror = () => resolve({ valid: false, w: 0, h: 0 });
-			img.src = `project-file://${path}`;
-		});
-	};
 
 	const tryOpenFile = (file: FileItem) => {
 		if (!selectedFolder?.path || !currentProject) return;
@@ -74,30 +54,19 @@ export function useFileActions() {
 			const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
 			const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
 			const configurationPath = await window.api.pathUnion(selectedFolder.path, jsonPath);
-			console.log(configurationPath);
 			const completeRelativePath = await window.api.pathUnion(selectedFolder.path, file.path);
-			console.log(completeRelativePath);
-
-			const result = await window.api.getFile(jsonPath, selectedFolder.path, currentProject);
-
-			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
-			const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
-
-			const sizeCheck = await validateImageSize(completePath);
-
-			if (!sizeCheck.valid) {
-				notify(
-					t('engine.notifications.warning_title'),
-					t('engine.notifications.texture_too_large', { height: sizeCheck.h, width: sizeCheck.w }),
-					'error'
-				);
-			}
 
 			const existingTileSet = useTileSetStore.getState().tilesets[completeRelativePath];
 			if (existingTileSet) {
 				setCurrentTileSet(completeRelativePath);
 				return;
 			}
+
+			const result = await window.api.getFile(jsonPath, selectedFolder.path, currentProject);
+
+			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
+			const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
+			console.log(completePath);
 
 			if (result.success) {
 				try {
@@ -136,11 +105,6 @@ export function useFileActions() {
 			}
 		} catch (error) {
 			console.error('Error while tileset:', error);
-			notify(
-				t('engine.notifications.error_title'),
-				t('engine.notifications.tileset_load_error'),
-				'error'
-			);
 		}
 	};
 
@@ -192,33 +156,20 @@ export function useFileActions() {
 
 			const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
 			const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
-			const completeRelativePath = await window.api.pathUnion(
-				selectedFolder.path,
-				fileToDelete.path
-			);
-			removeTileSet(completeRelativePath);
+			const configurationPath = await window.api.pathUnion(selectedFolder.path, jsonPath);
+
+			removeTileSet(configurationPath);
 
 			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 			await window.api.deleteFile(jsonPath, selectedFolder.path, currentProject);
 		}
-		notify(
-			t('engine.notifications.deleted_title'),
-			t('engine.notifications.file_deleted', { name: fileToDelete.name }),
-			'success',
-			4000
-		);
+
 		setFileToDelete(null);
 	};
 
 	const handleDeleteRequest = (file: FileItem) => {
 		setFileToDelete(file);
 		setShowDeleteConfirm(true);
-		notify(
-			t('engine.notifications.warning_title'),
-			t('engine.notifications.delete_map_warning'),
-			'error',
-			4000
-		);
 	};
 
 	return {

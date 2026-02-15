@@ -7,32 +7,16 @@ import {
 	OneFingerSelectHandGesture,
 	Play,
 	DragHandGesture,
-	Square,
-	Bug,
 } from 'iconoir-react';
 import './ToolBar.css';
 import { useToolsStore } from './ToolBarGState';
 import { useMapStore } from '../Map/MapGState';
 import { useEffect } from 'react';
-import { useProjectStore } from '../Project/ProjectConfigGState';
-import { useEngineStore } from './EngineGState';
-import { useNotify } from '../common/components/toast/ToastContext';
-import { useTranslation } from 'react-i18next';
 
 function ToolBar() {
 	const activeTool = useToolsStore((state) => state.activeTool);
 	const setActiveTool = useToolsStore((state) => state.setActiveTool);
-	const currentProject = useProjectStore((state) => state.currentProject);
-	const currentMapPath = useMapStore((state) => state.mapRelativePath);
-	const isMapDirty = useMapStore((state) => state.isDirty);
 	const { undo, redo } = useMapStore.temporal.getState();
-	const { t } = useTranslation();
-
-	const isRunning = useEngineStore((state) => state.isRunning);
-	const runMode = useEngineStore((state) => state.runMode);
-	const setEngineRunning = useEngineStore((state) => state.setEngineRunning);
-	const resetEngineState = useEngineStore((state) => state.resetEngineState);
-	const { notify } = useNotify();
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -48,122 +32,6 @@ function ToolBar() {
 		window.addEventListener('keydown', handleKeyDown);
 		return () => window.removeEventListener('keydown', handleKeyDown);
 	}, [undo, redo]);
-
-	useEffect(() => {
-		const cleanup = window.api.onEngineExit(() => {
-			console.log('Engine exited, resetting state');
-			resetEngineState();
-		});
-
-		return cleanup;
-	}, [resetEngineState]);
-
-	const shouldDisablePlay = (): boolean => {
-		return isRunning && runMode === 'debug';
-	};
-
-	const shouldDisableDebug = (): boolean => {
-		return (isRunning && runMode === 'play') || currentMapPath === null;
-	};
-
-	const handlePlay = async () => {
-		if (!currentProject) {
-			return;
-		}
-
-		if (isRunning) {
-			return;
-		}
-		if (isMapDirty) {
-			notify(
-				t('engine.notifications.warning_title'),
-				t('engine.notifications.map_dirty'),
-				'error',
-				2000
-			);
-		}
-
-		try {
-			setEngineRunning(true);
-			useEngineStore.setState({ runMode: 'play' });
-
-			const result = await window.api.runEngine(currentProject);
-
-			if (result.success) {
-				console.log('Engine started successfully in PLAY mode');
-				notify(t('engine.notifications.title'), t('engine.notifications.success_play'), 'success');
-			} else {
-				console.error('Failed to start engine:', result.error);
-				notify(t('engine.notifications.title'), t('engine.notifications.fail_start'), 'error');
-				resetEngineState();
-			}
-		} catch (error) {
-			console.error('Error running engine:', error);
-			notify(t('engine.notifications.title'), t('engine.notifications.fail_start'), 'error');
-			resetEngineState();
-		}
-	};
-
-	const handleDebug = async () => {
-		if (!currentProject) {
-			return;
-		}
-
-		if (!currentMapPath) {
-			return;
-		}
-
-		if (isRunning) {
-			return;
-		}
-
-		if (isMapDirty) {
-			notify(
-				t('engine.notifications.warning_title'),
-				t('engine.notifications.map_dirty'),
-				'error',
-				2000
-			);
-		}
-
-		try {
-			setEngineRunning(true);
-			useEngineStore.setState({ runMode: 'debug' });
-
-			const result = await window.api.runEngine(currentProject, currentMapPath);
-
-			if (result.success) {
-				console.log('Engine started successfully in DEBUG mode with map:', currentMapPath);
-				notify(
-					t('engine.notifications.title'),
-					t('engine.notifications.success_debug', { map: currentMapPath.split('/').pop() }),
-					'success'
-				);
-			} else {
-				notify(t('engine.notifications.title'), t('engine.notifications.fail_start'), 'error');
-				resetEngineState();
-			}
-		} catch (error) {
-			console.error('Error running engine:', error);
-			notify(t('engine.notifications.title'), t('engine.notifications.fail_start'), 'error');
-			resetEngineState();
-		}
-	};
-
-	const handleStop = async () => {
-		try {
-			const result = await window.api.stopEngine();
-
-			if (result.success) {
-				console.log('Engine stopped successfully');
-				resetEngineState();
-			} else {
-				console.error('Failed to stop engine:', result.error);
-			}
-		} catch (error) {
-			console.error('Error stopping engine:', error);
-		}
-	};
 
 	return (
 		<div className="tools-container">
@@ -203,57 +71,15 @@ function ToolBar() {
 					<DragHandGesture />
 				</button>
 			</div>
-			<div className="action-buttons">
-				{runMode === 'debug' && (
-					<>
-						<button
-							onClick={handlePlay}
-							className={`tool-button ${shouldDisablePlay() ? 'disabled' : ''}`}
-							disabled={shouldDisablePlay()}
-						>
-							<Play className="play-button" />
-						</button>
-						<button onClick={handleStop} className="tool-button">
-							<Square className="pause-button" />
-						</button>
-					</>
-				)}
-				{runMode === 'play' && (
-					<>
-						<button onClick={handleStop} className="tool-button">
-							<Square className="pause-button" />
-						</button>
-						<button
-							onClick={handleDebug}
-							className={`tool-button ${shouldDisableDebug() ? 'disabled' : ''}`}
-							disabled={shouldDisableDebug()}
-						>
-							<Bug className="debug-botton" />
-						</button>
-					</>
-				)}
-				{runMode !== 'debug' && runMode !== 'play' && (
-					<>
-						<button
-							onClick={handlePlay}
-							className={`tool-button ${shouldDisablePlay() ? 'disabled' : ''}`}
-							disabled={shouldDisablePlay()}
-						>
-							<Play className="play-button" />
-						</button>
-						<button
-							onClick={handleDebug}
-							className={`tool-button ${shouldDisableDebug() ? 'disabled' : ''}`}
-							disabled={shouldDisableDebug()}
-						>
-							<Bug className="debug-botton" />
-						</button>
-					</>
-				)}
+			<div className="play-button">
+				<button className="tool-button">
+					<Play className="play-button" />
+				</button>
 			</div>
 			<div className="other-tools">
 				<button
 					onClick={() => {
+						console.log('redo');
 						redo();
 					}}
 					className="tool-button"
@@ -263,6 +89,7 @@ function ToolBar() {
 				<button
 					onClick={() => {
 						undo();
+						console.log(undo);
 					}}
 					className="tool-button"
 				>

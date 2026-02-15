@@ -8,9 +8,9 @@ function onCollision(collidedEntity)
 end
 
 function onStart(entity)
-    Audio:setMusicVolume(0.02)
-    Audio:setMasterVolume(0.02)
-    Audio:playMusic("resources/music/music_overworld.mp3", true)
+    Audio:setMusicVolume(0.2)
+    Audio:setMasterVolume(0.2)
+    Audio:playMusic("../resources/music/music_overworld.mp3", true)
     local posComp = entity:getPos()
     if posComp and MainCamera then
         MainCamera:setPosition(posComp.x, posComp.y)

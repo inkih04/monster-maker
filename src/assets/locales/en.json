@@ -27,22 +27,5 @@
 	"defaultTileSize": "Default tile size",
 	"tileSizeTitle": "Define tile size",
 	"tileSize": "Tile size",
-	"accept": "Accept",
-	"engine": {
-		"notifications": {
-			"title": "Engine",
-			"warning_title": "Warning",
-			"map_dirty": "The current map has unsaved changes. Save to see the changes in the engine.",
-			"success_debug": "Engine started in DEBUG mode with map: {{map}}",
-			"fail_start": "Failed to start engine",
-			"stop_success": "Engine stopped successfully",
-			"texture_too_large": "This texture could be too large for Mac. H: {{height}}px W: {{width}}px",
-			"error_title": "Error",
-			"tileset_load_error": "Error while loading tileset",
-			"deleted_title": "Deleted",
-			"file_deleted": "File {{name}} has been deleted",
-			"delete_map_warning": "Deleting a tile map that is being used can cause errors",
-			"rename_map_warning": "Renaming a tile map that is being used can cause errors"
-		}
-	}
+	"accept": "Accept"
 }

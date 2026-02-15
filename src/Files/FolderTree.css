@@ -18,7 +18,6 @@
 	overflow-x: hidden;
 	scrollbar-width: none;
 	-ms-overflow-style: none;
-	padding-bottom: 20px;
 }
 
 .folders--container::-webkit-scrollbar {

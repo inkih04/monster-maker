@@ -28,7 +28,7 @@ declare global {
 			exportMap: (mapData: string) => Promise<{ success: boolean; path?: string; error?: string }>;
 			onExportMapRequest: (callback: () => void) => () => void;
 			onExportMapPNGRequest: (callback: () => void) => () => void;
-			saveImage: (base64Data: string) => Promise<{ success: boolean; path?: string }>;
+			saveImage: (base64Data: string) => Promise<{success: boolean; path?: string;}>;
 			startWatchingFiles: (
 				pd: ProjectData,
 				folder: FolderNode
@@ -71,13 +71,6 @@ declare global {
 			onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => () => void;
 			onAddNewFile: (callback: () => void) => () => void;
 			onSaveFile: (callback: () => void) => () => void;
-			runEngine: (
-				pd: ProjectData,
-				mapPath?: string
-			) => Promise<{ success: boolean; error?: string }>;
-			stopEngine: () => Promise<{ success: boolean; error?: string }>;
-			onEngineExit: (callback: () => void) => () => void;
-			onToggleCollisions: (callback: () => void) => () => void;
 		};
 	}
 }

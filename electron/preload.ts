@@ -12,7 +12,8 @@ contextBridge.exposeInMainWorld('api', {
 	getDirectoryStructure: (pd: ProjectData) =>
 		ipcRenderer.invoke('config:getDirectoryStructure', pd),
 
-	pathUnion: (path1: string, path2: string) => ipcRenderer.invoke('config:pathUnion', path1, path2),
+	pathUnion: (path1: string, path2: string) => 
+        ipcRenderer.invoke('config:pathUnion', path1, path2),
 
 	startWatchingDirectory: (pd: ProjectData) => ipcRenderer.invoke('config:startWatching', pd),
 	stopWatchingDirectory: () => ipcRenderer.invoke('config:stopWatching'),
@@ -90,19 +91,5 @@ contextBridge.exposeInMainWorld('api', {
 	onSaveFile: (callback: () => void) => {
 		ipcRenderer.on('save-file', callback);
 		return () => ipcRenderer.removeAllListeners('save-file');
-	},
-
-	runEngine: (pd: ProjectData, mapPath?: string) =>
-		ipcRenderer.invoke('config:runEngine', pd, mapPath),
-
-	stopEngine: () => ipcRenderer.invoke('config:stopEngine'),
-
-	onEngineExit: (callback: () => void) => {
-		ipcRenderer.on('engine-exited', callback);
-		return () => ipcRenderer.removeAllListeners('engine-exited');
-	},
-	onToggleCollisions: (callback: () => void) => {
-		ipcRenderer.on('toggle-collisions', callback);
-		return () => ipcRenderer.removeAllListeners('toggle-collisions');
 	},
 });

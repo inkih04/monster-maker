@@ -50,15 +50,6 @@
 	align-items: center;
 }
 
-.pre-entity {
-	object-fit: contain;
-	object-position: top left;
-	position: relative;
-	overflow: hidden;
-	min-height: 0;
-	height: 100%;
-	width: 100%;
-}
 .tilemap-container {
 	flex-grow: 2;
 	overflow: hidden;
