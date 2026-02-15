@@ -1,0 +1,212 @@
+.Entity-container {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	padding: var(--space-sm);
+	background-color: inherit;
+	border-radius: var(--radius);
+	font-size: var(--font-sm);
+	overflow-y: auto;
+	overflow-x: hidden;
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	margin-left: 15px;
+	color: var(--color-9);
+}
+
+.entity--entity {
+	height: 91.8%;
+	background-color: var(--color-3);
+	margin-top: 30px;
+	margin-bottom: 20px;
+	margin-right: 15px;
+	border-radius: 8px;
+	padding: 20px;
+	position: relative;
+}
+
+.entity--entity.is-empty::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-image: url('../assets/img/MonsterMaker.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 60% auto;
+	opacity: 0.15;
+	z-index: 0;
+	pointer-events: none;
+	border-radius: 8px;
+}
+
+.entity--row1-left div {
+	min-width: 120px;
+}
+
+.entity--row1 {
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	flex-shrink: 0;
+	gap: 10px;
+	position: relative;
+	z-index: 1;
+}
+
+.entity--row1 div {
+	flex-grow: 2;
+}
+
+.entity--cube {
+	color: var(--color-9);
+	font-size: 22px;
+}
+
+.entity--input-container {
+	padding: 5px 10px;
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	border-radius: var(--radius);
+	background-color: var(--color-2);
+}
+
+.entity--row-right {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 5px;
+	overflow: hidden;
+	margin-top: 0px;
+	margin-right: 1px;
+}
+
+.entity--row2 {
+	display: flex;
+	margin-top: 10px;
+	align-items: center;
+	justify-content: space-evenly;
+	position: relative;
+	z-index: 2;
+}
+
+.entity--tag {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	flex-shrink: 0;
+	position: relative;
+}
+
+.entity--layer {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.entity--layer div {
+	min-width: 70px;
+	min-height: 30px;
+}
+
+.entity--tag div {
+	min-width: 70px;
+	min-height: 30px;
+}
+
+.entity--tag-button {
+	min-width: 70px;
+	min-height: 30px;
+	border: none;
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+	cursor: pointer;
+	transition: background-color 0.2s;
+}
+
+.entity--tag-button:hover {
+	background-color: var(--color-3);
+}
+
+.entity--tag-dropdown {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	margin-top: 5px;
+	background-color: var(--color-2);
+	border-radius: var(--radius);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	max-height: 300px;
+	overflow-y: auto;
+	min-width: 180px;
+}
+
+.entity--tag-option {
+	padding: 8px 12px;
+	cursor: pointer;
+	transition: background-color 0.2s;
+	font-size: var(--font-sm);
+}
+
+.entity--tag-option:hover {
+	background-color: var(--color-3);
+}
+
+.entity--tag-option.selected {
+	background-color: var(--color-4);
+	font-weight: 500;
+}
+
+.entity--tag-option:first-child {
+	border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.entity--tag-option:last-child {
+	border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.entity--separator {
+	min-height: 3px;
+	width: calc(100% + 40px);
+	background-color: var(--color-2);
+	margin-top: 16px;
+	margin-bottom: 16px;
+	margin-left: -20px;
+	margin-right: -20px;
+	position: relative;
+	z-index: 1;
+}
+
+.entity--name-container {
+	cursor: pointer;
+	position: relative;
+}
+
+.entity--name-span {
+	display: block;
+	width: 100%;
+	user-select: none;
+}
+
+.entity--name-input {
+	width: 100%;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: inherit;
+	font-family: inherit;
+	font-size: inherit;
+	padding: 0;
+}

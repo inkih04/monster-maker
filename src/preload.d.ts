@@ -77,6 +77,7 @@ declare global {
 			) => Promise<{ success: boolean; error?: string }>;
 			stopEngine: () => Promise<{ success: boolean; error?: string }>;
 			onEngineExit: (callback: () => void) => () => void;
+			onToggleCollisions: (callback: () => void) => () => void;
 		};
 	}
 }
