@@ -32,7 +32,7 @@ function Layout() {
 					</div>
 					<aside className="entity">
 						<Spacer direction="vertical" />
-						<div className='pre-entity'>
+						<div className="pre-entity">
 							<Entity />
 						</div>
 					</aside>
