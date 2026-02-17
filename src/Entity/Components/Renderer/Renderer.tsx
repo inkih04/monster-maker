@@ -21,9 +21,7 @@ function Renderer() {
 
 	return (
 		<Component id="Render">
-			<ComponentHeader icon={VideoCamera} onDelete={() => console.log('Componente eliminado')}>
-				Render
-			</ComponentHeader>
+			<ComponentHeader icon={VideoCamera}>Render</ComponentHeader>
 			<ComponentBody>
 				<div className="Componet-input-row">
 					<span>Width: </span>

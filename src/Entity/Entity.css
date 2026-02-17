@@ -27,9 +27,9 @@
 	margin-right: 15px;
 	border-radius: 8px;
 	padding: 20px;
-	overflow-y: auto; 
-    display: flex;
-    flex-direction: column;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
 	position: relative;
 }
 
@@ -80,6 +80,12 @@
 	justify-content: left;
 	border-radius: var(--radius);
 	background-color: var(--color-2);
+}
+
+.entity--input-container:hover {
+	box-shadow:
+		0 4px 6px -1px rgba(0, 0, 0, 0.1),
+		0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 .entity--row-right {
@@ -138,9 +144,6 @@
 	transition: background-color 0.2s;
 }
 
-.entity--tag-button:hover {
-	background-color: var(--color-3);
-}
 
 .entity--tag-dropdown {
 	position: absolute;

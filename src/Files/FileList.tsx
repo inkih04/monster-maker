@@ -7,7 +7,6 @@ import { useFileActions } from './customHooks/useFileActions';
 import { useFileRename } from './customHooks/useFileRename';
 import { useFileEventListener } from './customHooks/useFileEventListener';
 
-
 export default function FileList() {
 	const { files, isLoading } = useFileWatcher();
 
@@ -52,6 +51,15 @@ export default function FileList() {
 		});
 	};
 
+	const handleDragStart = (
+		e: React.DragEvent,
+		file: { name: string; path: string; type: string }
+	) => {
+		e.dataTransfer.setData('application/file-item', JSON.stringify(file));
+		e.dataTransfer.setData(`file-type/${file.type}`, ''); 
+		e.dataTransfer.effectAllowed = 'copy';
+	};
+
 	if (isLoading) return null;
 
 	return (
@@ -62,6 +70,8 @@ export default function FileList() {
 						<div
 							key={`${file.path}-${index}`}
 							className="files--item"
+							draggable
+							onDragStart={(e) => handleDragStart(e, file)}
 							onContextMenu={(e) => handleFileContextMenu(e, file)}
 							onDoubleClick={() => {
 								if (renamingFile) return;

@@ -30,7 +30,7 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 	SCRIPT: {
 		icon: Code,
 		label: 'Script',
-		initData: { scriptPath: '' },
+		initData: { path: '' },
 	},
 	ANIMATION: {
 		icon: Play,

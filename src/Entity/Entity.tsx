@@ -6,6 +6,7 @@ import { Tag } from '../domain/ecs/tags';
 import EntityHeader from './Components/basic/EntityHeader';
 import CollisionComponent from './Components/Collision/Collision';
 import AddComponent from './Components/basic/AddComponent';
+import ScriptComponent from './Components/Script/ScriptComponent';
 
 function Entity() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
@@ -42,9 +43,11 @@ function Entity() {
 							<Renderer />
 							<div className="entity--separator"></div>
 							<CollisionComponent />
+							<div className="entity--separator"></div>
+							<ScriptComponent />
 						</div>
 						<div className="entity--separator"></div>
-						<AddComponent/>
+						<AddComponent />
 					</>
 				)}
 			</div>

@@ -41,6 +41,7 @@
 	--color-8: #63687c;
 	--color-9: #2d2d22;
 
+	--font-ssm: 0.75rem;
 	--font-sm: 0.875rem;
 	--font-md: 1rem;
 	--font-lg: 1.25rem;
@@ -76,4 +77,3 @@ body {
 
 	background-color: var(--bg-color);
 }
-
