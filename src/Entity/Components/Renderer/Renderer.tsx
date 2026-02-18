@@ -4,7 +4,7 @@ import './Renderer.css';
 import { useMapStore } from '../../../Map/MapGState';
 import NumberInput from '../../../common/components/numericInput/NumericInput';
 
-function Renderer() {
+function RendererComponent() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const map = useMapStore((state) => state.map);
 	const updateComponent = useMapStore((state) => state.updateComponent);
@@ -50,4 +50,4 @@ function Renderer() {
 	);
 }
 
-export default Renderer;
+export default RendererComponent;

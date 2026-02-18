@@ -35,6 +35,8 @@ export interface AnimationComponent {
 
 export interface MovementComponent {}
 
+export interface InteractionComponent {}
+
 export interface ScriptComponent {
 	path: string;
 }

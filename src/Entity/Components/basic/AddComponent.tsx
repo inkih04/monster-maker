@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Plus, Search, ViewGrid, Code, Play } from 'iconoir-react';
+import { Plus, Search, ViewGrid, Code, Play, FastArrowRight, Keyframe } from 'iconoir-react';
 import { useMapStore } from '../../../Map/MapGState';
 import { ComponentType, ComponentMap } from '../../../domain/ecs/componentMap';
 import './AddComponent.css';
@@ -26,7 +26,6 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 			isTrigger: false,
 		},
 	},
-
 	SCRIPT: {
 		icon: Code,
 		label: 'Script',
@@ -36,6 +35,16 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 		icon: Play,
 		label: 'Animation',
 		initData: { animations: [] },
+	},
+	MOVEMENT: {
+		icon: FastArrowRight,
+		label: 'Movement',
+		initData: {},
+	},
+	INTERACTION: {
+		icon: Keyframe,
+		label: 'Interaction',
+		initData: {},
 	},
 };
 
@@ -67,9 +76,15 @@ export default function AddComponent() {
 
 		const allowedKeys = Object.keys(ADDABLE_COMPONENTS) as ComponentType[];
 
+		const hasDependencies = currentKeys.includes('COLLIDER') && currentKeys.includes('SCRIPT');
+
 		return allowedKeys
 			.filter((type) => !currentKeys.includes(type))
 			.filter((type) => {
+				if (type === 'MOVEMENT' || type === 'INTERACTION') {
+					if (!hasDependencies) return false;
+				}
+
 				const config = ADDABLE_COMPONENTS[type];
 				return config ? config.label.toLowerCase().includes(searchTerm.toLowerCase()) : false;
 			});
@@ -114,7 +129,7 @@ export default function AddComponent() {
 					<div className="component--Add-list">
 						{availableComponents.length === 0 ? (
 							<div className="component--Add-no-results">
-								{searchTerm ? 'No matches found' : 'All components added'}
+								{searchTerm ? 'No matches found' : 'No components available'}
 							</div>
 						) : (
 							availableComponents.map((type) => {
