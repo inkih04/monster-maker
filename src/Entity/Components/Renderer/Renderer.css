@@ -29,21 +29,24 @@
 	transition: background-color 0.2s;
 }
 
+.Componet-input-row-path {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+
 .render-input:hover {
 	background-color: var(--color-4);
 }
 
-.render-input:focus {
-	background-color: var(--color-4);
-	box-shadow: 0 0 0 2px var(--color-5);
-}
+
 
 .render-input[type='number'] {
 	-moz-appearance: textfield;
 	appearance: textfield;
 }
 
-/* Spinners visibles pero ocultos por defecto */
 .render-input::-webkit-inner-spin-button,
 .render-input::-webkit-outer-spin-button {
 	opacity: 0;
@@ -51,7 +54,6 @@
 	transition: opacity 0.15s ease;
 }
 
-/* Mostrar solo al hover o focus */
 .render-input:hover::-webkit-inner-spin-button,
 .render-input:hover::-webkit-outer-spin-button,
 .render-input:focus::-webkit-inner-spin-button,

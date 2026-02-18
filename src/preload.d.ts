@@ -11,7 +11,15 @@ declare global {
 			getProjects: () => Promise<ProjectData[]>;
 			addProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			removeProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
-			selectFolder: () => Promise<{ success: boolean; path?: string; error?: string }>;
+			selectFolder: (
+				defaultPath?: string
+			) => Promise<{ success: boolean; path?: string; error?: string }>;
+			selectFile: (
+				defaultPath?: string
+			) => Promise<{ success: boolean; path?: string; error?: string }>;
+			toRelativePath: (
+				absolutePath: string
+			) => Promise<{ success: boolean; path?: string; error?: string }>;
 			openProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			validateProjectPath: (pd: ProjectData) => Promise<boolean>;
 			getDirectoryStructure: (

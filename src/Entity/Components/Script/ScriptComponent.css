@@ -1,0 +1,51 @@
+.script--input-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.script--input-path {
+	padding-right: 32px;
+	font-size: var(--font-ssm);
+}
+
+.script--input-folder {
+	position: absolute;
+	right: 4px;
+	top: 50%;
+	transform: translateY(-50%);
+	height: calc(100% - 8px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+	color: var(--color-9);
+	border: none;
+	border-radius: var(--radius);
+
+	cursor: pointer;
+	transition: all 0.2s;
+	width: 28px;
+}
+
+.script--input-folder:hover {
+	background-color: var(--color-4);
+}
+.script--folder {
+	width: 18px;
+	height: 18px;
+}
+.script--drag-over .render-input {
+	border-color: var(--color-6);
+	background-color: var(--color-3);
+}
+.script--drag-valid .render-input {
+	border-color: #22c55e;
+	background-color: rgba(34, 197, 94, 0.08);
+}
+
+.script--drag-invalid .render-input {
+	border-color: #ef4444;
+	background-color: rgba(239, 68, 68, 0.08);
+}

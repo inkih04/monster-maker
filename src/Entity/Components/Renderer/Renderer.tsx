@@ -4,7 +4,7 @@ import './Renderer.css';
 import { useMapStore } from '../../../Map/MapGState';
 import NumberInput from '../../../common/components/numericInput/NumericInput';
 
-function Renderer() {
+function RendererComponent() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const map = useMapStore((state) => state.map);
 	const updateComponent = useMapStore((state) => state.updateComponent);
@@ -21,9 +21,7 @@ function Renderer() {
 
 	return (
 		<Component id="Render">
-			<ComponentHeader icon={VideoCamera} onDelete={() => console.log('Componente eliminado')}>
-				Render
-			</ComponentHeader>
+			<ComponentHeader icon={VideoCamera}>Render</ComponentHeader>
 			<ComponentBody>
 				<div className="Componet-input-row">
 					<span>Width: </span>
@@ -52,4 +50,4 @@ function Renderer() {
 	);
 }
 
-export default Renderer;
+export default RendererComponent;

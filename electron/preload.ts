@@ -6,13 +6,15 @@ contextBridge.exposeInMainWorld('api', {
 	getProjects: () => ipcRenderer.invoke('config:getAll'),
 	addProject: (pd: ProjectData) => ipcRenderer.invoke('config:add', pd),
 	removeProject: (pd: ProjectData) => ipcRenderer.invoke('config:remove', pd),
-	selectFolder: () => ipcRenderer.invoke('config:selectFolder'),
+	selectFolder: (defaultPath?: string) => ipcRenderer.invoke('config:selectFolder', defaultPath),
 	openProject: (pd: ProjectData) => ipcRenderer.invoke('config:open', pd),
 	validateProjectPath: (pd: ProjectData) => ipcRenderer.invoke('validate-project-path', pd),
 	getDirectoryStructure: (pd: ProjectData) =>
 		ipcRenderer.invoke('config:getDirectoryStructure', pd),
 
 	pathUnion: (path1: string, path2: string) => ipcRenderer.invoke('config:pathUnion', path1, path2),
+	toRelativePath: (absolutePath: string) =>
+		ipcRenderer.invoke('config:toRelativePath', absolutePath),
 
 	startWatchingDirectory: (pd: ProjectData) => ipcRenderer.invoke('config:startWatching', pd),
 	stopWatchingDirectory: () => ipcRenderer.invoke('config:stopWatching'),
@@ -20,6 +22,7 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('directory-structure-changed', (_event, structure) => callback(structure));
 		return () => ipcRenderer.removeAllListeners('directory-structure-changed');
 	},
+	selectFile: (defaultPath?: string) => ipcRenderer.invoke('config:selectFile', defaultPath),
 	onLanguageChange: (callback: (lng: string) => void) => {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');

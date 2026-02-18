@@ -1,11 +1,33 @@
 import { useMapStore } from '../Map/MapGState';
-import Renderer from './Components/Renderer/Renderer';
+import { ComponentType } from '../domain/ecs/componentMap';
+
+import RendererComponent from './Components/Renderer/Renderer';
+import CollisionComponent from './Components/Collision/Collision';
+import ScriptComponent from './Components/Script/ScriptComponent';
+import MovementComponent from './Components/Movement/MovementComponent';
+import AddComponent from './Components/basic/AddComponent';
+import EntityHeader from './Components/basic/EntityHeader';
+import { Tag } from '../domain/ecs/tags';
 
 import './Entity.css';
-import { Tag } from '../domain/ecs/tags';
-import EntityHeader from './Components/basic/EntityHeader';
-import CollisionComponent from './Components/Collision/Collision';
-import AddComponent from './Components/basic/AddComponent';
+import InteractionComponent from './Components/Interaction/InteractionComponent';
+
+const COMPONENT_UI_MAP: Partial<Record<ComponentType, React.ComponentType>> = {
+	RENDER: RendererComponent,
+	COLLIDER: CollisionComponent,
+	SCRIPT: ScriptComponent,
+	MOVEMENT: MovementComponent,
+	INTERACTION: InteractionComponent,
+};
+
+const RENDER_ORDER: ComponentType[] = [
+	'RENDER',
+	'ANIMATION',
+	'COLLIDER',
+	'SCRIPT',
+	'MOVEMENT',
+	'INTERACTION',
+];
 
 function Entity() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
@@ -26,6 +48,10 @@ function Entity() {
 		}
 	};
 
+	const activeComponents = selectedEntity
+		? RENDER_ORDER.filter((type) => selectedEntity.components[type] && COMPONENT_UI_MAP[type])
+		: [];
+
 	return (
 		<div className="Entity-container">
 			<div className={`entity--entity ${!selectedEntityId ? 'is-empty' : ''}`}>
@@ -36,15 +62,24 @@ function Entity() {
 							onUpdateName={handleUpdateName}
 							onUpdateTag={handleUpdateTag}
 						/>
-						<div className="entity--separator"></div>
 
 						<div className="entity--componentcontainer">
-							<Renderer />
-							<div className="entity--separator"></div>
-							<CollisionComponent />
+							{activeComponents.map((type) => {
+								const ComponentToRender = COMPONENT_UI_MAP[type];
+
+								if (!ComponentToRender) return null;
+
+								return (
+									<div key={type}>
+										<div className="entity--separator"></div>
+										<ComponentToRender />
+									</div>
+								);
+							})}
 						</div>
+
 						<div className="entity--separator"></div>
-						<AddComponent/>
+						<AddComponent />
 					</>
 				)}
 			</div>

@@ -407,6 +407,20 @@ export class ProjectConfigManager {
 		this.currentWatchedFolder = null;
 	}
 
+	public toRelativePath(absolutePath: string): { success: boolean; path?: string; error?: string } {
+		try {
+			const normalized = absolutePath.replace(/\\/g, '/');
+			const marker = 'resources/';
+			const idx = normalized.indexOf(marker);
+			if (idx === -1) {
+				return { success: false, error: 'Path does not contain resources/' };
+			}
+			return { success: true, path: normalized.slice(idx) };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public runEngine(pd: ProjectData, mapPath?: string): { success: boolean; error?: string } {
 		try {
 			if (this.engineProcess && !this.engineProcess.killed) {
@@ -446,12 +460,11 @@ export class ProjectConfigManager {
 
 			const child = spawn(executablePath, args, {
 				cwd: projectPath,
-				detached: false, 
+				detached: false,
 				stdio: 'ignore',
 			});
 
 			this.engineProcess = child;
-
 
 			child.on('exit', (code, signal) => {
 				console.log(`Engine exited with code ${code} and signal ${signal}`);
