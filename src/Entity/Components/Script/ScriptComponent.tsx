@@ -14,6 +14,7 @@ const ScriptComponent = () => {
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const [dragState, setDragState] = useState<'none' | 'valid' | 'invalid'>('none');
+	
 
 	if (!selectedEntityId || !map) return null;
 	const entity = map.entities[selectedEntityId];

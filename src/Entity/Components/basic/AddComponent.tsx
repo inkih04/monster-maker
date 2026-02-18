@@ -3,6 +3,7 @@ import { Plus, Search, ViewGrid, Code, Play, FastArrowRight, Keyframe } from 'ic
 import { useMapStore } from '../../../Map/MapGState';
 import { ComponentType, ComponentMap } from '../../../domain/ecs/componentMap';
 import './AddComponent.css';
+import { useTranslation } from 'react-i18next';
 
 type IconType = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
@@ -52,6 +53,7 @@ export default function AddComponent() {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const [searchTerm, setSearchTerm] = useState<string>('');
 	const menuRef = useRef<HTMLDivElement>(null);
+	const { t } = useTranslation();
 
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const map = useMapStore((state) => state.map);
@@ -110,7 +112,7 @@ export default function AddComponent() {
 				onClick={() => setIsOpen(!isOpen)}
 			>
 				<Plus width={18} strokeWidth={2.5} />
-				<span>Add Component</span>
+				<span>{t('addComponent')}</span>
 			</button>
 
 			{isOpen && (
@@ -119,7 +121,7 @@ export default function AddComponent() {
 						<Search width={14} />
 						<input
 							type="text"
-							placeholder="Search..."
+							placeholder={t('search')}
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
 							autoFocus

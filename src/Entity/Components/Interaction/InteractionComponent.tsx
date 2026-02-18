@@ -2,11 +2,13 @@ import { useMemo } from 'react';
 import { useMapStore } from '../../../Map/MapGState';
 import { Component, ComponentBody, ComponentHeader } from '../basic/InspectorComponent';
 import { Keyframe, WarningTriangle } from 'iconoir-react';
+import { useTranslation } from 'react-i18next';
 
 function InteractionComponent() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const removeComponent = useMapStore((state) => state.removeComponent);
 	const map = useMapStore((state) => state.map);
+	const { t } = useTranslation();
 	const entity = selectedEntityId ? map?.entities[selectedEntityId] : null;
 
 	const isMissingDependencies = useMemo(() => {
@@ -39,11 +41,7 @@ function InteractionComponent() {
 				Interaction
 			</ComponentHeader>
 			<ComponentBody>
-				<div>
-					Handles interaction between entities via the interact event. The onInteract handler is
-					only required on the entity being interacted with. This component requires a Collision
-					Component.
-				</div>
+				<div>{t('interactionComponent')}</div>
 			</ComponentBody>
 		</Component>
 	);

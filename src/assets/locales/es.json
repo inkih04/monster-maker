@@ -44,5 +44,9 @@
 			"delete_map_warning": "Eliminar un mapa que está en uso puede causar errores",
 			"rename_map_warning": "Renombrar un mapa que está en uso puede causar errores"
 		}
-	}
+	},
+	"movementComponent": "Gestiona el movimiento con animaciones y colisiones. Requiere los componentes Position, Animation y Collision.",
+	"interactionComponent": "Gestiona la interacción entre entidades a través del evento interact. El manejador onInteract solo es necesario en la entidad con la que se interactúa. Este componente requiere un componente Collision.",
+	"addComponent": "Añadir Componente",
+	"search": "Buscar.."
 }
