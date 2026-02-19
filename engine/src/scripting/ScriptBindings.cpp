@@ -20,9 +20,17 @@ void ScriptBindings::registerStatic(sol::state& lua) {
     registerEntityManager(lua);
     registerCamera(lua);
     registerAudioService(lua);
+    registerBordersMapService(lua);
 }
 
-
+void ScriptBindings::registerBordersMapService(sol::state& lua) {
+    lua.new_usertype<BordersMapService>("BordersMapService",
+        "isOutOfBounds", [](BordersMapService& self, const Position& pos, float offsetX, float offsetY) {
+            return self.isOutOfBounds(pos, glm::vec2(offsetX, offsetY));
+        },
+        "clampCamera", &BordersMapService::clampCameraPosition
+    );
+}
 
 void ScriptBindings::registerAudioService(sol::state& lua) {
     lua.new_usertype<AudioService>("AudioService",
@@ -46,6 +54,7 @@ void ScriptBindings::registerAudioService(sol::state& lua) {
 void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityManager& entityManager) {
     lua["World"] = &entityManager;
     lua["MainCamera"] = camera;
+    lua["Borders"] = entityManager.getBordersMapService();
 
     lua.set_function("GetEntity", [&entityManager](EntityTag tag) -> Entity* {
         auto entities = entityManager.getEntitiesByTag(tag);
@@ -89,7 +98,9 @@ void ScriptBindings::registerCamera(sol::state& lua) {
             c.lerpTo(glm::vec2(x, y), alpha);
         },
         "setZoom", &Camera::setZoom,
-        "getPosition", &Camera::getPosition
+        "getPosition", &Camera::getPosition,
+        "getWidth",  &Camera::getWidth,
+        "getHeight", &Camera::getHeight
     );
 }
 

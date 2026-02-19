@@ -19,6 +19,8 @@ public:
 
     void setZoom(float zoom);
     float getZoom() const { return m_zoom; }
+    float getWidth() const { return m_width; }
+    float getHeight() const { return m_height; }
 
 private:
     void updateViewMatrix();
