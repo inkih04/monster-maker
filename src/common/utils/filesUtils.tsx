@@ -3,6 +3,8 @@ import TileSetIcon from '../../assets/img/TileSet.png';
 import LuaScriptIcon from '../../assets/img/LuaScript.png';
 import FragmentShaderIcon from '../../assets/img/FragmentShader.png';
 import VertexShaderIcon from '../../assets/img/VertexShader.png';
+import musicIcon from '../../assets/img/music.png';
+import undefined from '../../assets/img/Fichero.png';
 
 export function getFileIcon(type: string) {
 	switch (type) {
@@ -16,15 +18,17 @@ export function getFileIcon(type: string) {
 			return <img src={VertexShaderIcon} alt="Tileset" className="files--icon-img" />;
 		case 'fragment':
 			return <img src={FragmentShaderIcon} alt="Tileset" className="files--icon-img" />;
+		case 'music':
+			return <img src={musicIcon} alt="Tileset" className="files--icon-img" />;
 
 		default:
-			return <img src={LuaScriptIcon} alt="File" className="files--icon-img" />;
+			return <img src={undefined} alt="File" className="files--icon-img" />;
 	}
 }
 
 export function getFileType(
 	fileName: string
-): 'script' | 'tilemap' | 'tileset' | 'vertex' | 'fragment' {
+): 'script' | 'tilemap' | 'tileset' | 'vertex' | 'fragment' | 'music' | 'undefined' {
 	const extension = fileName.split('.').pop()?.toLowerCase();
 
 	if (extension === 'lua') return 'script';
@@ -32,8 +36,10 @@ export function getFileType(
 	if (extension === 'tsx' || extension === 'png' || extension === 'jpg') return 'tileset';
 	if (extension === 'vert') return 'vertex';
 	if (extension === 'frag') return 'fragment';
+	if (extension === 'waw' || extension === 'ogg' || extension === 'mp3' || extension === '.flac')
+		return 'music';
 
-	return 'script';
+	return 'undefined';
 }
 
 export function getFileNameWithoutExtension(filePath: string): string {
