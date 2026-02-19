@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-include_directories(include include/enums include/components include/structs include/scripting)
+include_directories(include include/enums include/components include/structs include/scripting include/service)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -75,6 +75,8 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         src/entities/service/InteractionService.cpp
         include/components/InteractionComponent.h
         include/structs/DebugHelper.h
+        src/entities/service/BordersMapService.cpp
+        include/service/BordersMapService.h
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD
@@ -158,6 +160,8 @@ add_executable(UnitTests
         tests/unitary/StateManagerTest.cpp
         tests/unitary/DialogBoxTest.cpp
         tests/unitary/CollisionServiceTest.cpp
+        tests/unitary/BorderMapServiceTest.cpp
+        src/entities/service/BordersMapService.cpp
 )
 
 target_link_libraries(UnitTests

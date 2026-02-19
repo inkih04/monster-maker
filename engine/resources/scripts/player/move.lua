@@ -1,8 +1,6 @@
 local speed = 2
 local cameraSmoothing = 0.15
 
-
-
 function onCollision(collidedEntity)
     print("OnCollision called in player move component")
 end
@@ -14,11 +12,9 @@ function onStart(entity)
     local posComp = entity:getPos()
     if posComp and MainCamera then
         MainCamera:setPosition(posComp.x, posComp.y)
-        print("Camera centered on Start at: " .. posComp.x .. ", " .. posComp.y)
     end
     print("Player Move Component Started")
 end
-
 
 function onUpdate(entity)
     local posComp = entity:getPos()
@@ -38,14 +34,17 @@ function onUpdate(entity)
     elseif Input:isKeyDown(Keys.RIGHT) or Input:isKeyDown(Keys.D) then
         newX = newX + speed
     end
+
     moveComp:move(Position.new(newX, newY))
 
     if Input:isKeyPressed(Keys.Z) then
-            print("Player: Interactuando")
-            entity:interact()
-        end
+        entity:interact()
+    end
 
     if MainCamera then
-        MainCamera:lerpTo(newX, newY, cameraSmoothing)
+        local halfW = MainCamera:getWidth()  / 2
+        local halfH = MainCamera:getHeight() / 2
+        local clamped = Borders:clampCamera(Position.new(newX, newY), halfW, halfH)
+        MainCamera:lerpTo(clamped.x, clamped.y, cameraSmoothing)
     end
 end
