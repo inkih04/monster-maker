@@ -50,5 +50,8 @@
 	"addComponent": "Add Component",
 	"search": "Search..",
 	"resetLayout": "The layout has been reset",
-	"layout": "Layout"
+	"layout": "Layout",
+	"files": "Files",
+	"essentialFolder": "Essential folders cannot be deleted",
+	"errorFolder": "An error occurred while deleting the folder"
 }

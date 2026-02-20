@@ -97,6 +97,15 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle('config:deleteFolder', async (_event, folderNode: FolderNode, pd: ProjectData) => {
+		try {
+			const result = configManager.deleteFolder(folderNode, pd);
+			return result;
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	});
+
 	ipcMain.handle('config:toRelativePath', (_event, absolutePath: string) => {
 		return configManager.toRelativePath(absolutePath);
 	});
@@ -324,6 +333,18 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 					success: false,
 					error: String(error),
 				};
+			}
+		}
+	);
+
+	ipcMain.handle(
+		'config:createFolder',
+		async (_event, folderNode: FolderNode, newFolderName: string, pd: ProjectData) => {
+			try {
+				const result = configManager.createFolder(folderNode, newFolderName, pd);
+				return result;
+			} catch (error) {
+				return { success: false, error: String(error) };
 			}
 		}
 	);

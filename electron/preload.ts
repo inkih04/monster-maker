@@ -112,4 +112,30 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('reset-layout', callback);
 		return () => ipcRenderer.removeAllListeners('reset-layout');
 	},
+	showFolderContextMenu: (folderData: { name: string; path: string }) =>
+		ipcRenderer.send('show-folder-context-menu', folderData),
+
+	onFolderAction: (
+		callback: (action: string, folderData: { name: string; path: string }) => void
+	) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			action: string,
+			folderData: { name: string; path: string }
+		) => callback(action, folderData);
+		ipcRenderer.on('folder-action', subscription);
+		return () => ipcRenderer.removeListener('folder-action', subscription);
+	},
+	onFolderMenuClosed: (callback: (folderData: { name: string; path: string }) => void) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			folderData: { name: string; path: string }
+		) => callback(folderData);
+		ipcRenderer.on('folder-menu-closed', subscription);
+		return () => ipcRenderer.removeListener('folder-menu-closed', subscription);
+	},
+	createFolder: (folderNode: FolderNode, newFolderName: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:createFolder', folderNode, newFolderName, pd),
+	deleteFolder: (folderNode: FolderNode, pd: ProjectData) =>
+		ipcRenderer.invoke('config:deleteFolder', folderNode, pd),
 });

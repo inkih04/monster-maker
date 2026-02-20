@@ -87,6 +87,22 @@ declare global {
 			onEngineExit: (callback: () => void) => () => void;
 			onToggleCollisions: (callback: () => void) => () => void;
 			onResetLayout: (callback: () => void) => () => void;
+			showFolderContextMenu: (folderData: { name: string; path: string }) => void;
+			onFolderAction: (
+				callback: (action: string, folderData: { name: string; path: string }) => void
+			) => () => void;
+			onFolderMenuClosed: (
+				callback: (folderData: { name: string; path: string }) => void
+			) => () => void;
+			createFolder: (
+				folderNode: FolderNode,
+				newFolderName: string,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string }>;
+			deleteFolder: (
+				folderNode: FolderNode,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' }>;
 		};
 	}
 }

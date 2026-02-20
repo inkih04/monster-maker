@@ -50,5 +50,8 @@
 	"addComponent": "Añadir Componente",
 	"search": "Buscar..",
 	"resetLayout": "El layout ha sido restablecido",
-	"layout": "Layout"
+	"layout": "Layout",
+	"files": "Archivos",
+	"essentialFolder": "Las carpetas esenciales no se pueden eliminar",
+	"errorFolder": "Se produjo un error al eliminar la carpeta"
 }
