@@ -7,6 +7,9 @@ interface FolderStore {
 
 	creatingFolderUnder: FolderNode | null;
 	setCreatingFolderUnder: (folder: FolderNode | null) => void;
+
+	deletingFolder: FolderNode | null;
+	setDeletingFolder: (folder: FolderNode | null) => void;
 }
 
 export const useFolderStore = create<FolderStore>((set) => ({
@@ -15,4 +18,7 @@ export const useFolderStore = create<FolderStore>((set) => ({
 
 	creatingFolderUnder: null,
 	setCreatingFolderUnder: (folder) => set({ creatingFolderUnder: folder }),
+
+	deletingFolder: null,
+	setDeletingFolder: (folder) => set({ deletingFolder: folder }),
 }));

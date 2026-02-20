@@ -99,6 +99,10 @@ declare global {
 				newFolderName: string,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string }>;
+			deleteFolder: (
+				folderNode: FolderNode,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

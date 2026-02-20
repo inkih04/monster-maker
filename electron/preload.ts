@@ -136,4 +136,6 @@ contextBridge.exposeInMainWorld('api', {
 	},
 	createFolder: (folderNode: FolderNode, newFolderName: string, pd: ProjectData) =>
 		ipcRenderer.invoke('config:createFolder', folderNode, newFolderName, pd),
+	deleteFolder: (folderNode: FolderNode, pd: ProjectData) =>
+		ipcRenderer.invoke('config:deleteFolder', folderNode, pd),
 });

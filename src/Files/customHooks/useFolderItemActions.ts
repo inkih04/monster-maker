@@ -8,10 +8,13 @@ export function useFolderItemActions(folder: FolderNode) {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const creatingFolderUnder = useFolderStore((state) => state.creatingFolderUnder);
 	const setCreatingFolderUnder = useFolderStore((state) => state.setCreatingFolderUnder);
+	const deletingFolder = useFolderStore((state) => state.deletingFolder);
+	const setDeletingFolder = useFolderStore((state) => state.setDeletingFolder);
 	const currentProject = useProjectStore((state) => state.currentProject);
 
 	const isSelected = selectedFolder?.path === folder.path;
 	const isCreatingHere = creatingFolderUnder?.path === folder.path;
+	const isConfirmingDelete = deletingFolder?.path === folder.path;
 
 	const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
 	const [newFolderName, setNewFolderName] = useState('');
@@ -25,8 +28,12 @@ export function useFolderItemActions(folder: FolderNode) {
 		});
 
 		const unsubscribeAction = window.api.onFolderAction((action, folderData) => {
-			if (folderData.path === folder.path && action === 'create-folder') {
+			if (folderData.path !== folder.path) return;
+
+			if (action === 'create-folder') {
 				setCreatingFolderUnder(folder);
+			} else if (action === 'delete-folder') {
+				setDeletingFolder(folder);
 			}
 		});
 
@@ -34,7 +41,8 @@ export function useFolderItemActions(folder: FolderNode) {
 			unsubscribeClosed();
 			unsubscribeAction();
 		};
-	}, [folder, setCreatingFolderUnder]);
+	}, [folder, setCreatingFolderUnder, setDeletingFolder]);
+
 
 	useEffect(() => {
 		if (isCreatingHere) {
@@ -82,9 +90,34 @@ export function useFolderItemActions(folder: FolderNode) {
 		}
 	};
 
+
+	const cancelDeletion = () => {
+		setDeletingFolder(null);
+	};
+
+	const confirmDeletion = async () => {
+		if (!currentProject) {
+			cancelDeletion();
+			return;
+		}
+
+		const result = await window.api.deleteFolder(folder, currentProject);
+
+		if (!result.success) {
+			console.error('[DeleteFolder] Error:', result.error);
+		}
+
+		if (isSelected) {
+			setSelectedFolder(null);
+		}
+
+		cancelDeletion();
+	};
+
 	return {
 		isSelected,
 		isCreatingHere,
+		isConfirmingDelete,
 		isContextMenuOpen,
 		newFolderName,
 		setNewFolderName,
@@ -93,5 +126,7 @@ export function useFolderItemActions(folder: FolderNode) {
 		handleContextMenu,
 		handleInputKeyDown,
 		cancelCreation,
+		cancelDeletion,
+		confirmDeletion,
 	};
 }

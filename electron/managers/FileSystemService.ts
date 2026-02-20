@@ -106,6 +106,24 @@ export class FileSystemService {
 		}
 	}
 
+	public deleteFolder(folderPath: string): { success: boolean; error?: string } {
+		try {
+			if (!this.exists(folderPath)) {
+				return { success: false, error: 'Folder does not exist' };
+			}
+
+			if (!this.isDirectory(folderPath)) {
+				return { success: false, error: 'Path is not a directory' };
+			}
+
+			fs.rmSync(folderPath, { recursive: true, force: true });
+			return { success: true };
+		} catch (error) {
+			console.error(`Error deleting folder ${folderPath}:`, error);
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public createFolder(folderPath: string): { success: boolean; error?: string } {
 		try {
 			if (this.exists(folderPath)) {

@@ -2,6 +2,7 @@ import { Folder } from 'iconoir-react';
 import './FolderItem.css';
 import type FolderNode from '../../../global/types/folderNode';
 import { useFolderItemActions } from '../customHooks/useFolderItemActions';
+import DeleteConfirmation from '../../common/components/delete/DeleteConfirmation';
 
 interface FolderItemProps {
 	folder: FolderNode;
@@ -12,6 +13,7 @@ export function FolderItem({ folder, level }: Readonly<FolderItemProps>) {
 	const {
 		isSelected,
 		isCreatingHere,
+		isConfirmingDelete,
 		isContextMenuOpen,
 		newFolderName,
 		setNewFolderName,
@@ -20,6 +22,8 @@ export function FolderItem({ folder, level }: Readonly<FolderItemProps>) {
 		handleContextMenu,
 		handleInputKeyDown,
 		cancelCreation,
+		cancelDeletion,
+		confirmDeletion,
 	} = useFolderItemActions(folder);
 
 	return (
@@ -48,6 +52,13 @@ export function FolderItem({ folder, level }: Readonly<FolderItemProps>) {
 					/>
 				</div>
 			)}
+
+			<DeleteConfirmation
+				open={isConfirmingDelete}
+				onOpenChange={(open) => { if (!open) cancelDeletion(); }}
+				itemName={folder.name}
+				onConfirm={confirmDeletion}
+			/>
 
 			{folder.children?.map((child) => (
 				<FolderItem key={child.path} folder={child} level={level + 1} />

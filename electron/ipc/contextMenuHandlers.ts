@@ -49,7 +49,9 @@ export function setupContextMenuHandlers(): void {
 			},
 			{
 				label: 'Delete',
-				enabled: false,
+				click: () => {
+					event.sender.send('folder-action', 'delete-folder', folderData);
+				},
 			},
 		];
 

@@ -58,6 +58,19 @@ export class ProjectConfigManager {
 		}
 	}
 
+	public deleteFolder(
+		folderNode: FolderNode,
+		pd: ProjectData
+	): { success: boolean; error?: string } {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const fullFolderPath = path.join(projectPath, folderNode.path);
+			return this.fileSystemService.deleteFolder(fullFolderPath);
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public saveFile(
 		fileRelativePath: string,
 		content: string,
