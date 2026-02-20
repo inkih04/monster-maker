@@ -108,4 +108,8 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('toggle-collisions', callback);
 		return () => ipcRenderer.removeAllListeners('toggle-collisions');
 	},
+	onResetLayout: (callback: () => void) => {
+		ipcRenderer.on('reset-layout', callback);
+		return () => ipcRenderer.removeAllListeners('reset-layout');
+	},
 });

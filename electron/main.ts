@@ -108,6 +108,15 @@ app.whenReady().then(() => {
 				click: (menuItem) => {
 					win?.webContents.send('toggle-collisions');
 				},
+			},
+			{
+				label: 'Reset Layout',
+				type: 'normal',
+				checked: false,
+				accelerator: 'CmdOrCtrl+r',
+				click: (menuItem) => {
+					win?.webContents.send('reset-layout');
+				},
 			}
 		);
 	}

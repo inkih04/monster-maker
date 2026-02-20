@@ -48,5 +48,7 @@
 	"movementComponent": "Gestiona el movimiento con animaciones y colisiones. Requiere los componentes Position, Animation y Collision.",
 	"interactionComponent": "Gestiona la interacción entre entidades a través del evento interact. El manejador onInteract solo es necesario en la entidad con la que se interactúa. Este componente requiere un componente Collision.",
 	"addComponent": "Añadir Componente",
-	"search": "Buscar.."
+	"search": "Buscar..",
+	"resetLayout": "El layout ha sido restablecido",
+	"layout": "Layout"
 }
