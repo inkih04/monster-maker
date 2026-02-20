@@ -1,5 +1,5 @@
 .tools-container {
-	flex-grow: 0.2;
+	padding: 15px;
 	width: 100%;
 	background-color: var(--color-3);
 	display: flex;

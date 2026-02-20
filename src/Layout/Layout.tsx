@@ -8,42 +8,84 @@ import FolderTree from '../Files/FolderTree';
 import FileList from '../Files/FileList';
 import CreateFile from '../common/components/createFile/CreateFile';
 import Entity from '../Entity/Entity';
+import { useLayoutResize, LIMITS } from './customHooks/useLayoutResize';
+import { useEffect } from 'react';
+import { useNotify } from '../common/components/toast/ToastContext';
+import { useTranslation } from 'react-i18next';
 
 function Layout() {
+	const {
+		mapUtilityWidth,
+		entityWidth,
+		filesHeight,
+		filesMenuWidth,
+		resizeMapUtility,
+		resizeEntity,
+		resizeFiles,
+		resizeFilesMenu,
+		resetLayout,
+	} = useLayoutResize();
+
+	const { notify } = useNotify();
+	const { t } = useTranslation();
+
+	useEffect(() => {
+		const removeListener = window.api.onResetLayout(() => {
+			resetLayout();
+			notify(t('layout'), t('resetLayout'), 'success', 3000);
+		});
+
+		return () => {
+			removeListener();
+		};
+	}, [resetLayout, notify, t]);
+
 	return (
 		<>
 			<ModalProject />
 			<CreateFile />
 			<div className="content">
 				<ToolBar />
-				<main className="main">
-					<aside className="map-utility">
+				<main className="main" style={{ minHeight: 0 }}>
+					<aside
+						className="map-utility"
+						style={{ flex: `0 0 ${mapUtilityWidth}px`, minWidth: LIMITS.mapUtilityWidth.min }}
+					>
 						<div className="tilemap-container">
 							<TileSet />
 						</div>
 						<Spacer size="small" />
 						<div className="maps"></div>
 					</aside>
+					<Spacer direction="vertical" resizable onResize={resizeMapUtility} />
 					<div className="map">
-						<Spacer direction="vertical" />
 						<div className="map-container">
 							<Map />
 						</div>
 					</div>
-					<aside className="entity">
-						<Spacer direction="vertical" />
+					<Spacer direction="vertical" resizable onResize={resizeEntity} />
+					<aside
+						className="entity"
+						style={{ flex: `0 0 ${entityWidth}px`, minWidth: LIMITS.entityWidth.min }}
+					>
 						<div className="pre-entity">
 							<Entity />
 						</div>
 					</aside>
 				</main>
-				<div className="files">
-					<Spacer />
+				<Spacer direction="horizontal" resizable onResize={resizeFiles} />
+				<div
+					className="files"
+					style={{ flex: `0 0 ${filesHeight}px`, minHeight: LIMITS.filesHeight.min }}
+				>
 					<div className="files-content">
-						<aside className="files-menu">
+						<aside
+							className="files-menu"
+							style={{ flex: `0 0 ${filesMenuWidth}px`, minWidth: LIMITS.filesMenuWidth.min }}
+						>
 							<FolderTree />
 						</aside>
-						<Spacer direction="vertical" size="small" />
+						<Spacer direction="vertical" size="small" resizable onResize={resizeFilesMenu} />
 						<aside className="raw-files">
 							<FileList />
 						</aside>
