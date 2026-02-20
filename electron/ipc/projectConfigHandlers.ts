@@ -328,6 +328,18 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle(
+		'config:createFolder',
+		async (_event, folderNode: FolderNode, newFolderName: string, pd: ProjectData) => {
+			try {
+				const result = configManager.createFolder(folderNode, newFolderName, pd);
+				return result;
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
 	ipcMain.handle('config:runEngine', async (_event, pd: ProjectData, mapPath?: string) => {
 		try {
 			const result = configManager.runEngine(pd, mapPath);

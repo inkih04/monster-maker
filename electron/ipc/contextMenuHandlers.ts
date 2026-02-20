@@ -35,4 +35,30 @@ export function setupContextMenuHandlers(): void {
 		const menu = Menu.buildFromTemplate(template);
 		menu.popup({ window: BrowserWindow.fromWebContents(event.sender) ?? undefined });
 	});
+
+	ipcMain.on('show-folder-context-menu', (event, folderData: { name: string; path: string }) => {
+		const template: MenuItemConstructorOptions[] = [
+			{
+				label: 'Create Folder',
+				click: () => {
+					event.sender.send('folder-action', 'create-folder', folderData);
+				},
+			},
+			{
+				type: 'separator',
+			},
+			{
+				label: 'Delete',
+				enabled: false,
+			},
+		];
+
+		const menu = Menu.buildFromTemplate(template);
+
+		menu.on('menu-will-close', () => {
+			event.sender.send('folder-menu-closed', folderData);
+		});
+
+		menu.popup({ window: BrowserWindow.fromWebContents(event.sender) ?? undefined });
+	});
 }

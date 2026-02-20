@@ -81,6 +81,7 @@ export class ProjectConfigManager {
 			return { success: false, error: String(error) };
 		}
 	}
+
 	public saveFileCompletePath(
 		name: string,
 		completePath: string,
@@ -182,6 +183,20 @@ export class ProjectConfigManager {
 		} catch (error) {
 			console.log(`Error deleting file: ${error}`);
 			return false;
+		}
+	}
+
+	public createFolder(
+		folderNode: FolderNode,
+		newFolderName: string,
+		pd: ProjectData
+	): { success: boolean; error?: string } {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const newFolderPath = path.join(projectPath, folderNode.path, newFolderName);
+			return this.fileSystemService.createFolder(newFolderPath);
+		} catch (error) {
+			return { success: false, error: String(error) };
 		}
 	}
 

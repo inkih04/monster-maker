@@ -106,6 +106,19 @@ export class FileSystemService {
 		}
 	}
 
+	public createFolder(folderPath: string): { success: boolean; error?: string } {
+		try {
+			if (this.exists(folderPath)) {
+				return { success: false, error: 'A folder with that name already exists' };
+			}
+			fs.mkdirSync(folderPath, { recursive: true });
+			return { success: true };
+		} catch (error) {
+			console.error(`Error creating folder ${folderPath}:`, error);
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public createDirectories(basePath: string, directories: string[]): void {
 		directories.forEach((dir) => {
 			const fullPath = path.join(basePath, dir);
