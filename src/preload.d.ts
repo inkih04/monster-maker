@@ -102,7 +102,7 @@ declare global {
 			deleteFolder: (
 				folderNode: FolderNode,
 				pd: ProjectData
-			) => Promise<{ success: boolean; error?: string }>;
+			) => Promise<{ success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' }>;
 		};
 	}
 }

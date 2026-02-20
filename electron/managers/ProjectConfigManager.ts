@@ -58,11 +58,34 @@ export class ProjectConfigManager {
 		}
 	}
 
+	private normalizePath(p: string): string {
+		return p.replace(/\\/g, '/');
+	}
+
+	private isEssentialFolder(relativeFolderPath: string): boolean {
+		const normalized = this.normalizePath(relativeFolderPath);
+		const essentialPaths = this.fileSystemService
+			.getRequiredProjectPaths()
+			.map((p) => this.normalizePath(p));
+
+		return essentialPaths.some(
+			(essential) => normalized === essential || essential.startsWith(normalized + '/')
+		);
+	}
+
 	public deleteFolder(
 		folderNode: FolderNode,
 		pd: ProjectData
-	): { success: boolean; error?: string } {
+	): { success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' } {
 		try {
+			if (this.isEssentialFolder(folderNode.path)) {
+				return {
+					success: false,
+					error: `Cannot delete essential project folder: "${folderNode.name}"`,
+					errorCode: 'ESSENTIAL_FOLDER',
+				};
+			}
+
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 			const fullFolderPath = path.join(projectPath, folderNode.path);
 			return this.fileSystemService.deleteFolder(fullFolderPath);

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type FolderNode from '../../../global/types/folderNode';
 import { useFolderStore } from '../../common/globalStores/useFolderStore';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
+import { useNotify } from '../../common/components/toast/ToastContext';
+import { useTranslation } from 'react-i18next';
 
 export function useFolderItemActions(folder: FolderNode) {
 	const setSelectedFolder = useFolderStore((state) => state.setSelectedFolder);
@@ -11,6 +13,9 @@ export function useFolderItemActions(folder: FolderNode) {
 	const deletingFolder = useFolderStore((state) => state.deletingFolder);
 	const setDeletingFolder = useFolderStore((state) => state.setDeletingFolder);
 	const currentProject = useProjectStore((state) => state.currentProject);
+
+	const { notify } = useNotify();
+	const { t } = useTranslation();
 
 	const isSelected = selectedFolder?.path === folder.path;
 	const isCreatingHere = creatingFolderUnder?.path === folder.path;
@@ -42,7 +47,6 @@ export function useFolderItemActions(folder: FolderNode) {
 			unsubscribeAction();
 		};
 	}, [folder, setCreatingFolderUnder, setDeletingFolder]);
-
 
 	useEffect(() => {
 		if (isCreatingHere) {
@@ -90,7 +94,6 @@ export function useFolderItemActions(folder: FolderNode) {
 		}
 	};
 
-
 	const cancelDeletion = () => {
 		setDeletingFolder(null);
 	};
@@ -104,7 +107,11 @@ export function useFolderItemActions(folder: FolderNode) {
 		const result = await window.api.deleteFolder(folder, currentProject);
 
 		if (!result.success) {
-			console.error('[DeleteFolder] Error:', result.error);
+			if (result?.errorCode === 'ESSENTIAL_FOLDER') {
+				notify(t('files'), t('essentialFolder'), 'error', 4000);
+			} else {
+				notify(t('files'), t('errorFolder'), 'error');
+			}
 		}
 
 		if (isSelected) {
