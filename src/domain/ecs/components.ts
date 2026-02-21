@@ -35,11 +35,16 @@ export interface AnimationComponent {
 
 export interface MovementComponent {}
 
+export interface InteractionComponent {}
+
 export interface ScriptComponent {
-	scriptPath: string;
+	path: string;
 }
 
 export interface CollisionComponent {
 	width: number;
 	height: number;
+	offsetY: number;
+	offsetX: number;
+	isTrigger: boolean;
 }

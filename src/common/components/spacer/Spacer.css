@@ -1,25 +1,103 @@
 .spacer {
-  background-color: var(--color-3);
-  margin: var(--space-sm);
-  padding: var(--space-ms);
+	background-color: var(--color-3);
+	margin: var(--space-md);
+	padding: var(--space-ms);
 }
 
 .normal {
-  padding: var(--space-ms);
+	padding: var(--space-ms);
 }
 
 .small {
-  padding: var(--space-sm);
+	padding: var(--space-sm);
 }
 
 .spacer.horizontal {
-  height: var(--space-ms);
-  width: 90%;
-  flex-shrink: 0;
+	height: var(--space-ms);
+	width: 90%;
+	flex-shrink: 0;
+	align-self: center;
 }
 
 .spacer.vertical {
-  width: var(--space-ms);
-  height: 90%;
-  flex-shrink: 0;
+	width: var(--space-ms);
+	height: 90%;
+	flex-shrink: 0;
+	align-self: center;
+}
+
+
+.spacer.resizable {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 10;
+	transition: background-color 0.15s ease;
+}
+
+.spacer.resizable.horizontal {
+	cursor: row-resize;
+}
+
+.spacer.resizable.vertical {
+	cursor: col-resize;
+}
+
+.spacer.resizable:hover,
+.spacer.resizable.dragging {
+	background-color: var(--color-accent, #4a9eff);
+}
+
+
+.spacer-handle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+}
+
+.spacer-dots {
+	display: block;
+	border-radius: 2px;
+	background-color: rgba(255, 255, 255, 0.35);
+	transition: background-color 0.15s ease;
+}
+
+.spacer.resizable:hover .spacer-dots,
+.spacer.resizable.dragging .spacer-dots {
+	background-color: rgba(255, 255, 255, 0.9);
+}
+
+.spacer.resizable.horizontal .spacer-dots {
+	width: 32px;
+	height: 2px;
+	box-shadow:
+		0 -3px 0 rgba(255, 255, 255, 0.35),
+		0 3px 0 rgba(255, 255, 255, 0.35);
+}
+
+.spacer.resizable.horizontal:hover .spacer-dots,
+.spacer.resizable.horizontal.dragging .spacer-dots {
+	box-shadow:
+		0 -3px 0 rgba(255, 255, 255, 0.9),
+		0 3px 0 rgba(255, 255, 255, 0.9);
+}
+
+.spacer.resizable.vertical .spacer-dots {
+	width: 2px;
+	height: 32px;
+	box-shadow:
+		-3px 0 0 rgba(255, 255, 255, 0.35),
+		3px 0 0 rgba(255, 255, 255, 0.35);
+}
+
+.spacer.resizable.vertical:hover .spacer-dots,
+.spacer.resizable.vertical.dragging .spacer-dots {
+	box-shadow:
+		-3px 0 0 rgba(255, 255, 255, 0.9),
+		3px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.spacer.dragging {
+	user-select: none;
 }

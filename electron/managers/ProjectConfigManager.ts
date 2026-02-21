@@ -7,6 +7,7 @@ import FolderNode from '../../global/types/folderNode';
 import { BrowserWindow } from 'electron';
 import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
+import { spawn } from 'child_process';
 
 export class ProjectConfigManager {
 	private readonly configPath: string;
@@ -14,6 +15,7 @@ export class ProjectConfigManager {
 	private readonly fileSystemWatcher: FileSystemWatcher;
 	private readonly fileSystemService: FileSystemService;
 	private currentWatchedFolder: { pd: ProjectData; folder: FolderNode } | null = null;
+	private engineProcess: ReturnType<typeof spawn> | null = null;
 
 	constructor() {
 		this.configPath = this.getConfigPath();
@@ -56,6 +58,42 @@ export class ProjectConfigManager {
 		}
 	}
 
+	private normalizePath(p: string): string {
+		return p.replace(/\\/g, '/');
+	}
+
+	private isEssentialFolder(relativeFolderPath: string): boolean {
+		const normalized = this.normalizePath(relativeFolderPath);
+		const essentialPaths = this.fileSystemService
+			.getRequiredProjectPaths()
+			.map((p) => this.normalizePath(p));
+
+		return essentialPaths.some(
+			(essential) => normalized === essential || essential.startsWith(normalized + '/')
+		);
+	}
+
+	public deleteFolder(
+		folderNode: FolderNode,
+		pd: ProjectData
+	): { success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' } {
+		try {
+			if (this.isEssentialFolder(folderNode.path)) {
+				return {
+					success: false,
+					error: `Cannot delete essential project folder: "${folderNode.name}"`,
+					errorCode: 'ESSENTIAL_FOLDER',
+				};
+			}
+
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const fullFolderPath = path.join(projectPath, folderNode.path);
+			return this.fileSystemService.deleteFolder(fullFolderPath);
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public saveFile(
 		fileRelativePath: string,
 		content: string,
@@ -79,6 +117,7 @@ export class ProjectConfigManager {
 			return { success: false, error: String(error) };
 		}
 	}
+
 	public saveFileCompletePath(
 		name: string,
 		completePath: string,
@@ -104,8 +143,8 @@ export class ProjectConfigManager {
 		}
 	}
 
-	public pathUnion(path1:string, path2: string): string {
-		return path.join(path1, path2)
+	public pathUnion(path1: string, path2: string): string {
+		return path.join(path1, path2);
 	}
 
 	public getFile(
@@ -183,6 +222,20 @@ export class ProjectConfigManager {
 		}
 	}
 
+	public createFolder(
+		folderNode: FolderNode,
+		newFolderName: string,
+		pd: ProjectData
+	): { success: boolean; error?: string } {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const newFolderPath = path.join(projectPath, folderNode.path, newFolderName);
+			return this.fileSystemService.createFolder(newFolderPath);
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public setMainWindow(window: BrowserWindow): void {
 		this.fileSystemWatcher.setMainWindow(window);
 	}
@@ -192,6 +245,20 @@ export class ProjectConfigManager {
 			return path.join(process.cwd(), 'src', 'assets', 'projects.json');
 		}
 		return path.join(process.resourcesPath, 'assets', 'projects.json');
+	}
+
+	public getEngineSourcePath(): string {
+		if (process.env.NODE_ENV === 'development') {
+			return path.join(process.cwd(), 'engine', 'exe');
+		}
+		return path.join(process.resourcesPath, 'engine', 'exe');
+	}
+
+	public getShaderSourcePath(): string {
+		if (process.env.NODE_ENV === 'development') {
+			return path.join(process.cwd(), 'engine', 'shaders');
+		}
+		return path.join(process.resourcesPath, 'engine', 'shaders');
 	}
 
 	public validateProjectPath(pd: ProjectData): boolean {
@@ -310,6 +377,15 @@ export class ProjectConfigManager {
 			const requiredPaths = this.fileSystemService.getRequiredProjectPaths();
 			this.fileSystemService.createDirectories(projectPath, requiredPaths);
 
+			const enginePath = this.getEngineSourcePath();
+			this.fileSystemService.copyDirectoryContent(enginePath, projectPath);
+
+			const shadersPath = this.getShaderSourcePath();
+			this.fileSystemService.copyDirectoryContent(
+				shadersPath,
+				path.join(projectPath, path.join('resources', 'shaders'))
+			);
+
 			this.addProjectData(pd);
 			return true;
 		} catch (error) {
@@ -380,5 +456,105 @@ export class ProjectConfigManager {
 	public stopWatchingFiles(): void {
 		this.fileSystemWatcher.stopWatcher('files-in-folder');
 		this.currentWatchedFolder = null;
+	}
+
+	public toRelativePath(absolutePath: string): { success: boolean; path?: string; error?: string } {
+		try {
+			const normalized = absolutePath.replace(/\\/g, '/');
+			const marker = 'resources/';
+			const idx = normalized.indexOf(marker);
+			if (idx === -1) {
+				return { success: false, error: 'Path does not contain resources/' };
+			}
+			return { success: true, path: normalized.slice(idx) };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public runEngine(pd: ProjectData, mapPath?: string): { success: boolean; error?: string } {
+		try {
+			if (this.engineProcess && !this.engineProcess.killed) {
+				return { success: false, error: 'Engine is already running' };
+			}
+
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+
+			if (!this.fileSystemService.exists(projectPath)) {
+				return { success: false, error: 'Engine directory does not exist' };
+			}
+
+			const platform = process.platform;
+			let executableName: string;
+
+			switch (platform) {
+				case 'darwin':
+					executableName = 'MonsterMakerEngineMac';
+					break;
+				case 'linux':
+					executableName = 'MonsterMakerEngineLinux';
+					break;
+				default:
+					return { success: false, error: `Unsupported platform: ${platform}` };
+			}
+
+			const executablePath = path.join(projectPath, executableName);
+
+			if (!this.fileSystemService.exists(executablePath)) {
+				return { success: false, error: `Executable not found: ${executablePath}` };
+			}
+
+			const args: string[] = [];
+			if (mapPath) {
+				args.push(mapPath);
+			}
+
+			const child = spawn(executablePath, args, {
+				cwd: projectPath,
+				detached: false,
+				stdio: 'ignore',
+			});
+
+			this.engineProcess = child;
+
+			child.on('exit', (code, signal) => {
+				console.log(`Engine exited with code ${code} and signal ${signal}`);
+				this.engineProcess = null;
+				this.fileSystemWatcher.notifyMainWindow('engine-exited', {});
+			});
+
+			child.on('error', (error) => {
+				console.error(`Engine process error: ${error}`);
+				this.engineProcess = null;
+				this.fileSystemWatcher.notifyMainWindow('engine-exited', {});
+			});
+
+			console.log(`Engine started: ${executablePath}`, mapPath ? `with map: ${mapPath}` : '');
+			return { success: true };
+		} catch (error) {
+			console.error(`Error running engine: ${error}`);
+			this.engineProcess = null;
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public stopEngine(): { success: boolean; error?: string } {
+		try {
+			if (!this.engineProcess || this.engineProcess.killed) {
+				return { success: false, error: 'No engine process is running' };
+			}
+			const killed = this.engineProcess.kill();
+
+			if (killed) {
+				console.log('Engine process killed successfully');
+				this.engineProcess = null;
+				return { success: true };
+			} else {
+				return { success: false, error: 'Failed to kill engine process' };
+			}
+		} catch (error) {
+			console.error(`Error stopping engine: ${error}`);
+			return { success: false, error: String(error) };
+		}
 	}
 }

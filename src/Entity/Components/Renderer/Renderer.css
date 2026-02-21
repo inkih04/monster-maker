@@ -1,0 +1,67 @@
+.Componet-input-row {
+	display: grid;
+	grid-template-columns: auto 90px;
+	column-gap: 10px;
+	align-items: center;
+	overflow: hidden;
+	margin-bottom: 5px;
+}
+
+.Componet-input-row:last-child {
+	margin-bottom: 0;
+}
+
+.Componet-input-row span {
+	justify-self: start;
+}
+
+.render-input {
+	width: 100%;
+	height: 30px;
+	padding: 5px 10px;
+	border: none;
+	border-radius: var(--radius);
+	background-color: var(--color-3);
+	color: var(--color-9);
+	font-size: 14px;
+	text-align: left;
+	outline: none;
+	transition: background-color 0.2s;
+}
+
+.Componet-input-row-path {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+
+.render-input:hover {
+	background-color: var(--color-4);
+}
+
+
+
+.render-input[type='number'] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+}
+
+.render-input::-webkit-inner-spin-button,
+.render-input::-webkit-outer-spin-button {
+	opacity: 0;
+	background: transparent;
+	transition: opacity 0.15s ease;
+}
+
+.render-input:hover::-webkit-inner-spin-button,
+.render-input:hover::-webkit-outer-spin-button,
+.render-input:focus::-webkit-inner-spin-button,
+.render-input:focus::-webkit-outer-spin-button {
+	opacity: 1;
+}
+
+.render-input:focus::-webkit-inner-spin-button,
+.render-input:focus::-webkit-outer-spin-button {
+	opacity: 0;
+}

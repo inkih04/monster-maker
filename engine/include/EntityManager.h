@@ -13,6 +13,7 @@
 #include "enums/EntityLayer.h"
 #include "enums/EntityTag.h"
 #include "Entity.h"
+#include "service/BordersMapService.h"
 #include "service/InteractionService.h"
 
 class EntityManager {
@@ -23,8 +24,10 @@ class EntityManager {
         std::vector<Entity*> m_rawCollisionEntities;
         void initCollisionCache();
         bool isCacheStarted;
+        bool isBordersMapStarted;
         std::unique_ptr<CollisionService> m_collisionService;
         std::unique_ptr<InteractionService> m_interactionService;
+        std::unique_ptr<BordersMapService> m_bordersMapService;
 
     public:
         EntityManager();
@@ -41,7 +44,7 @@ class EntityManager {
 
         void setCollisionEntity(Entity* entity) {m_rawCollisionEntities.push_back(entity);};
         std::vector<Entity*> getEntitiesByComponent(ComponentsType type) const;
-
+        BordersMapService* getBordersMapService() const { return m_bordersMapService.get(); }
 
 };
 

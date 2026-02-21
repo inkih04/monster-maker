@@ -6,8 +6,8 @@ import { getSelectionInfo, getFileNameFromPath } from './TileSetUtils';
 import './TileSet.css';
 import { useProjectStore } from '../Project/ProjectConfigGState';
 import TileSize from '../common/components/tileSize/TileSize';
-import { useToolsStore } from '../ToolBar/ToolBarGState'; 
-import { useEffect } from 'react'; 
+import { useToolsStore } from '../ToolBar/ToolBarGState';
+import { useEffect } from 'react';
 
 function TileSet() {
 	const zoom = useTileSetStore((state) => state.zoom);
@@ -17,7 +17,7 @@ function TileSet() {
 	const currentTileSetPath = useTileSetStore((state) => state.currentTileSetPath);
 	const tilesets = useTileSetStore((state) => state.tilesets);
 	const currentProject = useProjectStore((state) => state.currentProject);
-	
+
 	const activeTool = useToolsStore((state) => state.activeTool);
 	const isBrushActive = activeTool === 'brush';
 
@@ -28,7 +28,7 @@ function TileSet() {
 
 	const tilesetImages = useTileSetImages(tilesets);
 	const currentImage = currentTileSetPath ? tilesetImages[currentTileSetPath] : null;
-	const dimensions = currentImage 
+	const dimensions = currentImage
 		? { width: currentImage.width, height: currentImage.height }
 		: { width: 0, height: 0 };
 
@@ -54,13 +54,7 @@ function TileSet() {
 
 			if (currentImage.width > 0) {
 				ctx.imageSmoothingEnabled = false;
-				ctx.drawImage(
-					currentImage,
-					0,
-					0,
-					currentImage.width * zoom,
-					currentImage.height * zoom
-				);
+				ctx.drawImage(currentImage, 0, 0, currentImage.width * zoom, currentImage.height * zoom);
 			}
 		},
 	});
@@ -77,46 +71,46 @@ function TileSet() {
 	const conditionalHandleMouseUp = isBrushActive ? handleMouseUp : () => {};
 	const conditionalHandleMouseLeave = isBrushActive ? handleMouseLeave : () => {};
 
-	const handleZoomIn = () => setZoom(Math.min(zoom + 0.5, 5));
-	const handleZoomOut = () => setZoom(Math.max(zoom - 0.5, 0.5));
+	const handleZoomIn = () => setZoom(Math.min(zoom + 0.25, 5));
+	const handleZoomOut = () => setZoom(Math.max(zoom - 0.25, 0.25));
 
 	const selectionInfo = getSelectionInfo(selectedArea);
 
 	return (
 		<>
-		<div className="tilemap-wrapper">
-			<div className="tilemap-viewport" ref={containerRef}>
-				<canvas
-					ref={canvasRef}
-					className="tilemap-canvas"
-					onMouseDown={conditionalHandleMouseDown}
-					onMouseMove={conditionalHandleMouseMove}
-					onMouseUp={conditionalHandleMouseUp}
-					onMouseLeave={conditionalHandleMouseLeave}
-				/>
-			</div>
-			<div className="tilemap-controls">
-				<div className="tilemap-controls-zoom">
-					<button onClick={handleZoomIn} className="zoom-btn">
-						+
-					</button>
-					<span className="zoom-level">{Math.round(zoom * 100)}%</span>
-					<button onClick={handleZoomOut} className="zoom-btn">
-						-
-					</button>
+			<div className="tileset-wrapper">
+				<div className="tileset-viewport" ref={containerRef}>
+					<canvas
+						ref={canvasRef}
+						className="tilemap-canvas"
+						onMouseDown={conditionalHandleMouseDown}
+						onMouseMove={conditionalHandleMouseMove}
+						onMouseUp={conditionalHandleMouseUp}
+						onMouseLeave={conditionalHandleMouseLeave}
+					/>
 				</div>
-				<div className="tilemap-controls-name">
-					<span>{getFileNameFromPath(currentTileMap?.pathImg)}</span>
-					{selectionInfo && (
-						<span className="tile-coords">
-							({selectionInfo.minX}, {selectionInfo.minY}) - {selectionInfo.width}×
-							{selectionInfo.height} tiles
-						</span>
-					)}
+				<div className="tilemap-controls">
+					<div className="tilemap-controls-zoom">
+						<button onClick={handleZoomIn} className="zoom-btn">
+							+
+						</button>
+						<span className="zoom-level">{Math.round(zoom * 100)}%</span>
+						<button onClick={handleZoomOut} className="zoom-btn">
+							-
+						</button>
+					</div>
+					<div className="tilemap-controls-name">
+						<span>{getFileNameFromPath(currentTileMap?.pathImg)}</span>
+						{selectionInfo && (
+							<span className="tile-coords">
+								({selectionInfo.minX}, {selectionInfo.minY}) - {selectionInfo.width}×
+								{selectionInfo.height} tiles
+							</span>
+						)}
+					</div>
 				</div>
 			</div>
-		</div>
-		<TileSize/>
+			<TileSize />
 		</>
 	);
 }

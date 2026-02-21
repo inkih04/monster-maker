@@ -13,6 +13,7 @@
 class ExplorationState : public State{
     public:
         void update(int deltaTime) override;
+        void moveDebugCamera();
         void render() override;
         ExplorationState();
         ~ExplorationState() override = default;
@@ -23,7 +24,7 @@ class ExplorationState : public State{
 
 
     private:
-
+        bool debugMode = false;
         void renderGround() const;
         void renderDecoration() const;
         void renderEntities() const;

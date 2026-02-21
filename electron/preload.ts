@@ -6,14 +6,15 @@ contextBridge.exposeInMainWorld('api', {
 	getProjects: () => ipcRenderer.invoke('config:getAll'),
 	addProject: (pd: ProjectData) => ipcRenderer.invoke('config:add', pd),
 	removeProject: (pd: ProjectData) => ipcRenderer.invoke('config:remove', pd),
-	selectFolder: () => ipcRenderer.invoke('config:selectFolder'),
+	selectFolder: (defaultPath?: string) => ipcRenderer.invoke('config:selectFolder', defaultPath),
 	openProject: (pd: ProjectData) => ipcRenderer.invoke('config:open', pd),
 	validateProjectPath: (pd: ProjectData) => ipcRenderer.invoke('validate-project-path', pd),
 	getDirectoryStructure: (pd: ProjectData) =>
 		ipcRenderer.invoke('config:getDirectoryStructure', pd),
 
-	pathUnion: (path1: string, path2: string) => 
-        ipcRenderer.invoke('config:pathUnion', path1, path2),
+	pathUnion: (path1: string, path2: string) => ipcRenderer.invoke('config:pathUnion', path1, path2),
+	toRelativePath: (absolutePath: string) =>
+		ipcRenderer.invoke('config:toRelativePath', absolutePath),
 
 	startWatchingDirectory: (pd: ProjectData) => ipcRenderer.invoke('config:startWatching', pd),
 	stopWatchingDirectory: () => ipcRenderer.invoke('config:stopWatching'),
@@ -21,6 +22,7 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('directory-structure-changed', (_event, structure) => callback(structure));
 		return () => ipcRenderer.removeAllListeners('directory-structure-changed');
 	},
+	selectFile: (defaultPath?: string) => ipcRenderer.invoke('config:selectFile', defaultPath),
 	onLanguageChange: (callback: (lng: string) => void) => {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');
@@ -92,4 +94,48 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('save-file', callback);
 		return () => ipcRenderer.removeAllListeners('save-file');
 	},
+
+	runEngine: (pd: ProjectData, mapPath?: string) =>
+		ipcRenderer.invoke('config:runEngine', pd, mapPath),
+
+	stopEngine: () => ipcRenderer.invoke('config:stopEngine'),
+
+	onEngineExit: (callback: () => void) => {
+		ipcRenderer.on('engine-exited', callback);
+		return () => ipcRenderer.removeAllListeners('engine-exited');
+	},
+	onToggleCollisions: (callback: () => void) => {
+		ipcRenderer.on('toggle-collisions', callback);
+		return () => ipcRenderer.removeAllListeners('toggle-collisions');
+	},
+	onResetLayout: (callback: () => void) => {
+		ipcRenderer.on('reset-layout', callback);
+		return () => ipcRenderer.removeAllListeners('reset-layout');
+	},
+	showFolderContextMenu: (folderData: { name: string; path: string }) =>
+		ipcRenderer.send('show-folder-context-menu', folderData),
+
+	onFolderAction: (
+		callback: (action: string, folderData: { name: string; path: string }) => void
+	) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			action: string,
+			folderData: { name: string; path: string }
+		) => callback(action, folderData);
+		ipcRenderer.on('folder-action', subscription);
+		return () => ipcRenderer.removeListener('folder-action', subscription);
+	},
+	onFolderMenuClosed: (callback: (folderData: { name: string; path: string }) => void) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			folderData: { name: string; path: string }
+		) => callback(folderData);
+		ipcRenderer.on('folder-menu-closed', subscription);
+		return () => ipcRenderer.removeListener('folder-menu-closed', subscription);
+	},
+	createFolder: (folderNode: FolderNode, newFolderName: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:createFolder', folderNode, newFolderName, pd),
+	deleteFolder: (folderNode: FolderNode, pd: ProjectData) =>
+		ipcRenderer.invoke('config:deleteFolder', folderNode, pd),
 });

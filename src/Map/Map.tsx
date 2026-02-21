@@ -10,7 +10,14 @@ import { useProjectStore } from '../Project/ProjectConfigGState';
 import { useMapCapture } from './customHooks/useMapCapture';
 import { useActiveTool } from '../ToolBar/customHooks/useActiveTool';
 import { useToolsStore } from '../ToolBar/ToolBarGState';
-import { drawBrushPreview, drawEraserPreview, drawSelectionOverlay } from './mapUtils';
+import {
+	drawBrushPreview,
+	drawCollisionDebug,
+	drawEraserPreview,
+	drawSelectionOverlay,
+	drawSelectionPreview,
+} from './mapUtils';
+import { MapLoadingOverlay } from './MapLoadingOverlay';
 
 function Map() {
 	const zoom = useMapStore((state) => state.zoom);
@@ -26,6 +33,19 @@ function Map() {
 	const createMap = useMapStore((state) => state.createMap);
 	const activeTool = useToolsStore((state) => state.activeTool);
 	const selectedTilePosition = useMapStore((state) => state.selectedTilePosition);
+	const toggleShowCollisions = useMapStore((state) => state.toggleShowCollisions);
+	const showCollisions = useMapStore((state) => state.showCollisions);
+
+	useEffect(() => {
+		const removeListener = window.api.onToggleCollisions(() => {
+			toggleShowCollisions();
+			console.log('Toggle collisions activado!');
+		});
+
+		return () => {
+			removeListener();
+		};
+	}, [toggleShowCollisions]);
 
 	const currentTileSet = tileSets[currentTileSetPath || ''];
 
@@ -54,6 +74,7 @@ function Map() {
 
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
 		const layerOrder: Layer[] = ['ground', 'decoration', 'entities', 'shadows', 'foreground'];
+		const mapState = useMapStore.getState();
 
 		layerOrder.forEach((layer) => {
 			const tilesInLayer = paintedTiles.filter((tile) => tile.layer === layer);
@@ -64,24 +85,37 @@ function Map() {
 
 				if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
 
-				const tileTileSize = tileTileset.tileSizeX;
-				const scaledTileSize = tileTileSize * zoom;
+				const entityData = mapState.map?.entities[tile.entityId];
+				const renderComponent = entityData?.components.RENDER;
+
+				if (!renderComponent) return;
+
+				const sourceX = renderComponent.x;
+				const sourceY = renderComponent.y;
+				const sourceWidth = renderComponent.w;
+				const sourceHeight = renderComponent.h;
+
+				const destWidth = renderComponent.width * zoom;
+				const destHeight = renderComponent.height * zoom;
+
+				const posX = Math.floor(tile.x) * tileSize * zoom;
+				const posY = Math.floor(tile.y) * tileSize * zoom;
 
 				ctx.drawImage(
 					tilesetImage,
-					tile.tilesetX * tileTileSize,
-					tile.tilesetY * tileTileSize,
-					tileTileSize,
-					tileTileSize,
-					tile.x * scaledTileSize,
-					tile.y * scaledTileSize,
-					scaledTileSize,
-					scaledTileSize
+					sourceX,
+					sourceY,
+					sourceWidth,
+					sourceHeight,
+					posX,
+					posY,
+					destWidth,
+					destHeight
 				);
 			});
 		});
 
-		if (activeTool === 'brush' && previewPosition) {
+		if (activeTool === 'brush' && previewPosition && !isCapturingRef.current) {
 			drawBrushPreview({
 				ctx,
 				previewPosition,
@@ -92,7 +126,7 @@ function Map() {
 				selectedArea,
 				zoom,
 			});
-		} else if (activeTool === 'eraser' && previewPosition) {
+		} else if (activeTool === 'eraser' && previewPosition && !isCapturingRef.current) {
 			drawEraserPreview({
 				ctx,
 				previewPosition,
@@ -101,13 +135,39 @@ function Map() {
 				activeLayer,
 				tileSets,
 				tilesetImages,
+				tileSize,
 				zoom,
+				entities: mapState.map?.entities || {},
 			});
 		} else if (activeTool === 'select') {
-			drawSelectionOverlay({
+			if (previewPosition && !isCapturingRef.current) {
+				drawSelectionPreview({
+					ctx,
+					previewPosition,
+					isActive,
+					paintedTiles,
+					activeLayer,
+					tileSets,
+					tilesetImages,
+					tileSize,
+					zoom,
+					entities: mapState.map?.entities || {},
+				});
+			}
+			if (!isCapturingRef.current) {
+				drawSelectionOverlay({
+					ctx,
+					selectedTilePosition,
+					tileSize,
+					zoom,
+				});
+			}
+		}
+
+		if (showCollisions && !isCapturingRef.current) {
+			drawCollisionDebug({
 				ctx,
-				selectedTilePosition,
-				tileSize,
+				entities: mapState.map?.entities || {},
 				zoom,
 			});
 		}
@@ -120,12 +180,13 @@ function Map() {
 		drawBackground,
 		minWidth,
 		minHeight,
-		redrawTrigger: [paintedTiles, tilesetImages, previewPosition],
+		redrawTrigger: [paintedTiles, tilesetImages, previewPosition, showCollisions],
 	});
 
-	useMapCapture({
+	const { isCapturingRef } = useMapCapture({
 		canvasRef,
 		drawBackground,
+		zoom,
 	});
 
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
@@ -139,11 +200,11 @@ function Map() {
 	});
 
 	const handleZoomIn = () => {
-		setZoom(Math.min(zoom + 0.5, 5));
+		setZoom(Math.min(zoom + 0.25, 5));
 	};
 
 	const handleZoomOut = () => {
-		setZoom(Math.max(zoom - 0.5, 0.5));
+		setZoom(Math.max(zoom - 0.25, 0.25));
 	};
 
 	useEffect(() => {
@@ -153,72 +214,75 @@ function Map() {
 	}, [currentProject, createMap]);
 
 	return (
-		<div className="tilemap-wrapper">
-			<div className="tilemap-viewport" ref={containerRef}>
-				<canvas
-					ref={canvasRef}
-					className="tilemap-canvas"
-					onMouseDown={handleMouseDown}
-					onMouseMove={handleMouseMove}
-					onMouseUp={handleMouseUp}
-					onMouseLeave={handleMouseLeave}
-				/>
-			</div>
-			<div className="map-controls">
-				<div className="layers-container">
-					<button
-						className={`layer-button ${activeLayer === 'ground' ? 'layer-active' : ''}`}
-						onClick={() => {
-							setActiveLayer('ground');
-						}}
-					>
-						Ground
-					</button>
-					<button
-						className={`layer-button ${activeLayer === 'decoration' ? 'layer-active' : ''}`}
-						onClick={() => {
-							setActiveLayer('decoration');
-						}}
-					>
-						Decoration
-					</button>
-					<button
-						className={`layer-button ${activeLayer === 'entities' ? 'layer-active' : ''}`}
-						onClick={() => {
-							setActiveLayer('entities');
-						}}
-					>
-						Entities
-					</button>
-					<button
-						className={`layer-button ${activeLayer === 'shadows' ? 'layer-active' : ''}`}
-						onClick={() => {
-							setActiveLayer('shadows');
-						}}
-					>
-						Shadows
-					</button>
-					<button
-						className={`layer-button ${activeLayer === 'foreground' ? 'layer-active' : ''}`}
-						onClick={() => {
-							setActiveLayer('foreground');
-						}}
-					>
-						Foreground
-					</button>
+		<>
+			<div className="tilemap-wrapper">
+				<div className="tilemap-viewport" ref={containerRef}>
+					<canvas
+						ref={canvasRef}
+						className="tilemap-canvas"
+						onMouseDown={handleMouseDown}
+						onMouseMove={handleMouseMove}
+						onMouseUp={handleMouseUp}
+						onMouseLeave={handleMouseLeave}
+					/>
 				</div>
-				<div className="map-controls-zoom">
-					<button onClick={handleZoomIn} className="zoom-btn">
-						+
-					</button>
+				<div className="map-controls">
+					<div className="layers-container">
+						<button
+							className={`layer-button ${activeLayer === 'ground' ? 'layer-active' : ''}`}
+							onClick={() => {
+								setActiveLayer('ground');
+							}}
+						>
+							Ground
+						</button>
+						<button
+							className={`layer-button ${activeLayer === 'decoration' ? 'layer-active' : ''}`}
+							onClick={() => {
+								setActiveLayer('decoration');
+							}}
+						>
+							Decoration
+						</button>
+						<button
+							className={`layer-button ${activeLayer === 'entities' ? 'layer-active' : ''}`}
+							onClick={() => {
+								setActiveLayer('entities');
+							}}
+						>
+							Entities
+						</button>
+						<button
+							className={`layer-button ${activeLayer === 'shadows' ? 'layer-active' : ''}`}
+							onClick={() => {
+								setActiveLayer('shadows');
+							}}
+						>
+							Shadows
+						</button>
+						<button
+							className={`layer-button ${activeLayer === 'foreground' ? 'layer-active' : ''}`}
+							onClick={() => {
+								setActiveLayer('foreground');
+							}}
+						>
+							Foreground
+						</button>
+					</div>
+					<div className="map-controls-zoom">
+						<button onClick={handleZoomIn} className="zoom-btn">
+							+
+						</button>
 
-					<span className="zoom-level">{Math.round(zoom * 100)}%</span>
-					<button onClick={handleZoomOut} className="zoom-btn">
-						-
-					</button>
+						<span className="zoom-level">{Math.round(zoom * 100)}%</span>
+						<button onClick={handleZoomOut} className="zoom-btn">
+							-
+						</button>
+					</div>
 				</div>
 			</div>
-		</div>
+			<MapLoadingOverlay />
+		</>
 	);
 }
 export default Map;

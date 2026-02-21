@@ -11,7 +11,15 @@ declare global {
 			getProjects: () => Promise<ProjectData[]>;
 			addProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			removeProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
-			selectFolder: () => Promise<{ success: boolean; path?: string; error?: string }>;
+			selectFolder: (
+				defaultPath?: string
+			) => Promise<{ success: boolean; path?: string; error?: string }>;
+			selectFile: (
+				defaultPath?: string
+			) => Promise<{ success: boolean; path?: string; error?: string }>;
+			toRelativePath: (
+				absolutePath: string
+			) => Promise<{ success: boolean; path?: string; error?: string }>;
 			openProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			validateProjectPath: (pd: ProjectData) => Promise<boolean>;
 			getDirectoryStructure: (
@@ -28,7 +36,7 @@ declare global {
 			exportMap: (mapData: string) => Promise<{ success: boolean; path?: string; error?: string }>;
 			onExportMapRequest: (callback: () => void) => () => void;
 			onExportMapPNGRequest: (callback: () => void) => () => void;
-			saveImage: (base64Data: string) => Promise<{success: boolean; path?: string;}>;
+			saveImage: (base64Data: string) => Promise<{ success: boolean; path?: string }>;
 			startWatchingFiles: (
 				pd: ProjectData,
 				folder: FolderNode
@@ -71,6 +79,30 @@ declare global {
 			onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => () => void;
 			onAddNewFile: (callback: () => void) => () => void;
 			onSaveFile: (callback: () => void) => () => void;
+			runEngine: (
+				pd: ProjectData,
+				mapPath?: string
+			) => Promise<{ success: boolean; error?: string }>;
+			stopEngine: () => Promise<{ success: boolean; error?: string }>;
+			onEngineExit: (callback: () => void) => () => void;
+			onToggleCollisions: (callback: () => void) => () => void;
+			onResetLayout: (callback: () => void) => () => void;
+			showFolderContextMenu: (folderData: { name: string; path: string }) => void;
+			onFolderAction: (
+				callback: (action: string, folderData: { name: string; path: string }) => void
+			) => () => void;
+			onFolderMenuClosed: (
+				callback: (folderData: { name: string; path: string }) => void
+			) => () => void;
+			createFolder: (
+				folderNode: FolderNode,
+				newFolderName: string,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string }>;
+			deleteFolder: (
+				folderNode: FolderNode,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' }>;
 		};
 	}
 }

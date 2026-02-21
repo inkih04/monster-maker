@@ -57,9 +57,10 @@ export class FileSystemService {
 		return [
 			'resources',
 			'resources/fonts',
+			'resources/shaders',
 			'resources/maps',
 			'resources/maps/data',
-			'resources/maps/tileset',
+			'resources/maps/tilesets',
 			'resources/sprites',
 			'resources/scripts',
 			'resources/music',
@@ -105,6 +106,37 @@ export class FileSystemService {
 		}
 	}
 
+	public deleteFolder(folderPath: string): { success: boolean; error?: string } {
+		try {
+			if (!this.exists(folderPath)) {
+				return { success: false, error: 'Folder does not exist' };
+			}
+
+			if (!this.isDirectory(folderPath)) {
+				return { success: false, error: 'Path is not a directory' };
+			}
+
+			fs.rmSync(folderPath, { recursive: true, force: true });
+			return { success: true };
+		} catch (error) {
+			console.error(`Error deleting folder ${folderPath}:`, error);
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public createFolder(folderPath: string): { success: boolean; error?: string } {
+		try {
+			if (this.exists(folderPath)) {
+				return { success: false, error: 'A folder with that name already exists' };
+			}
+			fs.mkdirSync(folderPath, { recursive: true });
+			return { success: true };
+		} catch (error) {
+			console.error(`Error creating folder ${folderPath}:`, error);
+			return { success: false, error: String(error) };
+		}
+	}
+
 	public createDirectories(basePath: string, directories: string[]): void {
 		directories.forEach((dir) => {
 			const fullPath = path.join(basePath, dir);
@@ -123,6 +155,10 @@ export class FileSystemService {
 
 			for (const item of items) {
 				const fullPath = path.join(dirPath, item);
+
+				if (item === 'exe' && dirPath === basePath) {
+					continue;
+				}
 
 				if (this.isDirectory(fullPath)) {
 					const relativePath = path.relative(base, fullPath);
@@ -182,12 +218,52 @@ export class FileSystemService {
 		}
 	}
 
+	public copyFile(srcPath: string, destPath: string): boolean {
+		try {
+			fs.copyFileSync(srcPath, destPath);
+			return true;
+		} catch (error) {
+			console.error(`Error copying file from ${srcPath} to ${destPath}:`, error);
+			return false;
+		}
+	}
+
 	public writeJSON<T>(filePath: string, data: T): boolean {
 		try {
 			fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
 			return true;
 		} catch (error) {
 			console.error(`Error writing JSON file ${filePath}:`, error);
+			return false;
+		}
+	}
+
+	public copyDirectoryContent(srcDir: string, destDir: string): boolean {
+		try {
+			if (!this.exists(srcDir)) {
+				console.error(`Source directory does not exist: ${srcDir}`);
+				return false;
+			}
+
+			if (!this.exists(destDir)) {
+				fs.mkdirSync(destDir, { recursive: true });
+			}
+
+			const items = fs.readdirSync(srcDir);
+
+			for (const item of items) {
+				const srcPath = path.join(srcDir, item);
+				const destPath = path.join(destDir, item);
+				const stats = fs.statSync(srcPath);
+
+				if (stats.isFile()) {
+					fs.copyFileSync(srcPath, destPath);
+					fs.chmodSync(destPath, 0o755);
+				}
+			}
+			return true;
+		} catch (error) {
+			console.error(`Error copying directory content:`, error);
 			return false;
 		}
 	}

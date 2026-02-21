@@ -8,9 +8,10 @@
 #include "../../include/service/CollisionService.h"
 
 
-EntityManager::EntityManager(): isCacheStarted(false) {
+EntityManager::EntityManager(): isCacheStarted(false), isBordersMapStarted(false) {
     m_collisionService = std::make_unique<CollisionService>();
     m_interactionService = std::make_unique<InteractionService>(m_collisionService.get());
+    m_bordersMapService = std::make_unique<BordersMapService>();
 }
 
 
@@ -67,6 +68,10 @@ void EntityManager::updateEntities(int deltaTime) {
     if (!isCacheStarted) {
         initCollisionCache();
         isCacheStarted = true;
+    }
+    if (!isBordersMapStarted) {
+        m_bordersMapService->initBordersMapService(this->getEntitiesByComponent(ComponentsType::POSITION));
+        isBordersMapStarted = true;
     }
 
     for (const auto& entity : m_entities) {

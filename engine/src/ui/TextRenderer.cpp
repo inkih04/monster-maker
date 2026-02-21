@@ -11,7 +11,7 @@
 
 TextRenderer::TextRenderer(const std::string& fontPath, unsigned int fontSize)
     : m_textShader(nullptr) {
-    m_textShader = ResourceManager::loadShader("../src/graphics/Shader/text.vert", "../src/graphics/Shader/text.frag");
+    m_textShader = ResourceManager::loadShader("resources/shaders/text.vert", "resources/shaders/text.frag");
     m_textShader->use();
     m_textShader->setMat4("projection", glm::ortho(0.0f, static_cast<float>(GameConfig::Width), 0.0f, static_cast<float>(GameConfig::Height)));
 
