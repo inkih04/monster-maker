@@ -115,7 +115,7 @@ function Map() {
 			});
 		});
 
-		if (activeTool === 'brush' && previewPosition) {
+		if (activeTool === 'brush' && previewPosition && !isCapturingRef.current) {
 			drawBrushPreview({
 				ctx,
 				previewPosition,
@@ -126,7 +126,7 @@ function Map() {
 				selectedArea,
 				zoom,
 			});
-		} else if (activeTool === 'eraser' && previewPosition) {
+		} else if (activeTool === 'eraser' && previewPosition && !isCapturingRef.current) {
 			drawEraserPreview({
 				ctx,
 				previewPosition,
@@ -140,7 +140,7 @@ function Map() {
 				entities: mapState.map?.entities || {},
 			});
 		} else if (activeTool === 'select') {
-			if (previewPosition) {
+			if (previewPosition && !isCapturingRef.current) {
 				drawSelectionPreview({
 					ctx,
 					previewPosition,
@@ -154,15 +154,17 @@ function Map() {
 					entities: mapState.map?.entities || {},
 				});
 			}
-			drawSelectionOverlay({
-				ctx,
-				selectedTilePosition,
-				tileSize,
-				zoom,
-			});
+			if (!isCapturingRef.current) {
+				drawSelectionOverlay({
+					ctx,
+					selectedTilePosition,
+					tileSize,
+					zoom,
+				});
+			}
 		}
 
-		if (showCollisions) {
+		if (showCollisions && !isCapturingRef.current) {
 			drawCollisionDebug({
 				ctx,
 				entities: mapState.map?.entities || {},
@@ -181,9 +183,10 @@ function Map() {
 		redrawTrigger: [paintedTiles, tilesetImages, previewPosition, showCollisions],
 	});
 
-	useMapCapture({
+	const { isCapturingRef } = useMapCapture({
 		canvasRef,
 		drawBackground,
+		zoom,
 	});
 
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
@@ -197,11 +200,11 @@ function Map() {
 	});
 
 	const handleZoomIn = () => {
-		setZoom(Math.min(zoom + 0.5, 5));
+		setZoom(Math.min(zoom + 0.25, 5));
 	};
 
 	const handleZoomOut = () => {
-		setZoom(Math.max(zoom - 0.5, 0.5));
+		setZoom(Math.max(zoom - 0.25, 0.25));
 	};
 
 	useEffect(() => {

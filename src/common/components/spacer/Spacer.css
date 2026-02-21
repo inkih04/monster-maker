@@ -1,6 +1,6 @@
 .spacer {
 	background-color: var(--color-3);
-	margin: var(--space-sm);
+	margin: var(--space-md);
 	padding: var(--space-ms);
 }
 
