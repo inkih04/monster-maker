@@ -9,7 +9,7 @@ const DEFAULTS = {
 
 export const LIMITS = {
 	mapUtilityWidth: { min: 120, max: 400 },
-	entityWidth: { min: 300, max: 700 },
+	entityWidth: { min: 440, max: 700 },
 	filesHeight: { min: 100, max: 500 },
 	filesMenuWidth: { min: 100, max: 400 },
 } as const;
