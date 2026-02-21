@@ -78,8 +78,8 @@ function TileSet() {
 
 	return (
 		<>
-			<div className="tilemap-wrapper">
-				<div className="tilemap-viewport" ref={containerRef}>
+			<div className="tileset-wrapper">
+				<div className="tileset-viewport" ref={containerRef}>
 					<canvas
 						ref={canvasRef}
 						className="tilemap-canvas"
