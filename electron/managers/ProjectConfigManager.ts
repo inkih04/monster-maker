@@ -8,6 +8,7 @@ import { BrowserWindow } from 'electron';
 import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
 import { spawn } from 'child_process';
+import { EngineLog, LogLevel } from '../../global/types/engineLog';
 
 export class ProjectConfigManager {
 	private readonly configPath: string;
@@ -266,29 +267,13 @@ export class ProjectConfigManager {
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 
 			if (!this.fileSystemService.exists(projectPath)) {
-				console.log(`Project invalid: ${pd.name} - Path does not exist: ${projectPath}`);
-				return false;
-			}
-
-			if (!this.fileSystemService.isDirectory(projectPath)) {
-				console.log(`Project invalid: ${pd.name} - Path is not a directory: ${projectPath}`);
 				return false;
 			}
 
 			const requiredPaths = this.fileSystemService.getRequiredProjectPaths();
-			const isValid = this.fileSystemService.validateRequiredDirectories(
-				projectPath,
-				requiredPaths
-			);
-
-			if (!isValid) {
-				console.log(`Project invalid: ${pd.name} - Missing required directories`);
-				return false;
-			}
-
-			return true;
+			return this.fileSystemService.validateRequiredDirectories(projectPath, requiredPaths);
 		} catch (error) {
-			console.log(`Project invalid: ${pd.name} - Error validating: ${error}`);
+			log(error + ' (fail while validating project path)');
 			return false;
 		}
 	}
@@ -472,6 +457,75 @@ export class ProjectConfigManager {
 		}
 	}
 
+	private parseLogLine(raw: string): EngineLog | null {
+		const trimmed = raw.trim();
+
+		if (trimmed.length === 0) {
+			return null;
+		}
+
+		const timestamp = Date.now();
+
+		if (trimmed.startsWith('[ENGINE][ERROR]')) {
+			const message = trimmed.slice('[ENGINE][ERROR]'.length).trim();
+			return { message, level: 'error' as LogLevel, timestamp };
+		}
+
+		if (trimmed.startsWith('[ENGINE][WARN]')) {
+			const message = trimmed.slice('[ENGINE][WARN]'.length).trim();
+			return { message, level: 'warn' as LogLevel, timestamp };
+		}
+
+		if (trimmed.startsWith('[ENGINE]')) {
+			const message = trimmed.slice('[ENGINE]'.length).trim();
+			return { message, level: 'info' as LogLevel, timestamp };
+		}
+
+		return { message: trimmed, level: 'lua' as LogLevel, timestamp };
+	}
+
+	private pipeEngineLogs(child: ReturnType<typeof spawn>): void {
+		let stdoutBuffer = '';
+		let stderrBuffer = '';
+
+		const emitLine = (line: string): void => {
+			const engineLog = this.parseLogLine(line);
+			if (engineLog) {
+				this.fileSystemWatcher.notifyMainWindow('engine-log', engineLog);
+			}
+		};
+
+		const handleChunk = (buffer: string, chunk: Buffer | string): string => {
+			const accumulated = buffer + chunk.toString();
+			const lines = accumulated.split(/\r?\n/);
+			const incomplete = lines.pop() ?? '';
+			lines.forEach(emitLine);
+			return incomplete;
+		};
+
+		child.stdout?.on('data', (chunk: Buffer) => {
+			stdoutBuffer = handleChunk(stdoutBuffer, chunk);
+		});
+
+		child.stdout?.on('end', () => {
+			if (stdoutBuffer.length > 0) {
+				emitLine(stdoutBuffer);
+				stdoutBuffer = '';
+			}
+		});
+
+		child.stderr?.on('data', (chunk: Buffer) => {
+			stderrBuffer = handleChunk(stderrBuffer, chunk);
+		});
+
+		child.stderr?.on('end', () => {
+			if (stderrBuffer.length > 0) {
+				emitLine(stderrBuffer);
+				stderrBuffer = '';
+			}
+		});
+	}
+
 	public runEngine(pd: ProjectData, mapPath?: string): { success: boolean; error?: string } {
 		try {
 			if (this.engineProcess && !this.engineProcess.killed) {
@@ -512,10 +566,11 @@ export class ProjectConfigManager {
 			const child = spawn(executablePath, args, {
 				cwd: projectPath,
 				detached: false,
-				stdio: 'ignore',
+				stdio: ['ignore', 'pipe', 'pipe'],
 			});
 
 			this.engineProcess = child;
+			this.pipeEngineLogs(child);
 
 			child.on('exit', (code, signal) => {
 				console.log(`Engine exited with code ${code} and signal ${signal}`);

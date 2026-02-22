@@ -1,6 +1,7 @@
 import { ipcRenderer, contextBridge } from 'electron';
 import { ProjectData } from '../global/types/projectData';
 import FolderNode from '../global/types/folderNode';
+import { EngineLog } from '../global/types/engineLog';
 
 contextBridge.exposeInMainWorld('api', {
 	getProjects: () => ipcRenderer.invoke('config:getAll'),
@@ -101,9 +102,18 @@ contextBridge.exposeInMainWorld('api', {
 	stopEngine: () => ipcRenderer.invoke('config:stopEngine'),
 
 	onEngineExit: (callback: () => void) => {
-		ipcRenderer.on('engine-exited', callback);
-		return () => ipcRenderer.removeAllListeners('engine-exited');
+		const subscription = (_event: Electron.IpcRendererEvent) => callback();
+		ipcRenderer.on('engine-exited', subscription);
+		return () => ipcRenderer.removeListener('engine-exited', subscription);
 	},
+
+	onEngineLog: (callback: (engineLog: EngineLog) => void) => {
+		const subscription = (_event: Electron.IpcRendererEvent, engineLog: EngineLog) =>
+			callback(engineLog);
+		ipcRenderer.on('engine-log', subscription);
+		return () => ipcRenderer.removeListener('engine-log', subscription);
+	},
+
 	onToggleCollisions: (callback: () => void) => {
 		ipcRenderer.on('toggle-collisions', callback);
 		return () => ipcRenderer.removeAllListeners('toggle-collisions');

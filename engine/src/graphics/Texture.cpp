@@ -34,7 +34,7 @@ Texture::Texture(const std::string& path)
     stbi_image_free(data);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    std::cout << "Texture loaded: " << path << " (" << m_width << "x" << m_height << ")" << std::endl;
+    std::cout << "[ENGINE] Texture has been loaded " << path << " (" << m_width << "x" << m_height << ")" << std::endl;
 }
 
 Texture::~Texture() {

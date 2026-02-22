@@ -8,10 +8,12 @@ import FolderTree from '../Files/FolderTree';
 import FileList from '../Files/FileList';
 import CreateFile from '../common/components/createFile/CreateFile';
 import Entity from '../Entity/Entity';
+import DebugTerminal from '../DebugTerminal/DebugTerminal';
 import { useLayoutResize, LIMITS } from './customHooks/useLayoutResize';
 import { useEffect } from 'react';
 import { useNotify } from '../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
+import { useEngineStore } from '../ToolBar/EngineGState';
 
 function Layout() {
 	const {
@@ -29,6 +31,10 @@ function Layout() {
 	const { notify } = useNotify();
 	const { t } = useTranslation();
 
+	const isRunning = useEngineStore((state) => state.isRunning);
+	const mode = useEngineStore((state) => state.runMode);
+	const resetEngineState = useEngineStore((state) => state.resetEngineState);
+
 	useEffect(() => {
 		const removeListener = window.api.onResetLayout(() => {
 			resetLayout();
@@ -39,6 +45,16 @@ function Layout() {
 			removeListener();
 		};
 	}, [resetLayout, notify, t]);
+
+	useEffect(() => {
+		const removeListener = window.api.onEngineExit(() => {
+			resetEngineState();
+		});
+
+		return () => {
+			removeListener();
+		};
+	}, [resetEngineState]);
 
 	return (
 		<>
@@ -78,18 +94,25 @@ function Layout() {
 					className="files"
 					style={{ flex: `0 0 ${filesHeight}px`, minHeight: LIMITS.filesHeight.min }}
 				>
-					<div className="files-content">
-						<aside
-							className="files-menu"
-							style={{ flex: `0 0 ${filesMenuWidth}px`, minWidth: LIMITS.filesMenuWidth.min }}
-						>
-							<FolderTree />
-						</aside>
-						<Spacer direction="vertical" size="small" resizable onResize={resizeFilesMenu} />
-						<aside className="raw-files">
-							<FileList />
-						</aside>
-					</div>
+					{mode !== 'debug' && (
+						<div className="files-content">
+							<aside
+								className="files-menu"
+								style={{ flex: `0 0 ${filesMenuWidth}px`, minWidth: LIMITS.filesMenuWidth.min }}
+							>
+								<FolderTree />
+							</aside>
+							<Spacer direction="vertical" size="small" resizable onResize={resizeFilesMenu} />
+							<aside className="raw-files">
+								<FileList />
+							</aside>
+						</div>
+					)}
+					{isRunning && mode === 'debug' && (
+						<div className="layout--debugTerminal">
+							<DebugTerminal />
+						</div>
+					)}
 				</div>
 			</div>
 		</>

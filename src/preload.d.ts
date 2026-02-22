@@ -103,6 +103,7 @@ declare global {
 				folderNode: FolderNode,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' }>;
+			onEngineLog: (callback: (engineLog: EngineLog) => void) => () => void;
 		};
 	}
 }
