@@ -84,7 +84,7 @@ void Renderer::initRenderData() {
 
 void Renderer::draw(  glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color ) const {
     if (!m_currentShader) {
-        std::cout << "ERROR::Renderer: No shader configurado" << std::endl;
+        std::cout << "[ENGINE][ERROR] Error while loading the shader" << std::endl;
       return;
     }
     m_currentShader->use();
