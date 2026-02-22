@@ -109,3 +109,8 @@
 .content:has(.spacer.horizontal.dragging) {
 	cursor: row-resize;
 }
+
+.layout--debugTerminal {
+	width: 100%;
+	height: 100%;
+}

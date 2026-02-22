@@ -12,6 +12,7 @@ import { useLayoutResize, LIMITS } from './customHooks/useLayoutResize';
 import { useEffect } from 'react';
 import { useNotify } from '../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
+import { useEngineStore } from '../ToolBar/EngineGState';
 
 function Layout() {
 	const {
@@ -28,6 +29,9 @@ function Layout() {
 
 	const { notify } = useNotify();
 	const { t } = useTranslation();
+
+	const isRuning = useEngineStore((state) => state.isRunning);
+	const mode = useEngineStore((state) => state.runMode);
 
 	useEffect(() => {
 		const removeListener = window.api.onResetLayout(() => {
@@ -78,18 +82,27 @@ function Layout() {
 					className="files"
 					style={{ flex: `0 0 ${filesHeight}px`, minHeight: LIMITS.filesHeight.min }}
 				>
-					<div className="files-content">
-						<aside
-							className="files-menu"
-							style={{ flex: `0 0 ${filesMenuWidth}px`, minWidth: LIMITS.filesMenuWidth.min }}
-						>
-							<FolderTree />
-						</aside>
-						<Spacer direction="vertical" size="small" resizable onResize={resizeFilesMenu} />
-						<aside className="raw-files">
-							<FileList />
-						</aside>
-					</div>
+					{mode !== 'debug' && (
+						<div className="files-content">
+							<aside
+								className="files-menu"
+								style={{ flex: `0 0 ${filesMenuWidth}px`, minWidth: LIMITS.filesMenuWidth.min }}
+							>
+								<FolderTree />
+							</aside>
+							<Spacer direction="vertical" size="small" resizable onResize={resizeFilesMenu} />
+							<aside className="raw-files">
+								<FileList />
+							</aside>
+						</div>
+					)}
+					{isRuning && mode === 'debug' && (
+						<div className='layout--debugTerminal'>
+
+
+						</div>
+					)
+					}
 				</div>
 			</div>
 		</>
