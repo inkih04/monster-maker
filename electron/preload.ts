@@ -148,4 +148,6 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.invoke('config:createFolder', folderNode, newFolderName, pd),
 	deleteFolder: (folderNode: FolderNode, pd: ProjectData) =>
 		ipcRenderer.invoke('config:deleteFolder', folderNode, pd),
+	notifyLanguageChange: (lng: string) => ipcRenderer.send('language-changed', lng),
+	
 });

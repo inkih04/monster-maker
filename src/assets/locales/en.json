@@ -53,5 +53,29 @@
 	"layout": "Layout",
 	"files": "Files",
 	"essentialFolder": "Essential folders cannot be deleted",
-	"errorFolder": "An error occurred while deleting the folder"
+	"errorFolder": "An error occurred while deleting the folder",
+	"menu": {
+		"view": "View",
+		"showCollisions": "Show Collisions",
+		"resetLayout": "Reset Layout",
+		"language": "Language",
+		"english": "English",
+		"spanish": "Español",
+		"file": "File",
+		"createNewFile": "Create New File",
+		"map": "Map",
+		"prefab": "Prefab",
+		"script": "Script",
+		"addNewFile": "Add New File",
+		"save": "Save",
+		"exportMapJSON": "Export Current Map to JSON",
+		"exportMapPNG": "Export Current Map to PNG",
+		"contextMenu": {
+			"open": "Open",
+			"rename": "Rename",
+			"copy": "Copy",
+			"delete": "Delete",
+			"createFolder": "Create Folder"
+		}
+	}
 }

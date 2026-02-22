@@ -1,4 +1,12 @@
-import { app, BrowserWindow, Menu, MenuItemConstructorOptions, net, protocol } from 'electron';
+import {
+	app,
+	BrowserWindow,
+	Menu,
+	MenuItemConstructorOptions,
+	net,
+	protocol,
+	ipcMain,
+} from 'electron';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import path from 'node:path';
@@ -6,6 +14,7 @@ import { setupMapHandlers } from './ipc/mapHandlers';
 import { setupProjectConfigHandlers } from './ipc/projectConfigHandlers';
 import defaultMenu from 'electron-default-menu';
 import { setupContextMenuHandlers } from './ipc/contextMenuHandlers';
+import mainI18n from './mainI18n';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,6 +30,117 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL
 	: RENDERER_DIST;
 
 let win: BrowserWindow | null = null;
+
+function buildAppMenu() {
+	const t = (key: string) => mainI18n.t(key);
+	const menu = defaultMenu(app, require('electron').shell);
+
+	const viewMenuIndex = menu.findIndex((item) => item.label === 'View');
+	if (viewMenuIndex !== -1 && menu[viewMenuIndex].submenu) {
+		menu[viewMenuIndex].label = t('menu.view');
+		menu[viewMenuIndex].submenu = [
+			{
+				label: t('menu.showCollisions'),
+				type: 'checkbox',
+				checked: false,
+				accelerator: 'CmdOrCtrl+K',
+				click: () => {
+					win?.webContents.send('toggle-collisions');
+				},
+			},
+			{
+				label: t('menu.resetLayout'),
+				type: 'normal',
+				accelerator: 'CmdOrCtrl+r',
+				click: () => {
+					win?.webContents.send('reset-layout');
+				},
+			},
+		] as MenuItemConstructorOptions[];
+	}
+
+	menu.splice(-1, 0, {
+		label: t('menu.language'),
+		submenu: [
+			{
+				label: t('menu.english'),
+				type: 'radio',
+				checked: mainI18n.language === 'en',
+				click: () => {
+					win?.webContents.send('change-language', 'en');
+					mainI18n.changeLanguage('en').then(() => {
+						Menu.setApplicationMenu(Menu.buildFromTemplate(buildAppMenu()));
+					});
+				},
+			},
+			{
+				label: t('menu.spanish'),
+				type: 'radio',
+				checked: mainI18n.language === 'es',
+				click: () => {
+					win?.webContents.send('change-language', 'es');
+					mainI18n.changeLanguage('es').then(() => {
+						Menu.setApplicationMenu(Menu.buildFromTemplate(buildAppMenu()));
+					});
+				},
+			},
+		],
+	});
+
+	menu.splice(1, 0, {
+		label: t('menu.file'),
+		submenu: [
+			{
+				label: t('menu.createNewFile'),
+				type: 'submenu',
+				submenu: [
+					{
+						label: t('menu.map'),
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'map'),
+					},
+					{
+						label: t('menu.prefab'),
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'prefab'),
+					},
+					{
+						label: t('menu.script'),
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'script'),
+					},
+				],
+			},
+			{
+				label: t('menu.addNewFile'),
+				type: 'normal',
+				click: () => win?.webContents.send('add-new-file'),
+			},
+			{
+				label: t('menu.save'),
+				type: 'normal',
+				accelerator: 'CmdOrCtrl+S',
+				click: () => win?.webContents.send('save-file'),
+			},
+			{ type: 'separator' },
+			{
+				label: t('menu.exportMapJSON'),
+				accelerator: 'CmdOrCtrl+E',
+				click: () => {
+					win?.webContents.send('export-map-request');
+				},
+			},
+			{
+				label: t('menu.exportMapPNG'),
+				click: () => {
+					win?.webContents.send('export-map-PNG-request');
+				},
+			},
+		],
+	});
+
+	return menu as MenuItemConstructorOptions[];
+}
 
 function createWindow() {
 	win = new BrowserWindow({
@@ -93,111 +213,14 @@ app.whenReady().then(() => {
 
 	createWindow();
 	setupContextMenuHandlers();
-	const menu = defaultMenu(app, require('electron').shell);
-	const viewMenuIndex = menu.findIndex((item) => item.label === 'View');
 
-	if (viewMenuIndex !== -1 && menu[viewMenuIndex].submenu) {
-		const viewSubmenu = menu[viewMenuIndex].submenu as MenuItemConstructorOptions[];
-		viewSubmenu.push(
-			{ type: 'separator' },
-			{
-				label: 'Show Collisions',
-				type: 'checkbox',
-				checked: false,
-				accelerator: 'CmdOrCtrl+K',
-				click: (menuItem) => {
-					win?.webContents.send('toggle-collisions');
-				},
-			},
-			{
-				label: 'Reset Layout',
-				type: 'normal',
-				checked: false,
-				accelerator: 'CmdOrCtrl+r',
-				click: (menuItem) => {
-					win?.webContents.send('reset-layout');
-				},
-			}
-		);
-	}
-
-	const editMenuIndex = menu.findIndex((item) => item.label === 'Edit');
-	if (editMenuIndex !== -1 && menu[editMenuIndex].submenu) {
-		const editSubmenu = menu[editMenuIndex].submenu as MenuItemConstructorOptions[];
-		editSubmenu.push(
-			{ type: 'separator' },
-			{
-				label: 'Export Current Map to JSON',
-				accelerator: 'CmdOrCtrl+E',
-				click: () => {
-					win?.webContents.send('export-map-request');
-				},
-			}
-		);
-
-		editSubmenu.push({
-			label: 'Export Current Map to PNG',
-			click: () => {
-				win?.webContents.send('export-map-PNG-request');
-			},
+	ipcMain.on('language-changed', (_event, lng: string) => {
+		mainI18n.changeLanguage(lng).then(() => {
+			Menu.setApplicationMenu(Menu.buildFromTemplate(buildAppMenu()));
 		});
-	}
-
-	menu.splice(-1, 0, {
-		label: 'Language',
-		submenu: [
-			{
-				label: 'English',
-				type: 'radio',
-				click: () => win?.webContents.send('change-language', 'en'),
-			},
-			{
-				label: 'Español',
-				type: 'radio',
-				click: () => win?.webContents.send('change-language', 'es'),
-			},
-		],
 	});
 
-	menu.splice(1, 0, {
-		label: 'File',
-		submenu: [
-			{
-				label: 'Create New File',
-				type: 'submenu',
-				submenu: [
-					{
-						label: 'Map',
-						type: 'normal',
-						click: () => win?.webContents.send('create-new-file', 'map'),
-					},
-					{
-						label: 'Prefab',
-						type: 'normal',
-						click: () => win?.webContents.send('create-new-file', 'prefab'),
-					},
-					{
-						label: 'Script',
-						type: 'normal',
-						click: () => win?.webContents.send('create-new-file', 'script'),
-					},
-				],
-			},
-			{
-				label: 'Add New File',
-				type: 'normal',
-				click: () => win?.webContents.send('add-new-file'),
-			},
-			{
-				label: 'Save',
-				type: 'normal',
-				accelerator: 'CmdOrCtrl+S',
-				click: () => win?.webContents.send('save-file'),
-			},
-		],
-	});
-
-	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
+	Menu.setApplicationMenu(Menu.buildFromTemplate(buildAppMenu()));
 });
 
 app.on('window-all-closed', () => {
