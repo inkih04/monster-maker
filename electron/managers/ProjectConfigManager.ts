@@ -484,7 +484,6 @@ export class ProjectConfigManager {
 		return { message: trimmed, level: 'lua' as LogLevel, timestamp };
 	}
 
-
 	private pipeEngineLogs(child: ReturnType<typeof spawn>): void {
 		let stdoutBuffer = '';
 		let stderrBuffer = '';
@@ -498,7 +497,7 @@ export class ProjectConfigManager {
 
 		const handleChunk = (buffer: string, chunk: Buffer | string): string => {
 			const accumulated = buffer + chunk.toString();
-			const lines = accumulated.split('\n');
+			const lines = accumulated.split(/\r?\n/);
 			const incomplete = lines.pop() ?? '';
 			lines.forEach(emitLine);
 			return incomplete;
@@ -567,7 +566,6 @@ export class ProjectConfigManager {
 			const child = spawn(executablePath, args, {
 				cwd: projectPath,
 				detached: false,
-				// 'pipe' on stdout/stderr so we can read engine + Lua logs
 				stdio: ['ignore', 'pipe', 'pipe'],
 			});
 
