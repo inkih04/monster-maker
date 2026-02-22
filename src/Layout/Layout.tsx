@@ -8,6 +8,7 @@ import FolderTree from '../Files/FolderTree';
 import FileList from '../Files/FileList';
 import CreateFile from '../common/components/createFile/CreateFile';
 import Entity from '../Entity/Entity';
+import DebugTerminal from '../DebugTerminal/DebugTerminal';
 import { useLayoutResize, LIMITS } from './customHooks/useLayoutResize';
 import { useEffect } from 'react';
 import { useNotify } from '../common/components/toast/ToastContext';
@@ -30,8 +31,9 @@ function Layout() {
 	const { notify } = useNotify();
 	const { t } = useTranslation();
 
-	const isRuning = useEngineStore((state) => state.isRunning);
+	const isRunning = useEngineStore((state) => state.isRunning);
 	const mode = useEngineStore((state) => state.runMode);
+	const resetEngineState = useEngineStore((state) => state.resetEngineState);
 
 	useEffect(() => {
 		const removeListener = window.api.onResetLayout(() => {
@@ -43,6 +45,16 @@ function Layout() {
 			removeListener();
 		};
 	}, [resetLayout, notify, t]);
+
+	useEffect(() => {
+		const removeListener = window.api.onEngineExit(() => {
+			resetEngineState();
+		});
+
+		return () => {
+			removeListener();
+		};
+	}, [resetEngineState]);
 
 	return (
 		<>
@@ -96,13 +108,11 @@ function Layout() {
 							</aside>
 						</div>
 					)}
-					{isRuning && mode === 'debug' && (
-						<div className='layout--debugTerminal'>
-
-
+					{isRunning && mode === 'debug' && (
+						<div className="layout--debugTerminal">
+							<DebugTerminal />
 						</div>
-					)
-					}
+					)}
 				</div>
 			</div>
 		</>

@@ -49,15 +49,6 @@ function ToolBar() {
 		return () => window.removeEventListener('keydown', handleKeyDown);
 	}, [undo, redo]);
 
-	useEffect(() => {
-		const cleanup = window.api.onEngineExit(() => {
-			console.log('Engine exited, resetting state');
-			resetEngineState();
-		});
-
-		return cleanup;
-	}, [resetEngineState]);
-
 	const shouldDisablePlay = (): boolean => {
 		return isRunning && runMode === 'debug';
 	};
