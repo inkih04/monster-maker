@@ -53,5 +53,29 @@
 	"layout": "Layout",
 	"files": "Archivos",
 	"essentialFolder": "Las carpetas esenciales no se pueden eliminar",
-	"errorFolder": "Se produjo un error al eliminar la carpeta"
+	"errorFolder": "Se produjo un error al eliminar la carpeta",
+	"menu": {
+		"view": "Vista",
+		"showCollisions": "Mostrar Colisiones",
+		"resetLayout": "Restablecer Layout",
+		"language": "Idioma",
+		"english": "English",
+		"spanish": "Español",
+		"file": "Archivo",
+		"createNewFile": "Crear Nuevo Archivo",
+		"map": "Mapa",
+		"prefab": "Prefab",
+		"script": "Script",
+		"addNewFile": "Añadir Archivo",
+		"save": "Guardar",
+		"exportMapJSON": "Exportar Mapa Actual a JSON",
+		"exportMapPNG": "Exportar Mapa Actual a PNG",
+		"contextMenu": {
+			"open": "Abrir",
+			"rename": "Renombrar",
+			"copy": "Copiar",
+			"delete": "Eliminar",
+			"createFolder": "Crear Carpeta"
+		}
+	}
 }

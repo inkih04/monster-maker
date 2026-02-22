@@ -1,22 +1,25 @@
 import { ipcMain, Menu, MenuItemConstructorOptions, BrowserWindow } from 'electron';
+import mainI18n from '../mainI18n';
 
 export function setupContextMenuHandlers(): void {
 	ipcMain.on('show-file-context-menu', (event, fileData) => {
+		const t = (key: string) => mainI18n.t(key);
+
 		const template: MenuItemConstructorOptions[] = [
 			{
-				label: 'Open',
+				label: t('menu.contextMenu.open'),
 				click: () => {
 					event.sender.send('file-action', 'open', fileData);
 				},
 			},
 			{
-				label: 'Rename',
+				label: t('menu.contextMenu.rename'),
 				click: () => {
 					event.sender.send('file-action', 'rename', fileData);
 				},
 			},
 			{
-				label: 'Copy',
+				label: t('menu.contextMenu.copy'),
 				click: () => {
 					event.sender.send('file-action', 'copy', fileData);
 				},
@@ -25,7 +28,7 @@ export function setupContextMenuHandlers(): void {
 				type: 'separator',
 			},
 			{
-				label: 'Delete',
+				label: t('menu.contextMenu.delete'),
 				click: () => {
 					event.sender.send('file-action', 'delete', fileData);
 				},
@@ -37,9 +40,11 @@ export function setupContextMenuHandlers(): void {
 	});
 
 	ipcMain.on('show-folder-context-menu', (event, folderData: { name: string; path: string }) => {
+		const t = (key: string) => mainI18n.t(key);
+
 		const template: MenuItemConstructorOptions[] = [
 			{
-				label: 'Create Folder',
+				label: t('menu.contextMenu.createFolder'),
 				click: () => {
 					event.sender.send('folder-action', 'create-folder', folderData);
 				},
@@ -48,7 +53,7 @@ export function setupContextMenuHandlers(): void {
 				type: 'separator',
 			},
 			{
-				label: 'Delete',
+				label: t('menu.contextMenu.delete'),
 				click: () => {
 					event.sender.send('folder-action', 'delete-folder', folderData);
 				},

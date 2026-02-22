@@ -104,6 +104,7 @@ declare global {
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' }>;
 			onEngineLog: (callback: (engineLog: EngineLog) => void) => () => void;
+			notifyLanguageChange: (lng: string) => void;
 		};
 	}
 }
