@@ -2917,6 +2917,16 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "SCRIPT": {
+          "path": "/home/inkih/Desktop/test/Test1/resources/scripts/items/item.lua"
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "offsetX": 0,
+          "offsetY": 0,
+          "isTrigger": false
         }
       }
     },
@@ -8230,6 +8240,13 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 8,
+          "height": 64,
+          "offsetX": 8,
+          "offsetY": 0,
+          "isTrigger": false
         }
       }
     },
@@ -8377,6 +8394,16 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 8,
+          "height": 8,
+          "offsetX": 31,
+          "offsetY": 17,
+          "isTrigger": false
+        },
+        "SCRIPT": {
+          "path": "resources/scripts/teleport/teleport.lua"
         }
       }
     },
@@ -11484,7 +11511,8 @@
         "INTERACTION": {},
         "COLLIDER": {
           "width": 32,
-          "height": 32
+          "height": 32,
+          "offsetX": 0
         },
         "SCRIPT": {
           "path": "resources/scripts/items/item.lua"
@@ -12909,6 +12937,16 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "SCRIPT": {
+          "path": "resources/scripts/items/item.lua"
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 32,
+          "offsetX": 0,
+          "offsetY": 0,
+          "isTrigger": false
         }
       }
     },
@@ -13375,27 +13413,6 @@
       }
     },
     {
-      "id": "tile_1769196796071_vqrz7nbek",
-      "tag": "TILEMAP",
-      "layer": "shadows",
-      "components": {
-        "POSITION": {
-          "x": 544,
-          "y": 32,
-          "rotation": 0
-        },
-        "RENDER": {
-          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
-          "x": 64,
-          "y": 9344,
-          "w": 32,
-          "h": 32,
-          "width": 32,
-          "height": 32
-        }
-      }
-    },
-    {
       "id": "tile_1769196810176_4bodve4mu",
       "tag": "TILEMAP",
       "layer": "shadows",
@@ -13430,48 +13447,6 @@
           "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
           "x": 160,
           "y": 9344,
-          "w": 32,
-          "h": 32,
-          "width": 32,
-          "height": 32
-        }
-      }
-    },
-    {
-      "id": "tile_1769196810176_su6dltnlg",
-      "tag": "TILEMAP",
-      "layer": "shadows",
-      "components": {
-        "POSITION": {
-          "x": 320,
-          "y": 192,
-          "rotation": 0
-        },
-        "RENDER": {
-          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
-          "x": 128,
-          "y": 9376,
-          "w": 32,
-          "h": 32,
-          "width": 32,
-          "height": 32
-        }
-      }
-    },
-    {
-      "id": "tile_1769196810176_62ruvassx",
-      "tag": "TILEMAP",
-      "layer": "shadows",
-      "components": {
-        "POSITION": {
-          "x": 352,
-          "y": 192,
-          "rotation": 0
-        },
-        "RENDER": {
-          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
-          "x": 160,
-          "y": 9376,
           "w": 32,
           "h": 32,
           "width": 32,
@@ -13770,6 +13745,13 @@
           "h": 32,
           "width": 32,
           "height": 32
+        },
+        "COLLIDER": {
+          "width": 32,
+          "height": 16,
+          "offsetX": 0,
+          "offsetY": 0,
+          "isTrigger": false
         }
       }
     },
@@ -14661,41 +14643,55 @@
       "id": "test_entity2",
       "components": {
         "POSITION": {
-          "x": 192.0,
-          "y": 112.0,
-          "rotation": 0.0
+          "x": 192,
+          "y": 96,
+          "rotation": 0
         },
         "SCRIPT": {
           "path": "resources/scripts/player/move.lua"
         },
         "RENDER": {
           "spriteSheetPath": "resources/sprites/1.png",
-          "x": 0.0,
-          "y": 0.0,
-          "w": 32.0,
-          "h": 32.0,
-          "width": 32.0,
-          "height": 32.0
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 64,
+          "width": 32,
+          "height": 32
         },
         "COLLIDER": {
-          "width": 28.0,
-          "height": 16.0,
-          "offsetX": 0.0,
-          "offsetY": 16.0
+          "width": 8,
+          "height": 16,
+          "offsetX": 12,
+          "offsetY": 16
         },
-        "MOVEMENT" : {},
+        "MOVEMENT": {},
         "ANIMATION": {
           "animations": [
             {
               "name": "standdown",
-              "frames": [{"x": 0.0, "y": 0.0, "w": 64.0, "h": 64.0}],
+              "frames": [
+                {
+                  "x": 0,
+                  "y": 0,
+                  "w": 64,
+                  "h": 64
+                }
+              ],
               "frameDuration": 200,
               "loop": true,
               "priority": 0
             },
             {
               "name": "standup",
-              "frames": [{"x": 0.0, "y": 192.0, "w": 64.0, "h": 64.0}],
+              "frames": [
+                {
+                  "x": 0,
+                  "y": 192,
+                  "w": 64,
+                  "h": 64
+                }
+              ],
               "frameDuration": 200,
               "loop": true,
               "priority": 0
@@ -14703,10 +14699,30 @@
             {
               "name": "moveright",
               "frames": [
-                {"x": 0, "y": 128, "w": 64, "h": 64},
-                {"x": 64, "y": 128, "w": 64, "h": 64},
-                {"x": 128, "y": 128, "w": 64, "h": 64},
-                {"x": 192, "y": 128, "w": 64, "h": 64}
+                {
+                  "x": 0,
+                  "y": 128,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 64,
+                  "y": 128,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 128,
+                  "y": 128,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 192,
+                  "y": 128,
+                  "w": 64,
+                  "h": 64
+                }
               ],
               "frameDuration": 150,
               "loop": true,
@@ -14715,10 +14731,30 @@
             {
               "name": "moveleft",
               "frames": [
-                {"x": 0, "y": 64, "w": 64, "h": 64},
-                {"x": 64, "y": 64, "w": 64, "h": 64},
-                {"x": 128, "y": 64, "w": 64, "h": 64},
-                {"x": 192, "y": 64, "w": 64, "h": 64}
+                {
+                  "x": 0,
+                  "y": 64,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 64,
+                  "y": 64,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 128,
+                  "y": 64,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 192,
+                  "y": 64,
+                  "w": 64,
+                  "h": 64
+                }
               ],
               "frameDuration": 150,
               "loop": true,
@@ -14727,10 +14763,30 @@
             {
               "name": "movedown",
               "frames": [
-                {"x": 0, "y": 0, "w": 64, "h": 64},
-                {"x": 64, "y": 0, "w": 64, "h": 64},
-                {"x": 128, "y": 0, "w": 64, "h": 64},
-                {"x": 192, "y": 0, "w": 64, "h": 64}
+                {
+                  "x": 0,
+                  "y": 0,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 64,
+                  "y": 0,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 128,
+                  "y": 0,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 192,
+                  "y": 0,
+                  "w": 64,
+                  "h": 64
+                }
               ],
               "frameDuration": 150,
               "loop": true,
@@ -14739,10 +14795,30 @@
             {
               "name": "moveup",
               "frames": [
-                {"x": 0, "y": 192, "w": 64, "h": 64},
-                {"x": 64, "y": 192, "w": 64, "h": 64},
-                {"x": 128, "y": 192, "w": 64, "h": 64},
-                {"x": 192, "y": 192, "w": 64, "h": 64}
+                {
+                  "x": 0,
+                  "y": 192,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 64,
+                  "y": 192,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 128,
+                  "y": 192,
+                  "w": 64,
+                  "h": 64
+                },
+                {
+                  "x": 192,
+                  "y": 192,
+                  "w": 64,
+                  "h": 64
+                }
               ],
               "frameDuration": 150,
               "loop": true,
@@ -14750,21 +14826,36 @@
             },
             {
               "name": "standleft",
-              "frames": [{"x": 0.0, "y": 64.0, "w": 64.0, "h": 64.0}],
+              "frames": [
+                {
+                  "x": 0,
+                  "y": 64,
+                  "w": 64,
+                  "h": 64
+                }
+              ],
               "frameDuration": 200,
               "loop": true,
               "priority": 0
             },
             {
               "name": "standright",
-              "frames": [{"x": 0.0, "y": 128.0, "w": 64.0, "h": 64.0}],
+              "frames": [
+                {
+                  "x": 0,
+                  "y": 128,
+                  "w": 64,
+                  "h": 64
+                }
+              ],
               "frameDuration": 200,
               "loop": true,
               "priority": 0
             }
           ]
         }
-      }
+      },
+      "name": "Player super"
     },
     {
       "id": "tile_1769196905199_l8jugiy2c",
@@ -14780,6 +14871,188 @@
           "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
           "x": 160,
           "y": 10080,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1771153385297_oouuk5qj6",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 544,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 192,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1771153385297_25fbw93sj",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 576,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 224,
+          "y": 192,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1771153385297_tb169bxal",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 544,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 224,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1771153385297_wm1j6bqcm",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 576,
+          "y": 320,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 224,
+          "y": 224,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1771153392177_1zjqmnjfj",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 1760,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1771174536387_jz4z7ubbr",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 544,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 64,
+          "y": 9344,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        },
+        "COLLIDER": {
+          "width": 16,
+          "height": 32,
+          "offsetX": 8,
+          "offsetY": 0,
+          "isTrigger": false
+        }
+      }
+    },
+    {
+      "id": "tile_1772213770317_z4ynvrnva",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 9376,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        },
+        "COLLIDER": {
+          "width": 8,
+          "height": 8,
+          "offsetX": 3,
+          "offsetY": 17,
+          "isTrigger": false
+        }
+      }
+    },
+    {
+      "id": "tile_1772213772736_07k6dau72",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 192,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 9376,
           "w": 32,
           "h": 32,
           "width": 32,

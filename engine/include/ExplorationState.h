@@ -25,6 +25,7 @@ class ExplorationState : public State{
 
     private:
         bool debugMode = false;
+        void changeMap(const std::string& mapPath);
         void renderGround() const;
         void renderDecoration() const;
         void renderEntities() const;

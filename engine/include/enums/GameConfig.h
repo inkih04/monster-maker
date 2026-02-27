@@ -8,7 +8,7 @@
 namespace GameConfig {
     constexpr int Width = 480;
     constexpr int Height = 270;
-    constexpr int GridSize = 16;
+    constexpr int GridSize = 8;
 
 }
 
