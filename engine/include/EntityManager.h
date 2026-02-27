@@ -41,10 +41,11 @@ class EntityManager {
         void updateEntities(int deltaTime);
         void renderEntities() const;
 
-
+        std::unique_ptr<Entity> extractEntity(EntityTag tag, EntityLayer layer);
         void setCollisionEntity(Entity* entity) {m_rawCollisionEntities.push_back(entity);};
         std::vector<Entity*> getEntitiesByComponent(ComponentsType type) const;
         BordersMapService* getBordersMapService() const { return m_bordersMapService.get(); }
+        Entity* adoptEntity(std::unique_ptr<Entity> entity, EntityTag tag, EntityLayer layer);
 
 };
 

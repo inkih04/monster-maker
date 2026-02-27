@@ -22,6 +22,12 @@ void ScriptEngine::setupBindingsStatic() {
     ScriptBindings::registerStatic(m_lua);
 }
 
+std::string ScriptEngine::consumePendingMap() {
+    std::string path = m_pendingMap;
+    m_pendingMap.clear();
+    return path;
+}
+
 void ScriptEngine::setupBindingsDynamic(Camera* camera, EntityManager& entityManager) {
     ScriptBindings::registerDynamic(m_lua, camera, entityManager);
 }

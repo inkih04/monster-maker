@@ -12,6 +12,9 @@
 class ScriptComponent : public Component {
     private:
         std::string m_scriptPath;
+
+        sol::environment m_env;
+
         sol::protected_function m_luaStart;
         sol::protected_function m_luaUpdate;
         sol::protected_function m_luaDestroy;
@@ -35,6 +38,7 @@ class ScriptComponent : public Component {
         void init();
         void update(int deltaTime) override;
         void render() override {};
+        void reset() ;
 };
 
 #endif //POKEMONGAMEENGINE_SCRIPTCOMPONET_H

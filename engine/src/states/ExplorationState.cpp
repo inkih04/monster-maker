@@ -2,14 +2,12 @@
 // Created by inkih on 7/12/25.
 //
 #include "ExplorationState.h"
-
-#include <iostream>
-
 #include "AnimationComponent.h"
 #include "DebugHelper.h"
 #include "Engine.h"
 #include "EntityLoader.h"
 #include "InputManager.h"
+#include "PositionComponent.h"
 #include "ScriptEngine.h"
 
 
@@ -25,9 +23,28 @@ void ExplorationState::applyScriptContext()  {
 
 void ExplorationState::update(int deltaTime) {
     m_entityManager->updateEntities(deltaTime);
+
+    if (ScriptEngine::getInstance().hasPendingMapChange()) {
+        changeMap(ScriptEngine::getInstance().consumePendingMap());
+    }
+
     if (debugMode) {
         moveDebugCamera();
     }
+}
+
+void ExplorationState::changeMap(const std::string& mapPath) {
+    auto playerEntity = m_entityManager->extractEntity(EntityTag::PLAYER, EntityLayer::ENTITIES);
+
+    m_entityManager = std::make_unique<EntityManager>();
+    EntityLoader::loadEntitiesFromFile(mapPath, *m_entityManager);
+
+    if (playerEntity) {
+        m_entityManager->adoptEntity(std::move(playerEntity), EntityTag::PLAYER, EntityLayer::ENTITIES);
+    }
+    applyScriptContext();
+
+    std::cout << "[Engine] Map changed to: " << mapPath << std::endl;
 }
 
 void ExplorationState::moveDebugCamera() {

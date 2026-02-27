@@ -9,7 +9,6 @@
 #include <fstream>
 #include <iostream>
 #include "components/AnimationComponent.h"
-#include <stdexcept>
 
 #include "InteractionComponent.h"
 #include "MovementComponent.h"
@@ -18,19 +17,18 @@
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
-        throw std::runtime_error("No se pudo abrir el archivo: " + filePath);
+        std::cout << "[ENGINE][ERROR] Could not open file: " << filePath << std::endl; return;
     }
 
     json mapData;
     try {
         file >> mapData;
     } catch (const json::exception& e) {
-        throw std::runtime_error("Error parseando JSON: " + std::string(e.what()));
+        std::cout << "[ENGINE][ERROR] Error parsing JSON: " << e.what() << std::endl; return;
     }
 
-
     if (!mapData.contains("entities")) {
-        std::cerr << "Advertencia: No se encontró array 'entities' en " << filePath << std::endl;
+        std::cout << "[ENGINE][ERROR] No 'entities' array found in " << filePath << std::endl;
         return;
     }
 
@@ -39,7 +37,7 @@ void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManag
         try {
             parseEntity(entityJson, entityManager);
         } catch (const std::exception& e) {
-            std::cerr << "Error cargando entity: " << e.what() << std::endl;
+            std::cout << "[ENGINE][ERROR] Error loading entity: " << e.what() << std::endl;
         }
     }
 }
@@ -61,7 +59,7 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
     Entity* entity = entityManager.createEntity(tag, layer);
 
     if (!entityJson.contains("components")) {
-        std::cerr << "Advertencia: Entity sin componentes encontrada" << std::endl;
+        std::cout << "[ENGINE][ERROR] Entity with no components found" << std::endl;
         return;
     }
 
@@ -103,7 +101,9 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
 
     if (components.contains("SCRIPT")) {
         auto scriptComponent = createScriptComponent(components["SCRIPT"]);
-        entity->addComponent(ComponentsType::SCRIPT, std::move(scriptComponent));
+        if (scriptComponent) {
+            entity->addComponent(ComponentsType::SCRIPT, std::move(scriptComponent));
+        }
     }
 }
 
@@ -116,16 +116,20 @@ std::unique_ptr<Component> EntityLoader::createPositionComponent(const json& dat
 
 std::unique_ptr<Component> EntityLoader::createScriptComponent(const json& data) {
     if (!data.contains("path")) {
-        throw std::runtime_error("ScriptComponent requiere un campo 'path' con la ruta al archivo .lua");
+        std::cout << "[ENGINE][ERROR] ScriptComponent requires a 'path' field with the .lua file path" << std::endl; return nullptr;
     }
 
     std::string path = data["path"];
+
+    if (path.empty()) {
+        std::cout << "[ENGINE][ERROR] ScriptComponent 'path' cannot be empty" << std::endl; return nullptr;
+    }
     return std::make_unique<ScriptComponent>(path);
 }
 
 std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data) {
     if (!data.contains("spriteSheetPath")) {
-        throw std::runtime_error("RenderComponent requiere 'spriteSheetPath'");
+        std::cout << "[ENGINE][ERROR] RenderComponent requires 'spriteSheetPath'" << std::endl; return nullptr;
     }
 
     std::string spriteSheetPath = data["spriteSheetPath"];
@@ -155,14 +159,15 @@ std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& da
     auto animComponent = std::make_unique<AnimationComponent>();
 
     if (!data.contains("animations")) {
-        throw std::runtime_error("AnimationComponent requiere un array 'animations'");
+        std::cout << "[ENGINE][ERROR] AnimationComponent requires an 'animations' array" << std::endl; return nullptr;
     }
 
     for (const auto& animJson : data["animations"]) {
         std::string name = animJson.value("name", "");
 
         if (!animJson.contains("frames")) {
-            throw std::runtime_error("Animation '" + name + "' requiere 'frames'");
+            std::cout << "[ENGINE][ERROR] Animation '" << name << "' requires 'frames'" << std::endl;
+            continue;
         }
 
         std::vector<SpriteRect> frames;

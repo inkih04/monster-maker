@@ -9,6 +9,7 @@
 #include "RenderComponent.h"
 #include "AudioService.h"
 #include "InteractionComponent.h"
+#include "ScriptEngine.h"
 
 void ScriptBindings::registerStatic(sol::state& lua) {
     registerKeys(lua);
@@ -59,6 +60,10 @@ void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityMana
     lua.set_function("GetEntity", [&entityManager](EntityTag tag) -> Entity* {
         auto entities = entityManager.getEntitiesByTag(tag);
         return entities.empty() ? nullptr : entities[0];
+    });
+
+    lua.set_function("loadMap", [](const std::string& path) {
+        ScriptEngine::getInstance().requestMapChange(path);
     });
 }
 

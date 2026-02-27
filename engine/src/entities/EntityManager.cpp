@@ -5,6 +5,8 @@
 
 #include <algorithm>
 #include <cmath>
+
+#include "ScriptComponet.h"
 #include "../../include/service/CollisionService.h"
 
 
@@ -34,6 +36,58 @@ Entity* EntityManager::createEntity(EntityTag tag, EntityLayer layer) {
     m_entitiesByLayer[layer].push_back(entityPtr);
     return entityPtr;
 }
+
+
+std::unique_ptr<Entity> EntityManager::extractEntity(EntityTag tag, EntityLayer layer) {
+    auto it = std::find_if(m_entities.begin(), m_entities.end(),
+        [&](const std::unique_ptr<Entity>& e) {
+            auto tagIt = m_entitiesByTag.find(tag);
+            if (tagIt == m_entitiesByTag.end()) return false;
+            auto& tagVec = tagIt->second;
+            return std::find(tagVec.begin(), tagVec.end(), e.get()) != tagVec.end();
+        });
+
+    if (it == m_entities.end()) return nullptr;
+
+    Entity* rawPtr = it->get();
+
+
+    for (auto& [t, vec] : m_entitiesByTag)
+        vec.erase(std::remove(vec.begin(), vec.end(), rawPtr), vec.end());
+
+    for (auto& [l, vec] : m_entitiesByLayer)
+        vec.erase(std::remove(vec.begin(), vec.end(), rawPtr), vec.end());
+
+
+    m_rawCollisionEntities.erase(
+        std::remove(m_rawCollisionEntities.begin(), m_rawCollisionEntities.end(), rawPtr),
+        m_rawCollisionEntities.end());
+
+    std::unique_ptr<Entity> extracted = std::move(*it);
+    m_entities.erase(it);
+
+    return extracted;
+}
+
+
+Entity* EntityManager::adoptEntity(std::unique_ptr<Entity> entity, EntityTag tag, EntityLayer layer) {
+    entity->setCollisionService(m_collisionService.get());
+    entity->setInteractionService(m_interactionService.get());
+
+    if (entity->hasComponent(ComponentsType::SCRIPT)) {
+        auto* script = static_cast<ScriptComponent*>(entity->getComponent(ComponentsType::SCRIPT));
+        script->reset();
+    }
+
+    Entity* entityPtr = entity.get();
+    m_entities.push_back(std::move(entity));
+    m_entitiesByTag[tag].push_back(entityPtr);
+    m_entitiesByLayer[layer].push_back(entityPtr);
+
+    return entityPtr;
+}
+
+
 
 void EntityManager::destroyEntity(Entity* entity) {
     m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(),
