@@ -30,6 +30,7 @@ export interface TileSetStore {
 	setTileSetLoaded: (path: string, loaded: boolean) => void;
 	updateTileSet: (path: string, updates: Partial<TileSetData>) => void;
 	removeTileSet: (path: string) => void;
+	reset: () => void;
 }
 
 export const useTileSetStore = create<TileSetStore>((set, get) => {
@@ -41,6 +42,15 @@ export const useTileSetStore = create<TileSetStore>((set, get) => {
 
 		setSelectedArea: (area) => {
 			set({ selectedArea: area });
+		},
+
+		reset: () => {
+			set({
+				tilesets: {} as Record<string, TileSetData>,
+				currentTileSetPath: null,
+				selectedArea: null,
+				zoom: 1,
+			});
 		},
 
 		setZoom: (zoom) => {

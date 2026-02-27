@@ -2,6 +2,8 @@ import { useEffect } from 'react';
 import { useFileToBeCreatedStore } from '../globalStores/useFileToBeCreated';
 import { useMapStore } from '../../Map/MapGState';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
+import { useFolderStore } from '../globalStores/useFolderStore';
+import { useTileSetStore } from '../../Tileset/TileSetGState';
 
 export function FileListener() {
 	const openFileCreation = useFileToBeCreatedStore((state) => state.setOpen);
@@ -12,6 +14,11 @@ export function FileListener() {
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
 	const setIsDirty = useMapStore((state) => state.setIsDirty);
+
+	const resetMap = useMapStore((state) => state.reset);
+	const resetProject = useProjectStore((state) => state.reset);
+	const resetFolder = useFolderStore((state) => state.reset);
+	const resetTileSet = useTileSetStore((state) => state.reset);
 
 	useEffect(() => {
 		const handleExport = async () => {
@@ -97,19 +104,20 @@ export function FileListener() {
 			}
 		});
 
+		const cleanupCloseProject = window.api.onCloseProject(() => {
+			resetMap();
+			resetProject();
+			resetFolder();
+			resetTileSet();
+		});
+
 		return () => {
 			cleanupCreate();
 			cleanupAdd();
 			cleanupSave();
+			cleanupCloseProject();
 		};
-	}, [
-		openFileCreation,
-		setFileExtension,
-		setContent,
-		mapRelativePath,
-		currentProject,
-		exportToEngineFormat,
-	]);
+	}, [openFileCreation, setFileExtension, setContent, mapRelativePath, currentProject, exportToEngineFormat, setIsDirty, resetMap, resetProject, resetFolder, resetTileSet]);
 
 	return null;
 }

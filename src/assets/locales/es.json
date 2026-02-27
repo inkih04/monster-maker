@@ -76,6 +76,7 @@
 			"copy": "Copiar",
 			"delete": "Eliminar",
 			"createFolder": "Crear Carpeta"
-		}
+		},
+		"closeProject": "Cerrar Proyecto"
 	}
 }

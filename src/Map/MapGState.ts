@@ -42,9 +42,9 @@ interface MapStore {
 	selectedTilePosition: SelectedTilePosition | null;
 	isLoadingMap: boolean;
 	showCollisions: boolean;
-	
-    setShowCollisions: (show: boolean) => void; 
-    toggleShowCollisions: () => void;
+
+	setShowCollisions: (show: boolean) => void;
+	toggleShowCollisions: () => void;
 
 	setSelectedTilePosition: (position: SelectedTilePosition | null) => void;
 	setMapRelativePath: (relativePath: string) => void;
@@ -81,6 +81,7 @@ interface MapStore {
 	): void;
 	clearMapTiles(): void;
 	exportToEngineFormat(): string;
+	reset: () => void;
 }
 
 export const useMapStore = create<MapStore>()(
@@ -103,13 +104,35 @@ export const useMapStore = create<MapStore>()(
 			isLoadingMap: false,
 			showCollisions: false,
 
-			setShowCollisions: (show) => {
-                set({ showCollisions: show });
-            },
+			reset: () => {
+				set({
+					map: {
+						mapId: '1',
+						width: 100,
+						height: 100,
+						tileSize: 16,
+						entities: {},
+					},
+					mapRelativePath: null,
+					paintedTiles: [],
+					isDirty: false,
+					selectedEntityId: null,
+					selectedTilePosition: null,
+					zoom: 1,
+					activeLayer: 'ground' as Layer,
+					isLoadingMap: false,
+					showCollisions: false,
+				});
+				useMapStore.temporal.getState().clear();
+			},
 
-            toggleShowCollisions: () => {
-                set((state) => ({ showCollisions: !state.showCollisions }));
-            },
+			setShowCollisions: (show) => {
+				set({ showCollisions: show });
+			},
+
+			toggleShowCollisions: () => {
+				set((state) => ({ showCollisions: !state.showCollisions }));
+			},
 
 			setMapRelativePath: (relativePath: string) => {
 				set({ mapRelativePath: relativePath });

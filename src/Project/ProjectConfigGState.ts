@@ -5,20 +5,29 @@ interface ProjectStore {
 	projects: ProjectData[];
 	isLoading: boolean;
 	currentProject: ProjectData | null;
+	isModalOpen: boolean;
 
 	loadProjects: () => Promise<void>;
 	addProject: (project: ProjectData) => Promise<{ success: boolean; error?: string }>;
 	openProject: (project: ProjectData) => Promise<{ success: boolean; error?: string }>;
 	removeProject: (path: string) => Promise<boolean>;
 	setCurrentProject: (project: ProjectData | null) => void;
+	reset: () => void;
+	setIsModalOpen: (open: boolean) => void;
 }
 
 export const useProjectStore = create<ProjectStore>((set) => ({
 	projects: [],
 	currentProject: null,
 	isLoading: false,
+	isModalOpen: true,
 
+	setIsModalOpen: (open) => set({ isModalOpen: open }),
 	setCurrentProject: (project) => set({ currentProject: project }),
+
+	reset: () => {
+		set({ currentProject: null, isLoading: false, isModalOpen: true });
+	},
 
 	loadProjects: async () => {
 		set({ isLoading: true });
