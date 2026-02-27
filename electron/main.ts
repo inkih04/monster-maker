@@ -87,9 +87,15 @@ function buildAppMenu() {
 		],
 	});
 
-	menu.splice(1, 0, {
+	menu.splice(0, 0, {
 		label: t('menu.file'),
 		submenu: [
+			{
+				label: t('menu.closeProject'),
+				type: 'normal',
+				click: () => win?.webContents.send('close-project'),
+			},
+			{ type: 'separator' },
 			{
 				label: t('menu.createNewFile'),
 				type: 'submenu',

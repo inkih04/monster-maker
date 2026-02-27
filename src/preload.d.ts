@@ -78,6 +78,7 @@ declare global {
 
 			onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => () => void;
 			onAddNewFile: (callback: () => void) => () => void;
+			onCloseProject: (callback: () => void) => () => void;
 			onSaveFile: (callback: () => void) => () => void;
 			runEngine: (
 				pd: ProjectData,

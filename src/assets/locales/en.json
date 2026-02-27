@@ -76,6 +76,7 @@
 			"copy": "Copy",
 			"delete": "Delete",
 			"createFolder": "Create Folder"
-		}
+		},
+		"closeProject": "Close Project"
 	}
 }

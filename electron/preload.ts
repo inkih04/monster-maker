@@ -91,6 +91,11 @@ contextBridge.exposeInMainWorld('api', {
 		return () => ipcRenderer.removeAllListeners('add-new-file');
 	},
 
+	onCloseProject: (callback: () => void) => {
+		ipcRenderer.on('close-project', callback);
+		return () => ipcRenderer.removeAllListeners('close-project');
+	},
+
 	onSaveFile: (callback: () => void) => {
 		ipcRenderer.on('save-file', callback);
 		return () => ipcRenderer.removeAllListeners('save-file');
