@@ -332,23 +332,37 @@ export const useMapStore = create<MapStore>()(
 					const component = entity?.components[type];
 					if (!entity || !component) return state;
 
+					const updatedEntity = {
+						...entity,
+						components: {
+							...entity.components,
+							[type]: {
+								...component,
+								...data,
+							},
+						},
+					};
+
+					// Si se actualiza el RENDER, sincronizar spriteSheetPath en paintedTiles
+					let paintedTiles = state.paintedTiles;
+					if (type === 'RENDER' && 'spriteSheetPath' in data) {
+						const newPath = (data as { spriteSheetPath?: string }).spriteSheetPath;
+						if (newPath !== undefined) {
+							paintedTiles = paintedTiles.map((tile) =>
+								tile.entityId === entityId ? { ...tile, spriteSheetPath: newPath } : tile
+							);
+						}
+					}
+
 					return {
 						map: {
 							...state.map,
 							entities: {
 								...state.map.entities,
-								[entityId]: {
-									...entity,
-									components: {
-										...entity.components,
-										[type]: {
-											...component,
-											...data,
-										},
-									},
-								},
+								[entityId]: updatedEntity,
 							},
 						},
+						paintedTiles,
 					};
 				});
 			},

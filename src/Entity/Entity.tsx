@@ -11,6 +11,7 @@ import { Tag } from '../domain/ecs/tags';
 
 import './Entity.css';
 import InteractionComponent from './Components/Interaction/InteractionComponent';
+import AnimationInspector from './Components/Animation/AnimatorInspector';
 
 const COMPONENT_UI_MAP: Partial<Record<ComponentType, React.ComponentType>> = {
 	RENDER: RendererComponent,
@@ -18,6 +19,7 @@ const COMPONENT_UI_MAP: Partial<Record<ComponentType, React.ComponentType>> = {
 	SCRIPT: ScriptComponent,
 	MOVEMENT: MovementComponent,
 	INTERACTION: InteractionComponent,
+	ANIMATION: AnimationInspector
 };
 
 const RENDER_ORDER: ComponentType[] = [

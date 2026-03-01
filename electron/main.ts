@@ -56,6 +56,15 @@ function buildAppMenu() {
 					win?.webContents.send('reset-layout');
 				},
 			},
+			{ type: 'separator' },
+			{
+				label: 'Toggle Developer Tools',
+				type: 'normal',
+				accelerator: 'CmdOrCtrl+Shift+I',
+				click: () => {
+					win?.webContents.toggleDevTools();
+				},
+			},
 		] as MenuItemConstructorOptions[];
 	}
 

@@ -25,19 +25,22 @@ class ScriptComponent {
 }
 
 class AnimationComponent {
-        -unordered_map<string, Animation> m_animations
+        -std::unordered_map<std::string, std::unordered_map<std::string, Animation>> m_sets;
         -string m_currentAnimation
+        -string m_activeSet;
         -size_t m_currentFrame
         -float m_elapsedTime
         -bool m_isPlaying
         -void updateRenderComponent()
 
         +AnimationComponent()
-        +void addAnimation(string name, vector<SpriteRect> frames, float frameDuration, bool loop=true, int priority=0)
+        +void addAnimation(string name, vector<SpriteRect> frames, float frameDuration, bool loop=true)
         +void play(string name, bool forceRestart=false)
         +void pause()
         +void resume()
         +void stop()
+        +void setActiveSet(const std::string& set);
+        +const std::string& getActiveSet() const 
         +SpriteRect getCurrentFrame()
         +string getCurrentAnimationName()
         +bool isPlaying()

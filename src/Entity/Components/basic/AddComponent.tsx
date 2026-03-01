@@ -4,6 +4,7 @@ import { useMapStore } from '../../../Map/MapGState';
 import { ComponentType, ComponentMap } from '../../../domain/ecs/componentMap';
 import './AddComponent.css';
 import { useTranslation } from 'react-i18next';
+import { makeEmptySet, DEFAULT_SET } from '../Animation/customHooks/useAnimationInspector';
 
 type IconType = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
@@ -35,7 +36,10 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 	ANIMATION: {
 		icon: Play,
 		label: 'Animation',
-		initData: { animations: [] },
+		initData: {
+			defaultAnimation: 'standdown',
+			sets: { [DEFAULT_SET]: makeEmptySet() },
+		},
 	},
 	MOVEMENT: {
 		icon: FastArrowRight,

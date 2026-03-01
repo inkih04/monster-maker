@@ -15,7 +15,8 @@ declare global {
 				defaultPath?: string
 			) => Promise<{ success: boolean; path?: string; error?: string }>;
 			selectFile: (
-				defaultPath?: string
+				defaultPath?: string,
+				filters?: { name: string; extensions: string[] }[]
 			) => Promise<{ success: boolean; path?: string; error?: string }>;
 			toRelativePath: (
 				absolutePath: string
