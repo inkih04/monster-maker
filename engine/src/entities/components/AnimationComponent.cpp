@@ -132,6 +132,7 @@ void AnimationComponent::update(int deltaTime) {
 }
 
 void AnimationComponent::updateRenderComponent() {
+    if (!m_entity) return;
     Component* renderCompBase = m_entity->getComponent(ComponentsType::RENDER);
     if (!renderCompBase) {
         std::cerr << "[ENGINE][ERROR] Entity doesn't have RenderComponent!" << std::endl;
