@@ -1,12 +1,45 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useMapStore } from '../../../../Map/MapGState';
 import { useProjectStore } from '../../../../Project/ProjectConfigGState';
-import { AnimationFrame as Frame, Animation } from '../../../../domain/ecs/components';
+import {
+	AnimationFrame as Frame,
+	Animation,
+	AnimationSet,
+} from '../../../../domain/ecs/components';
 
 
-interface AnimationInspectorState {
-	animations: Animation[];
-	defaultAnimation?: string;
+export const DEFAULT_SET = 'default';
+
+export const BASIC_ANIMATION_NAMES = [
+	'standdown',
+	'standup',
+	'standleft',
+	'standright',
+	'movedown',
+	'moveup',
+	'moveleft',
+	'moveright',
+] as const;
+
+export type BasicAnimationName = (typeof BASIC_ANIMATION_NAMES)[number];
+
+
+function makeEmptyAnimation(name: string): Animation {
+	return { name, frames: [], frameDuration: 150, loop: true };
+}
+
+export function makeDefaultAnimations(): Animation[] {
+	return BASIC_ANIMATION_NAMES.map(makeEmptyAnimation);
+}
+
+export function makeEmptySet(): AnimationSet {
+	return { animations: makeDefaultAnimations() };
+}
+
+
+export interface ActiveSelection {
+	setName: string;
+	animIndex: number | null;
 }
 
 
@@ -14,6 +47,7 @@ export function useAnimationInspector() {
 	const selectedEntityId = useMapStore((s) => s.selectedEntityId);
 	const map = useMapStore((s) => s.map);
 	const updateComponent = useMapStore((s) => s.updateComponent);
+	const removeComponent = useMapStore((s) => s.removeComponent);
 	const currentProject = useProjectStore((s) => s.currentProject);
 
 	const entity = selectedEntityId && map ? map.entities[selectedEntityId] : null;
@@ -25,16 +59,26 @@ export function useAnimationInspector() {
 	const [imageUrl, setImageUrl] = useState<string>('');
 	const [cellW, setCellW] = useState<number>(64);
 	const [cellH, setCellH] = useState<number>(64);
-	const [data, setData] = useState<AnimationInspectorState>({ animations: [] });
-	const [activeAnim, setActiveAnim] = useState<number | null>(null);
+	const [sets, setSets] = useState<Record<string, AnimationSet>>({});
+	const [defaultAnimation, setDefaultAnimation] = useState<string | undefined>(undefined);
+	const [selection, setSelection] = useState<ActiveSelection>({
+		setName: DEFAULT_SET,
+		animIndex: null,
+	});
 	const [previewFrame, setPreviewFrame] = useState<number>(0);
 	const [isPreviewRunning, setIsPreviewRunning] = useState<boolean>(false);
 	const previewTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
 
 	useEffect(() => {
-		setData({ animations: animComp ? animComp.animations : [] });
-		setActiveAnim(null);
+		if (animComp?.sets) {
+			setSets(animComp.sets);
+			setDefaultAnimation(animComp.defaultAnimation);
+		} else {
+			setSets({ [DEFAULT_SET]: makeEmptySet() });
+			setDefaultAnimation(undefined);
+		}
+		setSelection({ setName: DEFAULT_SET, animIndex: null });
 	}, [selectedEntityId]); 
 
 	useEffect(() => {
@@ -48,10 +92,13 @@ export function useAnimationInspector() {
 			.catch(() => setImageUrl(''));
 	}, [spriteSheetPath, currentProject]);
 
-	const persistAnimations = useCallback(
-		(animations: Animation[]) => {
+	const persist = useCallback(
+		(nextSets: Record<string, AnimationSet>, nextDefault?: string) => {
 			if (!selectedEntityId) return;
-			updateComponent(selectedEntityId, 'ANIMATION', { animations });
+			updateComponent(selectedEntityId, 'ANIMATION', {
+				sets: nextSets,
+				defaultAnimation: nextDefault,
+			});
 		},
 		[selectedEntityId, updateComponent]
 	);
@@ -89,93 +136,134 @@ export function useAnimationInspector() {
 		}
 	};
 
-	const addAnimation = () => {
+	const addSet = (name: string) => {
+		if (!name || sets[name]) return;
+		const next = { ...sets, [name]: makeEmptySet() };
+		setSets(next);
+		persist(next, defaultAnimation);
+		setSelection({ setName: name, animIndex: null });
+	};
+
+	const deleteSet = (name: string) => {
+		if (name === DEFAULT_SET) return;
+		const next = { ...sets };
+		delete next[name];
+		setSets(next);
+		persist(next, defaultAnimation);
+		setSelection({ setName: DEFAULT_SET, animIndex: null });
+	};
+
+	const renameSet = (oldName: string, newName: string) => {
+		if (oldName === DEFAULT_SET || !newName || sets[newName]) return;
+		const next: Record<string, AnimationSet> = {};
+		for (const [k, v] of Object.entries(sets)) {
+			next[k === oldName ? newName : k] = v;
+		}
+		setSets(next);
+		persist(next, defaultAnimation);
+		if (selection.setName === oldName) setSelection((s) => ({ ...s, setName: newName }));
+	};
+
+	const addAnimation = (setName: string) => {
+		const currentAnims = sets[setName]?.animations ?? [];
 		const next: Animation = {
-			name: `anim_${data.animations.length}`,
+			name: `anim_${currentAnims.length}`,
 			frames: [],
 			frameDuration: 150,
 			loop: true,
-			priority: 0,
 		};
-		const nextIdx = data.animations.length;
-		setData((d) => {
-			const updated = [...d.animations, next];
-			persistAnimations(updated);
-			return { ...d, animations: updated };
-		});
-		setActiveAnim(nextIdx);
+		const nextSets = { ...sets, [setName]: { animations: [...currentAnims, next] } };
+		setSets(nextSets);
+		persist(nextSets, defaultAnimation);
+		setSelection({ setName, animIndex: currentAnims.length });
 	};
 
-	const deleteAnimation = (index: number) => {
-		setData((d) => {
-			const updated = d.animations.filter((_, i) => i !== index);
-			persistAnimations(updated);
-			return { ...d, animations: updated };
-		});
-		setActiveAnim(null);
+	const deleteAnimation = (setName: string, index: number) => {
+		if (setName === DEFAULT_SET && index < BASIC_ANIMATION_NAMES.length) return;
+		const anims = sets[setName]?.animations ?? [];
+		const nextSets = { ...sets, [setName]: { animations: anims.filter((_, i) => i !== index) } };
+		setSets(nextSets);
+		persist(nextSets, defaultAnimation);
+		setSelection((s) => ({ ...s, animIndex: null }));
 	};
 
-	const updateAnim = (index: number, patch: Partial<Animation>) => {
-		setData((d) => {
-			const anims = [...d.animations];
-			anims[index] = { ...anims[index], ...patch };
-			persistAnimations(anims);
-			return { ...d, animations: anims };
-		});
-	};
-
-	const setDefaultAnimation = (name: string | undefined) => {
-		setData((d) => ({ ...d, defaultAnimation: name }));
+	const updateAnim = (setName: string, index: number, patch: Partial<Animation>) => {
+		const anims = [...(sets[setName]?.animations ?? [])];
+		anims[index] = { ...anims[index], ...patch };
+		const nextSets = { ...sets, [setName]: { animations: anims } };
+		setSets(nextSets);
+		persist(nextSets, defaultAnimation);
 	};
 
 	const toggleCell = (frame: Frame) => {
-		if (activeAnim === null) return;
-		const anim = data.animations[activeAnim];
+		const { setName, animIndex } = selection;
+		if (animIndex === null) return;
+		const anim = sets[setName]?.animations[animIndex];
+		if (!anim) return;
 		const exists = anim.frames.findIndex((f) => f.x === frame.x && f.y === frame.y);
 		const newFrames =
 			exists >= 0 ? anim.frames.filter((_, i) => i !== exists) : [...anim.frames, frame];
-		updateAnim(activeAnim, { frames: newFrames });
+		updateAnim(setName, animIndex, { frames: newFrames });
 	};
 
-	const removeFrame = (frameIndex: number) => {
-		if (activeAnim === null) return;
-		updateAnim(activeAnim, {
-			frames: data.animations[activeAnim].frames.filter((_, i) => i !== frameIndex),
-		});
+	const removeFrame = (setName: string, animIndex: number, frameIndex: number) => {
+		const anim = sets[setName]?.animations[animIndex];
+		if (!anim) return;
+		updateAnim(setName, animIndex, { frames: anim.frames.filter((_, i) => i !== frameIndex) });
 	};
 
-	const moveFrame = (from: number, to: number) => {
-		if (activeAnim === null) return;
-		const frames = [...data.animations[activeAnim].frames];
+	const moveFrame = (setName: string, animIndex: number, from: number, to: number) => {
+		const anim = sets[setName]?.animations[animIndex];
+		if (!anim) return;
+		const frames = [...anim.frames];
 		const [item] = frames.splice(from, 1);
 		frames.splice(to, 0, item);
-		updateAnim(activeAnim, { frames });
+		updateAnim(setName, animIndex, { frames });
 	};
 
-	const currentAnim = activeAnim !== null ? data.animations[activeAnim] : null;
+
+	const handleSetDefault = (name: string | undefined) => {
+		setDefaultAnimation(name);
+		persist(sets, name);
+	};
+
+	const handleDelete = () => {
+		if (!selectedEntityId) return;
+		removeComponent(selectedEntityId, 'ANIMATION');
+	};
+
+	const currentAnim =
+		selection.animIndex !== null
+			? (sets[selection.setName]?.animations[selection.animIndex] ?? null)
+			: null;
 
 	return {
 		imageUrl,
 		cellW,
 		cellH,
-		data,
-		activeAnim,
+		sets,
+		defaultAnimation,
+		selection,
 		previewFrame,
 		currentAnim,
 		spriteSheetPath,
+		isPreviewRunning,
 		setCellW,
 		setCellH,
-		setActiveAnim,
-		setDefaultAnimation,
+		setSelection,
+		handleSetDefault,
 		handleSelectSpritesheet,
 		startPreview,
 		stopPreview,
-		isPreviewRunning,
+		addSet,
+		deleteSet,
+		renameSet,
 		addAnimation,
 		deleteAnimation,
 		updateAnim,
 		toggleCell,
 		removeFrame,
 		moveFrame,
+		handleDelete,
 	};
 }

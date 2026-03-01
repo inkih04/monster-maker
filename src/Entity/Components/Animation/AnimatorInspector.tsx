@@ -2,49 +2,103 @@ import { Component, ComponentHeader, ComponentBody } from '../basic/InspectorCom
 import { MediaImage, Plus } from 'iconoir-react';
 import './Animation.css';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import SpritePicker from './SpritePicker';
-import AnimationItem from './AnimationItem';
+import AnimationSetSection from './AnimationSetSection';
 import { useAnimationInspector } from './customHooks/useAnimationInspector';
+import { useMapStore } from '../../../Map/MapGState';
+import { useFolderStore } from '../../../common/globalStores/useFolderStore';
 
 function AnimationInspector() {
+	const selectedEntityId = useMapStore((s) => s.selectedEntityId);
+	const updateComponent = useMapStore((s) => s.updateComponent);
+
 	const {
 		imageUrl,
 		cellW,
 		cellH,
-		data,
-		activeAnim,
+		sets,
+		selection,
 		previewFrame,
 		currentAnim,
 		spriteSheetPath,
+		isPreviewRunning,
 		setCellW,
 		setCellH,
-		setActiveAnim,
-		setDefaultAnimation,
+		setSelection,
 		handleSelectSpritesheet,
 		startPreview,
+		stopPreview,
+		addSet,
+		deleteSet,
+		renameSet,
 		addAnimation,
 		deleteAnimation,
 		updateAnim,
 		toggleCell,
 		removeFrame,
 		moveFrame,
-		stopPreview,
-		isPreviewRunning,
+		handleDelete,
 	} = useAnimationInspector();
 
-	const [isListOpen, setIsListOpen] = useState(true);
-	const [isPickerOpen, setIsPickerOpen] = useState(true);
+	const [isPickerOpen, setIsPickerOpen] = useState(false);
+	const [dragState, setDragState] = useState<'none' | 'valid' | 'invalid'>('none');
+	const [isSetsOpen, setIsSetsOpen] = useState(false);
+	const [newSetName, setNewSetName] = useState('');
+	const [isAddingSet, setIsAddingSet] = useState(false);
+	const selectedFolder = useFolderStore((state) => state.selectedFolder);
+
+	const handleAddSet = () => {
+		if (!newSetName.trim()) return;
+		addSet(newSetName.trim());
+		setNewSetName('');
+		setIsAddingSet(false);
+	};
+
+	const handleDragOver = (e: React.DragEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		const isTileset = e.dataTransfer.types.includes('file-type/tileset');
+		const isFile = e.dataTransfer.types.some((t) => t.startsWith('file-type/'));
+		if (!isFile) return;
+		setDragState(isTileset ? 'valid' : 'invalid');
+	};
+
+	const handleDragLeave = () => setDragState('none');
+
+	const handleDrop = async (e: React.DragEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		setDragState('none');
+		const fileData = e.dataTransfer.getData('application/file-item');
+		if (!fileData) return;
+		const file = JSON.parse(fileData);
+		if (file.type !== 'tileset') return;
+
+		if (!selectedFolder) return;
+
+		const finalPath = await window.api.pathUnion(selectedFolder?.path, file.path);
+
+		if (selectedEntityId)
+			updateComponent(selectedEntityId, 'RENDER', { spriteSheetPath: finalPath });
+	};
+
+	const pickerDisabled = selection.animIndex === null;
 
 	return (
 		<div className="animation--wrapper">
 			<Component id="Animation">
-				<ComponentHeader icon={MediaImage} onDelete={() => {}}>
+				<ComponentHeader icon={MediaImage} onDelete={handleDelete}>
 					Animation
 				</ComponentHeader>
 
 				<ComponentBody>
-					<div className="animation--load-row">
+					<div
+						className={`animation--load-row ${dragState === 'valid' ? 'animation--drag-valid' : ''} ${dragState === 'invalid' ? 'animation--drag-invalid' : ''}`}
+						onDragOver={handleDragOver}
+						onDragLeave={handleDragLeave}
+						onDrop={handleDrop}
+					>
 						<button
 							className={`animation--load-btn ${spriteSheetPath ? 'animation--load-btn--loaded' : ''}`}
 							onClick={handleSelectSpritesheet}
@@ -52,7 +106,6 @@ function AnimationInspector() {
 						>
 							{spriteSheetPath ? `✓ ${spriteSheetPath.split('/').pop()}` : '+ select spritesheet…'}
 						</button>
-
 						<label className="animation--cell-label">
 							W
 							<input
@@ -74,6 +127,7 @@ function AnimationInspector() {
 							/>
 						</label>
 					</div>
+
 					{imageUrl && (
 						<div className="animation--section">
 							<div className="animation--section-header" onClick={() => setIsPickerOpen((v) => !v)}>
@@ -82,64 +136,100 @@ function AnimationInspector() {
 							</div>
 
 							{isPickerOpen && (
-								<div
-									className={`animation--picker-wrap animation--picker-wrap--borderless ${activeAnim === null ? 'animation--picker-wrap--disabled' : ''}`}
-								>
-									{activeAnim === null && (
+								<>
+									{pickerDisabled && (
 										<div className="animation--picker-hint">
-											Select or create an animation below to start picking frames
+											Select an animation below to start picking frames
 										</div>
 									)}
-									<SpritePicker
-										imageUrl={imageUrl}
-										cellW={cellW}
-										cellH={cellH}
-										selectedCells={currentAnim?.frames ?? []}
-										onToggleCell={toggleCell}
-									/>
-								</div>
-							)}
-						</div>
-					)}
-					<div className="animation--section">
-						<div className="animation--section-header" onClick={() => setIsListOpen((v) => !v)}>
-							<span className="animation--chevron">{isListOpen ? '▾' : '▸'}</span>
-							<span className="animation--section-title">Animations</span>
-							<span className="animation--frame-count">{data.animations.length}</span>
-						</div>
-
-						{isListOpen && (
-							<>
-								<div className="animation--list">
-									{data.animations.map((anim, i) => (
-										<AnimationItem
-											key={i}
-											anim={anim}
-											index={i}
-											isOpen={activeAnim === i}
-											isDefault={data.defaultAnimation === anim.name}
+									<div
+										className={`animation--picker-wrap animation--picker-wrap--borderless ${pickerDisabled ? 'animation--picker-wrap--disabled' : ''}`}
+									>
+										<SpritePicker
 											imageUrl={imageUrl}
 											cellW={cellW}
 											cellH={cellH}
-											previewFrame={previewFrame}
-											onToggle={setActiveAnim}
-											onUpdate={updateAnim}
-											onDelete={deleteAnimation}
-											onStartPreview={startPreview}
-											onSetDefault={setDefaultAnimation}
-											onRemoveFrame={removeFrame}
-											onMoveFrame={moveFrame}
-											isPreviewing={activeAnim === i && isPreviewRunning}
-											onStopPreview={stopPreview}
+											selectedCells={currentAnim?.frames ?? []}
+											onToggleCell={toggleCell}
 										/>
-									))}
-								</div>
+									</div>
+								</>
+							)}
+						</div>
+					)}
 
-								<button className="animation--add-btn" onClick={addAnimation}>
-									<Plus width={12} height={12} />
-									new animation
-								</button>
-							</>
+					<div className="animation--section">
+						<div className="animation--section-header" onClick={() => setIsSetsOpen((v) => !v)}>
+							<span className="animation--chevron">{isSetsOpen ? '▾' : '▸'}</span>
+							<span className="animation--section-title">Animation Sets</span>
+							<span className="animation--frame-count">{Object.keys(sets).length}</span>
+						</div>
+
+						{isSetsOpen && (
+							<div className="animation--sets-body">
+								{Object.entries(sets).map(([name, set]) => (
+									<AnimationSetSection
+										key={name}
+										setName={name}
+										set={set}
+										selection={selection}
+										imageUrl={imageUrl}
+										cellW={cellW}
+										cellH={cellH}
+										previewFrame={previewFrame}
+										isPreviewRunning={isPreviewRunning}
+										onSetSelection={setSelection}
+										onRenameSet={renameSet}
+										onDeleteSet={deleteSet}
+										onAddAnimation={addAnimation}
+										onUpdateAnim={updateAnim}
+										onDeleteAnim={deleteAnimation}
+										onStartPreview={startPreview}
+										onStopPreview={stopPreview}
+										onRemoveFrame={removeFrame}
+										onMoveFrame={moveFrame}
+									/>
+								))}
+
+								{isAddingSet ? (
+									<div className="animation--new-set-row">
+										<input
+											className="animation--new-set-input"
+											placeholder="set name…"
+											value={newSetName}
+											autoFocus
+											onChange={(e) => setNewSetName(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === 'Enter') handleAddSet();
+												if (e.key === 'Escape') {
+													setIsAddingSet(false);
+													setNewSetName('');
+												}
+											}}
+										/>
+										<button className="animation--icon-btn" onClick={handleAddSet}>
+											✓
+										</button>
+										<button
+											className="animation--icon-btn animation--icon-btn--danger"
+											onClick={() => {
+												setIsAddingSet(false);
+												setNewSetName('');
+											}}
+										>
+											✕
+										</button>
+									</div>
+								) : (
+									<button
+										className="animation--add-btn animation--add-btn--set"
+										onClick={() => setIsAddingSet(true)}
+									>
+										<Plus width={12} height={12} />
+										new set
+									</button>
+								)}
+							</div>
 						)}
 					</div>
 				</ComponentBody>
