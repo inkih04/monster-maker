@@ -10,9 +10,12 @@
 #include <vector>
 #include <string>
 
+static const std::string DEFAULT_SET = "default";
+
 class AnimationComponent: public Component {
     private:
-        std::unordered_map<std::string, Animation> m_animations;
+        std::unordered_map<std::string, std::unordered_map<std::string, Animation>> m_sets;
+        std::string m_activeSet;
         std::string m_currentAnimation;
         size_t m_currentFrame;
         float m_elapsedTime;
@@ -22,10 +25,13 @@ class AnimationComponent: public Component {
     public:
         AnimationComponent();
         void addAnimation(const std::string& name,
-                         const std::vector<SpriteRect>& frames,
-                         float frameDuration,
-                         bool loop = true,
-                         int priority = 0);
+                          const std::vector<SpriteRect>& frames,
+                          float frameDuration,
+                          bool loop = true,
+                          const std::string& set = DEFAULT_SET);
+
+        void setActiveSet(const std::string& set);
+        const std::string& getActiveSet() const { return m_activeSet; }
 
         void play(const std::string& name, bool forceRestart = false);
         void pause();
@@ -38,7 +44,7 @@ class AnimationComponent: public Component {
 
         void update(int deltaTime) override;
         void render() override {}
-};
+    };
 
 
 #endif //POKEMONGAMEENGINE_ANIMATIONCOMPONENT_H

@@ -5,9 +5,12 @@
 #ifndef POKEMONGAMEENGINE_ENTITYLOADER_H
 #define POKEMONGAMEENGINE_ENTITYLOADER_H
 
+#include <iosfwd>
 #include <string>
+#include <vector>
 #include <nlohmann/json.hpp>
 #include "EntityManager.h"
+#include "SpriteRect.h"
 
 using json = nlohmann::json;
 
@@ -22,6 +25,9 @@ private:
     static std::unique_ptr<Component> createRenderComponent(const json& data);
     static std::unique_ptr<Component> createColliderComponent(const json& data);
     static std::unique_ptr<Component> createAnimationComponent(const json& data);
+
+    static std::vector<SpriteRect> parseFrames(const json &framesJson);
+
     static std::unique_ptr<Component> createScriptComponent(const json& data);
 };
 

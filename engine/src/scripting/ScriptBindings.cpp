@@ -33,6 +33,23 @@ void ScriptBindings::registerBordersMapService(sol::state& lua) {
     );
 }
 
+void ScriptBindings::registerAnimationComponent(sol::state& lua) {
+    lua.new_usertype<AnimationComponent>("AnimationComponent",
+        "setSet",  &AnimationComponent::setActiveSet,
+        "getSet",  &AnimationComponent::getActiveSet,
+
+        "play", [](AnimationComponent& anim, const std::string& name, sol::optional<bool> forceRestart) {
+            anim.play(name, forceRestart.value_or(false));
+        },
+        "pause",  &AnimationComponent::pause,
+        "resume", &AnimationComponent::resume,
+        "stop",   &AnimationComponent::stop,
+
+        "isPlaying",       &AnimationComponent::isPlaying,
+        "currentAnim",     &AnimationComponent::getCurrentAnimationName
+    );
+}
+
 void ScriptBindings::registerAudioService(sol::state& lua) {
     lua.new_usertype<AudioService>("AudioService",
         sol::no_constructor,

@@ -27,6 +27,7 @@ class ScriptBindings {
         static void registerEntity(sol::state &lua);
         static void registerAudioService(sol::state &lua);
         static void registerBordersMapService(sol::state &lua);
+        static void registerAnimationComponent(sol::state &lua);
 
     public:
         static void registerStatic(sol::state& lua);

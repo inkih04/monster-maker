@@ -9,30 +9,66 @@
 
 
 AnimationComponent::AnimationComponent()
-    : m_currentFrame(0)
+    : m_activeSet(DEFAULT_SET)
+    , m_currentFrame(0)
     , m_elapsedTime(0.0f)
-    , m_isPlaying(false){
+    , m_isPlaying(false) {
 }
 
 void AnimationComponent::addAnimation(const std::string& name,
-                                     const std::vector<SpriteRect>& frames,
-                                     float frameDuration,
-                                     bool loop,
-                                     int priority) {
+                                      const std::vector<SpriteRect>& frames,
+                                      float frameDuration,
+                                      bool loop,
+                                      const std::string& set) {
     Animation anim;
     anim.name = name;
     anim.frames = frames;
     anim.frameDuration = frameDuration;
     anim.loop = loop;
-    anim.priority = priority;
 
-    m_animations[name] = anim;
+    m_sets[set][name] = anim;
+}
+
+void AnimationComponent::setActiveSet(const std::string& set) {
+    if (m_sets.find(set) == m_sets.end()) {
+        std::cerr << "[ENGINE][WARN] Animation set '" << set << "' not found, keeping current set '"
+                  << m_activeSet << "'" << std::endl;
+        return;
+    }
+
+    m_activeSet = set;
+
+    m_currentAnimation = "";
+    m_currentFrame = 0;
+    m_elapsedTime = 0.0f;
+    m_isPlaying = false;
 }
 
 void AnimationComponent::play(const std::string& name, bool forceRestart) {
-    if (m_animations.find(name) == m_animations.end()) {
-        std::cerr << "Animation '" << name << "' not found!" << std::endl;
+    auto setIt = m_sets.find(m_activeSet);
+    if (setIt == m_sets.end()) {
+        std::cerr << "[ENGINE][ERROR] Active set '" << m_activeSet << "' not found!" << std::endl;
         return;
+    }
+
+    const auto& animations = setIt->second;
+
+    auto animIt = animations.find(name);
+    if (animIt == animations.end()) {
+        if (m_activeSet != DEFAULT_SET) {
+            auto& defaultAnims = m_sets[DEFAULT_SET];
+            animIt = defaultAnims.find(name);
+            if (animIt == defaultAnims.end()) {
+                std::cerr << "[ENGINE][WARN] Animation '" << name
+                          << "' not found in set '" << m_activeSet
+                          << "' nor in 'default'" << std::endl;
+                return;
+            }
+        } else {
+            std::cerr << "[ENGINE][WARN] Animation '" << name << "' not found in set '"
+                      << m_activeSet << "'" << std::endl;
+            return;
+        }
     }
 
     if (m_currentAnimation == name && m_isPlaying && !forceRestart) {
@@ -52,7 +88,10 @@ void AnimationComponent::pause() {
 }
 
 void AnimationComponent::resume() {
-    if (!m_currentAnimation.empty() && !m_animations[m_currentAnimation].frames.empty()) {
+    auto setIt = m_sets.find(m_activeSet);
+    if (setIt == m_sets.end()) return;
+
+    if (!m_currentAnimation.empty() && !setIt->second.at(m_currentAnimation).frames.empty()) {
         m_isPlaying = true;
     }
 }
@@ -66,7 +105,13 @@ void AnimationComponent::stop() {
 void AnimationComponent::update(int deltaTime) {
     if (!m_isPlaying || m_currentAnimation.empty()) return;
 
-    Animation& anim = m_animations[m_currentAnimation];
+    auto setIt = m_sets.find(m_activeSet);
+    if (setIt == m_sets.end()) return;
+
+    auto animIt = setIt->second.find(m_currentAnimation);
+    if (animIt == setIt->second.end()) return;
+
+    Animation& anim = animIt->second;
 
     m_elapsedTime += deltaTime;
 
@@ -80,7 +125,6 @@ void AnimationComponent::update(int deltaTime) {
             } else {
                 m_currentFrame = anim.frames.size() - 1;
                 m_isPlaying = false;
-
             }
         }
         updateRenderComponent();
@@ -89,24 +133,27 @@ void AnimationComponent::update(int deltaTime) {
 
 void AnimationComponent::updateRenderComponent() {
     Component* renderCompBase = m_entity->getComponent(ComponentsType::RENDER);
-
     if (!renderCompBase) {
-        std::cerr << "Entity doesn't have RenderComponent!" << std::endl;
+        std::cerr << "[ENGINE][ERROR] Entity doesn't have RenderComponent!" << std::endl;
         return;
     }
 
-    //todo:Lo mismo puedo guardar el puntero en una variable miembro para no tener que buscarlo cada vez
     auto* renderComp = dynamic_cast<RenderComponent*>(renderCompBase);
-
     if (!renderComp) {
-        std::cerr << "Failed to cast to RenderComponent!" << std::endl;
+        std::cerr << "[ENGINE][ERROR] Failed to cast to RenderComponent!" << std::endl;
         return;
     }
 
-    Animation& anim = m_animations[m_currentAnimation];
+    auto setIt = m_sets.find(m_activeSet);
+    if (setIt == m_sets.end()) return;
+
+    auto animIt = setIt->second.find(m_currentAnimation);
+    if (animIt == setIt->second.end()) return;
+
+    const Animation& anim = animIt->second;
 
     if (m_currentFrame >= anim.frames.size()) {
-        std::cerr << "Invalid frame index!" << std::endl;
+        std::cerr << "[ENGINE][ERROR] Invalid frame index!" << std::endl;
         return;
     }
 
@@ -114,8 +161,11 @@ void AnimationComponent::updateRenderComponent() {
 }
 
 SpriteRect AnimationComponent::getCurrentFrame() const {
-    if (m_currentAnimation.empty()) return SpriteRect{-1, -1, -1, -1};
+    auto setIt = m_sets.find(m_activeSet);
+    if (setIt == m_sets.end()) return SpriteRect{-1, -1, -1, -1};
 
-    const Animation& anim = m_animations.at(m_currentAnimation);
-    return anim.frames[m_currentFrame];
+    auto animIt = setIt->second.find(m_currentAnimation);
+    if (animIt == setIt->second.end()) return SpriteRect{-1, -1, -1, -1};
+
+    return animIt->second.frames[m_currentFrame];
 }

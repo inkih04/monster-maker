@@ -8,8 +8,7 @@
 #include "ColliderComponent.h"
 #include <fstream>
 #include <iostream>
-#include "components/AnimationComponent.h"
-
+#include "AnimationComponent.h"
 #include "InteractionComponent.h"
 #include "MovementComponent.h"
 #include "ScriptComponet.h"
@@ -158,34 +157,49 @@ std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& dat
 std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& data) {
     auto animComponent = std::make_unique<AnimationComponent>();
 
-    if (!data.contains("animations")) {
-        std::cout << "[ENGINE][ERROR] AnimationComponent requires an 'animations' array" << std::endl; return nullptr;
-    }
+    if (data.contains("sets")) {
+        for (const auto& [setName, setJson] : data["sets"].items()) {
+            if (!setJson.contains("animations")) {
+                std::cout << "[ENGINE][WARN] Set '" << setName << "' has no 'animations' array, skipping" << std::endl;
+                continue;
+            }
 
-    for (const auto& animJson : data["animations"]) {
-        std::string name = animJson.value("name", "");
+            for (const auto& animJson : setJson["animations"]) {
+                std::string name = animJson.value("name", "");
+                if (!animJson.contains("frames")) {
+                    std::cout << "[ENGINE][ERROR] Animation '" << name << "' in set '" << setName << "' requires 'frames'" << std::endl;
+                    continue;
+                }
 
-        if (!animJson.contains("frames")) {
-            std::cout << "[ENGINE][ERROR] Animation '" << name << "' requires 'frames'" << std::endl;
-            continue;
+                std::vector<SpriteRect> frames = parseFrames(animJson["frames"]);
+                float frameDuration = animJson.value("frameDuration", 100.0f);
+                bool loop = animJson.value("loop", true);
+
+                animComponent->addAnimation(name, frames, frameDuration, loop, setName);
+            }
         }
 
-        std::vector<SpriteRect> frames;
+        std::string activeSet = data.value("activeSet", "default");
+        animComponent->setActiveSet(activeSet);
 
-        for (const auto& frame : animJson["frames"]) {
-            SpriteRect rect;
-            rect.x = frame.value("x", 0);
-            rect.y = frame.value("y", 0);
-            rect.width = frame.value("w", 32);
-            rect.height = frame.value("h", 32);
-            frames.push_back(rect);
+    } else if (data.contains("animations")) {
+        for (const auto& animJson : data["animations"]) {
+            std::string name = animJson.value("name", "");
+            if (!animJson.contains("frames")) {
+                std::cout << "[ENGINE][ERROR] Animation '" << name << "' requires 'frames'" << std::endl;
+                continue;
+            }
+
+            std::vector<SpriteRect> frames = parseFrames(animJson["frames"]);
+            float frameDuration = animJson.value("frameDuration", 100.0f);
+            bool loop = animJson.value("loop", true);
+
+            animComponent->addAnimation(name, frames, frameDuration, loop);
         }
 
-        float frameDuration = animJson.value("frameDuration", 100.0f);
-        bool loop = animJson.value("loop", true);
-        int priority = animJson.value("priority", 0);
-
-        animComponent->addAnimation(name, frames, frameDuration, loop, priority);
+    } else {
+        std::cout << "[ENGINE][ERROR] AnimationComponent requires either 'sets' or 'animations'" << std::endl;
+        return nullptr;
     }
 
     if (data.contains("defaultAnimation")) {
@@ -194,4 +208,17 @@ std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& da
     }
 
     return animComponent;
+}
+
+std::vector<SpriteRect> EntityLoader::parseFrames(const json& framesJson) {
+    std::vector<SpriteRect> frames;
+    for (const auto& frame : framesJson) {
+        SpriteRect rect;
+        rect.x = frame.value("x", 0);
+        rect.y = frame.value("y", 0);
+        rect.width = frame.value("w", 32);
+        rect.height = frame.value("h", 32);
+        frames.push_back(rect);
+    }
+    return frames;
 }
