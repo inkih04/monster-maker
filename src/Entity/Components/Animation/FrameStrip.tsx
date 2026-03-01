@@ -1,4 +1,5 @@
 import { AnimationFrame as Frame } from '../../../domain/ecs/components';
+import { useTranslation } from 'react-i18next';
 
 export interface FrameStripProps {
 	frames: Frame[];
@@ -17,8 +18,10 @@ function FrameStrip({
 	onRemove,
 	onMove,
 }: Readonly<FrameStripProps>) {
+	const { t } = useTranslation();
+
 	if (frames.length === 0) {
-		return <div className="animation--strip-empty">no frames selected</div>;
+		return <div className="animation--strip-empty">{t('animation.noFrames')}</div>;
 	}
 
 	return (

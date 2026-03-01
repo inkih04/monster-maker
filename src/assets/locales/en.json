@@ -78,5 +78,22 @@
 			"createFolder": "Create Folder"
 		},
 		"closeProject": "Close Project"
+	},
+	"animation": {
+		"selectSpritesheet": "+ select spritesheet…",
+		"spritesheet": "Spritesheet",
+		"pickerHint": "Select an animation below to start picking frames",
+		"animationSets": "Animation Sets",
+		"setNamePlaceholder": "set name…",
+		"newSet": "new set",
+		"noFrames": "no frames selected",
+		"renameHint": "Double click to rename",
+		"deleteSet": "Delete set",
+		"newAnimation": "new animation",
+		"basicRenameHint": "Basic animations cannot be renamed",
+		"stopPreview": "Stop preview",
+		"preview": "Preview",
+		"duration": "duration",
+		"loop": "loop"
 	}
 }

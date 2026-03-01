@@ -2,6 +2,7 @@ import { PlaySolid, PauseSolid, Trash } from 'iconoir-react';
 import FrameStrip from './FrameStrip';
 import { Animation } from '../../../domain/ecs/components';
 import { BASIC_ANIMATION_NAMES, DEFAULT_SET } from './customHooks/useAnimationInspector';
+import { useTranslation } from 'react-i18next';
 
 interface AnimationItemProps {
 	anim: Animation;
@@ -40,7 +41,10 @@ function AnimationItem({
 	onRemoveFrame,
 	onMoveFrame,
 }: Readonly<AnimationItemProps>) {
-	const isBasic = BASIC_ANIMATION_NAMES.includes(anim.name as (typeof BASIC_ANIMATION_NAMES)[number]);
+	const { t } = useTranslation();
+	const isBasic = BASIC_ANIMATION_NAMES.includes(
+		anim.name as (typeof BASIC_ANIMATION_NAMES)[number]
+	);
 	const nameLocked = setName === DEFAULT_SET && isBasic;
 
 	return (
@@ -53,7 +57,7 @@ function AnimationItem({
 					className="animation--name-input"
 					style={{ fontWeight: isOpen ? 600 : 400, opacity: nameLocked ? 0.6 : 1 }}
 					readOnly={nameLocked}
-					title={nameLocked ? 'Basic animations cannot be renamed' : undefined}
+					title={nameLocked ? t('animation.basicRenameHint') : undefined}
 					onClick={(e) => e.stopPropagation()}
 					onChange={(e) => !nameLocked && onUpdate(setName, index, { name: e.target.value })}
 				/>
@@ -63,7 +67,7 @@ function AnimationItem({
 				{imageUrl && anim.frames.length > 0 && (
 					<button
 						className={`animation--icon-btn ${isPreviewing ? 'animation--icon-btn--active' : ''}`}
-						title={isPreviewing ? 'Stop preview' : 'Preview'}
+						title={isPreviewing ? t('animation.stopPreview') : t('animation.preview')}
 						onClick={(e) => {
 							e.stopPropagation();
 							if (isPreviewing) {
@@ -74,17 +78,21 @@ function AnimationItem({
 							}
 						}}
 					>
-						{isPreviewing
-							? <PauseSolid width={12} height={12} />
-							: <PlaySolid width={12} height={12} />
-						}
+						{isPreviewing ? (
+							<PauseSolid width={12} height={12} />
+						) : (
+							<PlaySolid width={12} height={12} />
+						)}
 					</button>
 				)}
 
 				{!nameLocked && (
 					<button
 						className="animation--icon-btn animation--icon-btn--danger"
-						onClick={(e) => { e.stopPropagation(); onDelete(setName, index); }}
+						onClick={(e) => {
+							e.stopPropagation();
+							onDelete(setName, index);
+						}}
 					>
 						<Trash width={12} height={12} />
 					</button>
@@ -95,7 +103,7 @@ function AnimationItem({
 				<div className="animation--item-body">
 					<div className="animation--props-row">
 						<label className="animation--prop-label">
-							duration
+							{t('animation.duration')}
 							<input
 								type="number"
 								value={anim.frameDuration}
@@ -113,7 +121,7 @@ function AnimationItem({
 								onChange={(e) => onUpdate(setName, index, { loop: e.target.checked })}
 								style={{ accentColor: 'var(--color-8)' }}
 							/>
-							loop
+							{t('animation.loop')}
 						</label>
 					</div>
 
@@ -129,26 +137,28 @@ function AnimationItem({
 							/>
 						)}
 
-						{imageUrl && anim.frames.length > 0 && (() => {
-							const f = anim.frames[previewFrame % anim.frames.length];
-							return (
-								<div className="animation--preview">
-									<img
-										src={imageUrl}
-										draggable={false}
-										alt=""
-										style={{
-											imageRendering: 'pixelated',
-											position: 'absolute',
-											left: -f.x * (52 / cellW),
-											top: -f.y * (52 / cellH),
-											transform: `scale(${52 / cellW})`,
-											transformOrigin: '0 0',
-										}}
-									/>
-								</div>
-							);
-						})()}
+						{imageUrl &&
+							anim.frames.length > 0 &&
+							(() => {
+								const f = anim.frames[previewFrame % anim.frames.length];
+								return (
+									<div className="animation--preview">
+										<img
+											src={imageUrl}
+											draggable={false}
+											alt=""
+											style={{
+												imageRendering: 'pixelated',
+												position: 'absolute',
+												left: -f.x * (52 / cellW),
+												top: -f.y * (52 / cellH),
+												transform: `scale(${52 / cellW})`,
+												transformOrigin: '0 0',
+											}}
+										/>
+									</div>
+								);
+							})()}
 					</div>
 				</div>
 			)}

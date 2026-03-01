@@ -8,10 +8,12 @@ import AnimationSetSection from './AnimationSetSection';
 import { useAnimationInspector } from './customHooks/useAnimationInspector';
 import { useMapStore } from '../../../Map/MapGState';
 import { useFolderStore } from '../../../common/globalStores/useFolderStore';
+import { useTranslation } from 'react-i18next';
 
 function AnimationInspector() {
 	const selectedEntityId = useMapStore((s) => s.selectedEntityId);
 	const updateComponent = useMapStore((s) => s.updateComponent);
+	const { t } = useTranslation();
 
 	const {
 		imageUrl,
@@ -104,7 +106,9 @@ function AnimationInspector() {
 							onClick={handleSelectSpritesheet}
 							title={spriteSheetPath || undefined}
 						>
-							{spriteSheetPath ? `✓ ${spriteSheetPath.split('/').pop()}` : '+ select spritesheet…'}
+							{spriteSheetPath
+								? `✓ ${spriteSheetPath.split('/').pop()}`
+								: t('animation.selectSpritesheet')}
 						</button>
 						<label className="animation--cell-label">
 							W
@@ -132,15 +136,13 @@ function AnimationInspector() {
 						<div className="animation--section">
 							<div className="animation--section-header" onClick={() => setIsPickerOpen((v) => !v)}>
 								<span className="animation--chevron">{isPickerOpen ? '▾' : '▸'}</span>
-								<span className="animation--section-title">Spritesheet</span>
+								<span className="animation--section-title">{t('animation.spritesheet')}</span>
 							</div>
 
 							{isPickerOpen && (
 								<>
 									{pickerDisabled && (
-										<div className="animation--picker-hint">
-											Select an animation below to start picking frames
-										</div>
+										<div className="animation--picker-hint">{t('animation.pickerHint')}</div>
 									)}
 									<div
 										className={`animation--picker-wrap animation--picker-wrap--borderless ${pickerDisabled ? 'animation--picker-wrap--disabled' : ''}`}
@@ -161,7 +163,7 @@ function AnimationInspector() {
 					<div className="animation--section">
 						<div className="animation--section-header" onClick={() => setIsSetsOpen((v) => !v)}>
 							<span className="animation--chevron">{isSetsOpen ? '▾' : '▸'}</span>
-							<span className="animation--section-title">Animation Sets</span>
+							<span className="animation--section-title">{t('animation.animationSets')}</span>
 							<span className="animation--frame-count">{Object.keys(sets).length}</span>
 						</div>
 
@@ -195,7 +197,7 @@ function AnimationInspector() {
 									<div className="animation--new-set-row">
 										<input
 											className="animation--new-set-input"
-											placeholder="set name…"
+											placeholder={t('animation.setNamePlaceholder')}
 											value={newSetName}
 											autoFocus
 											onChange={(e) => setNewSetName(e.target.value)}
@@ -226,7 +228,7 @@ function AnimationInspector() {
 										onClick={() => setIsAddingSet(true)}
 									>
 										<Plus width={12} height={12} />
-										new set
+										{t('animation.newSet')}
 									</button>
 								)}
 							</div>
