@@ -3,6 +3,7 @@ import { Plus, Trash } from 'iconoir-react';
 import AnimationItem from './AnimationItem';
 import { Animation, AnimationSet } from '../../../domain/ecs/components';
 import { DEFAULT_SET, ActiveSelection } from './customHooks/useAnimationInspector';
+import { useTranslation } from 'react-i18next';
 
 interface AnimationSetSectionProps {
 	setName: string;
@@ -45,6 +46,7 @@ function AnimationSetSection({
 	onRemoveFrame,
 	onMoveFrame,
 }: Readonly<AnimationSetSectionProps>) {
+	const { t } = useTranslation();
 	const [isOpen, setIsOpen] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [draftName, setDraftName] = useState(setName);
@@ -93,7 +95,7 @@ function AnimationSetSection({
 					<span
 						className="animation--set-name"
 						onDoubleClick={() => !isDefault && setIsEditing(true)}
-						title={isDefault ? undefined : 'Double click to rename'}
+						title={isDefault ? undefined : t('animation.renameHint')}
 					>
 						{setName}
 					</span>
@@ -104,7 +106,7 @@ function AnimationSetSection({
 				{!isDefault && (
 					<button
 						className="animation--icon-btn animation--icon-btn--danger"
-						title="Delete set"
+						title={t('animation.deleteSet')}
 						onClick={() => onDeleteSet(setName)}
 					>
 						<Trash width={12} height={12} />
@@ -140,7 +142,7 @@ function AnimationSetSection({
 
 					<button className="animation--add-btn" onClick={() => onAddAnimation(setName)}>
 						<Plus width={12} height={12} />
-						new animation
+						{t('animation.newAnimation')}
 					</button>
 				</>
 			)}

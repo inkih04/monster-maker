@@ -78,5 +78,22 @@
 			"createFolder": "Crear Carpeta"
 		},
 		"closeProject": "Cerrar Proyecto"
+	},
+	"animation": {
+		"selectSpritesheet": "+ seleccionar spritesheet…",
+		"spritesheet": "Spritesheet",
+		"pickerHint": "Selecciona una animación abajo para empezar a elegir fotogramas",
+		"animationSets": "Sets de animación",
+		"setNamePlaceholder": "nombre del set…",
+		"newSet": "nuevo set",
+		"noFrames": "no hay fotogramas seleccionados",
+		"renameHint": "Doble clic para renombrar",
+		"deleteSet": "Eliminar set",
+		"newAnimation": "nueva animación",
+		"basicRenameHint": "Las animaciones básicas no se pueden renombrar",
+		"stopPreview": "Detener previsualización",
+		"preview": "Previsualizar",
+		"duration": "duración",
+		"loop": "bucle"
 	}
 }
