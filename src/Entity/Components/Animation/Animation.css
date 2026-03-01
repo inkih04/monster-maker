@@ -1,0 +1,411 @@
+.animation--wrapper {
+	font-family: 'Roboto', system-ui, sans-serif;
+	color: var(--color-9);
+}
+
+
+.animation--load-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.animation--load-btn {
+	flex: 1;
+	padding: 6px 10px;
+	background: var(--color-1);
+	border: 1px dashed var(--color-4);
+	border-radius: var(--radius);
+	color: var(--color-7);
+	font-size: var(--font-ssm);
+	font-family: 'Roboto', sans-serif;
+	cursor: pointer;
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	transition:
+		border-color 0.15s,
+		background 0.15s;
+}
+.animation--load-btn:hover {
+	border-color: var(--color-7);
+	background: var(--color-2);
+}
+.animation--load-btn--loaded {
+	border-style: solid;
+	border-color: var(--color-5);
+	color: var(--color-8);
+}
+
+.animation--cell-label {
+	font-size: var(--font-ssm);
+	color: var(--color-6);
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.animation--cell-input {
+	background: var(--color-1);
+	border: 1px solid var(--color-3);
+	border-radius: var(--radius);
+	color: var(--color-9);
+	font-size: var(--font-ssm);
+	font-family: 'Roboto', monospace;
+	padding: 2px 6px;
+	width: 44px;
+	transition: border-color 0.15s;
+}
+.animation--cell-input:focus {
+	outline: none;
+	border-color: var(--color-6);
+}
+
+
+.animation--picker-wrap {
+	border: 1px solid var(--color-3);
+	border-radius: var(--radius);
+	overflow: auto;
+	max-height: 220px;
+	margin-bottom: 12px;
+	background: var(--color-3);
+	position: relative;
+}
+.animation--picker-wrap--disabled {
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+.animation--picker-hint {
+	position: sticky;
+	top: 0;
+	left: 0;
+	z-index: 5;
+	background: var(--color-2);
+	border-bottom: 1px solid var(--color-3);
+	font-size: 10px;
+	color: var(--color-6);
+	padding: 4px 8px;
+}
+
+
+.animation--cell-badge {
+	position: absolute;
+	top: 2px;
+	left: 3px;
+	font-size: 9px;
+	font-weight: 700;
+	color: var(--color-9);
+	line-height: 1;
+	font-family: 'Roboto', monospace;
+	background: rgba(255, 255, 255, 0.7);
+	border-radius: 2px;
+	padding: 0 2px;
+}
+
+
+.animation--list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.animation--item {
+	border: 1px solid var(--color-3);
+	border-radius: var(--radius);
+	overflow: hidden;
+	transition: border-color 0.15s;
+	background: var(--color-1);
+}
+.animation--item--open {
+	border-color: var(--color-6);
+}
+
+.animation--item-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	cursor: pointer;
+	background: var(--color-2);
+	user-select: none;
+	transition: background 0.1s;
+}
+.animation--item-header:hover {
+	background: var(--color-3);
+}
+.animation--item--open .animation--item-header {
+	background: var(--color-2);
+	border-bottom: 1px solid var(--color-3);
+}
+
+.animation--chevron {
+	margin-bottom: 1px;
+	font-size: 10px;
+	color: var(--color-5);
+	min-width: 14px;
+}
+
+.animation--name-input {
+	flex: 1;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: var(--color-9);
+	font-size: var(--font-ssm);
+	font-family: 'Roboto', sans-serif;
+	padding: 0;
+	cursor: pointer;
+}
+.animation--name-input:focus {
+	cursor: text;
+}
+
+.animation--frame-count {
+	font-size: 10px;
+	color: var(--color-5);
+}
+
+.animation--icon-btn {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--color-5);
+	padding: 0;
+	display: flex;
+	align-items: center;
+	transition: color 0.15s;
+}
+.animation--icon-btn:hover {
+	color: var(--color-8);
+}
+.animation--icon-btn--danger:hover {
+	color: #c0392b;
+}
+
+
+.animation--item-body {
+	padding: 8px 10px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	background: var(--color-1);
+}
+
+.animation--props-row {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.animation--prop-label {
+	font-size: var(--font-ssm);
+	color: var(--color-6);
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.animation--prop-input {
+	background: var(--color-2);
+	border: 1px solid var(--color-3);
+	border-radius: var(--radius);
+	color: var(--color-9);
+	font-size: var(--font-ssm);
+	font-family: 'Roboto', monospace;
+	padding: 2px 5px;
+	transition: border-color 0.15s;
+}
+.animation--prop-input:focus {
+	outline: none;
+	border-color: var(--color-6);
+}
+
+.animation--prop-unit {
+	font-size: 10px;
+	color: var(--color-4);
+}
+
+
+.animation--strip-row {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+}
+
+.animation--strip {
+	display: flex;
+	gap: 7px;
+	flex-wrap: wrap;
+	flex: 1;
+}
+
+.animation--strip-empty {
+	height: 44px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px dashed var(--color-3);
+	border-radius: var(--radius);
+	color: var(--color-4);
+	font-size: var(--font-ssm);
+	flex: 1;
+}
+
+.animation--frame-thumb {
+	position: relative;
+	line-height: 0;
+	margin: 0 10px;
+}
+
+.animation--frame-img-wrap {
+	width: 48px;
+	height: 48px;
+	overflow: hidden;
+	border: 1px solid var(--color-4);
+	border-radius: var(--radius);
+	position: relative;
+	background: var(--color-3);
+}
+
+.animation--frame-num {
+	position: absolute;
+	bottom: 2px;
+	right: 3px;
+	font-size: 11px;
+	color: var(--color-6);
+	font-family: 'Roboto', monospace;
+}
+
+.animation--frame-remove {
+	position: absolute;
+	top: -5px;
+	right: -5px;
+	width: 13px;
+	height: 13px;
+	border-radius: 50%;
+	background: #c0392b;
+	border: none;
+	cursor: pointer;
+	color: #fff;
+	font-size: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	line-height: 1;
+}
+
+.animation--frame-arrow {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 14px;
+	height: 14px;
+	background: var(--color-2);
+	border: 1px solid var(--color-3);
+	border-radius: 3px;
+	color: var(--color-7);
+	font-size: 10px;
+	cursor: pointer;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.1s;
+}
+.animation--frame-arrow:hover {
+	background: var(--color-3);
+}
+.animation--frame-arrow--left {
+	left: -7px;
+}
+.animation--frame-arrow--right {
+	right: -7px;
+}
+
+
+.animation--preview {
+	width: 52px;
+	height: 52px;
+	overflow: hidden;
+	flex-shrink: 0;
+	border: 1px solid var(--color-4);
+	border-radius: var(--radius);
+	background: var(--color-3);
+	position: relative;
+}
+
+
+.animation--add-btn {
+	margin-top: 6px;
+	width: 100%;
+	padding: 6px;
+	background: transparent;
+	border: 1px dashed var(--color-4);
+	border-radius: var(--radius);
+	color: var(--color-6);
+	font-size: var(--font-ssm);
+	font-family: 'Roboto', sans-serif;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	transition:
+		border-color 0.15s,
+		color 0.15s;
+}
+.animation--add-btn:hover {
+	border-color: var(--color-7);
+	color: var(--color-8);
+}
+
+
+.animation--section {
+	border: 1px solid var(--color-3);
+	border-radius: var(--radius);
+	overflow: hidden;
+	margin-top: 8px;
+}
+
+.animation--section-header {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	background: var(--color-2);
+	cursor: pointer;
+	user-select: none;
+	transition: background 0.1s;
+}
+.animation--section-header:hover {
+	background: var(--color-3);
+}
+
+.animation--section-title {
+	flex: 1;
+	font-size: var(--font-ssm);
+	color: var(--color-8);
+	font-weight: 600;
+}
+
+.animation--section .animation--list {
+	padding: 6px 6px 0;
+}
+
+.animation--section .animation--add-btn {
+	margin: 6px;
+	margin-top: 12px;
+	width: calc(100% - 12px);
+}
+
+
+.animation--picker-wrap--borderless {
+	border: none;
+	border-radius: 0;
+	margin-bottom: 0;
+}

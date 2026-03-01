@@ -23,7 +23,7 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('directory-structure-changed', (_event, structure) => callback(structure));
 		return () => ipcRenderer.removeAllListeners('directory-structure-changed');
 	},
-	selectFile: (defaultPath?: string) => ipcRenderer.invoke('config:selectFile', defaultPath),
+	selectFile: (defaultPath?: string, filters?: { name: string; extensions: string[] }[]) => ipcRenderer.invoke('config:selectFile', defaultPath, filters),
 	onLanguageChange: (callback: (lng: string) => void) => {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');

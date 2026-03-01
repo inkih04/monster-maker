@@ -114,30 +114,33 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		return configManager.pathUnion(path1, path2);
 	});
 
-	ipcMain.handle('config:selectFile', async (_event, defaultPath?: string) => {
-		try {
-			const result = await dialog.showOpenDialog({
-				properties: ['openFile'],
-				title: 'Select a file',
-				defaultPath: defaultPath ?? '',
-				filters: [
-					{ name: 'Lua Scripts', extensions: ['lua'] },
-					{ name: 'All Files', extensions: ['*'] },
-				],
-			});
+	ipcMain.handle(
+		'config:selectFile',
+		async (_event, defaultPath?: string, filters?: { name: string; extensions: string[] }[]) => {
+			try {
+				const result = await dialog.showOpenDialog({
+					properties: ['openFile'],
+					title: 'Select a file',
+					defaultPath: defaultPath ?? '',
+					filters: filters ?? [
+						{ name: 'Lua Scripts', extensions: ['lua'] },
+						{ name: 'All Files', extensions: ['*'] },
+					],
+				});
 
-			if (result.canceled || result.filePaths.length === 0) {
-				return { success: false, error: 'Canceled' };
+				if (result.canceled || result.filePaths.length === 0) {
+					return { success: false, error: 'Canceled' };
+				}
+
+				return {
+					success: true,
+					path: result.filePaths[0],
+				};
+			} catch (error) {
+				return { success: false, error: String(error) };
 			}
-
-			return {
-				success: true,
-				path: result.filePaths[0],
-			};
-		} catch (error) {
-			return { success: false, error: String(error) };
 		}
-	});
+	);
 
 	ipcMain.handle('config:selectFolder', async (_event, defaultPath?: string) => {
 		try {
