@@ -14,7 +14,7 @@
 
 ExplorationState::ExplorationState() {
     setEntityManager();
-    debugMode = true;//!DebugHelper::getInstance().getCurrentMap().empty();
+    debugMode = !DebugHelper::getInstance().getCurrentMap().empty();
 }
 
 void ExplorationState::applyScriptContext()  {
