@@ -14,7 +14,7 @@ const ScriptComponent = () => {
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const [dragState, setDragState] = useState<'none' | 'valid' | 'invalid'>('none');
-	
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	if (!selectedEntityId || !map) return null;
 	const entity = map.entities[selectedEntityId];
@@ -26,6 +26,7 @@ const ScriptComponent = () => {
 		updateComponent(selectedEntityId, 'SCRIPT', {
 			path: e.target.value,
 		});
+		setIsDirty(true);
 	};
 
 	const handleSelectFile = async () => {
@@ -71,6 +72,7 @@ const ScriptComponent = () => {
 
 	const handleDelete = () => {
 		removeComponent(selectedEntityId, 'SCRIPT');
+		setIsDirty(true);
 	};
 
 	return (

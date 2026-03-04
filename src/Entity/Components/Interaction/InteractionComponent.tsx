@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 function InteractionComponent() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const removeComponent = useMapStore((state) => state.removeComponent);
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 	const map = useMapStore((state) => state.map);
 	const { t } = useTranslation();
 	const entity = selectedEntityId ? map?.entities[selectedEntityId] : null;
@@ -26,6 +27,7 @@ function InteractionComponent() {
 
 	const handleDelete = () => {
 		removeComponent(selectedEntityId, 'INTERACTION');
+		setIsDirty(true);
 	};
 
 	const WarningIcon = isMissingDependencies ? (

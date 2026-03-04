@@ -9,6 +9,7 @@ function MovementComponent() {
 	const removeComponent = useMapStore((state) => state.removeComponent);
 	const map = useMapStore((state) => state.map);
 	const { t } = useTranslation();
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	const entity = selectedEntityId ? map?.entities[selectedEntityId] : null;
 	const movementData = entity?.components?.MOVEMENT;
@@ -23,6 +24,7 @@ function MovementComponent() {
 
 	const handleDelete = () => {
 		removeComponent(selectedEntityId, 'MOVEMENT');
+		setIsDirty(true);
 	};
 
 	const WarningIcon = isMissingDependencies ? (
@@ -39,10 +41,7 @@ function MovementComponent() {
 				Movement
 			</ComponentHeader>
 			<ComponentBody>
-				<div>
-					{t('movementComponent')}
-
-				</div>
+				<div>{t('movementComponent')}</div>
 			</ComponentBody>
 		</Component>
 	);

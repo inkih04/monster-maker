@@ -343,7 +343,6 @@ export const useMapStore = create<MapStore>()(
 						},
 					};
 
-					// Si se actualiza el RENDER, sincronizar spriteSheetPath en paintedTiles
 					let paintedTiles = state.paintedTiles;
 					if (type === 'RENDER' && 'spriteSheetPath' in data) {
 						const newPath = (data as { spriteSheetPath?: string }).spriteSheetPath;
@@ -386,6 +385,7 @@ export const useMapStore = create<MapStore>()(
 								},
 							},
 						},
+						isDirty: true,
 					};
 				});
 			},

@@ -9,6 +9,7 @@ function RendererComponent() {
 	const map = useMapStore((state) => state.map);
 	const updateComponent = useMapStore((state) => state.updateComponent);
 	const entity = selectedEntityId && map ? map.entities[selectedEntityId] : null;
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 	const renderComponent = entity?.components.RENDER;
 	const width = renderComponent?.width ?? 0;
 	const height = renderComponent?.height ?? 0;
@@ -29,18 +30,20 @@ function RendererComponent() {
 						value={width}
 						step={8}
 						min={8}
-						onChange={(newWidth) =>
-							updateComponent(selectedEntityId, 'RENDER', { width: newWidth })
-						}
+						onChange={(newWidth) => {
+							updateComponent(selectedEntityId, 'RENDER', { width: newWidth });
+							setIsDirty(true);
+						}}
 					/>
 				</div>
 				<div className="Componet-input-row">
 					<span>Height: </span>
 					<NumberInput
 						value={height}
-						onChange={(newHeight) =>
-							updateComponent(selectedEntityId, 'RENDER', { height: newHeight })
-						}
+						onChange={(newHeight) => {
+							updateComponent(selectedEntityId, 'RENDER', { height: newHeight });
+							setIsDirty(true);
+						}}
 						step={8}
 						min={8}
 					/>
