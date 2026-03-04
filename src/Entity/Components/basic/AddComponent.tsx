@@ -62,6 +62,7 @@ export default function AddComponent() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const map = useMapStore((state) => state.map);
 	const addComponent = useMapStore((state) => state.addComponent);
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -105,6 +106,7 @@ export default function AddComponent() {
 			setIsOpen(false);
 			setSearchTerm('');
 		}
+		setIsDirty(true);
 	};
 
 	if (!selectedEntityId) return null;

@@ -67,10 +67,24 @@
 }
 
 .debugTerminal__filter--active.debugTerminal__filter--error {
-	color: #ee7e7e;
-	border-color: rgba(232, 85, 85, 0.7);
-	background-color: rgba(232, 85, 85, 0.28);
+	color: #f4a0a0;
+	border-color: rgba(244, 140, 140, 0.6);
+	background-color: rgba(244, 140, 140, 0.2);
 	opacity: 1;
+}
+
+.debugTerminal__entry--error {
+	border-left: 2px solid #f48c8c;
+	background-color: rgba(244, 140, 140, 0.1);
+}
+
+.debugTerminal__level--error {
+	color: #f48c8c;
+	background-color: rgba(244, 140, 140, 0.18);
+}
+
+.debugTerminal__message--error {
+	color: #f4a0a0;
 }
 
 .debugTerminal__filter--active.debugTerminal__filter--lua {
@@ -210,11 +224,6 @@
 	background-color: rgba(232, 168, 56, 0.08);
 }
 
-.debugTerminal__entry--error {
-	border-left: 2px solid #e85555;
-	background-color: rgba(232, 85, 85, 0.12);
-}
-
 .debugTerminal__entry--lua {
 	border-left: 2px solid #38b2ac;
 }
@@ -251,10 +260,7 @@
 	color: #e8a838;
 	background-color: rgba(232, 168, 56, 0.2);
 }
-.debugTerminal__level--error {
-	color: #e85555;
-	background-color: rgba(232, 85, 85, 0.2);
-}
+
 .debugTerminal__level--lua {
 	color: #38b2ac;
 	background-color: rgba(56, 178, 172, 0.18);
@@ -272,9 +278,7 @@
 .debugTerminal__message--warn {
 	color: #e8c87a;
 }
-.debugTerminal__message--error {
-	color: #e88080;
-}
+
 .debugTerminal__message--lua {
 	color: #6ee7e1;
 }

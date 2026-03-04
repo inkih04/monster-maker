@@ -19,7 +19,7 @@ const COMPONENT_UI_MAP: Partial<Record<ComponentType, React.ComponentType>> = {
 	SCRIPT: ScriptComponent,
 	MOVEMENT: MovementComponent,
 	INTERACTION: InteractionComponent,
-	ANIMATION: AnimationInspector
+	ANIMATION: AnimationInspector,
 };
 
 const RENDER_ORDER: ComponentType[] = [
@@ -33,6 +33,7 @@ const RENDER_ORDER: ComponentType[] = [
 
 function Entity() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 	const selectedEntity = useMapStore((state) =>
 		selectedEntityId ? state.map?.entities[selectedEntityId] : null
 	);
@@ -48,6 +49,7 @@ function Entity() {
 		if (selectedEntityId) {
 			updateEntity(selectedEntityId, { tag });
 		}
+		setIsDirty(true);
 	};
 
 	const activeComponents = selectedEntity
