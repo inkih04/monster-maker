@@ -15,6 +15,9 @@ class ExplorationState : public State{
         void update(int deltaTime) override;
         void moveDebugCamera();
         void render() override;
+
+        void renderCollisionDebug() const;
+
         ExplorationState();
         ~ExplorationState() override = default;
 
@@ -22,9 +25,12 @@ class ExplorationState : public State{
         void setEntityManager() override;
         void applyScriptContext() override;
 
+        void showColliders();
 
     private:
         bool debugMode = false;
+        bool showCollisionDebug = false;
+        bool m_cKeyWasDown = false;
         void changeMap(const std::string& mapPath);
         void renderGround() const;
         void renderDecoration() const;

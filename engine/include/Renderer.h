@@ -45,6 +45,8 @@ class Renderer {
         virtual void draw(glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f),
                           float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f)) const;
 
+        virtual void draw(glm::vec2 position, glm::vec2 size, float rotate, glm::vec4 color) const;
+
 };
 
 #endif //POKEMONGAMEENGINE_RENDERER_H

@@ -82,7 +82,11 @@ void Renderer::initRenderData() {
     glBindVertexArray(0);
 }
 
-void Renderer::draw(  glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color ) const {
+void Renderer::draw(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
+    draw(position, size, rotate, glm::vec4(color, 1.0f));
+}
+
+void Renderer::draw(  glm::vec2 position, glm::vec2 size, float rotate, glm::vec4 color ) const {
     if (!m_currentShader) {
         std::cout << "[ENGINE][ERROR] Error while loading the shader" << std::endl;
       return;
@@ -99,7 +103,7 @@ void Renderer::draw(  glm::vec2 position, glm::vec2 size, float rotate, glm::vec
     model = glm::scale(model, glm::vec3(size, 1.0f));
 
     m_currentShader->setMat4("model", model);
-    m_currentShader->setVec4("spriteColor", glm::vec4(color, 1.f));
+    m_currentShader->setVec4("spriteColor", color);
     m_currentShader->setBool("useTexture", false);
 
     glBindVertexArray(m_quadVAO);

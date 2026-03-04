@@ -33,7 +33,7 @@
 			"title": "Engine",
 			"warning_title": "Warning",
 			"map_dirty": "The current map has unsaved changes. Save to see the changes in the engine.",
-			"success_debug": "Engine started in DEBUG mode with map: {{map}}",
+			"success_debug": "Engine started in DEBUG mode with map: {{map}}, you can use ctrl + c to show collisions and ctrl + arrow or wasd to move",
 			"fail_start": "Failed to start engine",
 			"stop_success": "Engine stopped successfully",
 			"texture_too_large": "This texture could be too large for Mac. H: {{height}}px W: {{width}}px",

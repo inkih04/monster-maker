@@ -103,11 +103,11 @@ export function drawCollisionDebug({ ctx, entities, zoom }: DrawCollisionDebugPa
 			ctx.save();
 
 			if (collider.isTrigger) {
-				ctx.fillStyle = 'rgba(255, 165, 0, 0.3)';
-				ctx.strokeStyle = 'rgba(255, 165, 0, 0.9)';
+				ctx.fillStyle = 'rgba(122, 156, 200, 0.25)';
+				ctx.strokeStyle = 'rgba(174, 203, 238, 0.9)';
 			} else {
-				ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
-				ctx.strokeStyle = 'rgba(255, 255, 0, 0.9)';
+				ctx.fillStyle = 'rgba(232, 85, 85, 0.25)';
+				ctx.strokeStyle = 'rgba(244, 140, 140, 0.9)';
 			}
 
 			ctx.lineWidth = 1;
