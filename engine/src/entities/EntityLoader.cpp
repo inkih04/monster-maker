@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iostream>
 #include "AnimationComponent.h"
+#include "EditorConfig.h"
 #include "InteractionComponent.h"
 #include "MovementComponent.h"
 #include "ScriptComponet.h"
@@ -137,11 +138,14 @@ std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data)
     float y = data.value("y", -1.0f);
     float w = data.value("w", -1.0f);
     float h = data.value("h", -1.0f);
+    std::string shader = data.value("shader", "default");
 
     float width = data.value("width", 32.0f);
     float height = data.value("height", 32.0f);
 
-    return std::make_unique<RenderComponent>(spriteSheetPath, x, y, w, h, width, height);
+    int shaderMode = EditorConfig::getInstance().getShaderMode(shader);
+
+    return std::make_unique<RenderComponent>(spriteSheetPath, x, y, w, h, width, height, shaderMode);
 }
 
 std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& data) {

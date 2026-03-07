@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
         DebugHelper::getInstance().setCurrentMap(argv[1]);
     }
 
-    Application app = Application("Monster Maker", 800, 600);
+    Application app = Application(800, 600);
     app.run();
     return 0;
 }

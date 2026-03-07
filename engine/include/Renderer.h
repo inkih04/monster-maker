@@ -38,6 +38,7 @@ class Renderer {
         void loadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath);
         void setShader(const std::string& name);
         void setCamera(Camera &camera);
+        void setUniformFloat(const std::string& name, float value) const;
 
         virtual void drawSprite(const std::string& texturePath, glm::vec2 position, glm::vec2 size = glm::vec2(10.0f, 10.0f),
                                 float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f),const SpriteRect* spriteRect = nullptr) const;
@@ -46,6 +47,8 @@ class Renderer {
                           float rotate = 0.0f, glm::vec3 color = glm::vec3(1.0f)) const;
 
         virtual void draw(glm::vec2 position, glm::vec2 size, float rotate, glm::vec4 color) const;
+        void setShaderMode(int mode) const;
+
 
 };
 

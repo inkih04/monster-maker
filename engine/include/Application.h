@@ -11,7 +11,7 @@
 
 class Application {
 public:
-    Application(const char* title, int width, int height);
+    Application(int width, int height);
     ~Application() = default;
     void update(int deltaTime);
     void run();
