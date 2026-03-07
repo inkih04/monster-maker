@@ -77,6 +77,10 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         include/structs/DebugHelper.h
         src/entities/service/BordersMapService.cpp
         include/service/BordersMapService.h
+        include/EditorConfig.h
+        src/core/EditorConfig.cpp
+        include/EditorConfigLoader.h
+        src/core/EditorConfigLoader.cpp
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD

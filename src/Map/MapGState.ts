@@ -42,9 +42,13 @@ interface MapStore {
 	selectedTilePosition: SelectedTilePosition | null;
 	isLoadingMap: boolean;
 	showCollisions: boolean;
+	visibleLayers: Record<Layer, boolean>;
+	lockedLayers: Record<Layer, boolean>;
 
 	setShowCollisions: (show: boolean) => void;
 	toggleShowCollisions: () => void;
+	toggleLayerVisibility: (layer: Layer) => void;
+	toggleLayerLocked: (layer: Layer) => void;
 
 	setSelectedTilePosition: (position: SelectedTilePosition | null) => void;
 	setMapRelativePath: (relativePath: string) => void;
@@ -103,6 +107,20 @@ export const useMapStore = create<MapStore>()(
 			activeLayer: 'ground',
 			isLoadingMap: false,
 			showCollisions: false,
+			visibleLayers: {
+				ground: true,
+				decoration: true,
+				entities: true,
+				shadows: true,
+				foreground: true,
+			},
+			lockedLayers: {
+				ground: false,
+				decoration: false,
+				entities: false,
+				shadows: false,
+				foreground: false,
+			},
 
 			reset: () => {
 				set({
@@ -122,6 +140,20 @@ export const useMapStore = create<MapStore>()(
 					activeLayer: 'ground' as Layer,
 					isLoadingMap: false,
 					showCollisions: false,
+					visibleLayers: {
+						ground: true,
+						decoration: true,
+						entities: true,
+						shadows: true,
+						foreground: true,
+					},
+					lockedLayers: {
+						ground: false,
+						decoration: false,
+						entities: false,
+						shadows: false,
+						foreground: false,
+					},
 				});
 				useMapStore.temporal.getState().clear();
 			},
@@ -132,6 +164,24 @@ export const useMapStore = create<MapStore>()(
 
 			toggleShowCollisions: () => {
 				set((state) => ({ showCollisions: !state.showCollisions }));
+			},
+
+			toggleLayerVisibility: (layer) => {
+				set((state) => ({
+					visibleLayers: {
+						...state.visibleLayers,
+						[layer]: !state.visibleLayers[layer],
+					},
+				}));
+			},
+
+			toggleLayerLocked: (layer) => {
+				set((state) => ({
+					lockedLayers: {
+						...state.lockedLayers,
+						[layer]: !state.lockedLayers[layer],
+					},
+				}));
 			},
 
 			setMapRelativePath: (relativePath: string) => {

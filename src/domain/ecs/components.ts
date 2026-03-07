@@ -12,6 +12,7 @@ export interface RenderComponent {
 	h: number;
 	width: number;
 	height: number;
+	shader: string;
 }
 
 export interface AnimationFrame {

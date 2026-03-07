@@ -29,6 +29,11 @@ void Renderer::loadShader(const std::string& name, const std::string& vertexPath
 
 }
 
+void Renderer::setUniformFloat(const std::string& name, float value) const {
+    if (!m_currentShader) return;
+    m_currentShader->setFloat(name, value);
+}
+
 void Renderer::setShader(const std::string& name) {
     auto it = m_shaders.find(name);
     if (it != m_shaders.end()) {
@@ -37,7 +42,7 @@ void Renderer::setShader(const std::string& name) {
 
         if (m_activeCamera) updateCameraUniforms();
     } else {
-        std::cerr << "Advertencia: Intentando usar shader no existente '" << name << "'" << std::endl;
+        std::cerr << "[ENGINE][WARNING]: Shader does not exist '" << name << "'" << std::endl;
     }
 }
 
@@ -54,6 +59,11 @@ void Renderer::updateCameraUniforms() const {
         m_currentShader->setMat4("projection", m_activeCamera->getProjectionMatrix());
         m_currentShader->setMat4("view", m_activeCamera->getViewMatrix());
     }
+}
+
+void Renderer::setShaderMode(int mode) const {
+    if (!m_currentShader) return;
+    m_currentShader->setInt("u_mode", mode);
 }
 
 void Renderer::initRenderData() {

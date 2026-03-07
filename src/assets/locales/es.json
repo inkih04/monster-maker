@@ -95,5 +95,13 @@
 		"preview": "Previsualizar",
 		"duration": "duración",
 		"loop": "bucle"
-	}
+	},
+	"addShader": "Añadir shader",
+	"mode": "Modo",
+	"layers": "Capas",
+	"maps": "Mapas",
+	"unlockLayer": "Desbloquear capa",
+	"lockLayer": "Bloquear capa",
+	"showLayer": "Mostrar capa",
+	"hideLayer": "Ocultar capa"
 }

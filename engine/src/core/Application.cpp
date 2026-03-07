@@ -5,13 +5,16 @@
 #include <memory>
 
 #include "AudioService.h"
+#include "EditorConfig.h"
+#include "EditorConfigLoader.h"
 #include "ExplorationState.h"
 #include "ScriptEngine.h"
 
 class Engine;
 
-Application::Application(const char* title, int width, int height) {
-    m_engine = std::make_unique<Engine>(width, height, title);
+Application::Application(int width, int height) {
+    EditorConfigLoader::loadFromFile(".engineConfig.json");
+    m_engine = std::make_unique<Engine>(width, height, EditorConfig::getInstance().getGameName());
     m_stateManager = StateManager();
     AudioService::getInstance().init();
     ScriptEngine::getInstance().init();

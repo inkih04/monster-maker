@@ -154,5 +154,9 @@ contextBridge.exposeInMainWorld('api', {
 	deleteFolder: (folderNode: FolderNode, pd: ProjectData) =>
 		ipcRenderer.invoke('config:deleteFolder', folderNode, pd),
 	notifyLanguageChange: (lng: string) => ipcRenderer.send('language-changed', lng),
+		getEngineConfig: (pd: ProjectData) => ipcRenderer.invoke('config:getEngineConfig', pd),
+
+	updateShaders: (pd: ProjectData, shaders: Record<string, number>) =>
+		ipcRenderer.invoke('config:updateShaders', pd, shaders),
 	
 });
