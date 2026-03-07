@@ -36,6 +36,8 @@ function Map() {
 	const toggleShowCollisions = useMapStore((state) => state.toggleShowCollisions);
 	const showCollisions = useMapStore((state) => state.showCollisions);
 	const isDirty = useMapStore((state) => state.isDirty);
+	const visibleLayers = useMapStore((state) => state.visibleLayers);
+	const lockedLayers = useMapStore((state) => state.lockedLayers);
 
 	useEffect(() => {
 		const removeListener = window.api.onToggleCollisions(() => {
@@ -78,6 +80,8 @@ function Map() {
 		const mapState = useMapStore.getState();
 
 		layerOrder.forEach((layer) => {
+			if (!visibleLayers[layer]) return;
+
 			const tilesInLayer = paintedTiles.filter((tile) => tile.layer === layer);
 
 			tilesInLayer.forEach((tile) => {
@@ -116,7 +120,12 @@ function Map() {
 			});
 		});
 
-		if (activeTool === 'brush' && previewPosition && !isCapturingRef.current) {
+		if (
+			activeTool === 'brush' &&
+			previewPosition &&
+			!isCapturingRef.current &&
+			visibleLayers[activeLayer]
+		) {
 			drawBrushPreview({
 				ctx,
 				previewPosition,
@@ -126,8 +135,14 @@ function Map() {
 				tilesetImages,
 				selectedArea,
 				zoom,
+				isLayerLocked: lockedLayers[activeLayer],
 			});
-		} else if (activeTool === 'eraser' && previewPosition && !isCapturingRef.current) {
+		} else if (
+			activeTool === 'eraser' &&
+			previewPosition &&
+			!isCapturingRef.current &&
+			visibleLayers[activeLayer]
+		) {
 			drawEraserPreview({
 				ctx,
 				previewPosition,
@@ -139,8 +154,9 @@ function Map() {
 				tileSize,
 				zoom,
 				entities: mapState.map?.entities || {},
+				isLayerLocked: lockedLayers[activeLayer],
 			});
-		} else if (activeTool === 'select') {
+		} else if (activeTool === 'select' && visibleLayers[activeLayer]) {
 			if (previewPosition && !isCapturingRef.current) {
 				drawSelectionPreview({
 					ctx,
@@ -181,7 +197,7 @@ function Map() {
 		drawBackground,
 		minWidth,
 		minHeight,
-		redrawTrigger: [paintedTiles, tilesetImages, previewPosition, showCollisions],
+		redrawTrigger: [paintedTiles, tilesetImages, previewPosition, showCollisions, visibleLayers],
 	});
 
 	const { isCapturingRef } = useMapCapture({
@@ -196,8 +212,14 @@ function Map() {
 		isToolActive: isActive,
 		setIsToolActive: setIsActive,
 		setPreviewPosition,
-		onTileClick: onTileClick,
-		onTileDrag: onTileDrag,
+		onTileClick: (x, y) => {
+			if (!visibleLayers[activeLayer]) return;
+			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileClick(x, y);
+		},
+		onTileDrag: (x, y) => {
+			if (!visibleLayers[activeLayer]) return;
+			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileDrag(x, y);
+		},
 	});
 
 	const handleZoomIn = () => {

@@ -14,6 +14,7 @@ import { useEffect } from 'react';
 import { useNotify } from '../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
 import { useEngineStore } from '../ToolBar/EngineGState';
+import Tagger from '../Tagger/Tagger';
 
 function Layout() {
 	const {
@@ -21,11 +22,13 @@ function Layout() {
 		entityWidth,
 		filesHeight,
 		filesMenuWidth,
+		tilesetHeight,
 		resizeMapUtility,
 		resizeEntity,
 		resizeFiles,
 		resizeFilesMenu,
 		resetLayout,
+		resizeTileset,
 	} = useLayoutResize();
 
 	const { notify } = useNotify();
@@ -67,11 +70,13 @@ function Layout() {
 						className="map-utility"
 						style={{ flex: `0 0 ${mapUtilityWidth}px`, minWidth: LIMITS.mapUtilityWidth.min }}
 					>
-						<div className="tilemap-container">
+						<div className="tilemap-container" style={{ flex: `0 0 ${tilesetHeight}px` }}>
 							<TileSet />
 						</div>
-						<Spacer size="small" />
-						<div className="maps"></div>
+						<Spacer size="small" resizable onResize={resizeTileset} marginRight={false} />
+						<div className="tagger" style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+							<Tagger />
+						</div>
 					</aside>
 					<Spacer direction="vertical" resizable onResize={resizeMapUtility} />
 					<div className="map">

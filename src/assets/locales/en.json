@@ -45,7 +45,7 @@
 			"rename_map_warning": "Renaming a tile map that is being used can cause errors"
 		}
 	},
-	"movementComponent": "Handles movement with animations and collisions. Requires a Position component, anAnimation component, and a Collision component.",
+	"movementComponent": "Handles movement with animations and collisions. Requires a Position component, Animation component, and a Collision component.",
 	"interactionComponent": "Handles interaction between entities via the interact event. The onInteract handler is only required on the entity being interacted with. This component requires a Collision Component.",
 	"addComponent": "Add Component",
 	"search": "Search..",
@@ -95,5 +95,13 @@
 		"preview": "Preview",
 		"duration": "duration",
 		"loop": "loop"
-	}
+	},
+	"addShader": "Add shader entry",
+	"mode": "Mode",
+	"layers": "Layers",
+	"maps": "Maps",
+	"unlockLayer": "Unlock layer",
+	"lockLayer": "Lock layer",
+	"showLayer": "Show layer",
+	"hideLayer": "Hide layer"
 }

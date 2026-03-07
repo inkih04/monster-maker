@@ -107,6 +107,15 @@ declare global {
 			) => Promise<{ success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' }>;
 			onEngineLog: (callback: (engineLog: EngineLog) => void) => () => void;
 			notifyLanguageChange: (lng: string) => void;
+			getEngineConfig: (pd: ProjectData) => Promise<{
+				success: boolean;
+				config?: EngineConfig;
+				error?: string;
+			}>;
+			updateShaders: (
+				pd: ProjectData,
+				shaders: Record<string, number>
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

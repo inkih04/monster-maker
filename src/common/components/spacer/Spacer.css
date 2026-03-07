@@ -4,6 +4,10 @@
 	padding: var(--space-ms);
 }
 
+.spacer--no-margin-right {
+	margin-right: 0 !important;
+}
+
 .normal {
 	padding: var(--space-ms);
 }
@@ -26,7 +30,6 @@
 	align-self: center;
 }
 
-
 .spacer.resizable {
 	display: flex;
 	align-items: center;
@@ -47,7 +50,6 @@
 .spacer.resizable.dragging {
 	background-color: var(--color-accent, #4a9eff);
 }
-
 
 .spacer-handle {
 	display: flex;

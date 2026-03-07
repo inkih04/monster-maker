@@ -1,0 +1,265 @@
+.tagger-body--wrapper {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.tagger-body--scroll {
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	padding: 12px 16px 8px 16px;
+	display: flex;
+	flex-direction: column;
+}
+
+.tagger-layers--list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	border-top: 1px solid var(--color-4);
+}
+
+.tagger-layers--row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 5px 0;
+	border-bottom: 1px solid var(--color-4);
+	transition: background-color 0.15s;
+}
+
+.tagger-layers--row.is-hidden {
+	opacity: 0.4;
+}
+
+.tagger-layers--row.is-locked {
+	background-color: rgba(160, 60, 60, 0.13);
+	border-bottom-color: rgba(160, 60, 60, 0.25);
+}
+
+.tagger-layers--row.is-locked .tagger-layers--name {
+	color: rgba(200, 120, 120, 0.9);
+}
+
+/* hidden wins over locked */
+.tagger-layers--row.is-hidden.is-locked {
+	background-color: transparent;
+	border-bottom-color: var(--color-4);
+}
+
+.tagger-layers--row.is-hidden.is-locked .tagger-layers--name {
+	color: var(--color-6);
+}
+
+.tagger-layers--name {
+	flex: 1;
+	font-size: var(--font-ssm);
+	font-weight: 500;
+	color: var(--color-9);
+	letter-spacing: 0.01em;
+}
+
+.tagger-layers--row.is-hidden .tagger-layers--name {
+	color: var(--color-6);
+	font-style: italic;
+}
+
+.tagger-layers--actions {
+	display: flex;
+	align-items: center;
+	gap: 2px;
+}
+
+.tagger-layers--icon-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	background: transparent;
+	border: none;
+	border-radius: var(--radius);
+	color: var(--color-5);
+	cursor: pointer;
+	transition: all 0.15s;
+	padding: 0;
+}
+
+.tagger-layers--icon-btn:hover {
+	background-color: var(--color-4);
+	color: var(--color-9);
+}
+
+.tagger-layers--icon-btn.is-inactive {
+	color: var(--color-4);
+}
+
+.tagger-layers--icon-btn.is-locked-btn {
+	color: var(--color-8);
+}
+
+.tagger-kv--header-row {
+	display: flex;
+	align-items: center;
+	padding: 0 0 4px 0;
+	flex-shrink: 0;
+	border-bottom: 1px solid var(--color-4);
+	margin-bottom: 0;
+}
+
+.tagger-kv--col-label {
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--color-6);
+}
+
+.tagger-kv--col-label.col-tag-shader {
+	flex: 1;
+}
+.tagger-kv--col-label.col-mode {
+	width: 52px;
+	flex-shrink: 0;
+	padding-left: 6px;
+}
+
+.tagger-kv--col-label.col-tag-map {
+	width: 72px;
+	flex-shrink: 0;
+}
+.tagger-kv--col-label.col-path {
+	flex: 1;
+	padding-left: 6px;
+}
+
+.tagger-kv--col-spacer {
+	width: 22px;
+	flex-shrink: 0;
+}
+
+.tagger-kv--list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.tagger-kv--row-separator {
+	height: 1px;
+	background-color: var(--color-4);
+	margin: 0;
+}
+
+.tagger-kv--row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 0;
+}
+
+.tagger-kv--input {
+	height: 26px;
+	padding: 0 7px;
+	background-color: var(--color-2);
+	border: 1px solid var(--color-4);
+	border-radius: var(--radius);
+	color: var(--color-9);
+	font-size: var(--font-ssm);
+	font-family: inherit;
+	outline: none;
+	transition:
+		border-color 0.15s,
+		background-color 0.15s;
+	min-width: 0;
+}
+
+.tagger-kv--input::placeholder {
+	color: var(--color-5);
+}
+
+.tagger-kv--input:focus {
+	border-color: var(--color-7);
+	background-color: var(--color-1);
+}
+
+.tagger-kv--input.input-tag-shader {
+	flex: 1;
+}
+
+.tagger-kv--input.input-mode {
+	width: 52px;
+	flex-shrink: 0;
+	text-align: center;
+}
+
+.tagger-kv--input.input-mode::-webkit-inner-spin-button,
+.tagger-kv--input.input-mode::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.tagger-kv--input.input-tag-map {
+	width: 72px;
+	flex-shrink: 0;
+}
+
+.tagger-kv--input.input-path {
+	flex: 1;
+}
+
+.tagger-kv--remove-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	flex-shrink: 0;
+	background: transparent;
+	border: none;
+	border-radius: var(--radius);
+	color: var(--color-5);
+	cursor: pointer;
+	transition: all 0.15s;
+	padding: 0;
+}
+
+.tagger-kv--remove-btn:hover {
+	background-color: var(--color-4);
+	color: var(--color-9);
+}
+
+.tagger-kv--add-container {
+	margin-top: 10px;
+	padding-bottom: 20px;
+	flex-shrink: 0;
+}
+
+.tagger-kv--add-button {
+	width: 100%;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	background-color: transparent;
+	border: 1px dashed var(--color-5);
+	border-radius: var(--radius);
+	color: var(--color-6);
+	font-size: 11px;
+	font-weight: 500;
+	font-family: inherit;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.tagger-kv--add-button:hover {
+	background-color: var(--color-2);
+	border-color: var(--color-9);
+	color: var(--color-9);
+	border-style: solid;
+}
