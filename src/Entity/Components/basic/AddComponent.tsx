@@ -4,6 +4,7 @@ import { useMapStore } from '../../../Map/MapGState';
 import { ComponentType, ComponentMap } from '../../../domain/ecs/componentMap';
 import './AddComponent.css';
 import { useTranslation } from 'react-i18next';
+import { makeEmptySet, DEFAULT_SET } from '../Animation/customHooks/useAnimationInspector';
 
 type IconType = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
@@ -35,7 +36,10 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 	ANIMATION: {
 		icon: Play,
 		label: 'Animation',
-		initData: { animations: [] },
+		initData: {
+			defaultAnimation: 'standdown',
+			sets: { [DEFAULT_SET]: makeEmptySet() },
+		},
 	},
 	MOVEMENT: {
 		icon: FastArrowRight,
@@ -58,6 +62,7 @@ export default function AddComponent() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const map = useMapStore((state) => state.map);
 	const addComponent = useMapStore((state) => state.addComponent);
+	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -101,6 +106,7 @@ export default function AddComponent() {
 			setIsOpen(false);
 			setSearchTerm('');
 		}
+		setIsDirty(true);
 	};
 
 	if (!selectedEntityId) return null;

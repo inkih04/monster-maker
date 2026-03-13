@@ -8,6 +8,11 @@ import { BrowserWindow } from 'electron';
 import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
 import { spawn } from 'child_process';
+import { EngineLog, LogLevel } from '../../global/types/engineLog';
+import { EngineConfig, DEFAULT_ENGINE_CONFIG } from '../../global/types/engineConfig';
+
+
+const ENGINE_CONFIG_FILENAME = '.engineConfig.json';
 
 export class ProjectConfigManager {
 	private readonly configPath: string;
@@ -22,6 +27,58 @@ export class ProjectConfigManager {
 		this.fileSystemWatcher = new FileSystemWatcher();
 		this.fileSystemService = new FileSystemService();
 		this.config = this.loadConfig();
+	}
+
+	private getEngineConfigPath(pd: ProjectData): string {
+		return path.join(this.fileSystemService.getProjectPath(pd), ENGINE_CONFIG_FILENAME);
+	}
+
+
+	public ensureEngineConfig(pd: ProjectData): void {
+		const cfgPath = this.getEngineConfigPath(pd);
+		if (!this.fileSystemService.exists(cfgPath)) {
+			this.fileSystemService.writeJSON<EngineConfig>(cfgPath, DEFAULT_ENGINE_CONFIG);
+			log(`Created default ${ENGINE_CONFIG_FILENAME} for project "${pd.name}"`);
+		}
+	}
+
+	public getEngineConfig(pd: ProjectData): {
+		success: boolean;
+		config?: EngineConfig;
+		error?: string;
+	} {
+		try {
+			const cfgPath = this.getEngineConfigPath(pd);
+			const cfg = this.fileSystemService.readJSON<EngineConfig>(cfgPath);
+			if (cfg) {
+				return { success: true, config: cfg };
+			}
+			return { success: true, config: { ...DEFAULT_ENGINE_CONFIG } };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public updateShaders(
+		pd: ProjectData,
+		shaders: Record<string, number>
+	): { success: boolean; error?: string } {
+		try {
+			const cfgPath = this.getEngineConfigPath(pd);
+			const existing = this.fileSystemService.readJSON<EngineConfig>(cfgPath) ?? {
+				...DEFAULT_ENGINE_CONFIG,
+			};
+
+			const updated: EngineConfig = { ...existing, shaders };
+
+			const ok = this.fileSystemService.writeJSON<EngineConfig>(cfgPath, updated);
+			if (ok) {
+				return { success: true };
+			}
+			return { success: false, error: 'writeJSON returned false' };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
 	}
 
 	public deleteFile(fileRelativePath: string, folderPath: string, pd: ProjectData): boolean {
@@ -266,29 +323,13 @@ export class ProjectConfigManager {
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 
 			if (!this.fileSystemService.exists(projectPath)) {
-				console.log(`Project invalid: ${pd.name} - Path does not exist: ${projectPath}`);
-				return false;
-			}
-
-			if (!this.fileSystemService.isDirectory(projectPath)) {
-				console.log(`Project invalid: ${pd.name} - Path is not a directory: ${projectPath}`);
 				return false;
 			}
 
 			const requiredPaths = this.fileSystemService.getRequiredProjectPaths();
-			const isValid = this.fileSystemService.validateRequiredDirectories(
-				projectPath,
-				requiredPaths
-			);
-
-			if (!isValid) {
-				console.log(`Project invalid: ${pd.name} - Missing required directories`);
-				return false;
-			}
-
-			return true;
+			return this.fileSystemService.validateRequiredDirectories(projectPath, requiredPaths);
 		} catch (error) {
-			console.log(`Project invalid: ${pd.name} - Error validating: ${error}`);
+			log(error + ' (fail while validating project path)');
 			return false;
 		}
 	}
@@ -359,6 +400,10 @@ export class ProjectConfigManager {
 			}
 
 			this.addProjectData(pd);
+
+			// Guarantee .engineConfig.json exists when a project is opened
+			this.ensureEngineConfig(pd);
+
 			return true;
 		} catch (error) {
 			log(error + ' (fail while opening project directory)');
@@ -387,6 +432,10 @@ export class ProjectConfigManager {
 			);
 
 			this.addProjectData(pd);
+
+			// Create .engineConfig.json right away for new projects
+			this.ensureEngineConfig(pd);
+
 			return true;
 		} catch (error) {
 			log(error + ' (fail while creating project directory)');
@@ -472,6 +521,75 @@ export class ProjectConfigManager {
 		}
 	}
 
+	private parseLogLine(raw: string): EngineLog | null {
+		const trimmed = raw.trim();
+
+		if (trimmed.length === 0) {
+			return null;
+		}
+
+		const timestamp = Date.now();
+
+		if (trimmed.startsWith('[ENGINE][ERROR]')) {
+			const message = trimmed.slice('[ENGINE][ERROR]'.length).trim();
+			return { message, level: 'error' as LogLevel, timestamp };
+		}
+
+		if (trimmed.startsWith('[ENGINE][WARN]')) {
+			const message = trimmed.slice('[ENGINE][WARN]'.length).trim();
+			return { message, level: 'warn' as LogLevel, timestamp };
+		}
+
+		if (trimmed.startsWith('[ENGINE]')) {
+			const message = trimmed.slice('[ENGINE]'.length).trim();
+			return { message, level: 'info' as LogLevel, timestamp };
+		}
+
+		return { message: trimmed, level: 'lua' as LogLevel, timestamp };
+	}
+
+	private pipeEngineLogs(child: ReturnType<typeof spawn>): void {
+		let stdoutBuffer = '';
+		let stderrBuffer = '';
+
+		const emitLine = (line: string): void => {
+			const engineLog = this.parseLogLine(line);
+			if (engineLog) {
+				this.fileSystemWatcher.notifyMainWindow('engine-log', engineLog);
+			}
+		};
+
+		const handleChunk = (buffer: string, chunk: Buffer | string): string => {
+			const accumulated = buffer + chunk.toString();
+			const lines = accumulated.split(/\r?\n/);
+			const incomplete = lines.pop() ?? '';
+			lines.forEach(emitLine);
+			return incomplete;
+		};
+
+		child.stdout?.on('data', (chunk: Buffer) => {
+			stdoutBuffer = handleChunk(stdoutBuffer, chunk);
+		});
+
+		child.stdout?.on('end', () => {
+			if (stdoutBuffer.length > 0) {
+				emitLine(stdoutBuffer);
+				stdoutBuffer = '';
+			}
+		});
+
+		child.stderr?.on('data', (chunk: Buffer) => {
+			stderrBuffer = handleChunk(stderrBuffer, chunk);
+		});
+
+		child.stderr?.on('end', () => {
+			if (stderrBuffer.length > 0) {
+				emitLine(stderrBuffer);
+				stderrBuffer = '';
+			}
+		});
+	}
+
 	public runEngine(pd: ProjectData, mapPath?: string): { success: boolean; error?: string } {
 		try {
 			if (this.engineProcess && !this.engineProcess.killed) {
@@ -512,10 +630,11 @@ export class ProjectConfigManager {
 			const child = spawn(executablePath, args, {
 				cwd: projectPath,
 				detached: false,
-				stdio: 'ignore',
+				stdio: ['ignore', 'pipe', 'pipe'],
 			});
 
 			this.engineProcess = child;
+			this.pipeEngineLogs(child);
 
 			child.on('exit', (code, signal) => {
 				console.log(`Engine exited with code ${code} and signal ${signal}`);

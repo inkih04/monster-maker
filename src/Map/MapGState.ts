@@ -42,9 +42,13 @@ interface MapStore {
 	selectedTilePosition: SelectedTilePosition | null;
 	isLoadingMap: boolean;
 	showCollisions: boolean;
-	
-    setShowCollisions: (show: boolean) => void; 
-    toggleShowCollisions: () => void;
+	visibleLayers: Record<Layer, boolean>;
+	lockedLayers: Record<Layer, boolean>;
+
+	setShowCollisions: (show: boolean) => void;
+	toggleShowCollisions: () => void;
+	toggleLayerVisibility: (layer: Layer) => void;
+	toggleLayerLocked: (layer: Layer) => void;
 
 	setSelectedTilePosition: (position: SelectedTilePosition | null) => void;
 	setMapRelativePath: (relativePath: string) => void;
@@ -81,6 +85,7 @@ interface MapStore {
 	): void;
 	clearMapTiles(): void;
 	exportToEngineFormat(): string;
+	reset: () => void;
 }
 
 export const useMapStore = create<MapStore>()(
@@ -102,14 +107,82 @@ export const useMapStore = create<MapStore>()(
 			activeLayer: 'ground',
 			isLoadingMap: false,
 			showCollisions: false,
+			visibleLayers: {
+				ground: true,
+				decoration: true,
+				entities: true,
+				shadows: true,
+				foreground: true,
+			},
+			lockedLayers: {
+				ground: false,
+				decoration: false,
+				entities: false,
+				shadows: false,
+				foreground: false,
+			},
+
+			reset: () => {
+				set({
+					map: {
+						mapId: '1',
+						width: 100,
+						height: 100,
+						tileSize: 16,
+						entities: {},
+					},
+					mapRelativePath: null,
+					paintedTiles: [],
+					isDirty: false,
+					selectedEntityId: null,
+					selectedTilePosition: null,
+					zoom: 1,
+					activeLayer: 'ground' as Layer,
+					isLoadingMap: false,
+					showCollisions: false,
+					visibleLayers: {
+						ground: true,
+						decoration: true,
+						entities: true,
+						shadows: true,
+						foreground: true,
+					},
+					lockedLayers: {
+						ground: false,
+						decoration: false,
+						entities: false,
+						shadows: false,
+						foreground: false,
+					},
+				});
+				useMapStore.temporal.getState().clear();
+			},
 
 			setShowCollisions: (show) => {
-                set({ showCollisions: show });
-            },
+				set({ showCollisions: show });
+			},
 
-            toggleShowCollisions: () => {
-                set((state) => ({ showCollisions: !state.showCollisions }));
-            },
+			toggleShowCollisions: () => {
+				set((state) => ({ showCollisions: !state.showCollisions }));
+			},
+
+			toggleLayerVisibility: (layer) => {
+				set((state) => ({
+					visibleLayers: {
+						...state.visibleLayers,
+						[layer]: !state.visibleLayers[layer],
+					},
+				}));
+			},
+
+			toggleLayerLocked: (layer) => {
+				set((state) => ({
+					lockedLayers: {
+						...state.lockedLayers,
+						[layer]: !state.lockedLayers[layer],
+					},
+				}));
+			},
 
 			setMapRelativePath: (relativePath: string) => {
 				set({ mapRelativePath: relativePath });
@@ -309,23 +382,36 @@ export const useMapStore = create<MapStore>()(
 					const component = entity?.components[type];
 					if (!entity || !component) return state;
 
+					const updatedEntity = {
+						...entity,
+						components: {
+							...entity.components,
+							[type]: {
+								...component,
+								...data,
+							},
+						},
+					};
+
+					let paintedTiles = state.paintedTiles;
+					if (type === 'RENDER' && 'spriteSheetPath' in data) {
+						const newPath = (data as { spriteSheetPath?: string }).spriteSheetPath;
+						if (newPath !== undefined) {
+							paintedTiles = paintedTiles.map((tile) =>
+								tile.entityId === entityId ? { ...tile, spriteSheetPath: newPath } : tile
+							);
+						}
+					}
+
 					return {
 						map: {
 							...state.map,
 							entities: {
 								...state.map.entities,
-								[entityId]: {
-									...entity,
-									components: {
-										...entity.components,
-										[type]: {
-											...component,
-											...data,
-										},
-									},
-								},
+								[entityId]: updatedEntity,
 							},
 						},
+						paintedTiles,
 					};
 				});
 			},
@@ -349,6 +435,7 @@ export const useMapStore = create<MapStore>()(
 								},
 							},
 						},
+						isDirty: true,
 					};
 				});
 			},

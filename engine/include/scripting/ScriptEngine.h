@@ -20,6 +20,9 @@ public:
     void setupBindingsStatic();
     void setupBindingsDynamic(Camera* camera, EntityManager& entityManager);
     bool runScript(const std::string& filePath);
+    void requestMapChange(const std::string& mapPath) { m_pendingMap = mapPath; }
+    bool hasPendingMapChange() const { return !m_pendingMap.empty(); }
+    std::string consumePendingMap();
 
     sol::state& getState() { return m_lua; }
 
@@ -29,7 +32,7 @@ private:
 
     ScriptEngine(const ScriptEngine&) = delete;
     ScriptEngine& operator=(const ScriptEngine&) = delete;
-
+    std::string m_pendingMap;
     sol::state m_lua;
 };
 

@@ -16,7 +16,7 @@ void RenderComponent::render() {
 }
 
 void RenderComponent::update(int deltaTime) {
-    // Update logic if necessary
+
 }
 
 
@@ -32,8 +32,10 @@ glm::vec2  RenderComponent::getPrettyPosition() const {
 
 void RenderComponent::draw() const {
     if (spriteRect.width == -1 && spriteRect.height == -1 && spriteRect.x == -1 && spriteRect.y == -1) {
+        Renderer::getInstance().setShaderMode(this->shaderMode);
         Renderer::getInstance().drawSprite(m_spriteSheetPath,  getPrettyPosition(), glm::vec2(m_height, m_width));
     } else {
+        Renderer::getInstance().setShaderMode(this->shaderMode);
         Renderer::getInstance().drawSprite(m_spriteSheetPath, getPrettyPosition(), glm::vec2(m_height, m_width), 0.0f, glm::vec3(1.0f), &spriteRect);
     }
 }

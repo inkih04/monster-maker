@@ -6,6 +6,7 @@ interface SpacerProps {
 	size?: 'normal' | 'small';
 	resizable?: boolean;
 	onResize?: (delta: number) => void;
+	marginRight?: boolean;
 }
 
 function Spacer({
@@ -13,6 +14,7 @@ function Spacer({
 	size = 'normal',
 	resizable = false,
 	onResize,
+	marginRight = true,
 }: Readonly<SpacerProps>) {
 	const { ref, isDragging } = useResize({
 		direction,
@@ -26,7 +28,7 @@ function Spacer({
 	return (
 		<div
 			ref={ref}
-			className={`spacer ${direction} ${size} resizable ${isDragging ? 'dragging' : ''}`}
+			className={`spacer ${marginRight ? '' : 'spacer--no-margin-right'} ${direction} ${size} resizable ${isDragging ? 'dragging' : ''}`}
 			role="separator"
 			aria-orientation={direction === 'vertical' ? 'vertical' : 'horizontal'}
 		>

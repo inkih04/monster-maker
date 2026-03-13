@@ -71,7 +71,7 @@ TextRenderer::TextRenderer(const std::string& fontPath, unsigned int fontSize)
 
     initRenderData();
 
-    std::cout << "TextRenderer initialized with font: " << fontPath << std::endl;
+    std::cout << "[ENGINE] TextRenderer initialized with font: " << fontPath << std::endl;
 }
 
 TextRenderer::~TextRenderer() {

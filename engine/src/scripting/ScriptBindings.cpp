@@ -9,6 +9,7 @@
 #include "RenderComponent.h"
 #include "AudioService.h"
 #include "InteractionComponent.h"
+#include "ScriptEngine.h"
 
 void ScriptBindings::registerStatic(sol::state& lua) {
     registerKeys(lua);
@@ -29,6 +30,23 @@ void ScriptBindings::registerBordersMapService(sol::state& lua) {
             return self.isOutOfBounds(pos, glm::vec2(offsetX, offsetY));
         },
         "clampCamera", &BordersMapService::clampCameraPosition
+    );
+}
+
+void ScriptBindings::registerAnimationComponent(sol::state& lua) {
+    lua.new_usertype<AnimationComponent>("AnimationComponent",
+        "setSet",  &AnimationComponent::setActiveSet,
+        "getSet",  &AnimationComponent::getActiveSet,
+
+        "play", [](AnimationComponent& anim, const std::string& name, sol::optional<bool> forceRestart) {
+            anim.play(name, forceRestart.value_or(false));
+        },
+        "pause",  &AnimationComponent::pause,
+        "resume", &AnimationComponent::resume,
+        "stop",   &AnimationComponent::stop,
+
+        "isPlaying",       &AnimationComponent::isPlaying,
+        "currentAnim",     &AnimationComponent::getCurrentAnimationName
     );
 }
 
@@ -59,6 +77,10 @@ void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityMana
     lua.set_function("GetEntity", [&entityManager](EntityTag tag) -> Entity* {
         auto entities = entityManager.getEntitiesByTag(tag);
         return entities.empty() ? nullptr : entities[0];
+    });
+
+    lua.set_function("loadMap", [](const std::string& path) {
+        ScriptEngine::getInstance().requestMapChange(path);
     });
 }
 

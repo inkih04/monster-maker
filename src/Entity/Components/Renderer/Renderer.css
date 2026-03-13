@@ -35,12 +35,9 @@
 	gap: 5px;
 }
 
-
 .render-input:hover {
 	background-color: var(--color-4);
 }
-
-
 
 .render-input[type='number'] {
 	-moz-appearance: textfield;
@@ -64,4 +61,73 @@
 .render-input:focus::-webkit-inner-spin-button,
 .render-input:focus::-webkit-outer-spin-button {
 	opacity: 0;
+}
+
+.render-select-wrapper {
+	width: 100%;
+}
+
+.render-select-trigger {
+	width: 100%;
+	height: 30px;
+	padding: 0 8px;
+	border: none;
+	border-radius: var(--radius);
+	background-color: var(--color-3);
+	color: var(--color-9);
+	font-size: 14px;
+	font-family: inherit;
+	cursor: pointer;
+	outline: none;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	transition: background-color 0.2s;
+}
+
+.render-select-trigger:hover {
+	background-color: var(--color-4);
+}
+
+.render-select-value {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.render-select-arrow {
+	flex-shrink: 0;
+	transition: transform 0.15s ease;
+}
+
+.render-select-arrow.is-open {
+	transform: rotate(180deg);
+}
+
+.render-select-dropdown {
+	z-index: 9999;
+	margin: 0;
+	padding: 3px;
+	list-style: none;
+	border-radius: var(--radius);
+	background-color: var(--color-3);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.render-select-option {
+	padding: 5px 8px;
+	border-radius: var(--radius);
+	font-size: 14px;
+	color: var(--color-9);
+	cursor: pointer;
+	transition: background-color 0.15s;
+}
+
+.render-select-option:hover {
+	background-color: var(--color-4);
+}
+
+.render-select-option.is-selected {
+	background-color: var(--color-5);
+	color: var(--color-1);
 }

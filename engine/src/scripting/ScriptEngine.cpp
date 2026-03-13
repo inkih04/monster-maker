@@ -12,14 +12,20 @@ ScriptEngine& ScriptEngine::getInstance() {
 void ScriptEngine::init() {
     try {
         m_lua.open_libraries(sol::lib::base, sol::lib::package, sol::lib::math, sol::lib::table);
-        std::cout << "ScriptEngine init" << std::endl;
+        std::cout << "[ENGINE] ScriptEngine init" << std::endl;
     } catch (const std::exception& e) {
-        std::cerr << "ScriptEngine Error while loadin lua " << e.what() << std::endl;
+        std::cerr << "[ENGINE][ERROR] Error while loadin lua " << e.what() << std::endl;
     }
 }
 
 void ScriptEngine::setupBindingsStatic() {
     ScriptBindings::registerStatic(m_lua);
+}
+
+std::string ScriptEngine::consumePendingMap() {
+    std::string path = m_pendingMap;
+    m_pendingMap.clear();
+    return path;
 }
 
 void ScriptEngine::setupBindingsDynamic(Camera* camera, EntityManager& entityManager) {

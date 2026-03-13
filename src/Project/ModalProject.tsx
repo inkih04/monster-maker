@@ -11,11 +11,10 @@ import { ProjectData } from '../../global/types/projectData';
 
 function ModalProject() {
 	const { t } = useTranslation();
-	const [open, setOpen] = useState(true);
 	const [showNewProject, setShowNewProject] = useState(false);
 	const [showOpenProject, setShowOpenProject] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
-	const { setCurrentProject, removeProject } = useProjectStore();
+	const { isModalOpen, setIsModalOpen, setCurrentProject, removeProject } = useProjectStore();
 
 	const { projects, loadProjects } = useProjectStore();
 
@@ -37,13 +36,13 @@ function ModalProject() {
 			return;
 		}
 
-		setOpen(false);
+		setIsModalOpen(false);
 		setCurrentProject(project);
 	};
 
 	return (
 		<>
-			<Dialog.Root open={open}>
+			<Dialog.Root open={isModalOpen}>
 				<Dialog.Portal>
 					<Dialog.Overlay className="Dialog-overlay" />
 					<Dialog.Content className="Dialog-wrapper">

@@ -18,6 +18,7 @@ interface DrawBrushPreviewParams {
 	tilesetImages: Record<string, HTMLImageElement>;
 	selectedArea: TileSelection | null;
 	zoom: number;
+	isLayerLocked?: boolean;
 }
 
 interface DrawCollisionDebugParams {
@@ -37,6 +38,7 @@ interface DrawEraserPreviewParams {
 	tileSize: number;
 	zoom: number;
 	entities: Record<string, Entity>;
+	isLayerLocked?: boolean;
 }
 
 interface DrawSelectionPreviewParams {
@@ -50,6 +52,7 @@ interface DrawSelectionPreviewParams {
 	tileSize: number;
 	zoom: number;
 	entities: Record<string, Entity>;
+	isLayerLocked?: boolean;
 }
 
 export const createTileEntity = (
@@ -103,11 +106,11 @@ export function drawCollisionDebug({ ctx, entities, zoom }: DrawCollisionDebugPa
 			ctx.save();
 
 			if (collider.isTrigger) {
-				ctx.fillStyle = 'rgba(255, 165, 0, 0.3)';
-				ctx.strokeStyle = 'rgba(255, 165, 0, 0.9)';
+				ctx.fillStyle = 'rgba(122, 156, 200, 0.25)';
+				ctx.strokeStyle = 'rgba(174, 203, 238, 0.9)';
 			} else {
-				ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
-				ctx.strokeStyle = 'rgba(255, 255, 0, 0.9)';
+				ctx.fillStyle = 'rgba(232, 85, 85, 0.25)';
+				ctx.strokeStyle = 'rgba(244, 140, 140, 0.9)';
 			}
 
 			ctx.lineWidth = 1;
@@ -128,6 +131,7 @@ export function drawBrushPreview({
 	tilesetImages,
 	selectedArea,
 	zoom,
+	isLayerLocked = false,
 }: DrawBrushPreviewParams): void {
 	if (isActive || !currentTileSet || !previewPosition) return;
 
@@ -160,6 +164,14 @@ export function drawBrushPreview({
 				);
 			}
 		}
+
+		if (isLayerLocked) {
+			const w = (maxX - minX + 1) * scaledTileSize;
+			const h = (maxY - minY + 1) * scaledTileSize;
+			ctx.globalAlpha = 0.55;
+			ctx.fillStyle = 'rgba(220, 30, 30, 0.6)';
+			ctx.fillRect(previewPosition.x * scaledTileSize, previewPosition.y * scaledTileSize, w, h);
+		}
 	} else {
 		ctx.drawImage(
 			currentTilesetImage,
@@ -172,6 +184,17 @@ export function drawBrushPreview({
 			scaledTileSize,
 			scaledTileSize
 		);
+
+		if (isLayerLocked) {
+			ctx.globalAlpha = 0.55;
+			ctx.fillStyle = 'rgba(220, 30, 30, 0.6)';
+			ctx.fillRect(
+				previewPosition.x * scaledTileSize,
+				previewPosition.y * scaledTileSize,
+				scaledTileSize,
+				scaledTileSize
+			);
+		}
 	}
 
 	ctx.globalAlpha = 1;
@@ -188,6 +211,7 @@ export function drawEraserPreview({
 	tileSize,
 	zoom,
 	entities,
+	isLayerLocked = false,
 }: DrawEraserPreviewParams): void {
 	if (isActive || !previewPosition) return;
 
@@ -232,7 +256,7 @@ export function drawEraserPreview({
 		destHeight
 	);
 
-	ctx.fillStyle = 'rgba(255, 50, 50, 0.4)';
+	ctx.fillStyle = isLayerLocked ? 'rgba(255, 140, 0, 0.6)' : 'rgba(255, 50, 50, 0.4)';
 	ctx.fillRect(posX, posY, destWidth, destHeight);
 
 	ctx.globalAlpha = 1;
@@ -249,6 +273,7 @@ export function drawSelectionPreview({
 	tileSize,
 	zoom,
 	entities,
+	isLayerLocked = false,
 }: DrawSelectionPreviewParams): void {
 	if (isActive || !previewPosition) return;
 
@@ -293,7 +318,7 @@ export function drawSelectionPreview({
 		destHeight
 	);
 
-	ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+	ctx.fillStyle = isLayerLocked ? 'rgba(220, 30, 30, 0.6)' : 'rgba(0, 255, 0, 0.3)';
 	ctx.fillRect(posX, posY, destWidth, destHeight);
 
 	ctx.globalAlpha = 1;

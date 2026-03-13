@@ -8,6 +8,7 @@ import '../Renderer/Renderer.css';
 function Collision() {
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const map = useMapStore((state) => state.map);
+	const setIsDirty = useMapStore((state) => state.setIsDirty)
 	const updateComponent = useMapStore((state) => state.updateComponent);
 	const removeComponent = useMapStore((state) => state.removeComponent);
 
@@ -27,6 +28,7 @@ function Collision() {
 
 	const handleUpdate = (field: string, value: number | boolean) => {
 		updateComponent(selectedEntityId, 'COLLIDER', { [field]: value });
+		setIsDirty(true);
 	};
 
 	const handleDelete = () => {

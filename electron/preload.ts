@@ -1,6 +1,7 @@
 import { ipcRenderer, contextBridge } from 'electron';
 import { ProjectData } from '../global/types/projectData';
 import FolderNode from '../global/types/folderNode';
+import { EngineLog } from '../global/types/engineLog';
 
 contextBridge.exposeInMainWorld('api', {
 	getProjects: () => ipcRenderer.invoke('config:getAll'),
@@ -22,7 +23,7 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('directory-structure-changed', (_event, structure) => callback(structure));
 		return () => ipcRenderer.removeAllListeners('directory-structure-changed');
 	},
-	selectFile: (defaultPath?: string) => ipcRenderer.invoke('config:selectFile', defaultPath),
+	selectFile: (defaultPath?: string, filters?: { name: string; extensions: string[] }[]) => ipcRenderer.invoke('config:selectFile', defaultPath, filters),
 	onLanguageChange: (callback: (lng: string) => void) => {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');
@@ -90,6 +91,11 @@ contextBridge.exposeInMainWorld('api', {
 		return () => ipcRenderer.removeAllListeners('add-new-file');
 	},
 
+	onCloseProject: (callback: () => void) => {
+		ipcRenderer.on('close-project', callback);
+		return () => ipcRenderer.removeAllListeners('close-project');
+	},
+
 	onSaveFile: (callback: () => void) => {
 		ipcRenderer.on('save-file', callback);
 		return () => ipcRenderer.removeAllListeners('save-file');
@@ -101,9 +107,18 @@ contextBridge.exposeInMainWorld('api', {
 	stopEngine: () => ipcRenderer.invoke('config:stopEngine'),
 
 	onEngineExit: (callback: () => void) => {
-		ipcRenderer.on('engine-exited', callback);
-		return () => ipcRenderer.removeAllListeners('engine-exited');
+		const subscription = (_event: Electron.IpcRendererEvent) => callback();
+		ipcRenderer.on('engine-exited', subscription);
+		return () => ipcRenderer.removeListener('engine-exited', subscription);
 	},
+
+	onEngineLog: (callback: (engineLog: EngineLog) => void) => {
+		const subscription = (_event: Electron.IpcRendererEvent, engineLog: EngineLog) =>
+			callback(engineLog);
+		ipcRenderer.on('engine-log', subscription);
+		return () => ipcRenderer.removeListener('engine-log', subscription);
+	},
+
 	onToggleCollisions: (callback: () => void) => {
 		ipcRenderer.on('toggle-collisions', callback);
 		return () => ipcRenderer.removeAllListeners('toggle-collisions');
@@ -138,4 +153,10 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.invoke('config:createFolder', folderNode, newFolderName, pd),
 	deleteFolder: (folderNode: FolderNode, pd: ProjectData) =>
 		ipcRenderer.invoke('config:deleteFolder', folderNode, pd),
+	notifyLanguageChange: (lng: string) => ipcRenderer.send('language-changed', lng),
+		getEngineConfig: (pd: ProjectData) => ipcRenderer.invoke('config:getEngineConfig', pd),
+
+	updateShaders: (pd: ProjectData, shaders: Record<string, number>) =>
+		ipcRenderer.invoke('config:updateShaders', pd, shaders),
+	
 });

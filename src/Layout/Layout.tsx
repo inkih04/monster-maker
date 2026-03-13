@@ -8,10 +8,13 @@ import FolderTree from '../Files/FolderTree';
 import FileList from '../Files/FileList';
 import CreateFile from '../common/components/createFile/CreateFile';
 import Entity from '../Entity/Entity';
+import DebugTerminal from '../DebugTerminal/DebugTerminal';
 import { useLayoutResize, LIMITS } from './customHooks/useLayoutResize';
 import { useEffect } from 'react';
 import { useNotify } from '../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
+import { useEngineStore } from '../ToolBar/EngineGState';
+import Tagger from '../Tagger/Tagger';
 
 function Layout() {
 	const {
@@ -19,15 +22,21 @@ function Layout() {
 		entityWidth,
 		filesHeight,
 		filesMenuWidth,
+		tilesetHeight,
 		resizeMapUtility,
 		resizeEntity,
 		resizeFiles,
 		resizeFilesMenu,
 		resetLayout,
+		resizeTileset,
 	} = useLayoutResize();
 
 	const { notify } = useNotify();
 	const { t } = useTranslation();
+
+	const isRunning = useEngineStore((state) => state.isRunning);
+	const mode = useEngineStore((state) => state.runMode);
+	const resetEngineState = useEngineStore((state) => state.resetEngineState);
 
 	useEffect(() => {
 		const removeListener = window.api.onResetLayout(() => {
@@ -40,6 +49,16 @@ function Layout() {
 		};
 	}, [resetLayout, notify, t]);
 
+	useEffect(() => {
+		const removeListener = window.api.onEngineExit(() => {
+			resetEngineState();
+		});
+
+		return () => {
+			removeListener();
+		};
+	}, [resetEngineState]);
+
 	return (
 		<>
 			<ModalProject />
@@ -51,11 +70,13 @@ function Layout() {
 						className="map-utility"
 						style={{ flex: `0 0 ${mapUtilityWidth}px`, minWidth: LIMITS.mapUtilityWidth.min }}
 					>
-						<div className="tilemap-container">
+						<div className="tilemap-container" style={{ flex: `0 0 ${tilesetHeight}px` }}>
 							<TileSet />
 						</div>
-						<Spacer size="small" />
-						<div className="maps"></div>
+						<Spacer size="small" resizable onResize={resizeTileset} marginRight={false} />
+						<div className="tagger" style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+							<Tagger />
+						</div>
 					</aside>
 					<Spacer direction="vertical" resizable onResize={resizeMapUtility} />
 					<div className="map">
@@ -78,18 +99,25 @@ function Layout() {
 					className="files"
 					style={{ flex: `0 0 ${filesHeight}px`, minHeight: LIMITS.filesHeight.min }}
 				>
-					<div className="files-content">
-						<aside
-							className="files-menu"
-							style={{ flex: `0 0 ${filesMenuWidth}px`, minWidth: LIMITS.filesMenuWidth.min }}
-						>
-							<FolderTree />
-						</aside>
-						<Spacer direction="vertical" size="small" resizable onResize={resizeFilesMenu} />
-						<aside className="raw-files">
-							<FileList />
-						</aside>
-					</div>
+					{mode !== 'debug' && (
+						<div className="files-content">
+							<aside
+								className="files-menu"
+								style={{ flex: `0 0 ${filesMenuWidth}px`, minWidth: LIMITS.filesMenuWidth.min }}
+							>
+								<FolderTree />
+							</aside>
+							<Spacer direction="vertical" size="small" resizable onResize={resizeFilesMenu} />
+							<aside className="raw-files">
+								<FileList />
+							</aside>
+						</div>
+					)}
+					{isRunning && mode === 'debug' && (
+						<div className="layout--debugTerminal">
+							<DebugTerminal />
+						</div>
+					)}
 				</div>
 			</div>
 		</>

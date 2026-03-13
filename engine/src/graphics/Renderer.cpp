@@ -29,6 +29,11 @@ void Renderer::loadShader(const std::string& name, const std::string& vertexPath
 
 }
 
+void Renderer::setUniformFloat(const std::string& name, float value) const {
+    if (!m_currentShader) return;
+    m_currentShader->setFloat(name, value);
+}
+
 void Renderer::setShader(const std::string& name) {
     auto it = m_shaders.find(name);
     if (it != m_shaders.end()) {
@@ -37,7 +42,7 @@ void Renderer::setShader(const std::string& name) {
 
         if (m_activeCamera) updateCameraUniforms();
     } else {
-        std::cerr << "Advertencia: Intentando usar shader no existente '" << name << "'" << std::endl;
+        std::cerr << "[ENGINE][WARNING]: Shader does not exist '" << name << "'" << std::endl;
     }
 }
 
@@ -54,6 +59,11 @@ void Renderer::updateCameraUniforms() const {
         m_currentShader->setMat4("projection", m_activeCamera->getProjectionMatrix());
         m_currentShader->setMat4("view", m_activeCamera->getViewMatrix());
     }
+}
+
+void Renderer::setShaderMode(int mode) const {
+    if (!m_currentShader) return;
+    m_currentShader->setInt("u_mode", mode);
 }
 
 void Renderer::initRenderData() {
@@ -82,9 +92,13 @@ void Renderer::initRenderData() {
     glBindVertexArray(0);
 }
 
-void Renderer::draw(  glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color ) const {
+void Renderer::draw(glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color) const {
+    draw(position, size, rotate, glm::vec4(color, 1.0f));
+}
+
+void Renderer::draw(  glm::vec2 position, glm::vec2 size, float rotate, glm::vec4 color ) const {
     if (!m_currentShader) {
-        std::cout << "ERROR::Renderer: No shader configurado" << std::endl;
+        std::cout << "[ENGINE][ERROR] Error while loading the shader" << std::endl;
       return;
     }
     m_currentShader->use();
@@ -99,7 +113,7 @@ void Renderer::draw(  glm::vec2 position, glm::vec2 size, float rotate, glm::vec
     model = glm::scale(model, glm::vec3(size, 1.0f));
 
     m_currentShader->setMat4("model", model);
-    m_currentShader->setVec4("spriteColor", glm::vec4(color, 1.f));
+    m_currentShader->setVec4("spriteColor", color);
     m_currentShader->setBool("useTexture", false);
 
     glBindVertexArray(m_quadVAO);

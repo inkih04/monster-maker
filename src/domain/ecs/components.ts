@@ -12,6 +12,7 @@ export interface RenderComponent {
 	h: number;
 	width: number;
 	height: number;
+	shader: string;
 }
 
 export interface AnimationFrame {
@@ -26,11 +27,16 @@ export interface Animation {
 	frames: AnimationFrame[];
 	frameDuration: number;
 	loop: boolean;
-	priority: number;
+}
+
+export interface AnimationSet {
+	animations: Animation[];
 }
 
 export interface AnimationComponent {
-	animations: Animation[];
+	defaultAnimation?: string;
+	activeSet?: string;
+	sets: Record<string, AnimationSet>;
 }
 
 export interface MovementComponent {}

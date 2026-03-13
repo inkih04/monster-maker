@@ -15,7 +15,8 @@ declare global {
 				defaultPath?: string
 			) => Promise<{ success: boolean; path?: string; error?: string }>;
 			selectFile: (
-				defaultPath?: string
+				defaultPath?: string,
+				filters?: { name: string; extensions: string[] }[]
 			) => Promise<{ success: boolean; path?: string; error?: string }>;
 			toRelativePath: (
 				absolutePath: string
@@ -78,6 +79,7 @@ declare global {
 
 			onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => () => void;
 			onAddNewFile: (callback: () => void) => () => void;
+			onCloseProject: (callback: () => void) => () => void;
 			onSaveFile: (callback: () => void) => () => void;
 			runEngine: (
 				pd: ProjectData,
@@ -103,6 +105,17 @@ declare global {
 				folderNode: FolderNode,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string; errorCode?: 'ESSENTIAL_FOLDER' }>;
+			onEngineLog: (callback: (engineLog: EngineLog) => void) => () => void;
+			notifyLanguageChange: (lng: string) => void;
+			getEngineConfig: (pd: ProjectData) => Promise<{
+				success: boolean;
+				config?: EngineConfig;
+				error?: string;
+			}>;
+			updateShaders: (
+				pd: ProjectData,
+				shaders: Record<string, number>
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

@@ -22,20 +22,12 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		try {
 			const directoryHasBeenCreated: boolean = configManager.createProjectDirectory(pd);
 			if (directoryHasBeenCreated) {
-				return {
-					success: true,
-				};
+				return { success: true };
 			} else {
-				return {
-					success: false,
-					error: String('File with that name already exists'),
-				};
+				return { success: false, error: String('File with that name already exists') };
 			}
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
 
@@ -43,32 +35,21 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		try {
 			const directoryHasBeenOpened: boolean = configManager.openProjectDirectory(pd);
 			if (directoryHasBeenOpened) {
-				return {
-					success: true,
-				};
+				return { success: true };
 			} else {
-				return {
-					success: false,
-				};
+				return { success: false };
 			}
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
 
 	ipcMain.handle('config:remove', async (_event, pd: ProjectData) => {
 		try {
 			configManager.removeProject(pd);
-
 			return { success: true };
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
 
@@ -77,22 +58,13 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		async (_event, fileRelativePath: string, folderPath: string, pd: ProjectData) => {
 			try {
 				const success = configManager.deleteFile(fileRelativePath, folderPath, pd);
-
 				if (success) {
-					return {
-						success: true,
-					};
+					return { success: true };
 				} else {
-					return {
-						success: false,
-						error: 'File does not exist or could not be deleted',
-					};
+					return { success: false, error: 'File does not exist or could not be deleted' };
 				}
 			} catch (error) {
-				return {
-					success: false,
-					error: String(error),
-				};
+				return { success: false, error: String(error) };
 			}
 		}
 	);
@@ -114,36 +86,36 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		return configManager.pathUnion(path1, path2);
 	});
 
-	ipcMain.handle('config:selectFile', async (_event, defaultPath?: string) => {
-		try {
-			const result = await dialog.showOpenDialog({
-				properties: ['openFile'],
-				title: 'Select a file',
-				defaultPath: defaultPath ?? '',
-				filters: [
-					{ name: 'Lua Scripts', extensions: ['lua'] },
-					{ name: 'All Files', extensions: ['*'] },
-				],
-			});
+	ipcMain.handle(
+		'config:selectFile',
+		async (_event, defaultPath?: string, filters?: { name: string; extensions: string[] }[]) => {
+			try {
+				const result = await dialog.showOpenDialog({
+					properties: ['openFile'],
+					title: 'Select a file',
+					defaultPath: defaultPath ?? '',
+					filters: filters ?? [
+						{ name: 'Lua Scripts', extensions: ['lua'] },
+						{ name: 'All Files', extensions: ['*'] },
+					],
+				});
 
-			if (result.canceled || result.filePaths.length === 0) {
-				return { success: false, error: 'Canceled' };
+				if (result.canceled || result.filePaths.length === 0) {
+					return { success: false, error: 'Canceled' };
+				}
+
+				return { success: true, path: result.filePaths[0] };
+			} catch (error) {
+				return { success: false, error: String(error) };
 			}
-
-			return {
-				success: true,
-				path: result.filePaths[0],
-			};
-		} catch (error) {
-			return { success: false, error: String(error) };
 		}
-	});
+	);
 
 	ipcMain.handle('config:selectFolder', async (_event, defaultPath?: string) => {
 		try {
 			const result = await dialog.showOpenDialog({
 				properties: ['openDirectory'],
-				title: 'Selecet a folder',
+				title: 'Select a folder',
 				defaultPath: defaultPath ?? '',
 			});
 
@@ -157,26 +129,16 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 				suggestedName: result.filePaths[0].split(/[/\\]/).pop() || 'Proyecto',
 			};
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
 
 	ipcMain.handle('config:getDirectoryStructure', async (_event, pd: ProjectData) => {
 		try {
 			const structure = configManager.getDirectoryStructure(pd);
-			return {
-				success: true,
-				structure,
-			};
+			return { success: true, structure };
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-				structure: [],
-			};
+			return { success: false, error: String(error), structure: [] };
 		}
 	});
 
@@ -185,10 +147,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			configManager.startWatching(pd);
 			return { success: true };
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
 
@@ -197,10 +156,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			configManager.stopWatching();
 			return { success: true };
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
 
@@ -211,16 +167,9 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 	ipcMain.handle('config:getFilesInFolder', async (_event, pd: ProjectData, folder: FolderNode) => {
 		try {
 			const files = configManager.getFilesInFolder(pd, folder);
-			return {
-				success: true,
-				files,
-			};
+			return { success: true, files };
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-				files: [],
-			};
+			return { success: false, error: String(error), files: [] };
 		}
 	});
 
@@ -231,10 +180,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 				configManager.startWatchingFiles(pd, folder);
 				return { success: true };
 			} catch (error) {
-				return {
-					success: false,
-					error: String(error),
-				};
+				return { success: false, error: String(error) };
 			}
 		}
 	);
@@ -244,10 +190,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			configManager.stopWatchingFiles();
 			return { success: true };
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
 
@@ -262,22 +205,13 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		) => {
 			try {
 				const success = configManager.renameFile(oldFileRelativePath, newFileName, folderPath, pd);
-
 				if (success) {
-					return {
-						success: true,
-					};
+					return { success: true };
 				} else {
-					return {
-						success: false,
-						error: 'File does not exist or could not be renamed',
-					};
+					return { success: false, error: 'File does not exist or could not be renamed' };
 				}
 			} catch (error) {
-				return {
-					success: false,
-					error: String(error),
-				};
+				return { success: false, error: String(error) };
 			}
 		}
 	);
@@ -289,10 +223,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 				const result = configManager.getFile(fileRelativePath, folderPath, pd);
 				return result;
 			} catch (error) {
-				return {
-					success: false,
-					error: String(error),
-				};
+				return { success: false, error: String(error) };
 			}
 		}
 	);
@@ -302,17 +233,13 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		async (_event, fileRelativePath: string, content: string, pd: ProjectData) => {
 			try {
 				const result = configManager.saveFile(fileRelativePath, content, pd);
-
 				if (result.success) {
 					return { success: true };
 				} else {
 					return { success: false, error: result.error };
 				}
 			} catch (error) {
-				return {
-					success: false,
-					error: String(error),
-				};
+				return { success: false, error: String(error) };
 			}
 		}
 	);
@@ -322,17 +249,13 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		async (_event, name: string, completePath: string, content: string) => {
 			try {
 				const result = configManager.saveFileCompletePath(name, completePath, content);
-
 				if (result.success) {
 					return { success: true };
 				} else {
 					return { success: false, error: result.error };
 				}
 			} catch (error) {
-				return {
-					success: false,
-					error: String(error),
-				};
+				return { success: false, error: String(error) };
 			}
 		}
 	);
@@ -354,10 +277,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			const result = configManager.runEngine(pd, mapPath);
 			return result;
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
 
@@ -366,10 +286,28 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			const result = configManager.stopEngine();
 			return result;
 		} catch (error) {
-			return {
-				success: false,
-				error: String(error),
-			};
+			return { success: false, error: String(error) };
 		}
 	});
+
+
+	ipcMain.handle('config:getEngineConfig', async (_event, pd: ProjectData) => {
+		try {
+			return configManager.getEngineConfig(pd);
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	});
+
+
+	ipcMain.handle(
+		'config:updateShaders',
+		async (_event, pd: ProjectData, shaders: Record<string, number>) => {
+			try {
+				return configManager.updateShaders(pd, shaders);
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
 }
