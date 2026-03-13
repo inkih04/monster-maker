@@ -8,6 +8,7 @@
 #include "Renderer.h"
 #include "GameConfig.h"
 #include "Position.h"
+#include "UiManager.h"
 
 #define TARGET_FRAMERATE 60.0f
 
@@ -17,6 +18,7 @@ Engine::Engine(int width, int height, const std::string& title)
     InputManager::initialize(m_window);
     setUpShaders();
     setUpCamera(width, height);
+    UiManager::getInstance().init(m_width, m_height, "resources/fonts/Roboto/Roboto.ttf");
 }
 
 Engine::~Engine() {
@@ -58,6 +60,7 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
             int deltaTime = static_cast<int>(1000.0f * (currentTime - timePreviousFrame));
 
             InputManager::getInstance().update();
+            UiManager::getInstance().update();
             if (gameUpdate) gameUpdate(deltaTime);
 
             glViewport(0, 0, m_width, m_height);
@@ -77,6 +80,7 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
             glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
             Renderer::getInstance().setUniformFloat("u_time", static_cast<float>(currentTime));
             if (gameRender) gameRender();
+            UiManager::getInstance().render();
 
             timePreviousFrame = currentTime;
             glfwSwapBuffers(m_window);
@@ -87,7 +91,6 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
 
 void Engine::setUpShaders() const {
     Renderer::getInstance().loadShader("sprite", "resources/shaders/sprite.vert", "resources/shaders/sprite.frag");
-
     Renderer::getInstance().setShader("sprite");
 }
 
@@ -105,6 +108,7 @@ void Engine::onResize(int width, int height) {
         m_camera->setViewportSize(static_cast<float>(GameConfig::Width), static_cast<float>(GameConfig::Height));
         Renderer::getInstance().setCamera(*m_camera);
     }
+    UiManager::getInstance().resize(width, height);
 }
 
 void Engine::setUpCamera(int width, int height)  {
