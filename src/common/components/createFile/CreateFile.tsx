@@ -47,9 +47,7 @@ function CreateFile() {
 
 		if (name.trim() === '' || path.trim() === '') return;
 
-		console.log(path);
-
-		const result = await createFile(name, path);
+		const result = await createFile(name.trim(), path);
 
 		if (result.success) {
 			reset();
@@ -81,7 +79,7 @@ function CreateFile() {
 						<Dialog.Title className="saveFile--title">{t('saveFileTitle')}</Dialog.Title>
 						<Dialog.Close asChild>
 							<button className="saveFile--close" aria-label={t('close')} onClick={handleClose}>
-								×
+								x
 							</button>
 						</Dialog.Close>
 					</div>

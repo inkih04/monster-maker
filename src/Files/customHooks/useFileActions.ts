@@ -9,6 +9,7 @@ import { FileItem } from '../../../global/types/fileItem';
 import { TileSetData, useTileSetStore } from '../../Tileset/TileSetGState';
 import { useNotify } from '../../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
+import FolderNode from '../../../global/types/folderNode';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -200,6 +201,23 @@ export function useFileActions() {
 
 			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 			await window.api.deleteFile(jsonPath, selectedFolder.path, currentProject);
+		} else if (fileToDelete.type === 'ui') {
+			const fileNameAndExtension = `${fileToDelete.name}.ui`;
+			const correctFilePath = await window.api.pathUnion(
+				selectedFolder.path,
+				fileToDelete.path.replace(fileNameAndExtension, '')
+			);
+			const hiddenFolderPath = await window.api.pathUnion(correctFilePath, `.${fileToDelete.name}`);
+
+			const folder: FolderNode = {
+				name: `.${fileToDelete.name}`,
+				path: hiddenFolderPath,
+			};
+
+			await window.api.deleteFolder(folder, currentProject);
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
+		} else {
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 		}
 		notify(
 			t('engine.notifications.deleted_title'),
@@ -213,12 +231,14 @@ export function useFileActions() {
 	const handleDeleteRequest = (file: FileItem) => {
 		setFileToDelete(file);
 		setShowDeleteConfirm(true);
-		notify(
-			t('engine.notifications.warning_title'),
-			t('engine.notifications.delete_map_warning'),
-			'error',
-			4000
-		);
+		if (file.type === 'tilemap') {
+			notify(
+				t('engine.notifications.warning_title'),
+				t('engine.notifications.delete_map_warning'),
+				'error',
+				4000
+			);
+		}
 	};
 
 	return {

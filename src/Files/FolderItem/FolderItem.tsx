@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Folder } from 'iconoir-react';
 import './FolderItem.css';
 import type FolderNode from '../../../global/types/folderNode';
@@ -10,6 +11,8 @@ interface FolderItemProps {
 }
 
 export function FolderItem({ folder, level }: Readonly<FolderItemProps>) {
+	const [isCollapsed, setIsCollapsed] = useState(false);
+
 	const {
 		isSelected,
 		isCreatingHere,
@@ -26,6 +29,14 @@ export function FolderItem({ folder, level }: Readonly<FolderItemProps>) {
 		confirmDeletion,
 	} = useFolderItemActions(folder);
 
+	const hasChildren = folder.children && folder.children.length > 0;
+
+	const handleIconClick = (e: React.MouseEvent) => {
+		if (!hasChildren) return;
+		e.stopPropagation();
+		setIsCollapsed((prev) => !prev);
+	};
+
 	return (
 		<>
 			<button
@@ -33,7 +44,12 @@ export function FolderItem({ folder, level }: Readonly<FolderItemProps>) {
 				onClick={handleClick}
 				onContextMenu={handleContextMenu}
 			>
-				<Folder width={18} height={18} className="folders--icon" />
+				<span
+					className={`folders--icon-wrapper ${hasChildren ? 'folders--icon-clickable' : ''}`}
+					onClick={handleIconClick}
+				>
+					<Folder width={18} height={18} className="folders--icon" />
+				</span>
 				<span className="folders--name">{folder.name}</span>
 			</button>
 
@@ -55,14 +71,17 @@ export function FolderItem({ folder, level }: Readonly<FolderItemProps>) {
 
 			<DeleteConfirmation
 				open={isConfirmingDelete}
-				onOpenChange={(open) => { if (!open) cancelDeletion(); }}
+				onOpenChange={(open) => {
+					if (!open) cancelDeletion();
+				}}
 				itemName={folder.name}
 				onConfirm={confirmDeletion}
 			/>
 
-			{folder.children?.map((child) => (
-				<FolderItem key={child.path} folder={child} level={level + 1} />
-			))}
+			{!isCollapsed &&
+				folder.children
+					?.filter((child) => !child.name.startsWith('.'))
+					.map((child) => <FolderItem key={child.path} folder={child} level={level + 1} />)}
 		</>
 	);
 }
