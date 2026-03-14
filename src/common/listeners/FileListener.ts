@@ -4,6 +4,7 @@ import { useMapStore } from '../../Map/MapGState';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
 import { useFolderStore } from '../globalStores/useFolderStore';
 import { useTileSetStore } from '../../Tileset/TileSetGState';
+import { useEngineStore } from '../../ToolBar/EngineGState';
 
 export function FileListener() {
 	const openFileCreation = useFileToBeCreatedStore((state) => state.setOpen);
@@ -18,6 +19,7 @@ export function FileListener() {
 	const resetMap = useMapStore((state) => state.reset);
 	const resetProject = useProjectStore((state) => state.reset);
 	const resetFolder = useFolderStore((state) => state.reset);
+	const resetEditorMode = useEngineStore((state) => state.resetEngineState);
 	const resetTileSet = useTileSetStore((state) => state.reset);
 
 	useEffect(() => {
@@ -77,6 +79,11 @@ export function FileListener() {
 					extension = '.lua';
 					defaultContent = '';
 					break;
+
+				case 'ui':
+					extension = '.ui';
+					defaultContent = '';
+					break;
 			}
 
 			setFileExtension(extension);
@@ -109,6 +116,7 @@ export function FileListener() {
 			resetProject();
 			resetFolder();
 			resetTileSet();
+			resetEditorMode();
 		});
 
 		return () => {
@@ -117,7 +125,20 @@ export function FileListener() {
 			cleanupSave();
 			cleanupCloseProject();
 		};
-	}, [openFileCreation, setFileExtension, setContent, mapRelativePath, currentProject, exportToEngineFormat, setIsDirty, resetMap, resetProject, resetFolder, resetTileSet]);
+	}, [
+		openFileCreation,
+		setFileExtension,
+		setContent,
+		mapRelativePath,
+		currentProject,
+		exportToEngineFormat,
+		setIsDirty,
+		resetMap,
+		resetProject,
+		resetFolder,
+		resetTileSet,
+		resetEditorMode,
+	]);
 
 	return null;
 }

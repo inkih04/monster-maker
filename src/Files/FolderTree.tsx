@@ -13,9 +13,11 @@ export default function FolderTree() {
 
 	return (
 		<div className="folders--container">
-			{folderStructure.map((folder) => (
-				<FolderItem key={folder.path} folder={folder} level={0} />
-			))}
+			{folderStructure
+				.filter((folder) => !folder.name.startsWith('.'))
+				.map((folder) => (
+					<FolderItem key={folder.path} folder={folder} level={0} />
+				))}
 		</div>
 	);
 }

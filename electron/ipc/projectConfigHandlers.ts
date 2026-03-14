@@ -69,6 +69,22 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle(
+		'config:deleteFileFullPath',
+		async (_event, completePath: string, pd: ProjectData) => {
+			try {
+				const success = configManager.deleteFileFullPath(completePath, pd);
+				if (success) {
+					return { success: true };
+				} else {
+					return { success: false, error: 'File does not exist or could not be deleted' };
+				}
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
 	ipcMain.handle('config:deleteFolder', async (_event, folderNode: FolderNode, pd: ProjectData) => {
 		try {
 			const result = configManager.deleteFolder(folderNode, pd);
@@ -290,7 +306,6 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-
 	ipcMain.handle('config:getEngineConfig', async (_event, pd: ProjectData) => {
 		try {
 			return configManager.getEngineConfig(pd);
@@ -298,7 +313,6 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			return { success: false, error: String(error) };
 		}
 	});
-
 
 	ipcMain.handle(
 		'config:updateShaders',

@@ -74,6 +74,7 @@
 			"open": "Abrir",
 			"rename": "Renombrar",
 			"copy": "Copiar",
+			"paste": "Pegar",
 			"delete": "Eliminar",
 			"createFolder": "Crear Carpeta"
 		},
@@ -99,7 +100,8 @@
 	"addShader": "Añadir shader",
 	"mode": "Modo",
 	"layers": "Capas",
-	"maps": "Mapas",
+	"maps": "Tags",
+	"filePath": "Path del archivo",
 	"unlockLayer": "Desbloquear capa",
 	"lockLayer": "Bloquear capa",
 	"showLayer": "Mostrar capa",

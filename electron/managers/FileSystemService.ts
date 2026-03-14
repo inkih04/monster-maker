@@ -54,16 +54,19 @@ export class FileSystemService {
 	}
 
 	public getRequiredProjectPaths(): string[] {
+		const base = 'resources';
+
 		return [
-			'resources',
-			'resources/fonts',
-			'resources/shaders',
-			'resources/maps',
-			'resources/maps/data',
-			'resources/maps/tilesets',
-			'resources/sprites',
-			'resources/scripts',
-			'resources/music',
+			base,
+			path.join(base, 'ui'),
+			path.join(base, 'fonts'),
+			path.join(base, 'shaders'),
+			path.join(base, 'maps'),
+			path.join(base, 'maps', 'data'),
+			path.join(base, 'maps', 'tilesets'),
+			path.join(base, 'sprites'),
+			path.join(base, 'scripts'),
+			path.join(base, 'music'),
 		];
 	}
 
@@ -71,13 +74,17 @@ export class FileSystemService {
 		return fs.readFileSync(filePath, 'utf-8');
 	}
 
-	public saveFile(path: string, content: string): boolean {
+	public saveFile(filePath: string, content: string): boolean {
 		try {
-			if (this.isDirectory(path)) {
+			if (this.isDirectory(filePath)) {
 				return false;
 			}
+			const parentDir = path.dirname(filePath);
+			if (!this.exists(parentDir)) {
+				fs.mkdirSync(parentDir, { recursive: true });
+			}
 
-			fs.writeFileSync(path, content, 'utf-8');
+			fs.writeFileSync(filePath, content, 'utf-8');
 
 			return true;
 		} catch (error) {
@@ -189,6 +196,7 @@ export class FileSystemService {
 			const items = fs.readdirSync(dirPath);
 
 			for (const item of items) {
+				if (item.startsWith('.')) continue;
 				const fullPath = path.join(dirPath, item);
 				const stats = fs.statSync(fullPath);
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus, Xmark } from 'iconoir-react';
 import '../TaggerBody.css';
+import { useTranslation } from 'react-i18next';
 
 type MapEntry = {
 	id: string;
@@ -12,6 +13,8 @@ function TaggerMapsBody() {
 	const [entries, setEntries] = useState<MapEntry[]>([
 		{ id: crypto.randomUUID(), tagMap: '', pathMap: '' },
 	]);
+
+	const { t } = useTranslation();
 
 	const handleTagChange = (id: string, value: string) => {
 		setEntries((prev) =>
@@ -37,7 +40,7 @@ function TaggerMapsBody() {
 		<div className="tagger-body--scroll">
 			<div className="tagger-kv--header-row">
 				<span className="tagger-kv--col-label col-tag-map">Tag</span>
-				<span className="tagger-kv--col-label col-path">Map path</span>
+				<span className="tagger-kv--col-label col-path">{t('filePath')}</span>
 				<span className="tagger-kv--col-spacer" />
 			</div>
 

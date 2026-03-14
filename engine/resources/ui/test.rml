@@ -1,0 +1,90 @@
+<rml>
+<head>
+    <title>Menu de Prueba</title>
+    <style>
+        /* El 'body' ocupa toda la pantalla por defecto */
+        body {
+            /* IMPORTANTE: Usa el mismo nombre de la fuente que cargaste en el init */
+            font-family: Roboto;
+            font-weight: normal;
+            font-size: 16px;
+            color: white;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Nuestra ventana flotante */
+        #ventana-prueba {
+            display: block;
+            position: absolute;
+
+            /* Tamaño de la ventana */
+            width: 400px;
+            height: 250px;
+
+            /* Centrar en la pantalla matemáticamente */
+            left: 50%;
+            top: 50%;
+            margin-left: -200px; /* La mitad del ancho */
+            margin-top: -125px;  /* La mitad del alto */
+
+            /* Estilos visuales: fondo gris oscuro semitransparente y borde */
+            background-color: #222222EE;
+            border-width: 2px;
+            border-color: #FFFFFF;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Un título bonito */
+        h1 {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #FFCC00; /* Amarillo Pokémon */
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            display: block;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* Un botón interactivo */
+        button {
+            display: block;
+            width: 200px;
+            margin: 0 auto; /* Centra el botón horizontalmente */
+            padding: 10px;
+            background-color: #3366CC;
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            border-width: 2px;
+            border-color: #224488;
+        }
+
+        /* Efecto al pasar el ratón por encima (Hover) */
+        button:hover {
+            background-color: #4488FF;
+            cursor: pointer;
+        }
+
+        /* Efecto al hacer clic (Active) */
+        button:active {
+            background-color: #224488;
+        }
+    </style>
+</head>
+<body>
+    <div id="ventana-prueba">
+        <h1>¡Hola Motor!</h1>
+        <p>Si puedes leer esto, tu sistema de UI está renderizando la geometría y la fuente Roboto correctamente por encima de tu juego.</p>
+        <button id="btn-aceptar">¡Funciona!</button>
+    </div>
+</body>
+</rml>

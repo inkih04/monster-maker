@@ -35,6 +35,23 @@
 	color: var(--color-6);
 }
 
+.folders--icon-wrapper {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.folders--icon-clickable {
+	border-radius: var(--radius);
+	padding: 2px;
+	margin: -2px;
+	transition: color 0.15s ease;
+}
+
+.folders--icon-clickable:hover {
+	color: var(--color-8);
+}
+
 .folders--name {
 	font-weight: 400;
 	font-size: var(--font-md);

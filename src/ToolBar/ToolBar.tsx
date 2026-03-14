@@ -9,6 +9,8 @@ import {
 	DragHandGesture,
 	Square,
 	Bug,
+	CodeBrackets,
+	Codepen,
 } from 'iconoir-react';
 import './ToolBar.css';
 import { useToolsStore } from './ToolBarGState';
@@ -28,6 +30,8 @@ function ToolBar() {
 	const { undo, redo } = useMapStore.temporal.getState();
 	const { t } = useTranslation();
 
+	const editorMode = useEngineStore((state) => state.editorMode);
+	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const isRunning = useEngineStore((state) => state.isRunning);
 	const runMode = useEngineStore((state) => state.runMode);
 	const setEngineRunning = useEngineStore((state) => state.setEngineRunning);
@@ -240,6 +244,16 @@ function ToolBar() {
 							<Bug className="debug-botton" />
 						</button>
 					</>
+				)}
+				{editorMode === 'map' && (
+					<button onClick={() => changeEditorMode('code')} className="tool-button">
+						<CodeBrackets />
+					</button>
+				)}
+				{editorMode === 'code' && (
+					<button onClick={() => changeEditorMode('map')} className="tool-button">
+						<Codepen />
+					</button>
 				)}
 			</div>
 			<div className="other-tools">

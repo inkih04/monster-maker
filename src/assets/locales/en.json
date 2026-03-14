@@ -74,6 +74,7 @@
 			"open": "Open",
 			"rename": "Rename",
 			"copy": "Copy",
+			"paste": "Paste",
 			"delete": "Delete",
 			"createFolder": "Create Folder"
 		},
@@ -99,7 +100,8 @@
 	"addShader": "Add shader entry",
 	"mode": "Mode",
 	"layers": "Layers",
-	"maps": "Maps",
+	"maps": "Tags",
+	"filePath": "File path",
 	"unlockLayer": "Unlock layer",
 	"lockLayer": "Lock layer",
 	"showLayer": "Show layer",
