@@ -17,6 +17,7 @@ import { useEngineStore } from '../ToolBar/EngineGState';
 import Tagger from '../Tagger/Tagger';
 import LayoutCodeEditor from './LayoutCodeEditor';
 import { useLayoutCodeEditorResize } from './customHooks/useLayoutCodeEditorResize';
+import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
 
 function Layout() {
 	const {
@@ -42,6 +43,7 @@ function Layout() {
 	const mode = useEngineStore((state) => state.runMode);
 	const editorMode = useEngineStore((state) => state.editorMode);
 	const resetEngineState = useEngineStore((state) => state.resetEngineState);
+	const isFileDirty = useCodeEditorStore((state) => state.openFile?.isDirty ?? false);
 
 	useEffect(() => {
 		const removeListener = window.api.onResetLayout(() => {
@@ -65,12 +67,16 @@ function Layout() {
 		};
 	}, [resetEngineState]);
 
+	const showDirtyGlow = editorMode === 'code' && isFileDirty;
+
 	return (
 		<>
 			<ModalProject />
 			<CreateFile />
 			<div className="content">
-				<ToolBar />
+				<div className={showDirtyGlow ? 'layout--toolbar-dirty' : undefined}>
+					<ToolBar />
+				</div>
 				<main className="main" style={{ minHeight: 0 }}>
 					<div style={{ display: editorMode === 'map' ? 'contents' : 'none' }}>
 						<aside

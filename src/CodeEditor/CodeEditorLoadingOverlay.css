@@ -1,0 +1,28 @@
+.codeEditorOverlay--root {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.4);
+	z-index: 1000;
+}
+
+.codeEditorOverlay--content {
+	display: flex;
+	align-items: center;
+	padding: var(--space-ms) var(--space-md);
+	background: var(--color-9);
+	border-radius: var(--radius);
+}
+
+.codeEditorOverlay--spinner {
+	color: var(--color-3);
+	animation: codeEditorOverlay-spin 1s linear infinite;
+}
+
+@keyframes codeEditorOverlay-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

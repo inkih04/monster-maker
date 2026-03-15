@@ -11,6 +11,7 @@ import { useNotify } from '../../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
 import FolderNode from '../../../global/types/folderNode';
 import { useEngineStore } from '../../ToolBar/EngineGState';
+import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -76,10 +77,25 @@ export function useFileActions() {
 		}
 
 		if (file.type === 'script') {
-			changeCodeEditorMode('single');
-			changeEditorMode('code');
+			handleOpenScript(file);
 			return;
 		}
+	};
+
+	const handleOpenScript = async (file: FileItem) => {
+		changeCodeEditorMode('single');
+		changeEditorMode('code');
+		if (!selectedFolder?.path || !currentProject) return;
+
+		useCodeEditorStore.getState().setIsLoadingFile(true);
+
+		const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+		if (result.success && result.content) {
+			useCodeEditorStore.getState().setOpenFile(file.path, result.content.content);
+		} else {
+			useCodeEditorStore.getState().setIsLoadingFile(false);
+		}
+		return;
 	};
 
 	const handleOpenTileSet = async (file: FileItem) => {
