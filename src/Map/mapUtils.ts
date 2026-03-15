@@ -84,6 +84,7 @@ export const createTileEntity = (
 			h: tileSize,
 			width: tileSize,
 			height: tileSize,
+			shader: 'default',
 		},
 	},
 });
@@ -133,7 +134,7 @@ export function drawBrushPreview({
 	zoom,
 	isLayerLocked = false,
 }: DrawBrushPreviewParams): void {
-	if (isActive || !currentTileSet || !previewPosition) return;
+	if (isActive || !currentTileSet || !previewPosition || !selectedArea) return;
 
 	const currentTilesetImage = currentTileSetPath ? tilesetImages[currentTileSetPath] : null;
 	if (!currentTilesetImage) return;
