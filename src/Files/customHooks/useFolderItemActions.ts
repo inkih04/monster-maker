@@ -46,7 +46,7 @@ export function useFolderItemActions(folder: FolderNode) {
 			unsubscribeClosed();
 			unsubscribeAction();
 		};
-	}, [folder, setCreatingFolderUnder, setDeletingFolder]);
+	}, [folder.path, setCreatingFolderUnder, setDeletingFolder]);
 
 	useEffect(() => {
 		if (isCreatingHere) {

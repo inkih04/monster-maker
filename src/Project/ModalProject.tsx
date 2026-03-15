@@ -8,6 +8,7 @@ import { useProjectStore } from './ProjectConfigGState';
 import OpenProject from '../common/components/openProject/OpenProject';
 import { useTranslation } from 'react-i18next';
 import { ProjectData } from '../../global/types/projectData';
+import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 
 function ModalProject() {
 	const { t } = useTranslation();
@@ -46,6 +47,9 @@ function ModalProject() {
 				<Dialog.Portal>
 					<Dialog.Overlay className="Dialog-overlay" />
 					<Dialog.Content className="Dialog-wrapper">
+						<VisuallyHidden.Root>
+							<Dialog.Title>Project selector</Dialog.Title>
+						</VisuallyHidden.Root>
 						<div className="dialog-content">
 							<div className="dialog-options-bar">
 								<div className="dialog-searchbar">
@@ -64,7 +68,7 @@ function ModalProject() {
 								{filteredProjects.map((project, index) => (
 									<Project
 										onClick={() => handleProjectClick(project)}
-										key={project.path}
+										key={`${project.path}::${project.name}`}
 										index={index}
 										name={project.name}
 										path={project.path}

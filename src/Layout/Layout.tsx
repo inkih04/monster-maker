@@ -15,6 +15,8 @@ import { useNotify } from '../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
 import { useEngineStore } from '../ToolBar/EngineGState';
 import Tagger from '../Tagger/Tagger';
+import LayoutCodeEditor from './LayoutCodeEditor';
+import { useLayoutCodeEditorResize } from './customHooks/useLayoutCodeEditorResize';
 
 function Layout() {
 	const {
@@ -31,16 +33,20 @@ function Layout() {
 		resizeTileset,
 	} = useLayoutResize();
 
+	const { resetCodeEditorLayout } = useLayoutCodeEditorResize();
+
 	const { notify } = useNotify();
 	const { t } = useTranslation();
 
 	const isRunning = useEngineStore((state) => state.isRunning);
 	const mode = useEngineStore((state) => state.runMode);
+	const editorMode = useEngineStore((state) => state.editorMode);
 	const resetEngineState = useEngineStore((state) => state.resetEngineState);
 
 	useEffect(() => {
 		const removeListener = window.api.onResetLayout(() => {
 			resetLayout();
+			resetCodeEditorLayout();
 			notify(t('layout'), t('resetLayout'), 'success', 3000);
 		});
 
@@ -66,33 +72,36 @@ function Layout() {
 			<div className="content">
 				<ToolBar />
 				<main className="main" style={{ minHeight: 0 }}>
-					<aside
-						className="map-utility"
-						style={{ flex: `0 0 ${mapUtilityWidth}px`, minWidth: LIMITS.mapUtilityWidth.min }}
-					>
-						<div className="tilemap-container" style={{ flex: `0 0 ${tilesetHeight}px` }}>
-							<TileSet />
+					<div style={{ display: editorMode === 'map' ? 'contents' : 'none' }}>
+						<aside
+							className="map-utility"
+							style={{ flex: `0 0 ${mapUtilityWidth}px`, minWidth: LIMITS.mapUtilityWidth.min }}
+						>
+							<div className="tilemap-container" style={{ flex: `0 0 ${tilesetHeight}px` }}>
+								<TileSet />
+							</div>
+							<Spacer size="small" resizable onResize={resizeTileset} marginRight={false} />
+							<div className="tagger" style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
+								<Tagger />
+							</div>
+						</aside>
+						<Spacer direction="vertical" resizable onResize={resizeMapUtility} />
+						<div className="map">
+							<div className="map-container">
+								<Map />
+							</div>
 						</div>
-						<Spacer size="small" resizable onResize={resizeTileset} marginRight={false} />
-						<div className="tagger" style={{ flex: '1 1 0', minHeight: 0, overflow: 'hidden' }}>
-							<Tagger />
-						</div>
-					</aside>
-					<Spacer direction="vertical" resizable onResize={resizeMapUtility} />
-					<div className="map">
-						<div className="map-container">
-							<Map />
-						</div>
+						<Spacer direction="vertical" resizable onResize={resizeEntity} />
+						<aside
+							className="entity"
+							style={{ flex: `0 0 ${entityWidth}px`, minWidth: LIMITS.entityWidth.min }}
+						>
+							<div className="pre-entity">
+								<Entity />
+							</div>
+						</aside>
 					</div>
-					<Spacer direction="vertical" resizable onResize={resizeEntity} />
-					<aside
-						className="entity"
-						style={{ flex: `0 0 ${entityWidth}px`, minWidth: LIMITS.entityWidth.min }}
-					>
-						<div className="pre-entity">
-							<Entity />
-						</div>
-					</aside>
+					{editorMode === 'code' && <LayoutCodeEditor />}
 				</main>
 				<Spacer direction="horizontal" resizable onResize={resizeFiles} />
 				<div
