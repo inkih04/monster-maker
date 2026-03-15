@@ -19,7 +19,7 @@ export function FileListener() {
 	const resetMap = useMapStore((state) => state.reset);
 	const resetProject = useProjectStore((state) => state.reset);
 	const resetFolder = useFolderStore((state) => state.reset);
-	const resetEditorMode = useEngineStore((state) => state.resetEngineState);
+	const resetEditorMode = useEngineStore((state) => state.reset);
 	const resetTileSet = useTileSetStore((state) => state.reset);
 
 	useEffect(() => {

@@ -184,7 +184,7 @@ function createWindow() {
 					"script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173;",
 					"style-src 'self' 'unsafe-inline' http://localhost:5173;",
 					"img-src 'self' data: blob: project-file:;",
-					"font-src 'self' data:;",
+					"font-src 'self' data: http://localhost:5173;",
 				].join(' ')
 			: [
 					"default-src 'self';",

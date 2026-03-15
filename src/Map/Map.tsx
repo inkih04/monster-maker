@@ -75,6 +75,17 @@ function Map() {
 		};
 	}, [paintedTiles, zoom, tileSize]);
 
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') {
+				useTileSetStore.getState().setSelectedArea(null);
+			}
+		};
+
+		window.addEventListener('keydown', handleKeyDown);
+		return () => window.removeEventListener('keydown', handleKeyDown);
+	}, []);
+
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
 		const layerOrder: Layer[] = ['ground', 'decoration', 'entities', 'shadows', 'foreground'];
 		const mapState = useMapStore.getState();
@@ -206,6 +217,8 @@ function Map() {
 		zoom,
 	});
 
+	const isBrushBlocked = activeTool === 'brush' && !selectedArea;
+
 	const { handleMouseDown, handleMouseMove, handleMouseUp, handleMouseLeave } = useCanvasMouse({
 		zoom,
 		tileSize: tileSize,
@@ -213,10 +226,12 @@ function Map() {
 		setIsToolActive: setIsActive,
 		setPreviewPosition,
 		onTileClick: (x, y) => {
+			if (isBrushBlocked) return;
 			if (!visibleLayers[activeLayer]) return;
 			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileClick(x, y);
 		},
 		onTileDrag: (x, y) => {
+			if (isBrushBlocked) return;
 			if (!visibleLayers[activeLayer]) return;
 			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileDrag(x, y);
 		},

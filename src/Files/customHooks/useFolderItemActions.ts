@@ -4,6 +4,8 @@ import { useFolderStore } from '../../common/globalStores/useFolderStore';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
 import { useNotify } from '../../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
+import { useFolderEventsStore } from '../FolderEventsGState';
+
 
 export function useFolderItemActions(folder: FolderNode) {
 	const setSelectedFolder = useFolderStore((state) => state.setSelectedFolder);
@@ -25,28 +27,26 @@ export function useFolderItemActions(folder: FolderNode) {
 	const [newFolderName, setNewFolderName] = useState('');
 	const inputRef = useRef<HTMLInputElement>(null);
 
+	const lastFolderAction = useFolderEventsStore((state) => state.lastFolderAction);
+	const lastFolderMenuClosed = useFolderEventsStore((state) => state.lastFolderMenuClosed);
+
 	useEffect(() => {
-		const unsubscribeClosed = window.api.onFolderMenuClosed((folderData) => {
-			if (folderData.path === folder.path) {
-				setIsContextMenuOpen(false);
-			}
-		});
+		if (!lastFolderMenuClosed) return;
+		if (lastFolderMenuClosed.folderPath === folder.path) {
+			setIsContextMenuOpen(false);
+		}
+	}, [lastFolderMenuClosed, folder.path]);
 
-		const unsubscribeAction = window.api.onFolderAction((action, folderData) => {
-			if (folderData.path !== folder.path) return;
+	useEffect(() => {
+		if (!lastFolderAction) return;
+		if (lastFolderAction.folderPath !== folder.path) return;
 
-			if (action === 'create-folder') {
-				setCreatingFolderUnder(folder);
-			} else if (action === 'delete-folder') {
-				setDeletingFolder(folder);
-			}
-		});
-
-		return () => {
-			unsubscribeClosed();
-			unsubscribeAction();
-		};
-	}, [folder, setCreatingFolderUnder, setDeletingFolder]);
+		if (lastFolderAction.action === 'create-folder') {
+			setCreatingFolderUnder(folder);
+		} else if (lastFolderAction.action === 'delete-folder') {
+			setDeletingFolder(folder);
+		}
+	}, [lastFolderAction, folder.path, setCreatingFolderUnder, setDeletingFolder]);
 
 	useEffect(() => {
 		if (isCreatingHere) {

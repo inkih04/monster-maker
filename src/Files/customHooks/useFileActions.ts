@@ -10,6 +10,7 @@ import { TileSetData, useTileSetStore } from '../../Tileset/TileSetGState';
 import { useNotify } from '../../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
 import FolderNode from '../../../global/types/folderNode';
+import { useEngineStore } from '../../ToolBar/EngineGState';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -21,6 +22,8 @@ export function useFileActions() {
 	const addTileSet = useTileSetStore((state) => state.addTileSet);
 	const setCurrentTileSet = useTileSetStore((state) => state.setCurrentTileSet);
 	const removeTileSet = useTileSetStore((state) => state.removeTileSet);
+	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
+	const changeCodeEditorMode = useEngineStore((state) => state.changeCodeEditorMode);
 
 	const { notify } = useNotify();
 	const { t } = useTranslation();
@@ -61,7 +64,21 @@ export function useFileActions() {
 		}
 
 		if (file.type == 'tileset') {
+			changeEditorMode('map');
 			handleOpenTileSet(file);
+			return;
+		}
+
+		if (file.type === 'ui') {
+			changeEditorMode('code');
+			changeCodeEditorMode('duo');
+			return;
+		}
+
+		if (file.type === 'script') {
+			changeCodeEditorMode('single');
+			changeEditorMode('code');
+			return;
 		}
 	};
 
