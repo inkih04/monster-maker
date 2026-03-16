@@ -91,8 +91,9 @@ export function useFileCreate() {
 		if (creatingFileType === 'ui') {
 			const hiddenFolderName = `.${baseName}`;
 			const hiddenFolderPath = await window.api.pathUnion(relativePath, hiddenFolderName);
-			const htmlRelativePath = `${hiddenFolderName}/${baseName}_HTML.rmli`;
-			const cssRelativePath = `${hiddenFolderName}/${baseName}_CSS.css`;
+
+			const htmlRelativePath = await window.api.pathUnion(hiddenFolderPath, `${baseName}_HTML.rmli`)
+			const cssRelativePath =  await window.api.pathUnion(hiddenFolderPath, `${baseName}_CSS.css`);
 
 			const uiDescriptor = JSON.stringify(
 				{

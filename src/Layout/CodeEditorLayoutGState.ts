@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 
 const DEFAULTS = {
-	leftPanelWidth: 500,
+	leftPanelWidth: 650,
 	rightPanelWidth: 500,
 	mapPreviewHeight: 400,
 	mapPreviewZoom: 1.25,
 };
 
 export const CODE_EDITOR_LIMITS = {
-	leftPanelWidth: { min: 120, max: 700 },
+	leftPanelWidth: { min: 120, max: 900 },
 	rightPanelWidth: { min: 180, max: 700 },
 	mapPreviewHeight: { min: 80, max: 700 },
 	mapPreviewZoom: { min: 0.25, max: 5 },

@@ -270,6 +270,34 @@ export class ProjectConfigManager {
 		}
 	}
 
+
+	public getFileFullPath(
+		completePath: string,
+	): { success: boolean; content?: string; error?: string } {
+		try {
+
+			if (!this.fileSystemService.exists(completePath)) {
+				console.log(`File does not exist: ${completePath}`);
+				return { success: false, error: 'File does not exist' };
+			}
+
+			if (this.fileSystemService.isDirectory(completePath)) {
+				console.log(`Path is a directory, not a file: ${completePath}`);
+				return { success: false, error: 'Path is a directory' };
+			}
+
+			const cont = this.fileSystemService.readFile(completePath);
+
+			return { success: true, content:cont  };
+		} catch (error) {
+			console.log(`Error getting file: ${error}`);
+			return { success: false, error: String(error) };
+		}
+	}
+
+
+
+
 	public renameFile(
 		oldFileRelativePath: string,
 		newFileName: string,

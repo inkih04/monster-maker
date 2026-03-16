@@ -244,6 +244,15 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle('config:getFileFullPath', async (_event, completePath: string) => {
+		try {
+			const result = configManager.getFileFullPath(completePath);
+			return result;
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	});
+
 	ipcMain.handle(
 		'config:saveFile',
 		async (_event, fileRelativePath: string, content: string, pd: ProjectData) => {
