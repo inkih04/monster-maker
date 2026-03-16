@@ -22,7 +22,7 @@ function CodeEditor({
 	onChange,
 	readOnly = false,
 	className = '',
-}: CodeEditorProps) {
+}: Readonly<CodeEditorProps>) {
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 	const monacoRef = useRef<typeof monaco | null>(null);
 	const pendingValueRef = useRef<string | null>(null);
@@ -35,6 +35,7 @@ function CodeEditor({
 		}
 		if (editor.getValue() === value) return;
 		editor.setValue(value);
+		editor.revealLine(1);
 	}, [value]);
 
 	const applyTheme = useCallback(() => {

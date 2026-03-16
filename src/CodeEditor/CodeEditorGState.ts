@@ -3,6 +3,7 @@ import { create } from 'zustand';
 interface OpenFile {
 	relativePath: string;
 	content: string;
+	savedContent: string;
 	isDirty: boolean;
 }
 
@@ -21,15 +22,34 @@ export const useCodeEditorStore = create<CodeEditorStore>((set) => ({
 	isLoadingFile: false,
 
 	setOpenFile: (relativePath, content) =>
-		set({ openFile: { relativePath, content, isDirty: false }, isLoadingFile: false }),
+		set({
+			openFile: { relativePath, content, savedContent: content, isDirty: false },
+			isLoadingFile: false,
+		}),
 
 	updateContent: (content) =>
-		set((state) =>
-			state.openFile ? { openFile: { ...state.openFile, content, isDirty: true } } : state
-		),
+		set((state) => {
+			if (!state.openFile) return state;
+			return {
+				openFile: {
+					...state.openFile,
+					content,
+					isDirty: content !== state.openFile.savedContent,
+				},
+			};
+		}),
 
 	markSaved: () =>
-		set((state) => (state.openFile ? { openFile: { ...state.openFile, isDirty: false } } : state)),
+		set((state) => {
+			if (!state.openFile) return state;
+			return {
+				openFile: {
+					...state.openFile,
+					savedContent: state.openFile.content,
+					isDirty: false,
+				},
+			};
+		}),
 
 	closeFile: () => set({ openFile: null }),
 

@@ -89,6 +89,7 @@ export const EDITOR_OPTIONS: Monaco.editor.IStandaloneEditorConstructionOptions 
 	lineHeight: 22,
 	fontLigatures: true,
 	letterSpacing: 0.3,
+	stickyScroll: { enabled: false },
 	minimap: { enabled: false },
 	scrollbar: {
 		vertical: 'hidden',

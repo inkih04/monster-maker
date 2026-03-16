@@ -17,6 +17,7 @@ export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const isDirty = useMapStore((state) => state.isDirty);
+	const isCodeDirty = useCodeEditorStore((state) => state.openFile?.isDirty);
 	const loadMap = useMapStore((state) => state.loadMap);
 	const setMapRelativePath = useMapStore((state) => state.setMapRelativePath);
 	const createMap = useMapStore((state) => state.createMap);
@@ -77,7 +78,11 @@ export function useFileActions() {
 		}
 
 		if (file.type === 'script') {
-			handleOpenScript(file);
+			if (isCodeDirty) {
+				setShowSaveConfirm(true);
+			} else {
+				handleOpenScript(file);
+			}
 			return;
 		}
 	};
@@ -90,8 +95,9 @@ export function useFileActions() {
 		useCodeEditorStore.getState().setIsLoadingFile(true);
 
 		const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+		const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
 		if (result.success && result.content) {
-			useCodeEditorStore.getState().setOpenFile(file.path, result.content.content);
+			useCodeEditorStore.getState().setOpenFile(relativePath, result.content.content);
 		} else {
 			useCodeEditorStore.getState().setIsLoadingFile(false);
 		}
