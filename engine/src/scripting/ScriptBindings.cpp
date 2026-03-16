@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "scripting/ScriptBindings.h"
 #include <GLFW/glfw3.h>
 #include "Camera.h"
@@ -10,6 +11,7 @@
 #include "AudioService.h"
 #include "InteractionComponent.h"
 #include "ScriptEngine.h"
+#include "UiManager.h"
 
 void ScriptBindings::registerStatic(sol::state& lua) {
     registerKeys(lua);
@@ -22,7 +24,35 @@ void ScriptBindings::registerStatic(sol::state& lua) {
     registerCamera(lua);
     registerAudioService(lua);
     registerBordersMapService(lua);
+    registerUiManager(lua);
 }
+
+
+void ScriptBindings::registerUiManager(sol::state& lua) {
+    lua.new_usertype<UiDocument>("UiDocument",
+        "isOpen", &UiDocument::isOpen,
+        "close",  &UiDocument::close
+    );
+
+    lua.new_usertype<UiManager>("UiManager",
+        sol::no_constructor,
+        "open",    [](UiManager& self, const std::string& id, const std::string& uiFilePath) -> UiDocument* {
+            return self.openDocument(id, uiFilePath);
+        },
+        "close",   [](UiManager& self, const std::string& id) {
+            self.closeDocument(id);
+        },
+        "isOpen",  [](UiManager& self, const std::string& id) {
+            return self.isOpen(id);
+        },
+        "get",     [](UiManager& self, const std::string& id) -> UiDocument* {
+            return self.getDocument(id);
+        }
+    );
+
+    lua["UI"] = &UiManager::getInstance();
+}
+
 
 void ScriptBindings::registerBordersMapService(sol::state& lua) {
     lua.new_usertype<BordersMapService>("BordersMapService",

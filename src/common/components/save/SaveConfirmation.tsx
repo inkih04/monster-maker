@@ -4,6 +4,8 @@ import './SaveConfirmation.css';
 import { useMapStore } from '../../../Map/MapGState';
 import { useProjectStore } from '../../../Project/ProjectConfigGState';
 import { useFileToBeCreatedStore } from '../../globalStores/useFileToBeCreated';
+import { useEngineStore } from '../../../ToolBar/EngineGState';
+import { useCodeEditorStore } from '../../../CodeEditor/CodeEditorGState';
 
 interface ConfirmDialogProps {
 	open: boolean;
@@ -15,6 +17,15 @@ function SaveConfirmation({ open, onOpenChange, onConfirm }: Readonly<ConfirmDia
 	const mapRelativePath = useMapStore((get) => get.mapRelativePath);
 	const currentProject = useProjectStore((get) => get.currentProject);
 	const contentMap = useMapStore((get) => get.exportToEngineFormat());
+	const editorMode = useEngineStore((get) => get.editorMode);
+	const codeEditorMode = useEngineStore((get) => get.codeEditorMode);
+
+	const filePath = useCodeEditorStore((get) => get.openFile?.relativePath);
+	const contentCode = useCodeEditorStore((get) => get.openFile?.content);
+	const markSaved = useCodeEditorStore((get) => get.markSaved);
+
+	const openUiFile = useCodeEditorStore((get) => get.openUiFile);
+	const markUiSaved = useCodeEditorStore((get) => get.markUiSaved);
 
 	const openFileCreation = useFileToBeCreatedStore((get) => get.setOpen);
 	const setFileExtension = useFileToBeCreatedStore((get) => get.setExtension);
@@ -34,22 +45,45 @@ function SaveConfirmation({ open, onOpenChange, onConfirm }: Readonly<ConfirmDia
 	};
 
 	const save = async () => {
-		if (mapRelativePath && currentProject) {
-			const result = await window.api.saveFile(mapRelativePath, contentMap, currentProject);
-			console.log(result);
-			onConfirm();
-			onOpenChange(false);
-		} else {
-			reset();
-			setFileExtension('.json');
-			setContent(contentMap);
-			setOnOpenChange((isOpen: boolean) => {
-				if (!isOpen) {
-					onConfirm();
-				}
-			});
-			onOpenChange(false);
-			openFileCreation(true);
+		if (editorMode === 'map') {
+			if (mapRelativePath && currentProject) {
+				const result = await window.api.saveFile(mapRelativePath, contentMap, currentProject);
+				console.log(result);
+				onConfirm();
+				onOpenChange(false);
+			} else {
+				reset();
+				setFileExtension('.json');
+				setContent(contentMap);
+				setOnOpenChange((isOpen: boolean) => {
+					if (!isOpen) {
+						onConfirm();
+					}
+				});
+				onOpenChange(false);
+				openFileCreation(true);
+			}
+		} else if (editorMode === 'code') {
+			if (codeEditorMode === 'single') {
+				if (!filePath || !currentProject || !contentCode) return;
+				const result = await window.api.saveFile(filePath, contentCode, currentProject);
+				markSaved();
+				console.log(result);
+				onConfirm();
+				onOpenChange(false);
+			} else if (codeEditorMode === 'duo') {
+				if (!openUiFile) return;
+
+				const [htmlResult, cssResult] = await Promise.all([
+					window.api.saveFileCompletePath('', openUiFile.htmlPath, openUiFile.htmlContent),
+					window.api.saveFileCompletePath('', openUiFile.cssPath, openUiFile.cssContent),
+				]);
+
+				console.log('html save:', htmlResult, '| css save:', cssResult);
+				markUiSaved();
+				onConfirm();
+				onOpenChange(false);
+			}
 		}
 	};
 

@@ -11,11 +11,15 @@ import { useNotify } from '../../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
 import FolderNode from '../../../global/types/folderNode';
 import { useEngineStore } from '../../ToolBar/EngineGState';
+import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const isDirty = useMapStore((state) => state.isDirty);
+	const isCodeDirty = useCodeEditorStore(
+		(state) => state.openFile?.isDirty ?? state.openUiFile?.isDirty ?? false
+	);
 	const loadMap = useMapStore((state) => state.loadMap);
 	const setMapRelativePath = useMapStore((state) => state.setMapRelativePath);
 	const createMap = useMapStore((state) => state.createMap);
@@ -70,15 +74,102 @@ export function useFileActions() {
 		}
 
 		if (file.type === 'ui') {
-			changeEditorMode('code');
-			changeCodeEditorMode('duo');
+			if (isCodeDirty) {
+				setShowSaveConfirm(true);
+			} else {
+				handleOpenUiFile(file);
+			}
 			return;
 		}
 
 		if (file.type === 'script') {
-			changeCodeEditorMode('single');
-			changeEditorMode('code');
+			if (isCodeDirty) {
+				setShowSaveConfirm(true);
+			} else {
+				handleOpenScript(file);
+			}
 			return;
+		}
+	};
+
+	const handleOpenScript = async (file: FileItem) => {
+		changeCodeEditorMode('single');
+		changeEditorMode('code');
+		if (!selectedFolder?.path || !currentProject) return;
+
+		useCodeEditorStore.getState().setIsLoadingFile(true);
+
+		const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+		const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
+		if (result.success && result.content) {
+			useCodeEditorStore.getState().setOpenFile(relativePath, result.content.content);
+		} else {
+			useCodeEditorStore.getState().setIsLoadingFile(false);
+		}
+		return;
+	};
+
+	const handleOpenUiFile = async (file: FileItem) => {
+		if (!selectedFolder?.path || !currentProject) return;
+
+		changeEditorMode('code');
+		changeCodeEditorMode('duo');
+		useCodeEditorStore.getState().setIsLoadingFile(true);
+
+		try {
+			const descriptorResult = await window.api.getFile(
+				file.path,
+				selectedFolder.path,
+				currentProject
+			);
+
+			if (!descriptorResult.success || !descriptorResult.content) {
+				useCodeEditorStore.getState().setIsLoadingFile(false);
+				notify(
+					t('engine.notifications.error_title'),
+					t('engine.notifications.file_load_error'),
+					'error'
+				);
+				return;
+			}
+
+			const descriptor = JSON.parse(descriptorResult.content.content) as {
+				htmlPath: string;
+				cssPath: string;
+				scriptPath: string | null;
+			};
+
+			const [htmlResult, cssResult] = await Promise.all([
+				window.api.getFileFullPath(descriptor.htmlPath),
+				window.api.getFileFullPath(descriptor.cssPath),
+			]);
+
+			if (!htmlResult.success || !cssResult.success) {
+				useCodeEditorStore.getState().setIsLoadingFile(false);
+				notify(
+					t('engine.notifications.error_title'),
+					t('engine.notifications.file_load_error'),
+					'error'
+				);
+				return;
+			}
+
+			useCodeEditorStore
+				.getState()
+				.setOpenUiFile(
+					descriptor.htmlPath,
+					descriptor.cssPath,
+					htmlResult.content ?? '',
+					cssResult.content ?? ''
+				);
+		} catch (error) {
+			console.error('Error opening .ui file:', error);
+			useCodeEditorStore.getState().setIsLoadingFile(false);
+			notify(
+				t('engine.notifications.error_title'),
+				t('engine.notifications.file_load_error'),
+				'error'
+			);
 		}
 	};
 

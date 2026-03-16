@@ -73,6 +73,10 @@ declare global {
 				pd: ProjectData
 			) => Promise<{ success: boolean; content?: ProjectFile; error?: string }>;
 
+			getFileFullPath: (
+				completePath: string
+			) => Promise<{ success: boolean; content?: string; error?: string }>;
+
 			saveFile: (
 				fileRelativePath: string,
 				content: string,

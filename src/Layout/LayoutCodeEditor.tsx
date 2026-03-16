@@ -7,7 +7,9 @@ import {
 	CODE_EDITOR_LIMITS,
 } from './customHooks/useLayoutCodeEditorResize';
 import MapPreview from '../Map/MapPreview/MapPreview';
-
+import CodeEditor from '../CodeEditor/CodeEditor';
+import { CodeEditorLoadingOverlay } from '../CodeEditor/CodeEditorLoadingOverlay';
+import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
 
 function LayoutCodeEditor() {
 	const codeEditorMode = useEngineStore((state) => state.codeEditorMode);
@@ -33,7 +35,15 @@ function CodeEditorEmpty() {
 }
 
 function CodeEditorSingle() {
-	return <div className="layoutCodeEditor--single"></div>;
+	const openFile = useCodeEditorStore((state) => state.openFile);
+	const updateContent = useCodeEditorStore((state) => state.updateContent);
+
+	return (
+		<div className="layoutCodeEditor--single" style={{ position: 'relative' }}>
+			<CodeEditor language="lua" value={openFile?.content ?? ''} onChange={updateContent} />
+			<CodeEditorLoadingOverlay />
+		</div>
+	);
 }
 
 function CodeEditorDuo() {
@@ -46,17 +56,32 @@ function CodeEditorDuo() {
 		resizeMapPreview,
 	} = useLayoutCodeEditorResize();
 
+	const openUiFile = useCodeEditorStore((state) => state.openUiFile);
+	const updateHtmlContent = useCodeEditorStore((state) => state.updateHtmlContent);
+	const updateCssContent = useCodeEditorStore((state) => state.updateCssContent);
+
 	return (
-		<div className="layoutCodeEditor--duo">
+		<div className="layoutCodeEditor--duo" style={{ position: 'relative' }}>
 			<aside
 				className="layoutCodeEditor--duo-aside"
 				style={{ flex: `0 0 ${leftPanelWidth}px`, minWidth: CODE_EDITOR_LIMITS.leftPanelWidth.min }}
 			>
+				<CodeEditor
+					language="html"
+					value={openUiFile?.htmlContent ?? ''}
+					onChange={updateHtmlContent}
+				/>
 			</aside>
 
 			<Spacer direction="vertical" resizable onResize={resizeLeftPanel} />
 
-			<div className="layoutCodeEditor--duo-main"></div>
+			<div className="layoutCodeEditor--duo-main">
+				<CodeEditor
+					language="css"
+					value={openUiFile?.cssContent ?? ''}
+					onChange={updateCssContent}
+				/>
+			</div>
 
 			<Spacer direction="vertical" resizable onResize={resizeRightPanel} />
 
@@ -74,8 +99,10 @@ function CodeEditorDuo() {
 					<MapPreview />
 				</div>
 				<Spacer size="small" resizable onResize={resizeMapPreview} marginRight={false} />
-				<div className="layoutCodeEditor--duo-options"></div>
+				<div className="layoutCodeEditor--duo-options" />
 			</aside>
+
+			<CodeEditorLoadingOverlay />
 		</div>
 	);
 }

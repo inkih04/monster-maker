@@ -222,13 +222,13 @@ export class ProjectConfigManager {
 				}
 			}
 
-			completePath = path.join(completePath, name);
+			if (name !== '') {
+				completePath = path.join(completePath, name);
+			}
 
 			if (this.fileSystemService.saveFile(completePath, content)) {
-				log('completado');
 				return { success: true };
 			} else {
-				log('fallo2');
 				return { success: false };
 			}
 		} catch (error) {
@@ -264,6 +264,31 @@ export class ProjectConfigManager {
 			const relativeP = path.join(folderPath, fileRelativePath);
 
 			return { success: true, content: { relativePath: relativeP, content: cont } };
+		} catch (error) {
+			console.log(`Error getting file: ${error}`);
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public getFileFullPath(completePath: string): {
+		success: boolean;
+		content?: string;
+		error?: string;
+	} {
+		try {
+			if (!this.fileSystemService.exists(completePath)) {
+				console.log(`File does not exist: ${completePath}`);
+				return { success: false, error: 'File does not exist' };
+			}
+
+			if (this.fileSystemService.isDirectory(completePath)) {
+				console.log(`Path is a directory, not a file: ${completePath}`);
+				return { success: false, error: 'Path is a directory' };
+			}
+
+			const cont = this.fileSystemService.readFile(completePath);
+
+			return { success: true, content: cont };
 		} catch (error) {
 			console.log(`Error getting file: ${error}`);
 			return { success: false, error: String(error) };

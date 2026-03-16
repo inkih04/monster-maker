@@ -33,6 +33,7 @@ set(SOLOUD_ALL_SOURCES
         ${SOLOUD_CORE_SOURCES}
         ${SOLOUD_WAV_SOURCES}
         ${SOLOUD_BACKEND_SOURCES}
+        include/ui/UiDocument.h
 )
 
 add_library(SoloudStatic STATIC ${SOLOUD_ALL_SOURCES})
@@ -87,6 +88,9 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         src/ui/RmlSystemInterface.cpp
         include/ui/UiManager.h
         src/ui/UiManager.cpp
+        include/ui/UiDocumentLoader.h
+        src/ui/UiDocumentLoader.cpp
+        src/ui/UiDocument.cpp
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD
