@@ -5,36 +5,48 @@
 #ifndef MONSTERMAKERENGINE_UIMANAGER_H
 #define MONSTERMAKERENGINE_UIMANAGER_H
 
-#include <RmlUi/Core.h>
+#include <GL/glew.h>
 #include <string>
+#include <memory>
+#include <unordered_map>
+#include <RmlUi/Core.h>
 #include "RmlSystemInterface.h"
 #include "RmlRenderInterface.h"
+#include "UiDocument.h"
 
 class UiManager {
-public:
-    static UiManager& getInstance() {
-        static UiManager instance;
-        return instance;
-    }
+    public:
+        static UiManager& getInstance() {
+            static UiManager instance;
+            return instance;
+        }
 
-    void init(int width, int height, std::string fontPath);
-    Rml::ElementDocument* loadDocument(const std::string& path);
-    void resize(int width, int height);
-    void update();
-    void render();
-    void shutdown();
+        UiManager(const UiManager&) = delete;
+        UiManager& operator=(const UiManager&) = delete;
 
-    Rml::Context* getContext() { return m_context; }
+        void init(int width, int height, const std::string& fontPath);
+        void resize(int width, int height);
+        void update();
+        void render();
+        void shutdown();
 
-private:
-    UiManager() = default;
+        UiDocument* openDocument(const std::string& id, const std::string& uiFilePath);
 
-    UiManager(const UiManager&) = delete;
-    UiManager& operator=(const UiManager&) = delete;
+        void closeDocument(const std::string& id);
 
-    RmlSystemInterface m_systemInterface;
-    RmlRenderInterface m_renderInterface;
-    Rml::Context* m_context = nullptr;
-};
+        UiDocument* getDocument(const std::string& id);
+        bool isOpen(const std::string& id) const;
+
+        Rml::Context* getContext() { return m_context; }
+
+    private:
+        UiManager() = default;
+
+        RmlSystemInterface m_systemInterface;
+        RmlRenderInterface m_renderInterface;
+        Rml::Context*      m_context = nullptr;
+
+        std::unordered_map<std::string, std::unique_ptr<UiDocument>> m_documents;
+    };
 
 #endif //MONSTERMAKERENGINE_UIMANAGER_H

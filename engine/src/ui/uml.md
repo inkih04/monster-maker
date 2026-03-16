@@ -1,87 +1,87 @@
 ```mermaid
 
 classDiagram
-class DialogBox {
-- glm::vec2 m_position
-- glm::vec2 m_size
-- glm::vec3 m_backgroundColor
-- glm::vec3 m_borderColor
-- glm::vec3 m_textColor
-- float m_borderThickness
-- std::string m_fullText
-- std::string m_currentDisplayText
-- size_t m_currentCharIndex
-- float m_timeAccumulator
-- DialogSpeed m_textSpeed
-- bool m_isActive
-- bool m_isComplete
-- bool m_isVisible
-- float m_padding
-- std::vector<std::string> m_lines
-- int m_maxCharsPerLine
-- TextRenderer* m_textRenderer
-- Renderer* m_renderer
-- void wrapText()
-- void drawBackground()
-- void drawBorder()
-- void drawText()
-+ DialogBox(glm::vec2 position, glm::vec2 size, const std::string& pathFont , unsigned int fontSize)
-+ void setText(const std::string& text)
-+ void start()
-+ void update(float deltaTime)
-+ void render()
-+ void complete()
-+ void hide()
-+ void show()
-+ void setSpeed(DialogSpeed speed)
-+ void setTextColor(glm::vec3 color)
-+ void setBackgroundColor(glm::vec3 color)
-+ void setBorderColor(glm::vec3 color)
-+ void setBorderThickness(float thickness)
-+ void setPosition(glm::vec2 position)
-+ void setSize(glm::vec2 size)
-+ void setPadding(float padding)
-+ bool isActive()
-+ bool isComplete()
-+ bool isVisible()
-+ DialogSpeed getSpeed()
-+ std::string getCurrentText()
-}
 
-class TextRenderer {
-    - std::map<char, Character> m_characters
-    - Shader* m_textShader
-    - GLuint m_VAO
-    - GLuint m_VBO
-    - FT_Library m_ft
-    - FT_Face m_face
-    - void initRenderData()
-    + TextRenderer(const std::string& pathFont , unsigned int fontSize)
-    + void renderText(const std::string& text, glm::vec2 position, float scale, glm::vec3 color)
-    + float getTextWidth(const std::string& text, float scale) const
-    + float getTextHeight(float scale) const
-    + ~TextRenderer()
-}
+    class UiManager {
+        <<singleton>>
+        -unordered_map~string, unique_ptr~UiDocument~~ m_documents
+        -RmlSystemInterface m_systemInterface
+        -RmlRenderInterface m_renderInterface
+        -Rml::Context* m_context
 
-    class Renderer {
-    -GLuint m_quadVAO
-    -GLuint m_quadVBO
-    -*Shader m_currentShader
-    -Camera* m_activeCamera
-    -void initRenderData()
-    -void updateCameraUniforms()
-    -Renderer()
-    -~Renderer()
-    +Renderer* getInstance()
-    +void loadShader(const string& name, const string& vertexPath, const string& fragmentPath)
-    +void setShader(const string& name)
-    +void setCamera(Camera* camera)
-    +void drawSprite(const string& texturePath, glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f), SpriteRect spriteRect = null)
-    +void draw(glm::vec2 position, glm::vec2 size, float rotation = 0.0f, glm::vec4 color = glm::vec4(1.0f), SpriteRect spriteRect = null)
-    
+        +init(width, height, fontPath) void
+        +resize(width, height) void
+        +update() void
+        +render() void
+        +shutdown() void
+        +openDocument(id, uiFilePath) UiDocument*
+        +closeDocument(id) void
+        +getDocument(id) UiDocument*
+        +isOpen(id) bool
     }
 
+    class UiDocumentLoader {
+        <<static>>
+        +loadDef(uiFilePath) UiDocumentDef
+    }
 
-    DialogBox --> TextRenderer 
-    DialogBox --> Renderer 
+    class UiDocumentDef {
+        +string htmlPath
+        +string cssPath
+        +optional~string~ scriptPath
+    }
+
+    class UiDocument {
+        -Rml::ElementDocument* m_doc
+        -optional~string~ m_scriptPath
+        -sol::environment m_env
+        -sol::protected_function m_luaOnStart
+        -sol::protected_function m_luaOnDestroy
+
+        +UiDocument(doc, scriptPath)
+        +~UiDocument()
+        +close() void
+        +isOpen() bool
+        +getRaw() Rml::ElementDocument*
+        -loadScript(path) void
+        -callHook(fn, hookName) void
+    }
+
+    class RmlRenderInterface {
+        -glm::mat4 m_projection
+        -int m_width
+        -int m_height
+
+        +SetViewport(width, height) void
+        +BeginFrame() void
+        +EndFrame() void
+        +CompileGeometry(vertices, indices) CompiledGeometryHandle
+        +RenderGeometry(handle, translation, texture) void
+        +ReleaseGeometry(handle) void
+        +LoadTexture(dimensions, source) TextureHandle
+        +GenerateTexture(source, dimensions) TextureHandle
+        +ReleaseTexture(handle) void
+        +EnableScissorRegion(enable) void
+        +SetScissorRegion(region) void
+    }
+
+    class RmlSystemInterface {
+        +GetElapsedTime() double
+        +LogMessage(type, message) bool
+    }
+
+    class ScriptEngine {
+        <<singleton>>
+        -sol::state m_lua
+        +getState() sol::state&
+        +runScript(filePath) bool
+    }
+
+    UiManager "1" *-- "*" UiDocument : owns
+    UiManager ..> UiDocumentLoader : uses
+    UiManager *-- RmlRenderInterface
+    UiManager *-- RmlSystemInterface
+    UiDocumentLoader ..> UiDocumentDef : creates
+    UiDocument ..> ScriptEngine : uses
+    UiDocument ..> UiDocumentDef : built from
 ```mermaid
