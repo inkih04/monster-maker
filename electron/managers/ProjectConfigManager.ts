@@ -222,13 +222,13 @@ export class ProjectConfigManager {
 				}
 			}
 
-			completePath = path.join(completePath, name);
+			if (name !== '') {
+				completePath = path.join(completePath, name);
+			}
 
 			if (this.fileSystemService.saveFile(completePath, content)) {
-				log('completado');
 				return { success: true };
 			} else {
-				log('fallo2');
 				return { success: false };
 			}
 		} catch (error) {
@@ -270,12 +270,12 @@ export class ProjectConfigManager {
 		}
 	}
 
-
-	public getFileFullPath(
-		completePath: string,
-	): { success: boolean; content?: string; error?: string } {
+	public getFileFullPath(completePath: string): {
+		success: boolean;
+		content?: string;
+		error?: string;
+	} {
 		try {
-
 			if (!this.fileSystemService.exists(completePath)) {
 				console.log(`File does not exist: ${completePath}`);
 				return { success: false, error: 'File does not exist' };
@@ -288,15 +288,12 @@ export class ProjectConfigManager {
 
 			const cont = this.fileSystemService.readFile(completePath);
 
-			return { success: true, content:cont  };
+			return { success: true, content: cont };
 		} catch (error) {
 			console.log(`Error getting file: ${error}`);
 			return { success: false, error: String(error) };
 		}
 	}
-
-
-
 
 	public renameFile(
 		oldFileRelativePath: string,

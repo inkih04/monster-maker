@@ -56,19 +56,31 @@ function CodeEditorDuo() {
 		resizeMapPreview,
 	} = useLayoutCodeEditorResize();
 
+	const openUiFile = useCodeEditorStore((state) => state.openUiFile);
+	const updateHtmlContent = useCodeEditorStore((state) => state.updateHtmlContent);
+	const updateCssContent = useCodeEditorStore((state) => state.updateCssContent);
+
 	return (
-		<div className="layoutCodeEditor--duo">
+		<div className="layoutCodeEditor--duo" style={{ position: 'relative' }}>
 			<aside
 				className="layoutCodeEditor--duo-aside"
 				style={{ flex: `0 0 ${leftPanelWidth}px`, minWidth: CODE_EDITOR_LIMITS.leftPanelWidth.min }}
 			>
-				<CodeEditor language="html" />
+				<CodeEditor
+					language="html"
+					value={openUiFile?.htmlContent ?? ''}
+					onChange={updateHtmlContent}
+				/>
 			</aside>
 
 			<Spacer direction="vertical" resizable onResize={resizeLeftPanel} />
 
 			<div className="layoutCodeEditor--duo-main">
-				<CodeEditor language="css" />
+				<CodeEditor
+					language="css"
+					value={openUiFile?.cssContent ?? ''}
+					onChange={updateCssContent}
+				/>
 			</div>
 
 			<Spacer direction="vertical" resizable onResize={resizeRightPanel} />
@@ -89,6 +101,8 @@ function CodeEditorDuo() {
 				<Spacer size="small" resizable onResize={resizeMapPreview} marginRight={false} />
 				<div className="layoutCodeEditor--duo-options" />
 			</aside>
+
+			<CodeEditorLoadingOverlay />
 		</div>
 	);
 }

@@ -102,13 +102,29 @@ export function FileListener() {
 			const editorMode = useEngineStore.getState().editorMode;
 
 			if (editorMode === 'code') {
-				const { openFile } = useCodeEditorStore.getState();
-				if (!openFile || !currentProject) return;
-				await window.api.saveFile(openFile.relativePath, openFile.content, currentProject);
-				useCodeEditorStore.getState().markSaved();
+				const codeEditorMode = useEngineStore.getState().codeEditorMode;
+
+				if (codeEditorMode === 'single') {
+					const { openFile } = useCodeEditorStore.getState();
+					if (!openFile || !currentProject) return;
+					await window.api.saveFile(openFile.relativePath, openFile.content, currentProject);
+					useCodeEditorStore.getState().markSaved();
+					return;
+				}
+
+				if (codeEditorMode === 'duo') {
+					const { openUiFile } = useCodeEditorStore.getState();
+					if (!openUiFile) return;
+					await Promise.all([
+						window.api.saveFileCompletePath('', openUiFile.htmlPath, openUiFile.htmlContent),
+						window.api.saveFileCompletePath('', openUiFile.cssPath, openUiFile.cssContent),
+					]);
+					useCodeEditorStore.getState().markUiSaved();
+					return;
+				}
+
 				return;
 			}
-
 			const contentMap = exportToEngineFormat();
 			if (mapRelativePath && currentProject) {
 				const result = await window.api.saveFile(mapRelativePath, contentMap, currentProject);

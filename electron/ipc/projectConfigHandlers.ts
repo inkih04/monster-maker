@@ -269,6 +269,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+
 	ipcMain.handle(
 		'config:saveFileCompletePath',
 		async (_event, name: string, completePath: string, content: string) => {

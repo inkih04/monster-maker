@@ -43,7 +43,9 @@ function Layout() {
 	const mode = useEngineStore((state) => state.runMode);
 	const editorMode = useEngineStore((state) => state.editorMode);
 	const resetEngineState = useEngineStore((state) => state.resetEngineState);
-	const isFileDirty = useCodeEditorStore((state) => state.openFile?.isDirty ?? false);
+	const isFileDirty = useCodeEditorStore(
+		(state) => state.openFile?.isDirty ?? state.openUiFile?.isDirty ?? false
+	);
 
 	useEffect(() => {
 		const removeListener = window.api.onResetLayout(() => {
