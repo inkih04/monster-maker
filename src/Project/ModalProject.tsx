@@ -9,6 +9,7 @@ import OpenProject from '../common/components/openProject/OpenProject';
 import { useTranslation } from 'react-i18next';
 import { ProjectData } from '../../global/types/projectData';
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
+import { useEngineConfigStore } from '../Tagger/useEngineConfigStore';
 
 function ModalProject() {
 	const { t } = useTranslation();
@@ -16,6 +17,7 @@ function ModalProject() {
 	const [showOpenProject, setShowOpenProject] = useState(false);
 	const [searchValue, setSearchValue] = useState('');
 	const { isModalOpen, setIsModalOpen, setCurrentProject, removeProject } = useProjectStore();
+	const loadEngineConfig = useEngineConfigStore((get) => get.loadEngineConfig);
 
 	const { projects, loadProjects } = useProjectStore();
 
@@ -39,6 +41,7 @@ function ModalProject() {
 
 		setIsModalOpen(false);
 		setCurrentProject(project);
+		loadEngineConfig(project);
 	};
 
 	return (
