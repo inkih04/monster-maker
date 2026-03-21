@@ -34,6 +34,7 @@ set(SOLOUD_ALL_SOURCES
         ${SOLOUD_WAV_SOURCES}
         ${SOLOUD_BACKEND_SOURCES}
         include/ui/UiDocument.h
+        include/ui/RmlFileInterface.h
 )
 
 add_library(SoloudStatic STATIC ${SOLOUD_ALL_SOURCES})

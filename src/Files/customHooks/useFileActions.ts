@@ -324,6 +324,12 @@ export function useFileActions() {
 
 			await window.api.deleteFolder(folder, currentProject);
 			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
+			changeCodeEditorMode(null);
+			changeEditorMode('map');
+		} else if (fileToDelete.type === 'script') {
+			changeCodeEditorMode(null);
+			changeEditorMode('map');
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 		} else {
 			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 		}

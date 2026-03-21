@@ -6,6 +6,7 @@ import { useFolderStore } from '../globalStores/useFolderStore';
 import { useTileSetStore } from '../../Tileset/TileSetGState';
 import { useEngineStore } from '../../ToolBar/EngineGState';
 import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
+import { scriptContent } from '../../Files/defaultContentFiles/scripts/scriptDefaultContent';
 
 export function FileListener() {
 	const openFileCreation = useFileToBeCreatedStore((state) => state.setOpen);
@@ -78,7 +79,7 @@ export function FileListener() {
 					break;
 				case 'script':
 					extension = '.lua';
-					defaultContent = '';
+					defaultContent = scriptContent;
 					break;
 
 				case 'ui':

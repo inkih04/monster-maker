@@ -1,6 +1,3 @@
-//
-// Created by inkih on 13/3/26.
-//
 #include "UiManager.h"
 #include "UiDocumentLoader.h"
 #include <iostream>
@@ -8,6 +5,7 @@
 void UiManager::init(int width, int height, const std::string& fontPath) {
     m_renderInterface.SetViewport(width, height);
 
+    Rml::SetFileInterface(&m_fileInterface);
     Rml::SetSystemInterface(&m_systemInterface);
     Rml::SetRenderInterface(&m_renderInterface);
     Rml::Initialise();
