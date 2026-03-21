@@ -49,6 +49,7 @@ export const useCodeEditorStore = create<CodeEditorStore>((set) => ({
 	setOpenFile: (relativePath, content) =>
 		set({
 			openFile: { relativePath, content, savedContent: content, isDirty: false },
+			openUiFile: null,
 			isLoadingFile: false,
 		}),
 
@@ -80,6 +81,7 @@ export const useCodeEditorStore = create<CodeEditorStore>((set) => ({
 
 	setOpenUiFile: (htmlPath, cssPath, htmlContent, cssContent) =>
 		set({
+			openFile: null,
 			openUiFile: {
 				htmlPath,
 				cssPath,
