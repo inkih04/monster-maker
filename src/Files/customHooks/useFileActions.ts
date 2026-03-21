@@ -82,7 +82,7 @@ export function useFileActions() {
 			return;
 		}
 
-		if (file.type === 'script') {
+		if (file.type === 'script' || file.type === 'fragment' || file.type === 'vertex') {
 			if (isCodeDirty) {
 				setShowSaveConfirm(true);
 			} else {
@@ -255,34 +255,39 @@ export function useFileActions() {
 
 	const handleOpenFile = async (file = fileToOpen) => {
 		if (!file || !selectedFolder?.path || !currentProject) return;
+		if (file.type === 'tilemap') {
+			const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
 
-		const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+			if (!result.success || !result.content) return;
 
-		if (!result.success || !result.content) return;
+			const parsedMap = JSON.parse(result.content.content);
 
-		const parsedMap = JSON.parse(result.content.content);
+			if (!parsedMap.mapId || !parsedMap.entities) return;
 
-		if (!parsedMap.mapId || !parsedMap.entities) return;
+			const mapData: MapData = {
+				mapId: parsedMap.mapId,
+				width: parsedMap.width || 100,
+				height: parsedMap.height || 100,
+				tileSize: parsedMap.tileSize || currentProject.defaultTilesize || 16,
+				entities: Array.isArray(parsedMap.entities)
+					? parsedMap.entities.reduce(
+							(acc: Record<string, Entity>, entity: Entity) => {
+								acc[entity.id] = entity;
+								return acc;
+							},
+							{} as Record<string, Entity>
+						)
+					: parsedMap.entities,
+			};
 
-		const mapData: MapData = {
-			mapId: parsedMap.mapId,
-			width: parsedMap.width || 100,
-			height: parsedMap.height || 100,
-			tileSize: parsedMap.tileSize || currentProject.defaultTilesize || 16,
-			entities: Array.isArray(parsedMap.entities)
-				? parsedMap.entities.reduce(
-						(acc: Record<string, Entity>, entity: Entity) => {
-							acc[entity.id] = entity;
-							return acc;
-						},
-						{} as Record<string, Entity>
-					)
-				: parsedMap.entities,
-		};
-
-		loadMap(mapData);
-		setMapRelativePath(result.content.relativePath);
-		setShowSaveConfirm(false);
+			loadMap(mapData);
+			setMapRelativePath(result.content.relativePath);
+			setShowSaveConfirm(false);
+		} else if (file.type === 'ui') {
+			handleOpenUiFile(file);
+		} else if (file.type === 'script' || file.type === 'fragment' || file.type === 'vertex') {
+			handleOpenScript(file);
+		}
 	};
 
 	const handleConfirmDelete = async () => {
@@ -323,6 +328,12 @@ export function useFileActions() {
 			};
 
 			await window.api.deleteFolder(folder, currentProject);
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
+			changeCodeEditorMode(null);
+			changeEditorMode('map');
+		} else if (fileToDelete.type === 'script') {
+			changeCodeEditorMode(null);
+			changeEditorMode('map');
 			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 		} else {
 			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);

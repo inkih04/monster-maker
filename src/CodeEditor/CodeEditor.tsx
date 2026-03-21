@@ -1,7 +1,13 @@
 import * as monaco from 'monaco-editor';
 import { useRef, useCallback, useEffect } from 'react';
 import MonacoEditor, { OnMount, BeforeMount, loader } from '@monaco-editor/react';
-import { buildTheme, EDITOR_OPTIONS, registerLuaCompletions } from './monacoConfig';
+import {
+	buildTheme,
+	EDITOR_OPTIONS,
+	registerLuaCompletions,
+	registerHtmlCssClassCompletions,
+	registerHtmlEmmetCompletions,
+} from './monacoConfig';
 import './CodeEditor.css';
 
 loader.config({ monaco });
@@ -57,6 +63,10 @@ function CodeEditor({
 			monacoRef.current = m;
 			m.editor.defineTheme('monster-maker', buildTheme());
 			if (language === 'lua') registerLuaCompletions(m);
+			if (language === 'html') {
+				registerHtmlCssClassCompletions(m);
+				registerHtmlEmmetCompletions(m);
+			}
 		},
 		[language]
 	);

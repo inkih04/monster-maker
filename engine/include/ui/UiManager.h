@@ -12,41 +12,41 @@
 #include <RmlUi/Core.h>
 #include "RmlSystemInterface.h"
 #include "RmlRenderInterface.h"
+#include "RmlFileInterface.h"
 #include "UiDocument.h"
 
 class UiManager {
-    public:
-        static UiManager& getInstance() {
-            static UiManager instance;
-            return instance;
-        }
+public:
+    static UiManager& getInstance() {
+        static UiManager instance;
+        return instance;
+    }
 
-        UiManager(const UiManager&) = delete;
-        UiManager& operator=(const UiManager&) = delete;
+    UiManager(const UiManager&) = delete;
+    UiManager& operator=(const UiManager&) = delete;
 
-        void init(int width, int height, const std::string& fontPath);
-        void resize(int width, int height);
-        void update();
-        void render();
-        void shutdown();
+    void init(int width, int height, const std::string& fontPath);
+    void resize(int width, int height);
+    void update();
+    void render();
+    void shutdown();
 
-        UiDocument* openDocument(const std::string& id, const std::string& uiFilePath);
+    UiDocument* openDocument(const std::string& id, const std::string& uiFilePath);
+    void closeDocument(const std::string& id);
+    UiDocument* getDocument(const std::string& id);
+    bool isOpen(const std::string& id) const;
 
-        void closeDocument(const std::string& id);
+    Rml::Context* getContext() { return m_context; }
 
-        UiDocument* getDocument(const std::string& id);
-        bool isOpen(const std::string& id) const;
+private:
+    UiManager() = default;
 
-        Rml::Context* getContext() { return m_context; }
+    RmlSystemInterface m_systemInterface;
+    RmlRenderInterface m_renderInterface;
+    RmlFileInterface   m_fileInterface;
+    Rml::Context*      m_context = nullptr;
 
-    private:
-        UiManager() = default;
-
-        RmlSystemInterface m_systemInterface;
-        RmlRenderInterface m_renderInterface;
-        Rml::Context*      m_context = nullptr;
-
-        std::unordered_map<std::string, std::unique_ptr<UiDocument>> m_documents;
-    };
+    std::unordered_map<std::string, std::unique_ptr<UiDocument>> m_documents;
+};
 
 #endif //MONSTERMAKERENGINE_UIMANAGER_H

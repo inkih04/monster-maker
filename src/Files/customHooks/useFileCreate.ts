@@ -3,6 +3,9 @@ import { useProjectStore } from '../../Project/ProjectConfigGState';
 import { useFolderStore } from '../../common/globalStores/useFolderStore';
 import { useNotify } from '../../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
+import { uiHtmlDefaultContent } from '../defaultContentFiles/ui/uiHtmlDefaultContent';
+import { uiCssDefaultContent } from '../defaultContentFiles/ui/uiCssDefaultContent';
+import { scriptContent } from '../defaultContentFiles/scripts/scriptDefaultContent';
 
 export type CreatableFileType = 'map' | 'prefab' | 'script' | 'ui';
 
@@ -20,11 +23,9 @@ const FILE_EXTENSIONS: Record<CreatableFileType, string> = {
 	ui: '.ui',
 };
 
-
-export const UI_HTML_DEFAULT_CONTENT = (_fileName: string): string => ``;
-
-export const UI_CSS_DEFAULT_CONTENT = (_fileName: string): string => ``;
-
+export const UI_HTML_DEFAULT_CONTENT = (fileName: string, cssPath: string): string =>
+	uiHtmlDefaultContent(fileName, cssPath);
+export const UI_CSS_DEFAULT_CONTENT = (fileName: string): string => uiCssDefaultContent(fileName);
 
 const FILE_DEFAULT_CONTENT: Record<CreatableFileType, (tilesize: number) => string> = {
 	map: (tilesize) =>
@@ -40,7 +41,7 @@ const FILE_DEFAULT_CONTENT: Record<CreatableFileType, (tilesize: number) => stri
 			2
 		),
 	prefab: () => JSON.stringify({ prefabId: crypto.randomUUID(), components: [] }, null, 2),
-	script: () => '',
+	script: () => scriptContent,
 	ui: () => '',
 };
 
@@ -92,8 +93,11 @@ export function useFileCreate() {
 			const hiddenFolderName = `.${baseName}`;
 			const hiddenFolderPath = await window.api.pathUnion(relativePath, hiddenFolderName);
 
-			const htmlRelativePath = await window.api.pathUnion(hiddenFolderPath, `${baseName}_HTML.rmli`)
-			const cssRelativePath =  await window.api.pathUnion(hiddenFolderPath, `${baseName}_CSS.css`);
+			const htmlRelativePath = await window.api.pathUnion(
+				hiddenFolderPath,
+				`${baseName}_HTML.rmli`
+			);
+			const cssRelativePath = await window.api.pathUnion(hiddenFolderPath, `${baseName}_CSS.css`);
 
 			const uiDescriptor = JSON.stringify(
 				{
@@ -104,6 +108,9 @@ export function useFileCreate() {
 				null,
 				2
 			);
+
+			console.log(cssRelativePath);
+
 			const saves: Array<{ name: string; path: string; content: string; label: string }> = [
 				{
 					name: fileNameWithExt,
@@ -114,7 +121,7 @@ export function useFileCreate() {
 				{
 					name: `${baseName}_HTML.rmli`,
 					path: hiddenFolderPath,
-					content: UI_HTML_DEFAULT_CONTENT(baseName),
+					content: UI_HTML_DEFAULT_CONTENT(baseName, cssRelativePath),
 					label: 'HTML markup',
 				},
 				{

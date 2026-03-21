@@ -40,11 +40,12 @@ function ToolBar() {
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.ctrlKey && e.key === 'z') {
+			console.log(editorMode);
+			if (editorMode === 'map' && e.ctrlKey && e.key === 'z') {
 				e.preventDefault();
 				undo();
 			}
-			if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+			if (editorMode === 'map' && e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
 				e.preventDefault();
 				redo();
 			}
@@ -261,7 +262,8 @@ function ToolBar() {
 					onClick={() => {
 						redo();
 					}}
-					className="tool-button"
+					className={`tool-button ${editorMode === 'code' ? 'disabled' : ''}`}
+					disabled={editorMode === 'code'}
 				>
 					<Redo />
 				</button>
@@ -269,7 +271,8 @@ function ToolBar() {
 					onClick={() => {
 						undo();
 					}}
-					className="tool-button"
+					className={`tool-button ${editorMode === 'code' ? 'disabled' : ''}`}
+					disabled={editorMode === 'code'}
 				>
 					<Undo />
 				</button>
