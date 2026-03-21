@@ -11,6 +11,8 @@ import UiFilePreview from '../Map/MapPreview/UiFilePreview';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import { CodeEditorLoadingOverlay } from '../CodeEditor/CodeEditorLoadingOverlay';
 import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
+import { updateLiveCssContent } from '../CodeEditor/monacoConfig';
+import { useEffect } from 'react';
 
 function LayoutCodeEditor() {
 	const codeEditorMode = useEngineStore((state) => state.codeEditorMode);
@@ -60,6 +62,10 @@ function CodeEditorDuo() {
 	const openUiFile = useCodeEditorStore((state) => state.openUiFile);
 	const updateHtmlContent = useCodeEditorStore((state) => state.updateHtmlContent);
 	const updateCssContent = useCodeEditorStore((state) => state.updateCssContent);
+
+	useEffect(() => {
+		updateLiveCssContent(openUiFile?.cssContent ?? '');
+	}, [openUiFile?.cssContent]);
 
 	return (
 		<div className="layoutCodeEditor--duo" style={{ position: 'relative' }}>
