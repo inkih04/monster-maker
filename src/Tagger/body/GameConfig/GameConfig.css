@@ -35,6 +35,51 @@
 	max-width: 120px;
 }
 
+/* Wrapper used by ResetableInput for text fields */
+.game-config--input-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.game-config--input-wrapper .game-config--input {
+	padding-right: 26px;
+}
+
+/* Wrapper used for the numeric resolution inputs */
+.game-config--num-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.game-config--num-wrapper .game-config--input-num {
+	padding-right: 22px;
+}
+
+.game-config--reset-btn {
+	position: absolute;
+	right: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	background: transparent;
+	border: none;
+	border-radius: var(--radius);
+	color: var(--color-5);
+	cursor: pointer;
+	padding: 0;
+	transition: color 0.15s;
+	flex-shrink: 0;
+}
+
+.game-config--reset-btn:hover {
+	color: var(--color-8);
+}
+
 .game-config--resolution-row {
 	display: flex;
 	align-items: center;

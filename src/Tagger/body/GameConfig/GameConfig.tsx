@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Trash } from 'iconoir-react';
 import '../TaggerBody.css';
 import './GameConfig.css';
 import { useGameConfigDrag } from './customHook/useGameConfigDrag';
 import { useProjectStore } from '../../../Project/ProjectConfigGState';
 import { useEngineConfigStore } from '../../useEngineConfigStore';
 import { GameConfig, DEFAULT_GAME_CONFIG } from '../../../../global/types/engineConfig';
+import ResetableInput from './ResetableInput';
 
 type GameConfigData = {
 	gameName: string;
@@ -92,34 +94,33 @@ function TaggerGameConfigBody() {
 			<div className="game-config--form">
 				<div className="game-config--field">
 					<label className="game-config--label">{t('gameConfig.gameName')}</label>
-					<input
-						className="tagger-kv--input game-config--input"
-						type="text"
-						placeholder="Monster Maker Engine"
+					<ResetableInput
 						value={data.gameName}
-						onChange={(e) => handleChange('gameName', e.target.value)}
+						defaultValue={DEFAULT_GAME_CONFIG.gameName}
+						placeholder="Monster Maker Engine"
+						onChange={(v) => handleChange('gameName', v)}
 					/>
 				</div>
 
 				<div className="game-config--field">
 					<label className="game-config--label">{t('gameConfig.gameVersion')}</label>
-					<input
-						className="tagger-kv--input game-config--input game-config--input-short"
-						type="text"
-						placeholder="1.0.0"
+					<ResetableInput
+						className="game-config--input-short"
 						value={data.gameVersion}
-						onChange={(e) => handleChange('gameVersion', e.target.value)}
+						defaultValue={DEFAULT_GAME_CONFIG.gameVersion}
+						placeholder="1.0.0"
+						onChange={(v) => handleChange('gameVersion', v)}
 					/>
 				</div>
 
 				<div className="game-config--field game-config--field-group-start">
 					<label className="game-config--label">{t('gameConfig.initialMapPath')}</label>
-					<input
-						className={`tagger-kv--input game-config--input ${getDragClass('initialMapPath')}`}
-						type="text"
-						placeholder="maps/start.json"
+					<ResetableInput
+						className={getDragClass('initialMapPath')}
 						value={data.initialMapPath}
-						onChange={(e) => handleChange('initialMapPath', e.target.value)}
+						defaultValue={DEFAULT_GAME_CONFIG.initialMapPath}
+						placeholder="maps/start.json"
+						onChange={(v) => handleChange('initialMapPath', v)}
 						onDragOver={(e) => handleDragOver(e, 'initialMapPath')}
 						onDragLeave={handleDragLeave}
 						onDrop={(e) =>
@@ -130,12 +131,12 @@ function TaggerGameConfigBody() {
 
 				<div className="game-config--field">
 					<label className="game-config--label">{t('gameConfig.iconPath')}</label>
-					<input
-						className={`tagger-kv--input game-config--input ${getDragClass('imageIconPath')}`}
-						type="text"
-						placeholder="assets/icon.png"
+					<ResetableInput
+						className={getDragClass('imageIconPath')}
 						value={data.imageIconPath}
-						onChange={(e) => handleChange('imageIconPath', e.target.value)}
+						defaultValue={DEFAULT_GAME_CONFIG.imageIconPath}
+						placeholder="assets/icon.png"
+						onChange={(v) => handleChange('imageIconPath', v)}
 						onDragOver={(e) => handleDragOver(e, 'imageIconPath')}
 						onDragLeave={handleDragLeave}
 						onDrop={(e) =>
@@ -146,12 +147,12 @@ function TaggerGameConfigBody() {
 
 				<div className="game-config--field">
 					<label className="game-config--label">{t('gameConfig.defaultFont')}</label>
-					<input
-						className={`tagger-kv--input game-config--input ${getDragClass('defaultFont')}`}
-						type="text"
-						placeholder="assets/fonts/font.ttf"
+					<ResetableInput
+						className={getDragClass('defaultFont')}
 						value={data.defaultFont}
-						onChange={(e) => handleChange('defaultFont', e.target.value)}
+						defaultValue={DEFAULT_GAME_CONFIG.defaultFont}
+						placeholder="assets/fonts/font.ttf"
+						onChange={(v) => handleChange('defaultFont', v)}
 						onDragOver={(e) => handleDragOver(e, 'defaultFont')}
 						onDragLeave={handleDragLeave}
 						onDrop={(e) =>
@@ -163,23 +164,47 @@ function TaggerGameConfigBody() {
 				<div className="game-config--field game-config--field-group-start game-config--field-no-border">
 					<label className="game-config--label">{t('gameConfig.virtualResolution')}</label>
 					<div className="game-config--resolution-row">
-						<input
-							className="tagger-kv--input game-config--input-num"
-							type="number"
-							placeholder="480"
-							value={data.virtualWidth}
-							min={1}
-							onChange={(e) => handleIntChange('virtualWidth', e.target.value)}
-						/>
+						<div className="game-config--num-wrapper">
+							<input
+								className="tagger-kv--input game-config--input-num"
+								type="number"
+								placeholder="480"
+								value={data.virtualWidth}
+								min={1}
+								onChange={(e) => handleIntChange('virtualWidth', e.target.value)}
+							/>
+							{data.virtualWidth !== DEFAULT_GAME_CONFIG.virtualWidth && (
+								<button
+									className="game-config--reset-btn"
+									onClick={() => handleChange('virtualWidth', DEFAULT_GAME_CONFIG.virtualWidth)}
+									title="Reset to default"
+									tabIndex={-1}
+								>
+									<Trash width={11} strokeWidth={1.8} />
+								</button>
+							)}
+						</div>
 						<span className="game-config--resolution-sep">×</span>
-						<input
-							className="tagger-kv--input game-config--input-num"
-							type="number"
-							placeholder="270"
-							value={data.virtualHeight}
-							min={1}
-							onChange={(e) => handleIntChange('virtualHeight', e.target.value)}
-						/>
+						<div className="game-config--num-wrapper">
+							<input
+								className="tagger-kv--input game-config--input-num"
+								type="number"
+								placeholder="270"
+								value={data.virtualHeight}
+								min={1}
+								onChange={(e) => handleIntChange('virtualHeight', e.target.value)}
+							/>
+							{data.virtualHeight !== DEFAULT_GAME_CONFIG.virtualHeight && (
+								<button
+									className="game-config--reset-btn"
+									onClick={() => handleChange('virtualHeight', DEFAULT_GAME_CONFIG.virtualHeight)}
+									title="Reset to default"
+									tabIndex={-1}
+								>
+									<Trash width={11} strokeWidth={1.8} />
+								</button>
+							)}
+						</div>
 						<span className="game-config--resolution-hint">px</span>
 					</div>
 				</div>
