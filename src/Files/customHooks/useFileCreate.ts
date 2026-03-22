@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { uiHtmlDefaultContent } from '../defaultContentFiles/ui/uiHtmlDefaultContent';
 import { uiCssDefaultContent } from '../defaultContentFiles/ui/uiCssDefaultContent';
 import { scriptContent } from '../defaultContentFiles/scripts/scriptDefaultContent';
+import { useEngineConfigStore } from '../../Tagger/useEngineConfigStore';
 
 export type CreatableFileType = 'map' | 'prefab' | 'script' | 'ui';
 
@@ -48,6 +49,7 @@ const FILE_DEFAULT_CONTENT: Record<CreatableFileType, (tilesize: number) => stri
 export function useFileCreate() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const currentProject = useProjectStore((state) => state.currentProject);
+	const { tags, saveTags } = useEngineConfigStore();
 
 	const [creatingFileType, setCreatingFileType] = useState<CreatableFileType | null>(null);
 	const [newFileName, setNewFileName] = useState('');
@@ -73,6 +75,11 @@ export function useFileCreate() {
 	const cancelCreation = () => {
 		setCreatingFileType(null);
 		setNewFileName('');
+	};
+
+	const addTag = (baseName: string, tagPath: string) => {
+		if (!currentProject) return;
+		saveTags(currentProject, { ...tags, [baseName]: tagPath });
 	};
 
 	const confirmCreation = async () => {
@@ -150,6 +157,9 @@ export function useFileCreate() {
 					return;
 				}
 			}
+			const tagPath = await window.api.pathUnion(selectedFolder.path, fileNameWithExt);
+
+			addTag(baseName, tagPath);
 		} else {
 			const content = FILE_DEFAULT_CONTENT[creatingFileType](currentProject.defaultTilesize || 16);
 
@@ -161,6 +171,9 @@ export function useFileCreate() {
 				);
 				if (!result.success) {
 					notify(t('engine.notifications.error_title'), result.error ?? '', 'error');
+				} else {
+					const tagPath = await window.api.pathUnion(selectedFolder.path, fileNameWithExt);
+					addTag(baseName, tagPath);
 				}
 			} catch (error) {
 				console.error('[useFileCreate] Error saving file:', error);
