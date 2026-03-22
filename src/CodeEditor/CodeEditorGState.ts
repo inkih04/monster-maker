@@ -10,10 +10,12 @@ interface OpenFile {
 interface OpenUiFile {
 	htmlPath: string;
 	cssPath: string;
+	scriptPath: string | null; 
 	htmlContent: string;
 	cssContent: string;
 	savedHtmlContent: string;
 	savedCssContent: string;
+	savedScriptPath: string | null; 
 	isDirty: boolean;
 }
 
@@ -31,10 +33,12 @@ interface CodeEditorStore {
 		htmlPath: string,
 		cssPath: string,
 		htmlContent: string,
-		cssContent: string
+		cssContent: string,
+		scriptPath?: string | null
 	) => void;
 	updateHtmlContent: (content: string) => void;
 	updateCssContent: (content: string) => void;
+	updateScriptPath: (path: string | null) => void; 
 	markUiSaved: () => void;
 	closeUiFile: () => void;
 
@@ -79,16 +83,18 @@ export const useCodeEditorStore = create<CodeEditorStore>((set) => ({
 
 	closeFile: () => set({ openFile: null }),
 
-	setOpenUiFile: (htmlPath, cssPath, htmlContent, cssContent) =>
+	setOpenUiFile: (htmlPath, cssPath, htmlContent, cssContent, scriptPath = null) =>
 		set({
 			openFile: null,
 			openUiFile: {
 				htmlPath,
 				cssPath,
+				scriptPath,
 				htmlContent,
 				cssContent,
 				savedHtmlContent: htmlContent,
 				savedCssContent: cssContent,
+				savedScriptPath: scriptPath,
 				isDirty: false,
 			},
 			isLoadingFile: false,
@@ -99,7 +105,8 @@ export const useCodeEditorStore = create<CodeEditorStore>((set) => ({
 			if (!state.openUiFile) return state;
 			const isDirty =
 				content !== state.openUiFile.savedHtmlContent ||
-				state.openUiFile.cssContent !== state.openUiFile.savedCssContent;
+				state.openUiFile.cssContent !== state.openUiFile.savedCssContent ||
+				state.openUiFile.scriptPath !== state.openUiFile.savedScriptPath;
 			return { openUiFile: { ...state.openUiFile, htmlContent: content, isDirty } };
 		}),
 
@@ -108,8 +115,19 @@ export const useCodeEditorStore = create<CodeEditorStore>((set) => ({
 			if (!state.openUiFile) return state;
 			const isDirty =
 				state.openUiFile.htmlContent !== state.openUiFile.savedHtmlContent ||
-				content !== state.openUiFile.savedCssContent;
+				content !== state.openUiFile.savedCssContent ||
+				state.openUiFile.scriptPath !== state.openUiFile.savedScriptPath;
 			return { openUiFile: { ...state.openUiFile, cssContent: content, isDirty } };
+		}),
+
+	updateScriptPath: (path) =>
+		set((state) => {
+			if (!state.openUiFile) return state;
+			const isDirty =
+				state.openUiFile.htmlContent !== state.openUiFile.savedHtmlContent ||
+				state.openUiFile.cssContent !== state.openUiFile.savedCssContent ||
+				path !== state.openUiFile.savedScriptPath;
+			return { openUiFile: { ...state.openUiFile, scriptPath: path, isDirty } };
 		}),
 
 	markUiSaved: () =>
@@ -120,6 +138,7 @@ export const useCodeEditorStore = create<CodeEditorStore>((set) => ({
 					...state.openUiFile,
 					savedHtmlContent: state.openUiFile.htmlContent,
 					savedCssContent: state.openUiFile.cssContent,
+					savedScriptPath: state.openUiFile.scriptPath,
 					isDirty: false,
 				},
 			};

@@ -13,6 +13,7 @@ import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
 import { updateLiveCssContent } from '../CodeEditor/monacoConfig';
 import { useEffect } from 'react';
 import { useEngineConfigStore } from '../Tagger/useEngineConfigStore';
+import UiScriptPanel from './UiScriptPanel'; 
 
 function LayoutCodeEditor() {
 	const codeEditorMode = useEngineStore((state) => state.codeEditorMode);
@@ -112,7 +113,9 @@ function CodeEditorDuo() {
 					<MapPreview />
 				</div>
 				<Spacer size="small" resizable onResize={resizeMapPreview} marginRight={false} />
-				<div className="layoutCodeEditor--duo-options" />
+				<div className="layoutCodeEditor--duo-options">
+					<UiScriptPanel />
+				</div>
 			</aside>
 
 			<CodeEditorLoadingOverlay />
