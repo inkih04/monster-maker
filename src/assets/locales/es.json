@@ -76,7 +76,8 @@
 			"copy": "Copiar",
 			"paste": "Pegar",
 			"delete": "Eliminar",
-			"createFolder": "Crear Carpeta"
+			"createFolder": "Crear Carpeta",
+			"changeTileSize": "Cambiar tamaño del tileset"
 		},
 		"closeProject": "Cerrar Proyecto"
 	},

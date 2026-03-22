@@ -4,6 +4,7 @@ import mainI18n from '../mainI18n';
 export function setupContextMenuHandlers(): void {
 	ipcMain.on('show-file-context-menu', (event, fileData) => {
 		const t = (key: string) => mainI18n.t(key);
+		const isTileset = fileData.type === 'tileset';
 
 		const template: MenuItemConstructorOptions[] = [
 			{
@@ -24,6 +25,17 @@ export function setupContextMenuHandlers(): void {
 					event.sender.send('file-action', 'copy', fileData);
 				},
 			},
+			...(isTileset
+				? [
+						{ type: 'separator' as const },
+						{
+							label: t('menu.contextMenu.changeTileSize'),
+							click: () => {
+								event.sender.send('file-action', 'scale', fileData);
+							},
+						},
+					]
+				: []),
 			{
 				type: 'separator',
 			},

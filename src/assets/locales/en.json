@@ -76,7 +76,8 @@
 			"copy": "Copy",
 			"paste": "Paste",
 			"delete": "Delete",
-			"createFolder": "Create Folder"
+			"createFolder": "Create Folder",
+			"changeTileSize": "Change Tile Size"
 		},
 		"closeProject": "Close Project"
 	},

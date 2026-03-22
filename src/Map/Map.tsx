@@ -38,6 +38,7 @@ function Map() {
 	const isDirty = useMapStore((state) => state.isDirty);
 	const visibleLayers = useMapStore((state) => state.visibleLayers);
 	const lockedLayers = useMapStore((state) => state.lockedLayers);
+	const mapTileSize = useMapStore((state) => state.map!.tileSize);
 
 	useEffect(() => {
 		const removeListener = window.api.onToggleCollisions(() => {
@@ -146,6 +147,7 @@ function Map() {
 				tilesetImages,
 				selectedArea,
 				zoom,
+				mapTileSize: mapTileSize,
 				isLayerLocked: lockedLayers[activeLayer],
 			});
 		} else if (

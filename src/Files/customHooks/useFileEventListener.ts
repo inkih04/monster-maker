@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { FileItem } from '../../../global/types/fileItem';
-
+import { useTileSetStore } from '../../Tileset/TileSetGState';
 
 
 interface UseFileEventListenerProps {
@@ -10,6 +10,9 @@ interface UseFileEventListenerProps {
 }
 
 export function useFileEventListener({ onRename, onOpen, onDelete }: UseFileEventListenerProps) {
+	const openTileSizeDialog = useTileSetStore((state) => state.openTileSizeDialog);
+	const setCurrentTileSet = useTileSetStore((state) => state.setCurrentTileSet);
+
 	useEffect(() => {
 		const cleanup = window.api.onFileAction((action, fileData) => {
 			switch (action) {
@@ -22,9 +25,15 @@ export function useFileEventListener({ onRename, onOpen, onDelete }: UseFileEven
 				case 'delete':
 					onDelete(fileData);
 					break;
+				case 'scale':
+					if (fileData.path) {
+						setCurrentTileSet(fileData.path);
+					}
+					openTileSizeDialog();
+					break;
 			}
 		});
 
 		return cleanup;
-	}, [onRename, onOpen, onDelete]);
+	}, [onRename, onOpen, onDelete, openTileSizeDialog, setCurrentTileSet]);
 }

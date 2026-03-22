@@ -13,16 +13,15 @@ function TileSize() {
 	const tilesets = useTileSetStore((state) => state.tilesets);
 	const currentPath = useTileSetStore((state) => state.currentTileSetPath);
 	const updateTileSet = useTileSetStore((state) => state.updateTileSet);
+	const isTileSizeOpen = useTileSetStore((state) => state.isTileSizeOpen);
+	const closeTileSizeDialog = useTileSetStore((state) => state.closeTileSizeDialog);
 	const currentProject = useProjectStore((state) => state.currentProject);
 
 	const currentTileset = currentPath ? tilesets[currentPath] : null;
-	const isOpen = !!currentTileset && !currentTileset.isLoaded;
 	const isTileSizeValid = tileSize > 0 && tileSize % 16 === 0;
 
 	const handleClose = () => {
-		if (currentPath) {
-			updateTileSet(currentPath, { isLoaded: true });
-		}
+		closeTileSizeDialog();
 	};
 
 	const handleSubmit = async () => {
@@ -46,10 +45,11 @@ function TileSize() {
 			console.log(result);
 
 			updateTileSet(currentPath, {
-				isLoaded: true,
 				tileSizeX: tileSize,
 				tileSizeY: tileSize,
 			});
+
+			closeTileSizeDialog();
 		} catch (error) {
 			console.error('Error while saving the configuration:', error);
 		} finally {
@@ -58,7 +58,7 @@ function TileSize() {
 	};
 
 	return (
-		<Dialog.Root open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+		<Dialog.Root open={isTileSizeOpen} onOpenChange={(open) => !open && handleClose()}>
 			<Dialog.Portal>
 				<Dialog.Overlay className="tileSize--overlay" onClick={handleClose} />
 				<Dialog.Content className="tileSize--wrapper" onEscapeKeyDown={handleClose}>

@@ -18,6 +18,7 @@ interface DrawBrushPreviewParams {
 	tilesetImages: Record<string, HTMLImageElement>;
 	selectedArea: TileSelection | null;
 	zoom: number;
+	mapTileSize: number;
 	isLayerLocked?: boolean;
 }
 
@@ -64,6 +65,7 @@ export const createTileEntity = (
 	tilesetY: number,
 	tileSize: number,
 	spriteSheetPath: string,
+	mapSize: number,
 	name?: string
 ): Entity => ({
 	id: entityId,
@@ -72,8 +74,8 @@ export const createTileEntity = (
 	name,
 	components: {
 		POSITION: {
-			x: mapX * tileSize,
-			y: mapY * tileSize,
+			x: mapX * mapSize,
+			y: mapY * mapSize,
 			rotation: 0,
 		},
 		RENDER: {
@@ -82,8 +84,8 @@ export const createTileEntity = (
 			y: tilesetY * tileSize,
 			w: tileSize,
 			h: tileSize,
-			width: tileSize,
-			height: tileSize,
+			width: mapSize,
+			height: mapSize,
 			shader: 'default',
 		},
 	},
@@ -132,6 +134,7 @@ export function drawBrushPreview({
 	tilesetImages,
 	selectedArea,
 	zoom,
+	mapTileSize,
 	isLayerLocked = false,
 }: DrawBrushPreviewParams): void {
 	if (isActive || !currentTileSet || !previewPosition || !selectedArea) return;
@@ -139,8 +142,8 @@ export function drawBrushPreview({
 	const currentTilesetImage = currentTileSetPath ? tilesetImages[currentTileSetPath] : null;
 	if (!currentTilesetImage) return;
 
-	const tileSize = currentTileSet.tileSizeX;
-	const scaledTileSize = tileSize * zoom;
+	const srcTileSize = currentTileSet.tileSizeX;
+	const destTileSize = mapTileSize * zoom;
 
 	ctx.globalAlpha = 0.5;
 
@@ -154,46 +157,46 @@ export function drawBrushPreview({
 			for (let x = minX; x <= maxX; x++) {
 				ctx.drawImage(
 					currentTilesetImage,
-					x * tileSize,
-					y * tileSize,
-					tileSize,
-					tileSize,
-					(previewPosition.x + (x - minX)) * scaledTileSize,
-					(previewPosition.y + (y - minY)) * scaledTileSize,
-					scaledTileSize,
-					scaledTileSize
+					x * srcTileSize,
+					y * srcTileSize,
+					srcTileSize,
+					srcTileSize,
+					(previewPosition.x + (x - minX)) * destTileSize,
+					(previewPosition.y + (y - minY)) * destTileSize,
+					destTileSize,
+					destTileSize
 				);
 			}
 		}
 
 		if (isLayerLocked) {
-			const w = (maxX - minX + 1) * scaledTileSize;
-			const h = (maxY - minY + 1) * scaledTileSize;
+			const w = (maxX - minX + 1) * destTileSize;
+			const h = (maxY - minY + 1) * destTileSize;
 			ctx.globalAlpha = 0.55;
 			ctx.fillStyle = 'rgba(220, 30, 30, 0.6)';
-			ctx.fillRect(previewPosition.x * scaledTileSize, previewPosition.y * scaledTileSize, w, h);
+			ctx.fillRect(previewPosition.x * destTileSize, previewPosition.y * destTileSize, w, h);
 		}
 	} else {
 		ctx.drawImage(
 			currentTilesetImage,
 			0,
 			0,
-			tileSize,
-			tileSize,
-			previewPosition.x * scaledTileSize,
-			previewPosition.y * scaledTileSize,
-			scaledTileSize,
-			scaledTileSize
+			srcTileSize,
+			srcTileSize,
+			previewPosition.x * destTileSize,
+			previewPosition.y * destTileSize,
+			destTileSize,
+			destTileSize
 		);
 
 		if (isLayerLocked) {
 			ctx.globalAlpha = 0.55;
 			ctx.fillStyle = 'rgba(220, 30, 30, 0.6)';
 			ctx.fillRect(
-				previewPosition.x * scaledTileSize,
-				previewPosition.y * scaledTileSize,
-				scaledTileSize,
-				scaledTileSize
+				previewPosition.x * destTileSize,
+				previewPosition.y * destTileSize,
+				destTileSize,
+				destTileSize
 			);
 		}
 	}
