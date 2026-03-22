@@ -4,6 +4,8 @@
 #include "Engine.h"
 #include <iostream>
 #include <memory>
+
+#include "EditorConfig.h"
 #include "InputManager.h"
 #include "Renderer.h"
 #include "GameConfig.h"
@@ -16,9 +18,11 @@ Engine::Engine(int width, int height, const std::string& title)
     : m_width(width), m_height(height), m_title(title) {
     initGLFW();
     InputManager::initialize(m_window);
+    EditorConfig::getInstance().setVirtualResolution();
     setUpShaders();
     setUpCamera(width, height);
     UiManager::getInstance().init(m_width, m_height, "resources/fonts/Roboto/Roboto.ttf");
+
 }
 
 Engine::~Engine() {
@@ -113,6 +117,7 @@ void Engine::onResize(int width, int height) {
 }
 
 void Engine::setUpCamera(int width, int height)  {
+    std::cout << "[ENGINE] Setting up camera with viewport size: " << GameConfig::Width << "x" << GameConfig::Height;
     m_camera = std::make_unique<Camera>(GameConfig::Width, GameConfig::Height);
     m_camera->setPosition(glm::vec2(GameConfig::Width / 2.0f, GameConfig::Height / 2.0f));
     Renderer::getInstance().setCamera(*m_camera);

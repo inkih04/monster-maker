@@ -12,6 +12,7 @@ import { CodeEditorLoadingOverlay } from '../CodeEditor/CodeEditorLoadingOverlay
 import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
 import { updateLiveCssContent } from '../CodeEditor/monacoConfig';
 import { useEffect } from 'react';
+import { useEngineConfigStore } from '../Tagger/useEngineConfigStore';
 
 function LayoutCodeEditor() {
 	const codeEditorMode = useEngineStore((state) => state.codeEditorMode);
@@ -39,10 +40,16 @@ function CodeEditorEmpty() {
 function CodeEditorSingle() {
 	const openFile = useCodeEditorStore((state) => state.openFile);
 	const updateContent = useCodeEditorStore((state) => state.updateContent);
+	const tags = useEngineConfigStore((state) => state.tags);
 
 	return (
 		<div className="layoutCodeEditor--single" style={{ position: 'relative' }}>
-			<CodeEditor language="lua" value={openFile?.content ?? ''} onChange={updateContent} />
+			<CodeEditor
+				language="lua"
+				value={openFile?.content ?? ''}
+				onChange={updateContent}
+				tags={tags}
+			/>
 			<CodeEditorLoadingOverlay />
 		</div>
 	);

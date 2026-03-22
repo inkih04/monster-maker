@@ -16,6 +16,8 @@ public:
 
 private:
     static void parseShaders(const json& shadersJson);
+
+    static void parseTags(const json &tagsJson);
 };
 
 #endif //MONSTERMAKERENGINE_EDITORCONFIGLOADER_H

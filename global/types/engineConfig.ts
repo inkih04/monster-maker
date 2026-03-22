@@ -1,18 +1,18 @@
 export type ShaderMap = Record<string, number>;
-
-export interface MapEntry {
-	[mapName: string]: string;
-}
+export type TagMap = Record<string, string>;
+export type GameConfig = Record<string, string | number | boolean>;
 
 export interface EngineConfig {
-	maps: MapEntry[];
+	tags: TagMap;
 	shaders: ShaderMap;
+	gameConfig: GameConfig;
 }
 
 export const DEFAULT_ENGINE_CONFIG: EngineConfig = {
-	maps: [],
+	tags: {},
 	shaders: {
 		default: 0,
 		water: 1,
 	},
+	gameConfig: {},
 };

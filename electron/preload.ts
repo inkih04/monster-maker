@@ -173,4 +173,10 @@ contextBridge.exposeInMainWorld('api', {
 
 	updateShaders: (pd: ProjectData, shaders: Record<string, number>) =>
 		ipcRenderer.invoke('config:updateShaders', pd, shaders),
+
+	updateTags: (pd: ProjectData, tags: Record<string, string>) =>
+		ipcRenderer.invoke('config:updateTags', pd, tags),
+
+	updateGameConfig: (pd: ProjectData, gameConfig: Record<string, string | number | boolean>) =>
+		ipcRenderer.invoke('config:updateGameConfig', pd, gameConfig),
 });

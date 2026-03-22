@@ -130,6 +130,16 @@ declare global {
 				pd: ProjectData,
 				shaders: Record<string, number>
 			) => Promise<{ success: boolean; error?: string }>;
+
+			updateTags: (
+				pd: ProjectData,
+				tags: Record<string, string>
+			) => Promise<{ success: boolean; error?: string }>;
+
+			updateGameConfig: (
+				pd: ProjectData,
+				gameConfig: Record<string, string | number | boolean>
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

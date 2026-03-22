@@ -17,6 +17,8 @@ public:
         return instance;
     }
 
+    void setVirtualResolution() const;
+
     const std::string& getInitialMapPath() const;
     void setInitialMapPath(const std::string& value);
 
@@ -29,11 +31,11 @@ public:
     const std::string& getImageIconPath() const;
     void setImageIconPath(const std::string& value);
 
-    const std::unordered_map<std::string, std::string>& getMaps() const;
-    void setMaps(const std::unordered_map<std::string, std::string>& value);
-    void addMap(const std::string& name, const std::string& path);
-    bool hasMap(const std::string& name) const;
-    const std::string& getMap(const std::string& name) const;
+    const std::unordered_map<std::string, std::string>& getTags() const;
+    void setTags(const std::unordered_map<std::string, std::string>& value);
+    void addTag(const std::string& name, const std::string& path);
+    bool hasTag(const std::string& name) const;
+    const std::string& getTag(const std::string& name) const;
 
     const std::unordered_map<std::string, int>& getShaderTags() const;
     void setShaderTags(const std::unordered_map<std::string, int>& value);
@@ -47,6 +49,8 @@ private:
     std::string gameName = "Monster Maker Engine";
     std::string gameVersion = "1.0.0";
     std::string imageIconPath;
+    int virtualWidth = 480;
+    int virtualHeight = 270;
     std::unordered_map<std::string, std::string> maps;
     std::unordered_map<std::string, int> shaderTags;
 };

@@ -4,7 +4,7 @@ import TaggerBody from './body/TaggerBody';
 import './Tagger.css';
 import { useTranslation } from 'react-i18next';
 
-export type TaggerTab = 'layers' | 'shaders' | 'maps';
+export type TaggerTab = 'layers' | 'shaders' | 'tags' | 'gameConfig';
 
 function Tagger() {
 	const currentProject = useProjectStore((state) => state.currentProject);
@@ -29,10 +29,16 @@ function Tagger() {
 							Shaders
 						</button>
 						<button
-							className={`tagger--tab-button ${activeTab === 'maps' ? 'tagger--tab-active' : ''}`}
-							onClick={() => setActiveTab('maps')}
+							className={`tagger--tab-button ${activeTab === 'tags' ? 'tagger--tab-active' : ''}`}
+							onClick={() => setActiveTab('tags')}
 						>
 							{t('maps')}
+						</button>
+						<button
+							className={`tagger--tab-button ${activeTab === 'gameConfig' ? 'tagger--tab-active' : ''}`}
+							onClick={() => setActiveTab('gameConfig')}
+						>
+							{t('gameConfig') ?? 'Game Config'}
 						</button>
 					</div>
 					<div className="tagger--bodycontainer">

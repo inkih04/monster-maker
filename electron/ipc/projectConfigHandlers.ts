@@ -269,7 +269,6 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
-
 	ipcMain.handle(
 		'config:saveFileCompletePath',
 		async (_event, name: string, completePath: string, content: string) => {
@@ -329,6 +328,28 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		async (_event, pd: ProjectData, shaders: Record<string, number>) => {
 			try {
 				return configManager.updateShaders(pd, shaders);
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
+	ipcMain.handle(
+		'config:updateTags',
+		async (_event, pd: ProjectData, tags: Record<string, string>) => {
+			try {
+				return configManager.updateTags(pd, tags);
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
+	ipcMain.handle(
+		'config:updateGameConfig',
+		async (_event, pd: ProjectData, gameConfig: Record<string, string | number | boolean>) => {
+			try {
+				return configManager.updateGameConfig(pd, gameConfig);
 			} catch (error) {
 				return { success: false, error: String(error) };
 			}

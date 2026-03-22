@@ -735,4 +735,48 @@ export class ProjectConfigManager {
 			return { success: false, error: String(error) };
 		}
 	}
+
+	public updateTags(
+		pd: ProjectData,
+		tags: Record<string, string>
+	): { success: boolean; error?: string } {
+		try {
+			const cfgPath = this.getEngineConfigPath(pd);
+			const existing = this.fileSystemService.readJSON<EngineConfig>(cfgPath) ?? {
+				...DEFAULT_ENGINE_CONFIG,
+			};
+
+			const updated: EngineConfig = { ...existing, tags };
+
+			const ok = this.fileSystemService.writeJSON<EngineConfig>(cfgPath, updated);
+			if (ok) {
+				return { success: true };
+			}
+			return { success: false, error: 'writeJSON returned false' };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public updateGameConfig(
+		pd: ProjectData,
+		gameConfig: Record<string, string | number | boolean>
+	): { success: boolean; error?: string } {
+		try {
+			const cfgPath = this.getEngineConfigPath(pd);
+			const existing = this.fileSystemService.readJSON<EngineConfig>(cfgPath) ?? {
+				...DEFAULT_ENGINE_CONFIG,
+			};
+
+			const updated: EngineConfig = { ...existing, gameConfig };
+
+			const ok = this.fileSystemService.writeJSON<EngineConfig>(cfgPath, updated);
+			if (ok) {
+				return { success: true };
+			}
+			return { success: false, error: 'writeJSON returned false' };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
 }
