@@ -1,43 +1,33 @@
-import { useState } from 'react';
 import { Plus, Xmark } from 'iconoir-react';
 import '../TaggerBody.css';
+import { useTranslation } from 'react-i18next';
+import { useTagEntries } from './customHooks/useTagEntries';
 
-type MapEntry = {
-	id: string;
-	tagMap: string;
-	pathMap: string;
-};
 
-function TaggerMapsBody() {
-	const [entries, setEntries] = useState<MapEntry[]>([
-		{ id: crypto.randomUUID(), tagMap: '', pathMap: '' },
-	]);
+function TaggerTagsBody() {
+	const { t } = useTranslation();
+	const {
+		entries,
+		isLoading,
+		dragOverId,
+		handleTagChange,
+		handlePathChange,
+		handleAdd,
+		handleRemove,
+		handleDragOver,
+		handleDragLeave,
+		handleDrop,
+	} = useTagEntries();
 
-	const handleTagChange = (id: string, value: string) => {
-		setEntries((prev) =>
-			prev.map((entry) => (entry.id === id ? { ...entry, tagMap: value } : entry))
-		);
-	};
-
-	const handlePathChange = (id: string, value: string) => {
-		setEntries((prev) =>
-			prev.map((entry) => (entry.id === id ? { ...entry, pathMap: value } : entry))
-		);
-	};
-
-	const handleAdd = () => {
-		setEntries((prev) => [...prev, { id: crypto.randomUUID(), tagMap: '', pathMap: '' }]);
-	};
-
-	const handleRemove = (id: string) => {
-		setEntries((prev) => prev.filter((entry) => entry.id !== id));
-	};
+	if (isLoading) {
+		return <div className="tagger-body--scroll tagger-body--loading">Loading…</div>;
+	}
 
 	return (
 		<div className="tagger-body--scroll">
 			<div className="tagger-kv--header-row">
 				<span className="tagger-kv--col-label col-tag-map">Tag</span>
-				<span className="tagger-kv--col-label col-path">Map path</span>
+				<span className="tagger-kv--col-label col-path">{t('filePath')}</span>
 				<span className="tagger-kv--col-spacer" />
 			</div>
 
@@ -50,15 +40,18 @@ function TaggerMapsBody() {
 								className="tagger-kv--input input-tag-map"
 								type="text"
 								placeholder="e.g. town"
-								value={entry.tagMap}
+								value={entry.tag}
 								onChange={(e) => handleTagChange(entry.id, e.target.value)}
 							/>
 							<input
-								className="tagger-kv--input input-path"
+								className={`tagger-kv--input input-path ${dragOverId === entry.id ? 'tagger-kv--input-drag-over' : ''}`}
 								type="text"
 								placeholder="maps/town.json"
-								value={entry.pathMap}
+								value={entry.path}
 								onChange={(e) => handlePathChange(entry.id, e.target.value)}
+								onDragOver={(e) => handleDragOver(e, entry.id)}
+								onDragLeave={handleDragLeave}
+								onDrop={(e) => handleDrop(e, entry.id)}
 							/>
 							<button
 								className="tagger-kv--remove-btn"
@@ -75,11 +68,11 @@ function TaggerMapsBody() {
 			<div className="tagger-kv--add-container">
 				<button className="tagger-kv--add-button" onClick={handleAdd}>
 					<Plus width={14} strokeWidth={2.5} />
-					<span>Add map entry</span>
+					<span>{t('addTag') ?? 'Add tag'}</span>
 				</button>
 			</div>
 		</div>
 	);
 }
 
-export default TaggerMapsBody;
+export default TaggerTagsBody;

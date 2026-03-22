@@ -22,6 +22,7 @@ export interface TileSetStore {
 	currentTileSetPath: string | null;
 	selectedArea: TileSelection | null;
 	zoom: number;
+	isTileSizeOpen: boolean;
 
 	setSelectedArea: (area: TileSelection | null) => void;
 	setZoom: (zoom: number) => void;
@@ -30,6 +31,8 @@ export interface TileSetStore {
 	setTileSetLoaded: (path: string, loaded: boolean) => void;
 	updateTileSet: (path: string, updates: Partial<TileSetData>) => void;
 	removeTileSet: (path: string) => void;
+	openTileSizeDialog: () => void;
+	closeTileSizeDialog: () => void;
 	reset: () => void;
 }
 
@@ -39,6 +42,7 @@ export const useTileSetStore = create<TileSetStore>((set, get) => {
 		currentTileSetPath: null,
 		selectedArea: null,
 		zoom: 1,
+		isTileSizeOpen: false,
 
 		setSelectedArea: (area) => {
 			set({ selectedArea: area });
@@ -50,11 +54,20 @@ export const useTileSetStore = create<TileSetStore>((set, get) => {
 				currentTileSetPath: null,
 				selectedArea: null,
 				zoom: 1,
+				isTileSizeOpen: false,
 			});
 		},
 
 		setZoom: (zoom) => {
 			set({ zoom });
+		},
+
+		openTileSizeDialog: () => {
+			set({ isTileSizeOpen: true });
+		},
+
+		closeTileSizeDialog: () => {
+			set({ isTileSizeOpen: false });
 		},
 
 		setCurrentTileSet: (path) => {

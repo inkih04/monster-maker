@@ -9,17 +9,25 @@ import { FileItem } from '../../../global/types/fileItem';
 import { TileSetData, useTileSetStore } from '../../Tileset/TileSetGState';
 import { useNotify } from '../../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
+import FolderNode from '../../../global/types/folderNode';
+import { useEngineStore } from '../../ToolBar/EngineGState';
+import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const isDirty = useMapStore((state) => state.isDirty);
+	const isCodeDirty = useCodeEditorStore(
+		(state) => state.openFile?.isDirty ?? state.openUiFile?.isDirty ?? false
+	);
 	const loadMap = useMapStore((state) => state.loadMap);
 	const setMapRelativePath = useMapStore((state) => state.setMapRelativePath);
 	const createMap = useMapStore((state) => state.createMap);
 	const addTileSet = useTileSetStore((state) => state.addTileSet);
 	const setCurrentTileSet = useTileSetStore((state) => state.setCurrentTileSet);
 	const removeTileSet = useTileSetStore((state) => state.removeTileSet);
+	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
+	const changeCodeEditorMode = useEngineStore((state) => state.changeCodeEditorMode);
 
 	const { notify } = useNotify();
 	const { t } = useTranslation();
@@ -60,7 +68,108 @@ export function useFileActions() {
 		}
 
 		if (file.type == 'tileset') {
+			changeEditorMode('map');
 			handleOpenTileSet(file);
+			return;
+		}
+
+		if (file.type === 'ui') {
+			if (isCodeDirty) {
+				setShowSaveConfirm(true);
+			} else {
+				handleOpenUiFile(file);
+			}
+			return;
+		}
+
+		if (file.type === 'script' || file.type === 'fragment' || file.type === 'vertex') {
+			if (isCodeDirty) {
+				setShowSaveConfirm(true);
+			} else {
+				handleOpenScript(file);
+			}
+			return;
+		}
+	};
+
+	const handleOpenScript = async (file: FileItem) => {
+		changeCodeEditorMode('single');
+		changeEditorMode('code');
+		if (!selectedFolder?.path || !currentProject) return;
+
+		useCodeEditorStore.getState().setIsLoadingFile(true);
+
+		const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+		const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
+		if (result.success && result.content) {
+			useCodeEditorStore.getState().setOpenFile(relativePath, result.content.content);
+		} else {
+			useCodeEditorStore.getState().setIsLoadingFile(false);
+		}
+		return;
+	};
+
+	const handleOpenUiFile = async (file: FileItem) => {
+		if (!selectedFolder?.path || !currentProject) return;
+
+		changeEditorMode('code');
+		changeCodeEditorMode('duo');
+		useCodeEditorStore.getState().setIsLoadingFile(true);
+
+		try {
+			const descriptorResult = await window.api.getFile(
+				file.path,
+				selectedFolder.path,
+				currentProject
+			);
+
+			if (!descriptorResult.success || !descriptorResult.content) {
+				useCodeEditorStore.getState().setIsLoadingFile(false);
+				notify(
+					t('engine.notifications.error_title'),
+					t('engine.notifications.file_load_error'),
+					'error'
+				);
+				return;
+			}
+
+			const descriptor = JSON.parse(descriptorResult.content.content) as {
+				htmlPath: string;
+				cssPath: string;
+				scriptPath: string | null;
+			};
+
+			const [htmlResult, cssResult] = await Promise.all([
+				window.api.getFileFullPath(descriptor.htmlPath),
+				window.api.getFileFullPath(descriptor.cssPath),
+			]);
+
+			if (!htmlResult.success || !cssResult.success) {
+				useCodeEditorStore.getState().setIsLoadingFile(false);
+				notify(
+					t('engine.notifications.error_title'),
+					t('engine.notifications.file_load_error'),
+					'error'
+				);
+				return;
+			}
+
+			useCodeEditorStore
+				.getState()
+				.setOpenUiFile(
+					descriptor.htmlPath,
+					descriptor.cssPath,
+					htmlResult.content ?? '',
+					cssResult.content ?? ''
+				);
+		} catch (error) {
+			console.error('Error opening .ui file:', error);
+			useCodeEditorStore.getState().setIsLoadingFile(false);
+			notify(
+				t('engine.notifications.error_title'),
+				t('engine.notifications.file_load_error'),
+				'error'
+			);
 		}
 	};
 
@@ -146,34 +255,39 @@ export function useFileActions() {
 
 	const handleOpenFile = async (file = fileToOpen) => {
 		if (!file || !selectedFolder?.path || !currentProject) return;
+		if (file.type === 'tilemap') {
+			const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
 
-		const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+			if (!result.success || !result.content) return;
 
-		if (!result.success || !result.content) return;
+			const parsedMap = JSON.parse(result.content.content);
 
-		const parsedMap = JSON.parse(result.content.content);
+			if (!parsedMap.mapId || !parsedMap.entities) return;
 
-		if (!parsedMap.mapId || !parsedMap.entities) return;
+			const mapData: MapData = {
+				mapId: parsedMap.mapId,
+				width: parsedMap.width || 100,
+				height: parsedMap.height || 100,
+				tileSize: parsedMap.tileSize || currentProject.defaultTilesize || 16,
+				entities: Array.isArray(parsedMap.entities)
+					? parsedMap.entities.reduce(
+							(acc: Record<string, Entity>, entity: Entity) => {
+								acc[entity.id] = entity;
+								return acc;
+							},
+							{} as Record<string, Entity>
+						)
+					: parsedMap.entities,
+			};
 
-		const mapData: MapData = {
-			mapId: parsedMap.mapId,
-			width: parsedMap.width || 100,
-			height: parsedMap.height || 100,
-			tileSize: parsedMap.tileSize || currentProject.defaultTilesize || 16,
-			entities: Array.isArray(parsedMap.entities)
-				? parsedMap.entities.reduce(
-						(acc: Record<string, Entity>, entity: Entity) => {
-							acc[entity.id] = entity;
-							return acc;
-						},
-						{} as Record<string, Entity>
-					)
-				: parsedMap.entities,
-		};
-
-		loadMap(mapData);
-		setMapRelativePath(result.content.relativePath);
-		setShowSaveConfirm(false);
+			loadMap(mapData);
+			setMapRelativePath(result.content.relativePath);
+			setShowSaveConfirm(false);
+		} else if (file.type === 'ui') {
+			handleOpenUiFile(file);
+		} else if (file.type === 'script' || file.type === 'fragment' || file.type === 'vertex') {
+			handleOpenScript(file);
+		}
 	};
 
 	const handleConfirmDelete = async () => {
@@ -200,6 +314,29 @@ export function useFileActions() {
 
 			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 			await window.api.deleteFile(jsonPath, selectedFolder.path, currentProject);
+		} else if (fileToDelete.type === 'ui') {
+			const fileNameAndExtension = `${fileToDelete.name}.ui`;
+			const correctFilePath = await window.api.pathUnion(
+				selectedFolder.path,
+				fileToDelete.path.replace(fileNameAndExtension, '')
+			);
+			const hiddenFolderPath = await window.api.pathUnion(correctFilePath, `.${fileToDelete.name}`);
+
+			const folder: FolderNode = {
+				name: `.${fileToDelete.name}`,
+				path: hiddenFolderPath,
+			};
+
+			await window.api.deleteFolder(folder, currentProject);
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
+			changeCodeEditorMode(null);
+			changeEditorMode('map');
+		} else if (fileToDelete.type === 'script') {
+			changeCodeEditorMode(null);
+			changeEditorMode('map');
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
+		} else {
+			await window.api.deleteFile(fileToDelete.path, selectedFolder.path, currentProject);
 		}
 		notify(
 			t('engine.notifications.deleted_title'),
@@ -213,12 +350,14 @@ export function useFileActions() {
 	const handleDeleteRequest = (file: FileItem) => {
 		setFileToDelete(file);
 		setShowDeleteConfirm(true);
-		notify(
-			t('engine.notifications.warning_title'),
-			t('engine.notifications.delete_map_warning'),
-			'error',
-			4000
-		);
+		if (file.type === 'tilemap') {
+			notify(
+				t('engine.notifications.warning_title'),
+				t('engine.notifications.delete_map_warning'),
+				'error',
+				4000
+			);
+		}
 	};
 
 	return {

@@ -9,6 +9,8 @@ import {
 	DragHandGesture,
 	Square,
 	Bug,
+	CodeBrackets,
+	Codepen,
 } from 'iconoir-react';
 import './ToolBar.css';
 import { useToolsStore } from './ToolBarGState';
@@ -28,6 +30,8 @@ function ToolBar() {
 	const { undo, redo } = useMapStore.temporal.getState();
 	const { t } = useTranslation();
 
+	const editorMode = useEngineStore((state) => state.editorMode);
+	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const isRunning = useEngineStore((state) => state.isRunning);
 	const runMode = useEngineStore((state) => state.runMode);
 	const setEngineRunning = useEngineStore((state) => state.setEngineRunning);
@@ -36,11 +40,12 @@ function ToolBar() {
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.ctrlKey && e.key === 'z') {
+			console.log(editorMode);
+			if (editorMode === 'map' && e.ctrlKey && e.key === 'z') {
 				e.preventDefault();
 				undo();
 			}
-			if (e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+			if (editorMode === 'map' && e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
 				e.preventDefault();
 				redo();
 			}
@@ -241,13 +246,24 @@ function ToolBar() {
 						</button>
 					</>
 				)}
+				{editorMode === 'map' && (
+					<button onClick={() => changeEditorMode('code')} className="tool-button">
+						<CodeBrackets />
+					</button>
+				)}
+				{editorMode === 'code' && (
+					<button onClick={() => changeEditorMode('map')} className="tool-button">
+						<Codepen />
+					</button>
+				)}
 			</div>
 			<div className="other-tools">
 				<button
 					onClick={() => {
 						redo();
 					}}
-					className="tool-button"
+					className={`tool-button ${editorMode === 'code' ? 'disabled' : ''}`}
+					disabled={editorMode === 'code'}
 				>
 					<Redo />
 				</button>
@@ -255,7 +271,8 @@ function ToolBar() {
 					onClick={() => {
 						undo();
 					}}
-					className="tool-button"
+					className={`tool-button ${editorMode === 'code' ? 'disabled' : ''}`}
+					disabled={editorMode === 'code'}
 				>
 					<Undo />
 				</button>

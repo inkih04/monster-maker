@@ -1,0 +1,125 @@
+.uiScriptPanel--root {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	overflow: hidden;
+}
+
+.uiScriptPanel--header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 var(--space-sm, 8px);
+	height: 32px;
+	flex-shrink: 0;
+	background-color: var(--color-2);
+	border-bottom: 1px solid var(--color-3);
+	user-select: none;
+	margin-bottom: 16px;
+}
+
+.uiScriptPanel--header-left {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs, 6px);
+	font-size: var(--font-ssm);
+	color: var(--color-9);
+}
+
+.uiScriptPanel--header-icon {
+	width: 14px;
+	height: 14px;
+	color: var(--color-8);
+}
+
+.uiScriptPanel--body {
+	padding: var(--space-sm, 8px);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs, 6px);
+}
+
+.uiScriptPanel--row {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs, 6px);
+	font-size: var(--font-ssm);
+	color: var(--color-8);
+}
+
+.uiScriptPanel--input-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+.uiScriptPanel--input-path {
+	padding-right: 32px;
+	font-size: var(--font-ssm);
+	width: 100%;
+}
+
+.uiScriptPanel--input-folder {
+	position: absolute;
+	right: 4px;
+	top: 50%;
+	transform: translateY(-50%);
+	height: calc(100% - 8px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+	color: var(--color-9);
+	border: none;
+	border-radius: var(--radius);
+	cursor: pointer;
+	transition: all 0.2s;
+	width: 28px;
+}
+
+.uiScriptPanel--input-folder:hover {
+	background-color: var(--color-4);
+}
+
+.uiScriptPanel--folder-icon {
+	width: 18px;
+	height: 18px;
+}
+
+.uiScriptPanel--drag-over .render-input {
+	border-color: var(--color-6);
+	background-color: var(--color-3);
+}
+
+.uiScriptPanel--drag-valid .render-input {
+	border-color: #22c55e;
+	background-color: rgba(34, 197, 94, 0.08);
+}
+
+.uiScriptPanel--drag-invalid .render-input {
+	border-color: #ef4444;
+	background-color: rgba(239, 68, 68, 0.08);
+}
+
+.uiScriptPanel--clear {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+	color: var(--color-7);
+	border: none;
+	border-radius: var(--radius);
+	cursor: pointer;
+	transition: all 0.2s;
+	width: 22px;
+	height: 22px;
+	padding: 0;
+}
+
+.uiScriptPanel--clear:hover {
+	background-color: var(--color-4);
+	color: var(--color-9);
+}

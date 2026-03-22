@@ -506,7 +506,8 @@ export const useMapStore = create<MapStore>()(
 							tile.tilesetX,
 							tile.tilesetY,
 							tile.tileSize,
-							tile.spriteSheetPath
+							tile.spriteSheetPath,
+							state.map!.tileSize
 						);
 
 						newPaintedTiles.push({

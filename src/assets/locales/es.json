@@ -74,8 +74,10 @@
 			"open": "Abrir",
 			"rename": "Renombrar",
 			"copy": "Copiar",
+			"paste": "Pegar",
 			"delete": "Eliminar",
-			"createFolder": "Crear Carpeta"
+			"createFolder": "Crear Carpeta",
+			"changeTileSize": "Cambiar tamaño del tileset"
 		},
 		"closeProject": "Cerrar Proyecto"
 	},
@@ -99,9 +101,47 @@
 	"addShader": "Añadir shader",
 	"mode": "Modo",
 	"layers": "Capas",
-	"maps": "Mapas",
+	"maps": "Tags",
+	"filePath": "Path del archivo",
 	"unlockLayer": "Desbloquear capa",
 	"lockLayer": "Bloquear capa",
 	"showLayer": "Mostrar capa",
-	"hideLayer": "Ocultar capa"
+	"hideLayer": "Ocultar capa",
+	"gameConfig": {
+		"tabLabel": "Config. del Juego",
+		"gameName": "Nombre del Juego",
+		"gameVersion": "Versión",
+		"initialMapPath": "Mapa Inicial",
+		"iconPath": "Path del Icono",
+		"defaultFont": "Fuente por Defecto",
+		"virtualResolution": "Resolución Virtual"
+	},
+	"rcssWarnings": {
+		"incompatibility": "incompatibilidad con RmlUi",
+		"incompatibilities": "incompatibilidades con RmlUi",
+		"borderSolidShorthand": {
+			"message": "border: N solid COLOR — la palabra \"solid\" es ignorada por RmlUi.",
+			"fix": "Usa border-width y border-color por separado. El borde será sólido por defecto."
+		},
+		"borderStyle": {
+			"message": "border-style no existe en RCSS. RmlUi siempre pinta bordes sólidos.",
+			"fix": "Elimina border-style. Controla el grosor con border-width y el color con border-color."
+		},
+		"transition": {
+			"message": "transition no está soportado en RmlUi.",
+			"fix": "Usa el sistema de animaciones nativo de RmlUi (<animation> en RCSS)."
+		},
+		"animation": {
+			"message": "animation CSS no está soportado en RmlUi.",
+			"fix": "Usa la directiva @keyframes de RmlUi y la propiedad animation de RCSS (sintaxis diferente)."
+		},
+		"boxShadow": {
+			"message": "box-shadow tiene soporte muy limitado en RmlUi (solo spread y color básicos).",
+			"fix": "Simplifica el box-shadow o usa un elemento hermano con opacity como alternativa."
+		},
+		"vwVhUnits": {
+			"message": "Las unidades vw/vh tienen soporte limitado en RmlUi. Pueden no funcionar en todos los contextos.",
+			"fix": "Verifica en el motor. Para layouts de pantalla completa, width: 100% / height: 100% suele ser más seguro."
+		}
+	}
 }

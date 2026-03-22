@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 const DEFAULTS = {
-	mapUtilityWidth: 340 as number,
+	mapUtilityWidth: 440 as number,
 	entityWidth: 490 as number,
 	filesHeight: 220 as number,
 	filesMenuWidth: 200 as number,
@@ -9,7 +9,7 @@ const DEFAULTS = {
 };
 
 export const LIMITS = {
-	mapUtilityWidth: { min: 240, max: 400 },
+	mapUtilityWidth: { min: 240, max: 640 },
 	entityWidth: { min: 440, max: 700 },
 	filesHeight: { min: 100, max: 500 },
 	filesMenuWidth: { min: 100, max: 400 },

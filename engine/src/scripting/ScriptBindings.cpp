@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include "scripting/ScriptBindings.h"
 #include <GLFW/glfw3.h>
 #include "Camera.h"
@@ -8,8 +9,10 @@
 #include "PositionComponent.h"
 #include "RenderComponent.h"
 #include "AudioService.h"
+#include "EditorConfig.h"
 #include "InteractionComponent.h"
 #include "ScriptEngine.h"
+#include "UiManager.h"
 
 void ScriptBindings::registerStatic(sol::state& lua) {
     registerKeys(lua);
@@ -22,7 +25,44 @@ void ScriptBindings::registerStatic(sol::state& lua) {
     registerCamera(lua);
     registerAudioService(lua);
     registerBordersMapService(lua);
+    registerUiManager(lua);
+    registerConfigTags(lua);
 }
+
+void ScriptBindings::registerConfigTags(sol::state& lua) {
+    sol::table tagsTable = lua.create_table();
+    for (const auto& [name, path] : EditorConfig::getInstance().getTags()) {
+        tagsTable[name] = path;
+    }
+    lua["tags"] = tagsTable;
+}
+
+
+void ScriptBindings::registerUiManager(sol::state& lua) {
+    lua.new_usertype<UiDocument>("UiDocument",
+        "isOpen", &UiDocument::isOpen,
+        "close",  &UiDocument::close
+    );
+
+    lua.new_usertype<UiManager>("UiManager",
+        sol::no_constructor,
+        "open",    [](UiManager& self, const std::string& id, const std::string& uiFilePath) -> UiDocument* {
+            return self.openDocument(id, EditorConfig::getInstance().getTag(uiFilePath));
+        },
+        "close",   [](UiManager& self, const std::string& id) {
+            self.closeDocument(id);
+        },
+        "isOpen",  [](UiManager& self, const std::string& id) {
+            return self.isOpen(id);
+        },
+        "get",     [](UiManager& self, const std::string& id) -> UiDocument* {
+            return self.getDocument(id);
+        }
+    );
+
+    lua["UI"] = &UiManager::getInstance();
+}
+
 
 void ScriptBindings::registerBordersMapService(sol::state& lua) {
     lua.new_usertype<BordersMapService>("BordersMapService",
@@ -55,7 +95,7 @@ void ScriptBindings::registerAudioService(sol::state& lua) {
         sol::no_constructor,
 
         "playMusic", [](AudioService& self, const std::string& path, sol::optional<bool> loop) {
-            self.playMusic(path, loop.value_or(true));
+            self.playMusic(EditorConfig::getInstance().getTag(path), loop.value_or(true));
         },
         "playSound", &AudioService::playSound,
         "stopMusic", &AudioService::stopMusic,
@@ -80,7 +120,7 @@ void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityMana
     });
 
     lua.set_function("loadMap", [](const std::string& path) {
-        ScriptEngine::getInstance().requestMapChange(path);
+        ScriptEngine::getInstance().requestMapChange(EditorConfig::getInstance().getTag(path));
     });
 }
 

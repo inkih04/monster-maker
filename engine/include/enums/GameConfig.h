@@ -6,8 +6,8 @@
 #define POKEMONGAMEENGINE_GAMECONFIG_H
 
 namespace GameConfig {
-    constexpr int Width = 480;
-    constexpr int Height = 270;
+    inline int Width = 480;
+    inline int Height = 270;
     constexpr int GridSize = 8;
 
 }

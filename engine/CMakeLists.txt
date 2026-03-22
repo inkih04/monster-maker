@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-include_directories(include include/enums include/components include/structs include/scripting include/service)
+include_directories(include include/enums include/components include/structs include/scripting include/service include/ui)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -33,6 +33,8 @@ set(SOLOUD_ALL_SOURCES
         ${SOLOUD_CORE_SOURCES}
         ${SOLOUD_WAV_SOURCES}
         ${SOLOUD_BACKEND_SOURCES}
+        include/ui/UiDocument.h
+        include/ui/RmlFileInterface.h
 )
 
 add_library(SoloudStatic STATIC ${SOLOUD_ALL_SOURCES})
@@ -52,6 +54,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_package(lua CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(RmlUi CONFIG REQUIRED)
 
 if(APPLE)
     find_library(OPENGL_FRAMEWORK OpenGL)
@@ -81,6 +84,14 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         src/core/EditorConfig.cpp
         include/EditorConfigLoader.h
         src/core/EditorConfigLoader.cpp
+        include/ui/RmlSystemInterface.h
+        include/ui/RmlRenderInterface.h
+        src/ui/RmlSystemInterface.cpp
+        include/ui/UiManager.h
+        src/ui/UiManager.cpp
+        include/ui/UiDocumentLoader.h
+        src/ui/UiDocumentLoader.cpp
+        src/ui/UiDocument.cpp
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD
@@ -98,6 +109,7 @@ target_link_libraries(MonsterMakerEngine
         lua
         Freetype::Freetype
         SoloudStatic
+        RmlUi::RmlUi
 )
 
 if(UNIX AND NOT APPLE)

@@ -9,8 +9,7 @@ import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
 import { spawn } from 'child_process';
 import { EngineLog, LogLevel } from '../../global/types/engineLog';
-import { EngineConfig, DEFAULT_ENGINE_CONFIG } from '../../global/types/engineConfig';
-
+import { EngineConfig, DEFAULT_ENGINE_CONFIG, GameConfig } from '../../global/types/engineConfig';
 
 const ENGINE_CONFIG_FILENAME = '.engineConfig.json';
 
@@ -32,7 +31,6 @@ export class ProjectConfigManager {
 	private getEngineConfigPath(pd: ProjectData): string {
 		return path.join(this.fileSystemService.getProjectPath(pd), ENGINE_CONFIG_FILENAME);
 	}
-
 
 	public ensureEngineConfig(pd: ProjectData): void {
 		const cfgPath = this.getEngineConfigPath(pd);
@@ -97,6 +95,38 @@ export class ProjectConfigManager {
 
 			if (this.currentWatchedFolder) {
 				const folderPath = path.dirname(fileRelativePath);
+				const watchedFolderPath = this.currentWatchedFolder.folder.path;
+
+				if (folderPath === watchedFolderPath) {
+					const files = this.getFilesInFolder(
+						this.currentWatchedFolder.pd,
+						this.currentWatchedFolder.folder
+					);
+					this.fileSystemWatcher.notifyMainWindow('files-changed', files);
+				}
+			}
+
+			return true;
+		} catch (error) {
+			console.log(`Error deleting file: ${error}`);
+			return false;
+		}
+	}
+
+	public deleteFileFullPath(pathComplete: string, pd: ProjectData): boolean {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const completePath = path.join(projectPath, pathComplete);
+
+			if (!this.fileSystemService.exists(completePath)) {
+				console.log(`File does not exist: ${completePath}`);
+				return false;
+			}
+
+			this.fileSystemService.deleteFile(completePath);
+
+			if (this.currentWatchedFolder) {
+				const folderPath = path.dirname(pathComplete);
 				const watchedFolderPath = this.currentWatchedFolder.folder.path;
 
 				if (folderPath === watchedFolderPath) {
@@ -181,17 +211,24 @@ export class ProjectConfigManager {
 		content: string
 	): { success: boolean; error?: string } {
 		try {
-			const dirPath = path.dirname(completePath);
-			if (!this.fileSystemService.exists(dirPath)) {
-				return { success: false, error: `Directory does not exist: ${dirPath}` };
+			if (!this.fileSystemService.exists(completePath)) {
+				const parentDir = path.dirname(completePath);
+				if (!this.fileSystemService.exists(parentDir)) {
+					return { success: false, error: `Parent directory does not exist: ${parentDir}` };
+				}
+				const createResult = this.fileSystemService.createFolder(completePath);
+				if (!createResult.success) {
+					return { success: false, error: createResult.error };
+				}
 			}
-			completePath = path.join(completePath, name);
+
+			if (name !== '') {
+				completePath = path.join(completePath, name);
+			}
 
 			if (this.fileSystemService.saveFile(completePath, content)) {
-				log('completado');
 				return { success: true };
 			} else {
-				log('fallo2');
 				return { success: false };
 			}
 		} catch (error) {
@@ -227,6 +264,31 @@ export class ProjectConfigManager {
 			const relativeP = path.join(folderPath, fileRelativePath);
 
 			return { success: true, content: { relativePath: relativeP, content: cont } };
+		} catch (error) {
+			console.log(`Error getting file: ${error}`);
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public getFileFullPath(completePath: string): {
+		success: boolean;
+		content?: string;
+		error?: string;
+	} {
+		try {
+			if (!this.fileSystemService.exists(completePath)) {
+				console.log(`File does not exist: ${completePath}`);
+				return { success: false, error: 'File does not exist' };
+			}
+
+			if (this.fileSystemService.isDirectory(completePath)) {
+				console.log(`Path is a directory, not a file: ${completePath}`);
+				return { success: false, error: 'Path is a directory' };
+			}
+
+			const cont = this.fileSystemService.readFile(completePath);
+
+			return { success: true, content: cont };
 		} catch (error) {
 			console.log(`Error getting file: ${error}`);
 			return { success: false, error: String(error) };
@@ -400,8 +462,6 @@ export class ProjectConfigManager {
 			}
 
 			this.addProjectData(pd);
-
-			// Guarantee .engineConfig.json exists when a project is opened
 			this.ensureEngineConfig(pd);
 
 			return true;
@@ -433,7 +493,6 @@ export class ProjectConfigManager {
 
 			this.addProjectData(pd);
 
-			// Create .engineConfig.json right away for new projects
 			this.ensureEngineConfig(pd);
 
 			return true;
@@ -673,6 +732,50 @@ export class ProjectConfigManager {
 			}
 		} catch (error) {
 			console.error(`Error stopping engine: ${error}`);
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public updateTags(
+		pd: ProjectData,
+		tags: Record<string, string>
+	): { success: boolean; error?: string } {
+		try {
+			const cfgPath = this.getEngineConfigPath(pd);
+			const existing = this.fileSystemService.readJSON<EngineConfig>(cfgPath) ?? {
+				...DEFAULT_ENGINE_CONFIG,
+			};
+
+			const updated: EngineConfig = { ...existing, tags };
+
+			const ok = this.fileSystemService.writeJSON<EngineConfig>(cfgPath, updated);
+			if (ok) {
+				return { success: true };
+			}
+			return { success: false, error: 'writeJSON returned false' };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public updateGameConfig(
+		pd: ProjectData,
+		gameConfig: GameConfig
+	): { success: boolean; error?: string } {
+		try {
+			const cfgPath = this.getEngineConfigPath(pd);
+			const existing = this.fileSystemService.readJSON<EngineConfig>(cfgPath) ?? {
+				...DEFAULT_ENGINE_CONFIG,
+			};
+
+			const updated: EngineConfig = { ...existing, gameConfig };
+
+			const ok = this.fileSystemService.writeJSON<EngineConfig>(cfgPath, updated);
+			if (ok) {
+				return { success: true };
+			}
+			return { success: false, error: 'writeJSON returned false' };
+		} catch (error) {
 			return { success: false, error: String(error) };
 		}
 	}

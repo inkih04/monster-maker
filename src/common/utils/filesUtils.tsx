@@ -5,6 +5,8 @@ import FragmentShaderIcon from '../../assets/img/FragmentShader.png';
 import VertexShaderIcon from '../../assets/img/VertexShader.png';
 import musicIcon from '../../assets/img/music.png';
 import undefined from '../../assets/img/Fichero.png';
+import rmlui from '../../assets/img/Rmlui.png';
+import fonts from '../../assets/img/fonts.png';
 
 export function getFileIcon(type: string) {
 	switch (type) {
@@ -15,11 +17,15 @@ export function getFileIcon(type: string) {
 		case 'tileset':
 			return <img src={TileSetIcon} alt="Tileset" className="files--icon-img" />;
 		case 'vertex':
-			return <img src={VertexShaderIcon} alt="Tileset" className="files--icon-img" />;
+			return <img src={VertexShaderIcon} alt="vertexshader" className="files--icon-img" />;
 		case 'fragment':
-			return <img src={FragmentShaderIcon} alt="Tileset" className="files--icon-img" />;
+			return <img src={FragmentShaderIcon} alt="fragmentshader" className="files--icon-img" />;
 		case 'music':
-			return <img src={musicIcon} alt="Tileset" className="files--icon-img" />;
+			return <img src={musicIcon} alt="music" className="files--icon-img" />;
+		case 'ui':
+			return <img src={rmlui} alt="ui" className="files--icon-img" />;
+		case 'font':
+			return <img src={fonts} alt="font" className="files--icon-img" />;
 
 		default:
 			return <img src={undefined} alt="File" className="files--icon-img" />;
@@ -28,7 +34,16 @@ export function getFileIcon(type: string) {
 
 export function getFileType(
 	fileName: string
-): 'script' | 'tilemap' | 'tileset' | 'vertex' | 'fragment' | 'music' | 'undefined' {
+):
+	| 'script'
+	| 'tilemap'
+	| 'tileset'
+	| 'vertex'
+	| 'fragment'
+	| 'music'
+	| 'ui'
+	| 'font'
+	| 'undefined' {
 	const extension = fileName.split('.').pop()?.toLowerCase();
 
 	if (extension === 'lua') return 'script';
@@ -38,6 +53,9 @@ export function getFileType(
 	if (extension === 'frag') return 'fragment';
 	if (extension === 'waw' || extension === 'ogg' || extension === 'mp3' || extension === '.flac')
 		return 'music';
+	if (extension === 'ui') return 'ui';
+	if (extension === 'ttf' || extension === 'otf' || extension === 'woff' || extension === 'wolff')
+		return 'font';
 
 	return 'undefined';
 }

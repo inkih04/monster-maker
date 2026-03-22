@@ -1,4 +1,5 @@
 import { ProjectData } from '../global/types/projectData';
+import { GameConfig } from '../global/types/engineConfig';
 import FolderNode from '../global/types/folderNode';
 import { FileData } from '../global/types/fileData';
 import { ProjectFile } from '../global/types/projectFile';
@@ -45,10 +46,18 @@ declare global {
 			stopWatchingFiles: () => Promise<{ success: boolean; error?: string }>;
 			onFilesChanged: (callback: (files: string[]) => void) => () => void;
 			showFileContextMenu: (fileData: FileData) => void;
+			showFileListContextMenu: () => void;
+			onCreateFileInline: (
+				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void
+			) => () => void;
 			onFileAction: (callback: (action: string, fileData: FileData) => void) => () => void;
 			deleteFile: (
 				fileRelativePath: string,
 				folderPath: string,
+				pd: ProjectData
+			) => Promise<{ success: boolean; error?: string }>;
+			deleteFileFullPath: (
+				completePath: string,
 				pd: ProjectData
 			) => Promise<{ success: boolean; error?: string }>;
 			pathUnion: (path1: string, path2: string) => Promise<string>;
@@ -65,6 +74,10 @@ declare global {
 				pd: ProjectData
 			) => Promise<{ success: boolean; content?: ProjectFile; error?: string }>;
 
+			getFileFullPath: (
+				completePath: string
+			) => Promise<{ success: boolean; content?: string; error?: string }>;
+
 			saveFile: (
 				fileRelativePath: string,
 				content: string,
@@ -77,7 +90,9 @@ declare global {
 				content: string
 			) => Promise<{ success: boolean; error?: string }>;
 
-			onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => () => void;
+			onCreateNewFile: (
+				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void
+			) => () => void;
 			onAddNewFile: (callback: () => void) => () => void;
 			onCloseProject: (callback: () => void) => () => void;
 			onSaveFile: (callback: () => void) => () => void;
@@ -115,6 +130,16 @@ declare global {
 			updateShaders: (
 				pd: ProjectData,
 				shaders: Record<string, number>
+			) => Promise<{ success: boolean; error?: string }>;
+
+			updateTags: (
+				pd: ProjectData,
+				tags: Record<string, string>
+			) => Promise<{ success: boolean; error?: string }>;
+
+			updateGameConfig: (
+				pd: ProjectData,
+				gameConfig: GameConfig
 			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}

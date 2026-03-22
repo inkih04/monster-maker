@@ -69,6 +69,22 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle(
+		'config:deleteFileFullPath',
+		async (_event, completePath: string, pd: ProjectData) => {
+			try {
+				const success = configManager.deleteFileFullPath(completePath, pd);
+				if (success) {
+					return { success: true };
+				} else {
+					return { success: false, error: 'File does not exist or could not be deleted' };
+				}
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
 	ipcMain.handle('config:deleteFolder', async (_event, folderNode: FolderNode, pd: ProjectData) => {
 		try {
 			const result = configManager.deleteFolder(folderNode, pd);
@@ -228,6 +244,15 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle('config:getFileFullPath', async (_event, completePath: string) => {
+		try {
+			const result = configManager.getFileFullPath(completePath);
+			return result;
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	});
+
 	ipcMain.handle(
 		'config:saveFile',
 		async (_event, fileRelativePath: string, content: string, pd: ProjectData) => {
@@ -290,7 +315,6 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-
 	ipcMain.handle('config:getEngineConfig', async (_event, pd: ProjectData) => {
 		try {
 			return configManager.getEngineConfig(pd);
@@ -299,12 +323,33 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-
 	ipcMain.handle(
 		'config:updateShaders',
 		async (_event, pd: ProjectData, shaders: Record<string, number>) => {
 			try {
 				return configManager.updateShaders(pd, shaders);
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
+	ipcMain.handle(
+		'config:updateTags',
+		async (_event, pd: ProjectData, tags: Record<string, string>) => {
+			try {
+				return configManager.updateTags(pd, tags);
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
+	ipcMain.handle(
+		'config:updateGameConfig',
+		async (_event, pd: ProjectData, gameConfig: Record<string, string | number | boolean>) => {
+			try {
+				return configManager.updateGameConfig(pd, gameConfig);
 			} catch (error) {
 				return { success: false, error: String(error) };
 			}

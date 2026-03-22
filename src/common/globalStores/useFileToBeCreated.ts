@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { useMapStore } from '../../Map/MapGState';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
+import { UI_CSS_DEFAULT_CONTENT, UI_HTML_DEFAULT_CONTENT } from '../../Files/customHooks/useFileCreate';
 
 interface FileToBeCreatedStore {
 	isOpen: boolean;
@@ -28,7 +29,6 @@ export const useFileToBeCreatedStore = create<FileToBeCreatedStore>((set, get) =
 		set({ extension: null, content: null, onOpenChange: () => {} });
 	},
 	setContent: (content: string) => set({ content: content }),
-
 	setOnOpenChange: (fn) => set({ onOpenChange: fn }),
 	setExtension(extension) {
 		set({ extension: extension });
@@ -37,8 +37,40 @@ export const useFileToBeCreatedStore = create<FileToBeCreatedStore>((set, get) =
 	createFile: async (name: string, path: string) => {
 		set({ lastFilePath: path });
 		const { extension, content } = get();
-		const safeContent = content ?? '';
 
+		if (extension === '.ui') {
+			const baseName = name.endsWith('.ui') ? name.slice(0, -3) : name;
+			const resolvedContent = (content ?? '').split('__UI_NAME__').join(baseName);
+
+			const result = await window.api.saveFileCompletePath(`${baseName}.ui`, path, resolvedContent);
+
+			if (!result.success) {
+				return result;
+			}
+
+			const hiddenFolderPath = await window.api.pathUnion(path, `.${baseName}`);
+
+			const assetFiles = [
+				{ name: `${baseName}_HTML.rmli`, content: UI_HTML_DEFAULT_CONTENT(baseName) },
+				{ name: `${baseName}_CSS.css`, content: UI_CSS_DEFAULT_CONTENT(baseName) },
+			];
+
+			for (const file of assetFiles) {
+				const assetResult = await window.api.saveFileCompletePath(
+					file.name,
+					hiddenFolderPath,
+					file.content
+				);
+				if (!assetResult.success) {
+					console.error(`[useFileToBeCreated] Failed to create ${file.name}:`, assetResult.error);
+				}
+			}
+
+			get().reset();
+			return result;
+		}
+
+		const safeContent = content ?? '';
 		const result = await window.api.saveFileCompletePath(name + extension, path, safeContent);
 
 		if (result.success) {

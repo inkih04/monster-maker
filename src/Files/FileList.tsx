@@ -6,6 +6,7 @@ import SaveConfirmation from '../common/components/save/SaveConfirmation';
 import { useFileActions } from './customHooks/useFileActions';
 import { useFileRename } from './customHooks/useFileRename';
 import { useFileEventListener } from './customHooks/useFileEventListener';
+import { useFileCreate, CREATABLE_TYPE_TO_ICON } from './customHooks/useFileCreate';
 
 export default function FileList() {
 	const { files, isLoading } = useFileWatcher();
@@ -30,6 +31,15 @@ export default function FileList() {
 		cancelRename,
 		handleRenameKeyDown,
 	} = useFileRename();
+
+	const {
+		creatingFileType,
+		newFileName: newCreateName,
+		setNewFileName: setNewCreateName,
+		inputRef: createInputRef,
+		cancelCreation,
+		handleCreateKeyDown,
+	} = useFileCreate();
 
 	useFileEventListener({
 		onRename: startRename,
@@ -56,7 +66,7 @@ export default function FileList() {
 		file: { name: string; path: string; type: string }
 	) => {
 		e.dataTransfer.setData('application/file-item', JSON.stringify(file));
-		e.dataTransfer.setData(`file-type/${file.type}`, ''); 
+		e.dataTransfer.setData(`file-type/${file.type}`, '');
 		e.dataTransfer.effectAllowed = 'copy';
 	};
 
@@ -64,7 +74,13 @@ export default function FileList() {
 
 	return (
 		<>
-			<div className="files--container">
+			<div
+				className="files--container"
+				onContextMenu={(e) => {
+					e.preventDefault();
+					window.api.showFileListContextMenu();
+				}}
+			>
 				<div className="files--grid">
 					{files.map((file, index) => (
 						<div
@@ -94,6 +110,24 @@ export default function FileList() {
 							)}
 						</div>
 					))}
+
+					{creatingFileType && (
+						<div className="files--item">
+							<div className="files--icon">
+								{getFileIcon(CREATABLE_TYPE_TO_ICON[creatingFileType])}
+							</div>
+							<textarea
+								ref={createInputRef}
+								className="files--name files--rename-input"
+								value={newCreateName}
+								onChange={(e) => setNewCreateName(e.target.value)}
+								onKeyDown={handleCreateKeyDown}
+								onBlur={cancelCreation}
+								rows={1}
+								spellCheck={false}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 

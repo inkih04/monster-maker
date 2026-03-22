@@ -23,7 +23,8 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('directory-structure-changed', (_event, structure) => callback(structure));
 		return () => ipcRenderer.removeAllListeners('directory-structure-changed');
 	},
-	selectFile: (defaultPath?: string, filters?: { name: string; extensions: string[] }[]) => ipcRenderer.invoke('config:selectFile', defaultPath, filters),
+	selectFile: (defaultPath?: string, filters?: { name: string; extensions: string[] }[]) =>
+		ipcRenderer.invoke('config:selectFile', defaultPath, filters),
 	onLanguageChange: (callback: (lng: string) => void) => {
 		ipcRenderer.on('change-language', (_event, lng: string) => callback(lng));
 		return () => ipcRenderer.removeAllListeners('change-language');
@@ -50,6 +51,15 @@ contextBridge.exposeInMainWorld('api', {
 	},
 	showFileContextMenu: (fileData: { name: string; path: string; type: string }) =>
 		ipcRenderer.send('show-file-context-menu', fileData),
+	showFileListContextMenu: () => ipcRenderer.send('show-filelist-context-menu'),
+	onCreateFileInline: (callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void) => {
+		const subscription = (
+			_event: Electron.IpcRendererEvent,
+			fileType: 'map' | 'prefab' | 'script' | 'ui'
+		) => callback(fileType);
+		ipcRenderer.on('create-file-inline', subscription);
+		return () => ipcRenderer.removeListener('create-file-inline', subscription);
+	},
 	onFileAction: (
 		callback: (action: string, fileData: { name: string; path: string; type: string }) => void
 	) => {
@@ -63,6 +73,8 @@ contextBridge.exposeInMainWorld('api', {
 	},
 	deleteFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
 		ipcRenderer.invoke('config:deleteFile', fileRelativePath, folderPath, pd),
+	deleteFileFullPath: (completePath: string, pd: ProjectData) =>
+		ipcRenderer.invoke('config:deleteFileFullPath', completePath, pd),
 	renameFile: (
 		oldFileRelativePath: string,
 		newFileName: string,
@@ -71,16 +83,19 @@ contextBridge.exposeInMainWorld('api', {
 	) => ipcRenderer.invoke('config:renameFile', oldFileRelativePath, newFileName, folderPath, pd),
 	getFile: (fileRelativePath: string, folderPath: string, pd: ProjectData) =>
 		ipcRenderer.invoke('config:getFile', fileRelativePath, folderPath, pd),
+
+	getFileFullPath: (completePath: string) =>
+		ipcRenderer.invoke('config:getFileFullPath', completePath),
 	saveFile: (fileRelativePath: string, content: string, pd: ProjectData) =>
 		ipcRenderer.invoke('config:saveFile', fileRelativePath, content, pd),
 
 	saveFileCompletePath: (name: string, completePath: string, content: string) =>
 		ipcRenderer.invoke('config:saveFileCompletePath', name, completePath, content),
 
-	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script') => void) => {
+	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void) => {
 		const subscription = (
 			_event: Electron.IpcRendererEvent,
-			fileType: 'map' | 'prefab' | 'script'
+			fileType: 'map' | 'prefab' | 'script' | 'ui'
 		) => callback(fileType);
 		ipcRenderer.on('create-new-file', subscription);
 		return () => ipcRenderer.removeListener('create-new-file', subscription);
@@ -154,9 +169,14 @@ contextBridge.exposeInMainWorld('api', {
 	deleteFolder: (folderNode: FolderNode, pd: ProjectData) =>
 		ipcRenderer.invoke('config:deleteFolder', folderNode, pd),
 	notifyLanguageChange: (lng: string) => ipcRenderer.send('language-changed', lng),
-		getEngineConfig: (pd: ProjectData) => ipcRenderer.invoke('config:getEngineConfig', pd),
+	getEngineConfig: (pd: ProjectData) => ipcRenderer.invoke('config:getEngineConfig', pd),
 
 	updateShaders: (pd: ProjectData, shaders: Record<string, number>) =>
 		ipcRenderer.invoke('config:updateShaders', pd, shaders),
-	
+
+	updateTags: (pd: ProjectData, tags: Record<string, string>) =>
+		ipcRenderer.invoke('config:updateTags', pd, tags),
+
+	updateGameConfig: (pd: ProjectData, gameConfig: Record<string, string | number | boolean>) =>
+		ipcRenderer.invoke('config:updateGameConfig', pd, gameConfig),
 });

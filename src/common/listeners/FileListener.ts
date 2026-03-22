@@ -4,6 +4,9 @@ import { useMapStore } from '../../Map/MapGState';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
 import { useFolderStore } from '../globalStores/useFolderStore';
 import { useTileSetStore } from '../../Tileset/TileSetGState';
+import { useEngineStore } from '../../ToolBar/EngineGState';
+import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
+import { scriptContent } from '../../Files/defaultContentFiles/scripts/scriptDefaultContent';
 
 export function FileListener() {
 	const openFileCreation = useFileToBeCreatedStore((state) => state.setOpen);
@@ -18,6 +21,7 @@ export function FileListener() {
 	const resetMap = useMapStore((state) => state.reset);
 	const resetProject = useProjectStore((state) => state.reset);
 	const resetFolder = useFolderStore((state) => state.reset);
+	const resetEditorMode = useEngineStore((state) => state.reset);
 	const resetTileSet = useTileSetStore((state) => state.reset);
 
 	useEffect(() => {
@@ -75,6 +79,11 @@ export function FileListener() {
 					break;
 				case 'script':
 					extension = '.lua';
+					defaultContent = scriptContent;
+					break;
+
+				case 'ui':
+					extension = '.ui';
 					defaultContent = '';
 					break;
 			}
@@ -91,8 +100,33 @@ export function FileListener() {
 		});
 
 		const cleanupSave = window.api.onSaveFile(async () => {
-			const contentMap = exportToEngineFormat();
+			const editorMode = useEngineStore.getState().editorMode;
 
+			if (editorMode === 'code') {
+				const codeEditorMode = useEngineStore.getState().codeEditorMode;
+
+				if (codeEditorMode === 'single') {
+					const { openFile } = useCodeEditorStore.getState();
+					if (!openFile || !currentProject) return;
+					await window.api.saveFile(openFile.relativePath, openFile.content, currentProject);
+					useCodeEditorStore.getState().markSaved();
+					return;
+				}
+
+				if (codeEditorMode === 'duo') {
+					const { openUiFile } = useCodeEditorStore.getState();
+					if (!openUiFile) return;
+					await Promise.all([
+						window.api.saveFileCompletePath('', openUiFile.htmlPath, openUiFile.htmlContent),
+						window.api.saveFileCompletePath('', openUiFile.cssPath, openUiFile.cssContent),
+					]);
+					useCodeEditorStore.getState().markUiSaved();
+					return;
+				}
+
+				return;
+			}
+			const contentMap = exportToEngineFormat();
 			if (mapRelativePath && currentProject) {
 				const result = await window.api.saveFile(mapRelativePath, contentMap, currentProject);
 				setIsDirty(false);
@@ -103,12 +137,12 @@ export function FileListener() {
 				openFileCreation(true);
 			}
 		});
-
 		const cleanupCloseProject = window.api.onCloseProject(() => {
 			resetMap();
 			resetProject();
 			resetFolder();
 			resetTileSet();
+			resetEditorMode();
 		});
 
 		return () => {
@@ -117,7 +151,20 @@ export function FileListener() {
 			cleanupSave();
 			cleanupCloseProject();
 		};
-	}, [openFileCreation, setFileExtension, setContent, mapRelativePath, currentProject, exportToEngineFormat, setIsDirty, resetMap, resetProject, resetFolder, resetTileSet]);
+	}, [
+		openFileCreation,
+		setFileExtension,
+		setContent,
+		mapRelativePath,
+		currentProject,
+		exportToEngineFormat,
+		setIsDirty,
+		resetMap,
+		resetProject,
+		resetFolder,
+		resetTileSet,
+		resetEditorMode,
+	]);
 
 	return null;
 }
