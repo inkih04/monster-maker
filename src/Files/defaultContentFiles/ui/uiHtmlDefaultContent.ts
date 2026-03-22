@@ -1,7 +1,7 @@
-export const uiHtmlDefaultContent = (fileName: string, cssPath: string): string => `<rml>
+export const uiHtmlDefaultContent = (fileName: string, cssName: string): string => `<rml>
 <head>
     <title>${fileName}</title>
-    <link type="text/rcss" href="${cssPath}"/>
+    <link type="text/rcss" href="${cssName}"/>
 </head>
 <body>
 </body>

@@ -106,5 +106,33 @@
 	"unlockLayer": "Unlock layer",
 	"lockLayer": "Lock layer",
 	"showLayer": "Show layer",
-	"hideLayer": "Hide layer"
+	"hideLayer": "Hide layer",
+	"rcssWarnings": {
+		"incompatibility": "incompatibility with RmlUi",
+		"incompatibilities": "incompatibilities with RmlUi",
+		"borderSolidShorthand": {
+			"message": "border: N solid COLOR — the word \"solid\" is ignored by RmlUi.",
+			"fix": "Use border-width and border-color separately. The border will be solid by default."
+		},
+		"borderStyle": {
+			"message": "border-style does not exist in RCSS. RmlUi always renders solid borders.",
+			"fix": "Remove border-style. Control thickness with border-width and color with border-color."
+		},
+		"transition": {
+			"message": "transition is not supported in RmlUi.",
+			"fix": "Use RmlUi's native animation system (<animation> in RCSS)."
+		},
+		"animation": {
+			"message": "CSS animation is not supported in RmlUi.",
+			"fix": "Use RmlUi's @keyframes directive and the animation property in RCSS (different syntax)."
+		},
+		"boxShadow": {
+			"message": "box-shadow has very limited support in RmlUi (only basic spread and color).",
+			"fix": "Simplify the box-shadow or use a sibling element with opacity as an alternative."
+		},
+		"vwVhUnits": {
+			"message": "vw/vh units have limited support in RmlUi. They may not work in all contexts.",
+			"fix": "Verify in the engine. For fullscreen layouts, width: 100% / height: 100% is usually safer."
+		}
+	}
 }

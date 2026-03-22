@@ -80,6 +80,7 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
             glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
             Renderer::getInstance().setUniformFloat("u_time", static_cast<float>(currentTime));
             if (gameRender) gameRender();
+            glViewport(0, 0, m_width, m_height);
             UiManager::getInstance().render();
 
             timePreviousFrame = currentTime;
