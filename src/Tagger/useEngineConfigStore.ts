@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { ProjectData } from '../../global/types/projectData';
-import { ShaderMap, TagMap, GameConfig } from '../../global/types/engineConfig';
+import {
+	ShaderMap,
+	TagMap,
+	GameConfig,
+	DEFAULT_GAME_CONFIG,
+} from '../../global/types/engineConfig';
 
 interface EngineConfigState {
 	shaders: ShaderMap;
@@ -21,7 +26,7 @@ interface EngineConfigActions {
 const INITIAL_STATE: EngineConfigState = {
 	shaders: {},
 	tags: {},
-	gameConfig: {},
+	gameConfig: { ...DEFAULT_GAME_CONFIG },
 	isLoading: false,
 	error: null,
 };
@@ -37,7 +42,7 @@ export const useEngineConfigStore = create<EngineConfigState & EngineConfigActio
 				set({
 					shaders: result.config.shaders,
 					tags: result.config.tags ?? {},
-					gameConfig: result.config.gameConfig ?? {},
+					gameConfig: result.config.gameConfig ?? { ...DEFAULT_GAME_CONFIG },
 					isLoading: false,
 				});
 			} else {

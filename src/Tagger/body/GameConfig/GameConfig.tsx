@@ -1,42 +1,54 @@
 import { useEffect, useRef, useState } from 'react';
-import { Plus, Xmark } from 'iconoir-react';
+import { useTranslation } from 'react-i18next';
 import '../TaggerBody.css';
+import './GameConfig.css';
+import { useGameConfigDrag } from './customHook/useGameConfigDrag';
 import { useProjectStore } from '../../../Project/ProjectConfigGState';
 import { useEngineConfigStore } from '../../useEngineConfigStore';
-import { GameConfig } from '../../../../global/types/engineConfig';
+import { GameConfig, DEFAULT_GAME_CONFIG } from '../../../../global/types/engineConfig';
 
-type ConfigEntry = {
-	id: string;
-	key: string;
-	value: string;
+type GameConfigData = {
+	gameName: string;
+	gameVersion: string;
+	initialMapPath: string;
+	imageIconPath: string;
+	defaultFont: string;
+	virtualWidth: number | '';
+	virtualHeight: number | '';
 };
 
-function gameConfigToEntries(gameConfig: GameConfig): ConfigEntry[] {
-	return Object.entries(gameConfig).map(([key, value]) => ({
-		id: crypto.randomUUID(),
-		key,
-		value: String(value),
-	}));
+function gameConfigToData(gc: GameConfig): GameConfigData {
+	return {
+		gameName: gc.gameName,
+		gameVersion: gc.gameVersion,
+		initialMapPath: gc.initialMapPath,
+		imageIconPath: gc.imageIconPath,
+		defaultFont: gc.defaultFont,
+		virtualWidth: gc.virtualWidth,
+		virtualHeight: gc.virtualHeight,
+	};
 }
 
-function entriesToGameConfig(entries: ConfigEntry[]): GameConfig {
-	const result: GameConfig = {};
-	for (const entry of entries) {
-		if (entry.key.trim() === '') continue;
-		const raw = entry.value;
-		if (raw === 'true') result[entry.key.trim()] = true;
-		else if (raw === 'false') result[entry.key.trim()] = false;
-		else if (raw !== '' && !isNaN(Number(raw))) result[entry.key.trim()] = Number(raw);
-		else result[entry.key.trim()] = raw;
-	}
-	return result;
+function dataToGameConfig(data: GameConfigData): GameConfig {
+	return {
+		gameName: data.gameName,
+		gameVersion: data.gameVersion,
+		initialMapPath: data.initialMapPath,
+		imageIconPath: data.imageIconPath,
+		defaultFont: data.defaultFont,
+		virtualWidth: data.virtualWidth === '' ? DEFAULT_GAME_CONFIG.virtualWidth : data.virtualWidth,
+		virtualHeight:
+			data.virtualHeight === '' ? DEFAULT_GAME_CONFIG.virtualHeight : data.virtualHeight,
+	};
 }
 
 function TaggerGameConfigBody() {
+	const { t } = useTranslation();
 	const currentProject = useProjectStore((s) => s.currentProject);
 	const { gameConfig, isLoading, loadEngineConfig, saveGameConfig } = useEngineConfigStore();
-	const [entries, setEntries] = useState<ConfigEntry[]>(() => gameConfigToEntries(gameConfig));
+	const [data, setData] = useState<GameConfigData>(() => gameConfigToData(gameConfig));
 	const skipNextSync = useRef(false);
+	const { handleDragOver, handleDragLeave, handleDrop, getDragClass } = useGameConfigDrag();
 
 	useEffect(() => {
 		if (!currentProject) return;
@@ -48,34 +60,26 @@ function TaggerGameConfigBody() {
 			skipNextSync.current = false;
 			return;
 		}
-		setEntries(gameConfigToEntries(gameConfig));
+		setData(gameConfigToData(gameConfig));
 	}, [gameConfig]);
 
-	const persist = (nextEntries: ConfigEntry[]) => {
+	const persist = (next: GameConfigData) => {
 		if (!currentProject) return;
 		skipNextSync.current = true;
-		saveGameConfig(currentProject, entriesToGameConfig(nextEntries));
+		saveGameConfig(currentProject, dataToGameConfig(next));
 	};
 
-	const handleKeyChange = (id: string, value: string) => {
-		const next = entries.map((e) => (e.id === id ? { ...e, key: value } : e));
-		setEntries(next);
+	const handleChange = <K extends keyof GameConfigData>(key: K, value: GameConfigData[K]) => {
+		const next = { ...data, [key]: value };
+		setData(next);
 		persist(next);
 	};
 
-	const handleValueChange = (id: string, value: string) => {
-		const next = entries.map((e) => (e.id === id ? { ...e, value } : e));
-		setEntries(next);
-		persist(next);
-	};
-
-	const handleAdd = () => {
-		setEntries((prev) => [...prev, { id: crypto.randomUUID(), key: '', value: '' }]);
-	};
-
-	const handleRemove = (id: string) => {
-		const next = entries.filter((e) => e.id !== id);
-		setEntries(next);
+	const handleIntChange = (key: 'virtualWidth' | 'virtualHeight', raw: string) => {
+		const value = raw === '' ? '' : parseInt(raw, 10);
+		if (raw !== '' && isNaN(value as number)) return;
+		const next = { ...data, [key]: value };
+		setData(next);
 		persist(next);
 	};
 
@@ -85,48 +89,100 @@ function TaggerGameConfigBody() {
 
 	return (
 		<div className="tagger-body--scroll">
-			<div className="tagger-kv--header-row">
-				<span className="tagger-kv--col-label col-tag-map">Key</span>
-				<span className="tagger-kv--col-label col-path">Value</span>
-				<span className="tagger-kv--col-spacer" />
-			</div>
+			<div className="game-config--form">
+				<div className="game-config--field">
+					<label className="game-config--label">{t('gameConfig.gameName')}</label>
+					<input
+						className="tagger-kv--input game-config--input"
+						type="text"
+						placeholder="Monster Maker Engine"
+						value={data.gameName}
+						onChange={(e) => handleChange('gameName', e.target.value)}
+					/>
+				</div>
 
-			<ul className="tagger-kv--list">
-				{entries.map((entry, index) => (
-					<>
-						{index > 0 && <li key={`sep-${entry.id}`} className="tagger-kv--row-separator" />}
-						<li key={entry.id} className="tagger-kv--row">
-							<input
-								className="tagger-kv--input input-tag-map"
-								type="text"
-								placeholder="e.g. gravity"
-								value={entry.key}
-								onChange={(e) => handleKeyChange(entry.id, e.target.value)}
-							/>
-							<input
-								className="tagger-kv--input input-path"
-								type="text"
-								placeholder="e.g. 9.8"
-								value={entry.value}
-								onChange={(e) => handleValueChange(entry.id, e.target.value)}
-							/>
-							<button
-								className="tagger-kv--remove-btn"
-								onClick={() => handleRemove(entry.id)}
-								title="Remove entry"
-							>
-								<Xmark width={12} strokeWidth={2} />
-							</button>
-						</li>
-					</>
-				))}
-			</ul>
+				<div className="game-config--field">
+					<label className="game-config--label">{t('gameConfig.gameVersion')}</label>
+					<input
+						className="tagger-kv--input game-config--input game-config--input-short"
+						type="text"
+						placeholder="1.0.0"
+						value={data.gameVersion}
+						onChange={(e) => handleChange('gameVersion', e.target.value)}
+					/>
+				</div>
 
-			<div className="tagger-kv--add-container">
-				<button className="tagger-kv--add-button" onClick={handleAdd}>
-					<Plus width={14} strokeWidth={2.5} />
-					<span>Add property</span>
-				</button>
+				<div className="game-config--field game-config--field-group-start">
+					<label className="game-config--label">{t('gameConfig.initialMapPath')}</label>
+					<input
+						className={`tagger-kv--input game-config--input ${getDragClass('initialMapPath')}`}
+						type="text"
+						placeholder="maps/start.json"
+						value={data.initialMapPath}
+						onChange={(e) => handleChange('initialMapPath', e.target.value)}
+						onDragOver={(e) => handleDragOver(e, 'initialMapPath')}
+						onDragLeave={handleDragLeave}
+						onDrop={(e) =>
+							handleDrop(e, 'initialMapPath', (path) => handleChange('initialMapPath', path))
+						}
+					/>
+				</div>
+
+				<div className="game-config--field">
+					<label className="game-config--label">{t('gameConfig.iconPath')}</label>
+					<input
+						className={`tagger-kv--input game-config--input ${getDragClass('imageIconPath')}`}
+						type="text"
+						placeholder="assets/icon.png"
+						value={data.imageIconPath}
+						onChange={(e) => handleChange('imageIconPath', e.target.value)}
+						onDragOver={(e) => handleDragOver(e, 'imageIconPath')}
+						onDragLeave={handleDragLeave}
+						onDrop={(e) =>
+							handleDrop(e, 'imageIconPath', (path) => handleChange('imageIconPath', path))
+						}
+					/>
+				</div>
+
+				<div className="game-config--field">
+					<label className="game-config--label">{t('gameConfig.defaultFont')}</label>
+					<input
+						className={`tagger-kv--input game-config--input ${getDragClass('defaultFont')}`}
+						type="text"
+						placeholder="assets/fonts/font.ttf"
+						value={data.defaultFont}
+						onChange={(e) => handleChange('defaultFont', e.target.value)}
+						onDragOver={(e) => handleDragOver(e, 'defaultFont')}
+						onDragLeave={handleDragLeave}
+						onDrop={(e) =>
+							handleDrop(e, 'defaultFont', (path) => handleChange('defaultFont', path))
+						}
+					/>
+				</div>
+
+				<div className="game-config--field game-config--field-group-start game-config--field-no-border">
+					<label className="game-config--label">{t('gameConfig.virtualResolution')}</label>
+					<div className="game-config--resolution-row">
+						<input
+							className="tagger-kv--input game-config--input-num"
+							type="number"
+							placeholder="480"
+							value={data.virtualWidth}
+							min={1}
+							onChange={(e) => handleIntChange('virtualWidth', e.target.value)}
+						/>
+						<span className="game-config--resolution-sep">×</span>
+						<input
+							className="tagger-kv--input game-config--input-num"
+							type="number"
+							placeholder="270"
+							value={data.virtualHeight}
+							min={1}
+							onChange={(e) => handleIntChange('virtualHeight', e.target.value)}
+						/>
+						<span className="game-config--resolution-hint">px</span>
+					</div>
+				</div>
 			</div>
 		</div>
 	);

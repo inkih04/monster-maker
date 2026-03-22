@@ -9,7 +9,7 @@ import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
 import { spawn } from 'child_process';
 import { EngineLog, LogLevel } from '../../global/types/engineLog';
-import { EngineConfig, DEFAULT_ENGINE_CONFIG } from '../../global/types/engineConfig';
+import { EngineConfig, DEFAULT_ENGINE_CONFIG, GameConfig } from '../../global/types/engineConfig';
 
 const ENGINE_CONFIG_FILENAME = '.engineConfig.json';
 
@@ -760,7 +760,7 @@ export class ProjectConfigManager {
 
 	public updateGameConfig(
 		pd: ProjectData,
-		gameConfig: Record<string, string | number | boolean>
+		gameConfig: GameConfig
 	): { success: boolean; error?: string } {
 		try {
 			const cfgPath = this.getEngineConfigPath(pd);

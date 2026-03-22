@@ -38,7 +38,7 @@ function Tagger() {
 							className={`tagger--tab-button ${activeTab === 'gameConfig' ? 'tagger--tab-active' : ''}`}
 							onClick={() => setActiveTab('gameConfig')}
 						>
-							{t('gameConfig') ?? 'Game Config'}
+							{t('gameConfig.tabLabel')}
 						</button>
 					</div>
 					<div className="tagger--bodycontainer">

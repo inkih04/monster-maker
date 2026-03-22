@@ -31,6 +31,15 @@ public:
     const std::string& getImageIconPath() const;
     void setImageIconPath(const std::string& value);
 
+    const std::string& getDefaultFontPath() const;
+    void setDefaultFontPath(const std::string& value);
+
+    int getVirtualWidth() const;
+    void setVirtualWidth(int value);
+
+    int getVirtualHeight() const;
+    void setVirtualHeight(int value);
+
     const std::unordered_map<std::string, std::string>& getTags() const;
     void setTags(const std::unordered_map<std::string, std::string>& value);
     void addTag(const std::string& name, const std::string& path);
@@ -49,6 +58,7 @@ private:
     std::string gameName = "Monster Maker Engine";
     std::string gameVersion = "1.0.0";
     std::string imageIconPath;
+    std::string defaultFontPath;
     int virtualWidth = 480;
     int virtualHeight = 270;
     std::unordered_map<std::string, std::string> maps;

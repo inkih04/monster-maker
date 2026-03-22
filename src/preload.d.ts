@@ -1,4 +1,5 @@
 import { ProjectData } from '../global/types/projectData';
+import { GameConfig } from '../global/types/engineConfig';
 import FolderNode from '../global/types/folderNode';
 import { FileData } from '../global/types/fileData';
 import { ProjectFile } from '../global/types/projectFile';
@@ -138,7 +139,7 @@ declare global {
 
 			updateGameConfig: (
 				pd: ProjectData,
-				gameConfig: Record<string, string | number | boolean>
+				gameConfig: GameConfig
 			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}

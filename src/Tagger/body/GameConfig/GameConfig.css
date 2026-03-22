@@ -1,0 +1,76 @@
+.game-config--form {
+	display: flex;
+	flex-direction: column;
+}
+
+.game-config--field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 7px 0;
+	border-bottom: 1px solid var(--color-4);
+}
+
+.game-config--field-group-start {
+	margin-top: 8px;
+}
+
+.game-config--field-no-border {
+	border-bottom: none;
+}
+
+.game-config--label {
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--color-6);
+}
+
+.game-config--input {
+	width: 100%;
+}
+
+.game-config--input-short {
+	max-width: 120px;
+}
+
+.game-config--resolution-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.game-config--input-num {
+	width: 72px;
+	flex-shrink: 0;
+	text-align: center;
+}
+
+.game-config--input-num::-webkit-inner-spin-button,
+.game-config--input-num::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.game-config--resolution-sep {
+	font-size: 13px;
+	color: var(--color-5);
+	font-weight: 500;
+}
+
+.game-config--resolution-hint {
+	font-size: 11px;
+	color: var(--color-5);
+	margin-left: 2px;
+}
+
+.game-config--drag-valid {
+	border-color: #22c55e;
+	background-color: rgba(34, 197, 94, 0.08);
+}
+
+.game-config--drag-invalid {
+	border-color: #ef4444;
+	background-color: rgba(239, 68, 68, 0.08);
+}

@@ -11,6 +11,12 @@
       "name": "aa",
       "color": "#F8B195",
       "defaultTilesize": 32
+    },
+    {
+      "path": "/home/inkih/Desktop/test",
+      "name": "bb",
+      "color": "#F8B195",
+      "defaultTilesize": 32
     }
   ]
 }

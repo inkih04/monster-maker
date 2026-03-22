@@ -107,6 +107,15 @@
 	"lockLayer": "Bloquear capa",
 	"showLayer": "Mostrar capa",
 	"hideLayer": "Ocultar capa",
+	"gameConfig": {
+		"tabLabel": "Config. del Juego",
+		"gameName": "Nombre del Juego",
+		"gameVersion": "Versión",
+		"initialMapPath": "Mapa Inicial",
+		"iconPath": "Path del Icono",
+		"defaultFont": "Fuente por Defecto",
+		"virtualResolution": "Resolución Virtual"
+	},
 	"rcssWarnings": {
 		"incompatibility": "incompatibilidad con RmlUi",
 		"incompatibilities": "incompatibilidades con RmlUi",
