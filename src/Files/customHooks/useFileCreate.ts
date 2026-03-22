@@ -121,7 +121,7 @@ export function useFileCreate() {
 				{
 					name: `${baseName}_HTML.rmli`,
 					path: hiddenFolderPath,
-					content: UI_HTML_DEFAULT_CONTENT(baseName, cssRelativePath),
+					content: UI_HTML_DEFAULT_CONTENT(baseName, `${baseName}_CSS.css`),
 					label: 'HTML markup',
 				},
 				{

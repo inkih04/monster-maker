@@ -5,6 +5,7 @@ import { useGridCanvas } from '../../common/customHooks/useGridCanvas';
 import { useCodeEditorLayoutStore } from '../../Layout/CodeEditorLayoutGState';
 import { useMemo } from 'react';
 import { Layer } from '../../domain/ecs/layer';
+import UiFilePreview from './UiFilePreview';
 import './MapPreview.css';
 
 const LAYER_ORDER: Layer[] = ['ground', 'decoration', 'entities', 'shadows', 'foreground'];
@@ -88,6 +89,7 @@ function MapPreview() {
 		<div className="mapPreview--wrapper">
 			<div className="mapPreview--viewport" ref={containerRef}>
 				<canvas ref={canvasRef} className="mapPreview--canvas" />
+				<UiFilePreview />
 			</div>
 			<div className="mapPreview--controls">
 				<button onClick={handleZoomIn} className="mapPreview--zoom-btn">

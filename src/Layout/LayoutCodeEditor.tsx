@@ -7,7 +7,6 @@ import {
 	CODE_EDITOR_LIMITS,
 } from './customHooks/useLayoutCodeEditorResize';
 import MapPreview from '../Map/MapPreview/MapPreview';
-import UiFilePreview from '../Map/MapPreview/UiFilePreview';
 import CodeEditor from '../CodeEditor/CodeEditor';
 import { CodeEditorLoadingOverlay } from '../CodeEditor/CodeEditorLoadingOverlay';
 import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
@@ -104,7 +103,6 @@ function CodeEditorDuo() {
 					style={{ flex: `0 0 ${mapPreviewHeight}px` }}
 				>
 					<MapPreview />
-					<UiFilePreview />
 				</div>
 				<Spacer size="small" resizable onResize={resizeMapPreview} marginRight={false} />
 				<div className="layoutCodeEditor--duo-options" />
