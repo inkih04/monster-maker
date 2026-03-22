@@ -1,7 +1,9 @@
 import { TaggerTab } from '../Tagger';
+import TaggerGameConfigBody from './GameConfig/GameConfig';
 import TaggerLayersBody from './Layers/TaggerLayersBody';
 import TaggerShadersBody from './Shaders/TaggerShaderBody';
-import TaggerMapsBody from './Maps/TaggerMapsBody';
+import TaggerTagsBody from './Tags/TaggerTagsBody';
+
 
 type TaggerBodyProps = {
 	activeTab: TaggerTab;
@@ -12,7 +14,8 @@ function TaggerBody({ activeTab }: TaggerBodyProps) {
 		<div className="tagger-body--wrapper">
 			{activeTab === 'layers' && <TaggerLayersBody />}
 			{activeTab === 'shaders' && <TaggerShadersBody />}
-			{activeTab === 'maps' && <TaggerMapsBody />}
+			{activeTab === 'tags' && <TaggerTagsBody />}
+			{activeTab === 'gameConfig' && <TaggerGameConfigBody />}
 		</div>
 	);
 }

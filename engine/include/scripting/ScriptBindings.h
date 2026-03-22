@@ -33,7 +33,7 @@ class ScriptBindings {
     public:
         static void registerStatic(sol::state& lua);
 
-
+        static void registerConfigTags(sol::state &lua);
 
 
         static void registerDynamic(sol::state& lua,Camera* camera, EntityManager& entityManager);

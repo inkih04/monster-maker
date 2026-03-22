@@ -7,6 +7,7 @@ import {
 	registerLuaCompletions,
 	registerHtmlCssClassCompletions,
 	registerHtmlEmmetCompletions,
+	updateLuaTags,
 } from './monacoConfig';
 import './CodeEditor.css';
 
@@ -20,6 +21,7 @@ interface CodeEditorProps {
 	onChange?: (value: string) => void;
 	readOnly?: boolean;
 	className?: string;
+	tags?: Record<string, string>;
 }
 
 function CodeEditor({
@@ -28,6 +30,7 @@ function CodeEditor({
 	onChange,
 	readOnly = false,
 	className = '',
+	tags = {},
 }: Readonly<CodeEditorProps>) {
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 	const monacoRef = useRef<typeof monaco | null>(null);
@@ -43,6 +46,10 @@ function CodeEditor({
 		editor.setValue(value);
 		editor.revealLine(1);
 	}, [value]);
+
+	useEffect(() => {
+		if (language === 'lua') updateLuaTags(tags);
+	}, [tags, language]);
 
 	const applyTheme = useCallback(() => {
 		monacoRef.current?.editor.defineTheme('monster-maker', buildTheme());

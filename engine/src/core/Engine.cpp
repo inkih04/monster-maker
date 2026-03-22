@@ -4,6 +4,9 @@
 #include "Engine.h"
 #include <iostream>
 #include <memory>
+#include <stb_image.h>
+
+#include "EditorConfig.h"
 #include "InputManager.h"
 #include "Renderer.h"
 #include "GameConfig.h"
@@ -16,9 +19,11 @@ Engine::Engine(int width, int height, const std::string& title)
     : m_width(width), m_height(height), m_title(title) {
     initGLFW();
     InputManager::initialize(m_window);
+    EditorConfig::getInstance().setVirtualResolution();
     setUpShaders();
     setUpCamera(width, height);
-    UiManager::getInstance().init(m_width, m_height, "resources/fonts/Roboto/Roboto.ttf");
+    UiManager::getInstance().init(m_width, m_height, EditorConfig::getInstance().getTag(EditorConfig::getInstance().getDefaultFontPath()));
+
 }
 
 Engine::~Engine() {
@@ -41,6 +46,19 @@ void Engine::initGLFW() {
     glfwMakeContextCurrent(m_window);
     glfwSetWindowUserPointer(m_window, this);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
+
+    const std::string& iconPath = EditorConfig::getInstance().getImageIconPath();
+    if (!iconPath.empty()) {
+        int iconWidth, iconHeight, iconChannels;
+        unsigned char* pixels = stbi_load(iconPath.c_str(), &iconWidth, &iconHeight, &iconChannels, 4);
+        if (pixels) {
+            GLFWimage icon{ iconWidth, iconHeight, pixels };
+            glfwSetWindowIcon(m_window, 1, &icon);
+            stbi_image_free(pixels);
+        } else {
+            std::cout << "[ENGINE] Could not load window icon: " << iconPath << "\n";
+        }
+    }
 
     glewExperimental = GL_TRUE;
     if (glewInit() != GLEW_OK) exit(-1);

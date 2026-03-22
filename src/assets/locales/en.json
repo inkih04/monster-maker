@@ -107,6 +107,15 @@
 	"lockLayer": "Lock layer",
 	"showLayer": "Show layer",
 	"hideLayer": "Hide layer",
+	"gameConfig": {
+		"tabLabel": "Game Config",
+		"gameName": "Game Name",
+		"gameVersion": "Version",
+		"initialMapPath": "Initial Map Path",
+		"iconPath": "Icon Path",
+		"defaultFont": "Default Font",
+		"virtualResolution": "Virtual Resolution"
+	},
 	"rcssWarnings": {
 		"incompatibility": "incompatibility with RmlUi",
 		"incompatibilities": "incompatibilities with RmlUi",

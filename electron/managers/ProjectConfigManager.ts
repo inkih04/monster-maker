@@ -9,7 +9,7 @@ import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
 import { spawn } from 'child_process';
 import { EngineLog, LogLevel } from '../../global/types/engineLog';
-import { EngineConfig, DEFAULT_ENGINE_CONFIG } from '../../global/types/engineConfig';
+import { EngineConfig, DEFAULT_ENGINE_CONFIG, GameConfig } from '../../global/types/engineConfig';
 
 const ENGINE_CONFIG_FILENAME = '.engineConfig.json';
 
@@ -732,6 +732,50 @@ export class ProjectConfigManager {
 			}
 		} catch (error) {
 			console.error(`Error stopping engine: ${error}`);
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public updateTags(
+		pd: ProjectData,
+		tags: Record<string, string>
+	): { success: boolean; error?: string } {
+		try {
+			const cfgPath = this.getEngineConfigPath(pd);
+			const existing = this.fileSystemService.readJSON<EngineConfig>(cfgPath) ?? {
+				...DEFAULT_ENGINE_CONFIG,
+			};
+
+			const updated: EngineConfig = { ...existing, tags };
+
+			const ok = this.fileSystemService.writeJSON<EngineConfig>(cfgPath, updated);
+			if (ok) {
+				return { success: true };
+			}
+			return { success: false, error: 'writeJSON returned false' };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public updateGameConfig(
+		pd: ProjectData,
+		gameConfig: GameConfig
+	): { success: boolean; error?: string } {
+		try {
+			const cfgPath = this.getEngineConfigPath(pd);
+			const existing = this.fileSystemService.readJSON<EngineConfig>(cfgPath) ?? {
+				...DEFAULT_ENGINE_CONFIG,
+			};
+
+			const updated: EngineConfig = { ...existing, gameConfig };
+
+			const ok = this.fileSystemService.writeJSON<EngineConfig>(cfgPath, updated);
+			if (ok) {
+				return { success: true };
+			}
+			return { success: false, error: 'writeJSON returned false' };
+		} catch (error) {
 			return { success: false, error: String(error) };
 		}
 	}

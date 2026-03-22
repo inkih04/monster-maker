@@ -1,4 +1,5 @@
 import { ProjectData } from '../global/types/projectData';
+import { GameConfig } from '../global/types/engineConfig';
 import FolderNode from '../global/types/folderNode';
 import { FileData } from '../global/types/fileData';
 import { ProjectFile } from '../global/types/projectFile';
@@ -129,6 +130,16 @@ declare global {
 			updateShaders: (
 				pd: ProjectData,
 				shaders: Record<string, number>
+			) => Promise<{ success: boolean; error?: string }>;
+
+			updateTags: (
+				pd: ProjectData,
+				tags: Record<string, string>
+			) => Promise<{ success: boolean; error?: string }>;
+
+			updateGameConfig: (
+				pd: ProjectData,
+				gameConfig: GameConfig
 			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}

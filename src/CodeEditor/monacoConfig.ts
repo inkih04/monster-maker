@@ -133,9 +133,14 @@ let _liveCssContent = '';
 let _luaRegistered = false;
 let _htmlCssClassesRegistered = false;
 let _htmlEmmetRegistered = false;
+let _luaTags: Record<string, string> = {};
 
 export function updateLiveCssContent(css: string) {
 	_liveCssContent = css;
+}
+
+export function updateLuaTags(tags: Record<string, string>) {
+	_luaTags = tags;
 }
 
 function extractCssClasses(css: string): string[] {
@@ -238,7 +243,6 @@ const HTML_TAGS = [
 ];
 const VOID_HTML_TAGS = new Set(['input', 'img', 'link']);
 
-
 export function registerHtmlEmmetCompletions(monaco: typeof Monaco) {
 	if (_htmlEmmetRegistered) return;
 	_htmlEmmetRegistered = true;
@@ -287,7 +291,6 @@ export function registerHtmlEmmetCompletions(monaco: typeof Monaco) {
 		},
 	});
 }
-
 
 function kw(
 	monaco: typeof Monaco,
@@ -450,7 +453,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					'GetEntity(tag) → Entity',
 					range
 				),
-				fn(monaco, 'loadMap', 'loadMap("${1:path/to/map.json}")', 'loadMap(path)', range),
+				fn(monaco, 'loadMap', 'loadMap(${1:tags.mapName})', 'loadMap(path)', range),
 				fn(
 					monaco,
 					'Input.isKeyDown',
@@ -556,7 +559,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(
 					monaco,
 					'UI.open',
-					'UI:open("${1:id}", "${2:path/to/file.ui}")',
+					'UI:open("${1:id}", tags.${2:uiFile})',
 					'open(id, uiFilePath) → UiDocument',
 					range
 				),
@@ -566,7 +569,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(
 					monaco,
 					'Audio.playMusic',
-					'Audio:playMusic("${1:path}", ${2:true})',
+					'Audio:playMusic(tags.${1:musicName}, ${2:true})',
 					'playMusic(path, loop?)',
 					range
 				),
@@ -656,6 +659,10 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					'${1:render}:getIsActive()',
 					'getIsActive() → bool',
 					range
+				),
+
+				...Object.entries(_luaTags).map(([name, path]) =>
+					constant(monaco, `tags.${name}`, path, range)
 				),
 			];
 

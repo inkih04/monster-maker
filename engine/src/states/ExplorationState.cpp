@@ -5,6 +5,7 @@
 #include "AnimationComponent.h"
 #include "ColliderComponent.h"
 #include "DebugHelper.h"
+#include "EditorConfig.h"
 #include "Engine.h"
 #include "EntityLoader.h"
 #include "InputManager.h"
@@ -58,7 +59,7 @@ void ExplorationState::changeMap(const std::string& mapPath) {
     }
     applyScriptContext();
 
-    std::cout << "[Engine] Map changed to: " << mapPath << std::endl;
+    std::cout << "[ENGINE][WARNING] Map changed to: " << mapPath << std::endl;
 }
 
 void ExplorationState::moveDebugCamera() {
@@ -86,7 +87,16 @@ void ExplorationState::moveDebugCamera() {
 void ExplorationState::setEntityManager() {
     m_entityManager = std::make_unique<EntityManager>();
     std::string debugMap = DebugHelper::getInstance().getCurrentMap();
-    if (debugMap.empty()) EntityLoader::loadEntitiesFromFile("resources/maps/data/map32-super.json", *m_entityManager);
+    if (debugMap.empty()) {
+        if (!EditorConfig::getInstance().getInitialMapPath().empty()) {
+            std::string mapPath = EditorConfig::getInstance().getTag(EditorConfig::getInstance().getInitialMapPath());
+            EntityLoader::loadEntitiesFromFile(mapPath, *m_entityManager);
+        }
+        else {
+            std::cout << "[ENGINE][ERROR] No default map has been set" << debugMap << std::endl;
+            EntityLoader::loadEntitiesFromFile("resources/maps/data/map32-super.json", *m_entityManager);
+        }
+    }
     else {
         EntityLoader::loadEntitiesFromFile(debugMap, *m_entityManager);
     }
