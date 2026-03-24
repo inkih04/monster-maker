@@ -119,3 +119,26 @@
 	border-color: #ef4444;
 	background-color: rgba(239, 68, 68, 0.08);
 }
+
+.game-config--checkbox-row {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	cursor: pointer;
+	width: fit-content;
+}
+
+.game-config--checkbox {
+	width: 13px;
+	height: 13px;
+	accent-color: var(--color-accent, #6366f1);
+	cursor: pointer;
+	flex-shrink: 0;
+	margin: 0;
+}
+
+.game-config--checkbox-hint {
+	font-size: 11px;
+	color: var(--color-5);
+	user-select: none;
+}

@@ -27,6 +27,19 @@ void ScriptBindings::registerStatic(sol::state& lua) {
     registerBordersMapService(lua);
     registerUiManager(lua);
     registerConfigTags(lua);
+    registerConfig(lua);
+}
+
+
+void ScriptBindings::registerConfig(sol::state& lua) {
+    lua.new_usertype<EditorConfig>("EditorConfig",
+        sol::no_constructor,
+        "setLetterboxing", &EditorConfig::setLetterboxing,
+        "getLetterboxing", &EditorConfig::getLetterboxing,
+        "getGameName", &EditorConfig::getGameName,
+        "getGameVersion", &EditorConfig::getGameVersion
+    );
+    lua["Config"] = &EditorConfig::getInstance();
 }
 
 void ScriptBindings::registerConfigTags(sol::state& lua) {
@@ -36,7 +49,6 @@ void ScriptBindings::registerConfigTags(sol::state& lua) {
     }
     lua["tags"] = tagsTable;
 }
-
 
 void ScriptBindings::registerUiManager(sol::state& lua) {
     lua.new_usertype<UiDocument>("UiDocument",

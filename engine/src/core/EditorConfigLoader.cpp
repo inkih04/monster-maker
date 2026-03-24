@@ -1,7 +1,3 @@
-//
-// Created by inkih on 07/3/26.
-//
-
 #include "EditorConfigLoader.h"
 #include "EditorConfig.h"
 #include <fstream>
@@ -77,5 +73,9 @@ void EditorConfigLoader::parseGameConfig(const json& gameConfigJson) {
 
     if (gameConfigJson.contains("virtualHeight") && gameConfigJson["virtualHeight"].is_number_integer()) {
         config.setVirtualHeight(gameConfigJson["virtualHeight"].get<int>());
+    }
+
+    if (gameConfigJson.contains("letterboxing") && gameConfigJson["letterboxing"].is_boolean()) {
+        config.setLetterboxing(gameConfigJson["letterboxing"].get<bool>());
     }
 }

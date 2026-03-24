@@ -17,6 +17,7 @@ type GameConfigData = {
 	defaultFont: string;
 	virtualWidth: number | '';
 	virtualHeight: number | '';
+	letterboxing: boolean;
 };
 
 function gameConfigToData(gc: GameConfig): GameConfigData {
@@ -28,6 +29,7 @@ function gameConfigToData(gc: GameConfig): GameConfigData {
 		defaultFont: gc.defaultFont,
 		virtualWidth: gc.virtualWidth,
 		virtualHeight: gc.virtualHeight,
+		letterboxing: gc.letterboxing ?? DEFAULT_GAME_CONFIG.letterboxing,
 	};
 }
 
@@ -41,6 +43,7 @@ function dataToGameConfig(data: GameConfigData): GameConfig {
 		virtualWidth: data.virtualWidth === '' ? DEFAULT_GAME_CONFIG.virtualWidth : data.virtualWidth,
 		virtualHeight:
 			data.virtualHeight === '' ? DEFAULT_GAME_CONFIG.virtualHeight : data.virtualHeight,
+		letterboxing: data.letterboxing,
 	};
 }
 
@@ -159,6 +162,23 @@ function TaggerGameConfigBody() {
 							handleDrop(e, 'defaultFont', (path) => handleChange('defaultFont', path))
 						}
 					/>
+				</div>
+				<div
+					className="game-config--field game-config--field-group-start"
+					style={{ paddingBottom: '8px' }}
+				>
+					<label className="game-config--label">{t('gameConfig.letterboxing')}</label>
+					<label className="game-config--checkbox-row">
+						<input
+							type="checkbox"
+							className="game-config--checkbox"
+							checked={data.letterboxing}
+							onChange={(e) => handleChange('letterboxing', e.target.checked)}
+						/>
+						<span className="game-config--checkbox-hint">
+							{data.letterboxing ? t('gameConfig.letterboxingOn') : t('gameConfig.letterboxingOff')}
+						</span>
+					</label>
 				</div>
 
 				<div className="game-config--field game-config--field-group-start game-config--field-no-border">
