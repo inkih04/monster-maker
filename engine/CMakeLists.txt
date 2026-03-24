@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-include_directories(include include/enums include/components include/structs include/scripting include/service include/ui)
+include_directories(include include/enums include/components include/structs include/scripting include/service include/ui include/memory)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -92,6 +92,8 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         include/ui/UiDocumentLoader.h
         src/ui/UiDocumentLoader.cpp
         src/ui/UiDocument.cpp
+        src/memory/SessionManager.cpp
+        include/memory/SessionManager.h
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD
@@ -167,7 +169,9 @@ add_executable(UnitTests
         src/entities/Entity.cpp
         src/entities/EntityManager.cpp
         src/ui/DialogBox.cpp
+        src/memory/SessionManager.cpp
         src/entities/service/CollisionService.cpp
+        tests/mocks/MockScriptComponent.cpp
         tests/unitary/InputManagerTest.cpp
         tests/mocks/MockGLFW.cpp
         tests/unitary/StateManagerTest.cpp
@@ -178,6 +182,7 @@ add_executable(UnitTests
         tests/unitary/CollisionServiceTest.cpp
         tests/unitary/BorderMapServiceTest.cpp
         src/entities/service/BordersMapService.cpp
+        tests/unitary/SesionManagerTest.cpp
 )
 
 target_link_libraries(UnitTests

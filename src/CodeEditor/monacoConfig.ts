@@ -592,6 +592,35 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				),
 				fn(monaco, 'Audio.setSfxVolume', 'Audio:setSfxVolume(${1:1.0})', 'setSfxVolume(v)', range),
 
+				fn(
+					monaco,
+					'Config.setLetterboxing',
+					'Config:setLetterboxing(${1:true})',
+					'setLetterboxing(bool)',
+					range
+				),
+				fn(
+					monaco,
+					'Config.getLetterboxing',
+					'Config:getLetterboxing()',
+					'getLetterboxing() → bool',
+					range
+				),
+				fn(monaco, 'Config.getGameName', 'Config:getGameName()', 'getGameName() → string', range),
+				fn(
+					monaco,
+					'Config.getGameVersion',
+					'Config:getGameVersion()',
+					'getGameVersion() → string',
+					range
+				),
+
+				fn(monaco, 'Session.set', 'Session:set("${1:key}", ${2:value})', 'set(key, value)', range),
+				fn(monaco, 'Session.get', 'Session:get("${1:key}")', 'get(key) → value', range),
+				fn(monaco, 'Session.has', 'Session:has("${1:key}")', 'has(key) → bool', range),
+				fn(monaco, 'Session.remove', 'Session:remove("${1:key}")', 'remove(key)', range),
+				fn(monaco, 'Session.clear', 'Session:clear()', 'clear()', range),
+
 				...(
 					[
 						'PLAYER',
@@ -666,7 +695,48 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				),
 			];
 
-			return { suggestions };
+			const text = model.getValue();
+			const matches = text.match(/\b[a-zA-Z_]\w*\b/g) || [];
+			const uniqueWords = new Set(matches);
+			uniqueWords.delete(word.word);
+
+			const luaKeywords = [
+				'and',
+				'break',
+				'do',
+				'else',
+				'elseif',
+				'end',
+				'false',
+				'for',
+				'function',
+				'goto',
+				'if',
+				'in',
+				'local',
+				'nil',
+				'not',
+				'or',
+				'repeat',
+				'return',
+				'then',
+				'true',
+				'until',
+				'while',
+			];
+			luaKeywords.forEach((k) => uniqueWords.delete(k));
+
+			const dynamicSuggestions: Monaco.languages.CompletionItem[] = Array.from(uniqueWords).map(
+				(w) => ({
+					label: w,
+					kind: monaco.languages.CompletionItemKind.Variable,
+					insertText: w,
+					detail: 'Variable',
+					range,
+				})
+			);
+
+			return { suggestions: [...suggestions, ...dynamicSuggestions] };
 		},
 	});
 }

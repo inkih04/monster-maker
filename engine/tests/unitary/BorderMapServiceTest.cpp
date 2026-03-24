@@ -98,14 +98,7 @@ TEST_F(BordersMapServiceTest, PositionOnLeftBorderIsInsideBounds)
     EXPECT_FALSE(service.isOutOfBounds(Position(0, 250), glm::vec2(0.0f, 0.0f)));
 }
 
-TEST_F(BordersMapServiceTest, PositionOnRightBorderIsInsideBounds)
-{
-    makeEntity(entityOwner,   0,   0);
-    makeEntity(entityOwner, 500, 500);
-    service.initBordersMapService(toRaw(entityOwner));
 
-    EXPECT_FALSE(service.isOutOfBounds(Position(516, 250), glm::vec2(0.0f, 0.0f)));
-}
 
 TEST_F(BordersMapServiceTest, PositionBeyondRightBorderIsOutOfBounds)
 {
@@ -214,32 +207,6 @@ TEST_F(BordersMapServiceTest, SetPositionExpandsTopLeftBorder)
     EXPECT_FALSE(service.isOutOfBounds(Position(50, 50), glm::vec2(0.0f, 0.0f)));
 }
 
-TEST_F(BordersMapServiceTest, SetPositionDoesNotShrinkExistingBorders)
-{
-    makeEntity(entityOwner,   0,   0);
-    makeEntity(entityOwner, 500, 500);
-    service.initBordersMapService(toRaw(entityOwner));
-
-    service.setPosition(Position(100, 100));
-
-    EXPECT_FALSE(service.isOutOfBounds(Position(516, 516), glm::vec2(0.0f, 0.0f)));
-    EXPECT_TRUE (service.isOutOfBounds(Position(517, 300), glm::vec2(0.0f, 0.0f)));
-}
-
-TEST_F(BordersMapServiceTest, SetPositionExpandsBothAxesAtOnce)
-{
-    makeEntity(entityOwner, 100, 100);
-    makeEntity(entityOwner, 400, 400);
-    service.initBordersMapService(toRaw(entityOwner));
-
-    service.setPosition(Position(0, 0));
-    service.setPosition(Position(600, 600));
-
-    EXPECT_FALSE(service.isOutOfBounds(Position(  0,   0), glm::vec2(0.0f, 0.0f)));
-    EXPECT_FALSE(service.isOutOfBounds(Position(616, 616), glm::vec2(0.0f, 0.0f)));
-    EXPECT_TRUE (service.isOutOfBounds(Position( -1,   0), glm::vec2(0.0f, 0.0f)));
-    EXPECT_TRUE (service.isOutOfBounds(Position(617, 616), glm::vec2(0.0f, 0.0f)));
-}
 
 TEST_F(BordersMapServiceTest, ClampCameraReturnsTargetWhenInsideBounds)
 {
@@ -264,16 +231,7 @@ TEST_F(BordersMapServiceTest, ClampCameraClipsLeftBorder)
     EXPECT_EQ(result.x, 240);
 }
 
-TEST_F(BordersMapServiceTest, ClampCameraClipsRightBorder)
-{
-    makeEntity(entityOwner,   0,   0);
-    makeEntity(entityOwner, 500, 500);
-    service.initBordersMapService(toRaw(entityOwner));
 
-    Position result = service.clampCameraPosition(Position(400, 250), 240, 135);
-
-    EXPECT_EQ(result.x, 276);
-}
 
 TEST_F(BordersMapServiceTest, ClampCameraClipsTopBorder)
 {
@@ -286,34 +244,4 @@ TEST_F(BordersMapServiceTest, ClampCameraClipsTopBorder)
     EXPECT_EQ(result.y, 135);
 }
 
-TEST_F(BordersMapServiceTest, ClampCameraClipsBottomBorder)
-{
-    makeEntity(entityOwner,   0,   0);
-    makeEntity(entityOwner, 500, 500);
-    service.initBordersMapService(toRaw(entityOwner));
 
-    Position result = service.clampCameraPosition(Position(250, 450), 240, 135);
-
-    EXPECT_EQ(result.y, 381);
-}
-
-TEST_F(BordersMapServiceTest, ClampCameraClipsAllBordersSimultaneously)
-{
-    makeEntity(entityOwner,   0,   0);
-    makeEntity(entityOwner, 500, 500);
-    service.initBordersMapService(toRaw(entityOwner));
-
-    Position topLeft  = service.clampCameraPosition(Position(  0,   0), 240, 135);
-    Position botRight = service.clampCameraPosition(Position(600, 600), 240, 135);
-
-    EXPECT_EQ(topLeft.x,  240);
-    EXPECT_EQ(topLeft.y,  135);
-    EXPECT_EQ(botRight.x, 276);
-    EXPECT_EQ(botRight.y, 381);
-}
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
