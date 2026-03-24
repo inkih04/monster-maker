@@ -29,13 +29,11 @@ class ScriptBindings {
         static void registerBordersMapService(sol::state &lua);
         static void registerAnimationComponent(sol::state &lua);
         static void registerUiManager(sol::state &lua);
+        static void registerConfig(sol::state &lua);
 
     public:
         static void registerStatic(sol::state& lua);
-
         static void registerConfigTags(sol::state &lua);
-
-
         static void registerDynamic(sol::state& lua,Camera* camera, EntityManager& entityManager);
 
 

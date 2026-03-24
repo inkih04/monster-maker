@@ -40,6 +40,9 @@ public:
     int getVirtualHeight() const;
     void setVirtualHeight(int value);
 
+    bool getLetterboxing() const;
+    void setLetterboxing(bool value);
+
     const std::unordered_map<std::string, std::string>& getTags() const;
     void setTags(const std::unordered_map<std::string, std::string>& value);
     void addTag(const std::string& name, const std::string& path);
@@ -61,6 +64,7 @@ private:
     std::string defaultFontPath;
     int virtualWidth = 480;
     int virtualHeight = 270;
+    bool letterboxing = false;
     std::unordered_map<std::string, std::string> maps;
     std::unordered_map<std::string, int> shaderTags;
 };

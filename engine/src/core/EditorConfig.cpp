@@ -1,7 +1,3 @@
-//
-// Created by inkih on 07/3/26.
-//
-
 #include "EditorConfig.h"
 
 #include "GameConfig.h"
@@ -26,6 +22,9 @@ void EditorConfig::setVirtualWidth(int value) { virtualWidth = value; }
 
 int EditorConfig::getVirtualHeight() const { return virtualHeight; }
 void EditorConfig::setVirtualHeight(int value) { virtualHeight = value; }
+
+bool EditorConfig::getLetterboxing() const { return letterboxing; }
+void EditorConfig::setLetterboxing(bool value) { letterboxing = value; }
 
 const std::unordered_map<std::string, std::string>& EditorConfig::getTags() const { return maps; }
 void EditorConfig::setTags(const std::unordered_map<std::string, std::string>& value) { maps = value; }

@@ -114,7 +114,10 @@
 		"initialMapPath": "Mapa Inicial",
 		"iconPath": "Path del Icono",
 		"defaultFont": "Fuente por Defecto",
-		"virtualResolution": "Resolución Virtual"
+		"virtualResolution": "Resolución Virtual",
+		"letterboxing": "Modo de Escalado",
+		"letterboxingOn": "Letterbox — mantener proporción con bandas negras",
+		"letterboxingOff": "Estirar — escalar para llenar la pantalla"
 	},
 	"rcssWarnings": {
 		"incompatibility": "incompatibilidad con RmlUi",

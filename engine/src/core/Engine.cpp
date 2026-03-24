@@ -87,7 +87,13 @@ void Engine::startLoop(std::function<void(int)> gameUpdate, std::function<void()
 
             int scaleX = m_width  / GameConfig::Width;
             int scaleY = m_height / GameConfig::Height;
-            int scale  = std::max(1, std::max(scaleX, scaleY));
+            int scale;
+
+            if (!EditorConfig::getInstance().getLetterboxing()) {
+                scale  = std::max(1, std::max(scaleX, scaleY));
+            } else {
+                scale  = std::max(1, std::min(scaleX, scaleY));
+            }
 
             int viewportWidth  = GameConfig::Width  * scale;
             int viewportHeight = GameConfig::Height * scale;
