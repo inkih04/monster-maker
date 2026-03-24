@@ -18,8 +18,8 @@ void ScriptEngine::init() {
     }
 }
 
-void ScriptEngine::setupBindingsStatic() {
-    ScriptBindings::registerStatic(m_lua);
+void ScriptEngine::setupBindingsStatic(SessionManager& sessionManager) {
+    ScriptBindings::registerStatic(m_lua, sessionManager);
 }
 
 std::string ScriptEngine::consumePendingMap() {
