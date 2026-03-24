@@ -130,10 +130,18 @@ void ScriptBindings::registerEntity(sol::state& lua) {
         "disable", &Entity::disableEntity,
         "getPos", [](Entity& e) -> PositionComponent* {
             auto* comp = e.getComponent(ComponentsType::POSITION);
+            if (!comp) {
+                std::cout << "[ENGINE][WARNING] Trying to access a component that the entity does not have: PositionComponent" << std::endl;
+                return nullptr;
+            }
             return static_cast<PositionComponent*>(comp);
         },
         "getMove", [](Entity& e) -> MovementComponent* {
             auto* comp = e.getComponent(ComponentsType::MOVEMENT);
+            if (!comp) {
+                std::cout << "[ENGINE][WARNING] Trying to access a component that the entity does not have: MovementComponent" << std::endl;
+                return nullptr;
+            }
             return static_cast<MovementComponent*>(comp);
         },
         "interact", [](Entity& e) {

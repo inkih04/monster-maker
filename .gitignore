@@ -214,3 +214,7 @@ engine/temp-data/
 ###############################################
 ### FIN DEL .gitignore
 ###############################################
+engine/resources/music/music_overworld.mp3
+engine/resources/maps/data/map-mac.json
+src/assets/projects.json
+src/assets/projects.json
