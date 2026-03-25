@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTileSetStore } from '../../../Tileset/TileSetGState';
 import { useProjectStore } from '../../../Project/ProjectConfigGState';
+import { TileSetConfig } from '../../../../global/types/tileSetConfig';
 
 function TileSize() {
 	const { t } = useTranslation();
@@ -30,23 +31,43 @@ function TileSize() {
 		setIsSubmitting(true);
 
 		try {
-			const config = {
+			const config: TileSetConfig = {
 				tileSizeX: tileSize,
 				tileSizeY: tileSize,
 			};
 
-			console.log('going to save file');
-			const result = await window.api.saveFile(
-				currentTileset.pathTileMapConfig,
-				JSON.stringify(config, null, 2),
-				currentProject
+			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
+			const completeConfigPath = await window.api.pathUnion(
+				fullProjectPath,
+				currentTileset.pathTileMapConfig
 			);
 
-			console.log(result);
+			const splitResult = await window.api.splitTileset(
+				currentTileset.pathImg,
+				completeConfigPath,
+				config,
+				4096
+			);
+
+			if (splitResult.success) {
+				if (splitResult.atlasWidth) config.atlasWidth = splitResult.atlasWidth;
+				if (splitResult.atlasHeight) config.atlasHeight = splitResult.atlasHeight;
+				if (splitResult.subImages) config.subImages = splitResult.subImages;
+			} else {
+				await window.api.saveFile(
+					currentTileset.pathTileMapConfig,
+					JSON.stringify(config, null, 2),
+					currentProject
+				);
+			}
 
 			updateTileSet(currentPath, {
-				tileSizeX: tileSize,
-				tileSizeY: tileSize,
+				tileSizeX: config.tileSizeX,
+				tileSizeY: config.tileSizeY,
+				isLoaded: true,
+				atlasWidth: config.atlasWidth,
+				atlasHeight: config.atlasHeight,
+				subImages: config.subImages,
 			});
 
 			closeTileSizeDialog();

@@ -14,7 +14,7 @@ const transformToFileItems = (fileNames: string[]): FileItem[] => {
 			name: getFileNameWithoutExtension(fileName),
 			type: getFileType(fileName),
 			path: fileName,
-		}));
+		}))
 };
 
 export function useFileWatcher() {
