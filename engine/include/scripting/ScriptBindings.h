@@ -8,6 +8,7 @@
 #include <sol/sol.hpp>
 
 #include "Camera.h"
+#include "SaveManager.h"
 #include "SessionManager.h"
 
 class EntityManager;
@@ -32,9 +33,10 @@ class ScriptBindings {
         static void registerUiManager(sol::state &lua);
         static void registerConfig(sol::state &lua);
         static void registerSessionManager(sol::state &lua, SessionManager &sessionManager);
+        static void registerSaveManager(sol::state &lua, SaveManager &saveManager);
 
     public:
-        static void registerStatic(sol::state &lua, SessionManager &sessionManager);
+        static void registerStatic(sol::state &lua, SessionManager &sessionManager, SaveManager &save_manager);
         static void registerConfigTags(sol::state &lua);
         static void registerDynamic(sol::state& lua,Camera* camera, EntityManager& entityManager);
 

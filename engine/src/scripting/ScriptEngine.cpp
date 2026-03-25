@@ -4,6 +4,8 @@
 #include "scripting/ScriptBindings.h"
 #include "scripting/ScriptEngine.h"
 
+#include "SaveManager.h"
+
 ScriptEngine& ScriptEngine::getInstance() {
     static ScriptEngine instance;
     return instance;
@@ -18,8 +20,8 @@ void ScriptEngine::init() {
     }
 }
 
-void ScriptEngine::setupBindingsStatic(SessionManager& sessionManager) {
-    ScriptBindings::registerStatic(m_lua, sessionManager);
+void ScriptEngine::setupBindingsStatic(SessionManager& sessionManager, SaveManager& saveManager) {
+    ScriptBindings::registerStatic(m_lua, sessionManager, saveManager);
 }
 
 std::string ScriptEngine::consumePendingMap() {
