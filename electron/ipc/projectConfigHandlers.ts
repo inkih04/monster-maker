@@ -3,6 +3,8 @@ import { ProjectConfigManager } from '../managers/ProjectConfigManager';
 import type { ProjectData } from '../../global/types/projectData';
 import type { BrowserWindow } from 'electron';
 import FolderNode from '../../global/types/folderNode';
+import { GameConfig } from '../../global/types/engineConfig';
+import { TileSetConfig } from '../../global/types/tileSetConfig';
 
 const configManager = new ProjectConfigManager();
 
@@ -347,9 +349,26 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 
 	ipcMain.handle(
 		'config:updateGameConfig',
-		async (_event, pd: ProjectData, gameConfig: Record<string, string | number | boolean>) => {
+		async (_event, pd: ProjectData, gameConfig: GameConfig) => {
 			try {
 				return configManager.updateGameConfig(pd, gameConfig);
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
+		ipcMain.handle(
+		'config:splitTileset',
+		async (
+			_event,
+			imagePath: string,
+			configPath: string,
+			existingConfig: TileSetConfig,
+			maxGpuSize: number
+		) => {
+			try {
+				return configManager.splitTileset(imagePath, configPath, existingConfig, maxGpuSize);
 			} catch (error) {
 				return { success: false, error: String(error) };
 			}

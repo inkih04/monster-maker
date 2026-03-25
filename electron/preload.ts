@@ -179,4 +179,11 @@ contextBridge.exposeInMainWorld('api', {
 
 	updateGameConfig: (pd: ProjectData, gameConfig: Record<string, string | number | boolean>) =>
 		ipcRenderer.invoke('config:updateGameConfig', pd, gameConfig),
+
+	splitTileset: (
+		imagePath: string,
+		configPath: string,
+		existingConfig: Record<string, unknown>,
+		maxGpuSize: number
+	) => ipcRenderer.invoke('config:splitTileset', imagePath, configPath, existingConfig, maxGpuSize),
 });

@@ -10,6 +10,8 @@ import { FileSystemService } from './FileSystemService';
 import { spawn } from 'child_process';
 import { EngineLog, LogLevel } from '../../global/types/engineLog';
 import { EngineConfig, DEFAULT_ENGINE_CONFIG, GameConfig } from '../../global/types/engineConfig';
+import { TileSetConfig } from '../../global/types/tileSetConfig';
+import { AtlasService } from './atlasService';
 
 const ENGINE_CONFIG_FILENAME = '.engineConfig.json';
 
@@ -20,6 +22,7 @@ export class ProjectConfigManager {
 	private readonly fileSystemService: FileSystemService;
 	private currentWatchedFolder: { pd: ProjectData; folder: FolderNode } | null = null;
 	private engineProcess: ReturnType<typeof spawn> | null = null;
+	private readonly atlasService: AtlasService = new AtlasService();
 
 	constructor() {
 		this.configPath = this.getConfigPath();
@@ -778,5 +781,14 @@ export class ProjectConfigManager {
 		} catch (error) {
 			return { success: false, error: String(error) };
 		}
+	}
+
+	public async splitTileset(
+		imagePath: string,
+		configPath: string,
+		existingConfig: TileSetConfig,
+		maxGpuSize: number
+	) {
+		return this.atlasService.splitTileset(imagePath, configPath, existingConfig, maxGpuSize);
 	}
 }
