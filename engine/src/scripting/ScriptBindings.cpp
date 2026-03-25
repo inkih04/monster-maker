@@ -14,7 +14,7 @@
 #include "ScriptEngine.h"
 #include "UiManager.h"
 
-void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionManager) {
+void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionManager, SaveManager& save_manager) {
     registerKeys(lua);
     registerInputManager(lua);
     registerComponents(lua);
@@ -29,6 +29,7 @@ void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionMana
     registerConfigTags(lua);
     registerConfig(lua);
     registerSessionManager(lua, sessionManager);
+    registerSaveManager(lua, save_manager);
 }
 
 void ScriptBindings::registerSessionManager(sol::state& lua, SessionManager& sessionManager) {
@@ -41,6 +42,21 @@ void ScriptBindings::registerSessionManager(sol::state& lua, SessionManager& ses
         "clear",  &SessionManager::clear
     );
     lua["Session"] = std::ref(sessionManager);
+}
+
+void ScriptBindings::registerSaveManager(sol::state& lua, SaveManager& saveManager) {
+    lua.new_usertype<SaveManager>("SaveManager",
+        sol::no_constructor,
+        "set",    &SaveManager::set,
+        "get",    &SaveManager::get,
+        "has",    &SaveManager::has,
+        "remove", &SaveManager::remove,
+        "clear",  &SaveManager::clear,
+
+        "load",   &SaveManager::loadFromFile,
+        "commit", &SaveManager::commitToFile
+    );
+    lua["Save"] = std::ref(saveManager);
 }
 
 

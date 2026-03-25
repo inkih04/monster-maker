@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include <memory>
 
+#include "SaveManager.h"
 #include "SessionManager.h"
 #include "StateManager.h"
 
@@ -23,6 +24,7 @@ private:
     std::unique_ptr<Engine> m_engine;
     StateManager m_stateManager;
     SessionManager m_sessionManager;
+    SaveManager m_saveManager;
 };
 
 #endif //POKEMONGAMEENGINE_APPLICATION_H
