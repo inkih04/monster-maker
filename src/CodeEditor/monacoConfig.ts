@@ -620,6 +620,15 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(monaco, 'Session.has', 'Session:has("${1:key}")', 'has(key) → bool', range),
 				fn(monaco, 'Session.remove', 'Session:remove("${1:key}")', 'remove(key)', range),
 				fn(monaco, 'Session.clear', 'Session:clear()', 'clear()', range),
+				fn(monaco, 'Save.set', 'Save:set("${1:key}", ${2:value})', 'set(key, value)', range),
+				fn(monaco, 'Save.get', 'Save:get("${1:key}")', 'get(key) → value', range),
+				fn(monaco, 'Save.has', 'Save:has("${1:key}")', 'has(key) → bool', range),
+				fn(monaco, 'Save.remove', 'Save:remove("${1:key}")', 'remove(key)', range),
+				fn(monaco, 'Save.clear', 'Save:clear()', 'clear()', range),
+				fn(monaco, 'Save.load', 'Save:load("${1:filepath}")', 'load(filepath) → bool', range),
+				fn(monaco, 'Save.commit', 'Save:commit("${1:filepath}")', 'commit(filepath) → bool', range),
+				fn(monaco, 'Data.get', 'Data:get("${1:category}")', 'get(category) → value', range),
+				fn(monaco, 'Data.has', 'Data:has("${1:category}")', 'has(category) → bool', range),
 
 				...(
 					[

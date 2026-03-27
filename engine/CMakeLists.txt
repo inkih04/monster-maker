@@ -96,6 +96,8 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         include/memory/SessionManager.h
         include/memory/SaveManager.h
         src/memory/SaveManager.cpp
+        include/memory/DataManager.h
+        src/memory/DataManager.cpp
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD

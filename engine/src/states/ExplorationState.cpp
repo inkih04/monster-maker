@@ -81,7 +81,7 @@ void ExplorationState::moveDebugCamera() {
     if (input.isKeyDown(GLFW_KEY_A) || input.isKeyDown(GLFW_KEY_LEFT))  targetPos.x -= speed;
     if (input.isKeyDown(GLFW_KEY_D) || input.isKeyDown(GLFW_KEY_RIGHT)) targetPos.x += speed;
 
-    camera->lerpTo(targetPos, smoothness);
+    camera->setPosition(targetPos);
 }
 
 void ExplorationState::setEntityManager() {
