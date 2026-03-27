@@ -100,7 +100,7 @@ function Map() {
 				const tileTileset = tileSets[tile.spriteSheetPath];
 				const tilesetImage = tilesetImages[tile.spriteSheetPath];
 
-				if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
+				if (!tilesetImage) return;
 
 				const entityData = mapState.map?.entities[tile.entityId];
 				const renderComponent = entityData?.components.RENDER;
@@ -162,9 +162,7 @@ function Map() {
 				isActive,
 				paintedTiles,
 				activeLayer,
-				tileSets,
 				tilesetImages,
-				tileSize,
 				zoom,
 				entities: mapState.map?.entities || {},
 				isLayerLocked: lockedLayers[activeLayer],
@@ -177,9 +175,7 @@ function Map() {
 					isActive,
 					paintedTiles,
 					activeLayer,
-					tileSets,
 					tilesetImages,
-					tileSize,
 					zoom,
 					entities: mapState.map?.entities || {},
 				});

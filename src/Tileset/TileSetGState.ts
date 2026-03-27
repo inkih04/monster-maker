@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { TileSetSubImage } from '../../global/types/tileSetConfig';
 
 export interface TileSetData {
 	id: string;
@@ -8,6 +9,9 @@ export interface TileSetData {
 	tileSizeX: number;
 	tileSizeY: number;
 	isLoaded: boolean;
+	atlasWidth?: number;
+	atlasHeight?: number;
+	subImages?: TileSetSubImage[];
 }
 
 export interface TileSelection {
@@ -119,7 +123,6 @@ export const useTileSetStore = create<TileSetStore>((set, get) => {
 		removeTileSet: (path) => {
 			set((state) => {
 				const { [path]: _, ...remainingTilesets } = state.tilesets;
-
 				const isCurrent = state.currentTileSetPath === path;
 
 				return {

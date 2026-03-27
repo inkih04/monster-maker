@@ -240,9 +240,10 @@ export const useMapStore = create<MapStore>()(
 						const renderComponent = entity.components.RENDER;
 
 						if (positionComponent && renderComponent) {
-							const spriteSheetPath = renderComponent.spriteSheetPath;
-							if (spriteSheetPath) {
-								usedTilesets.add(spriteSheetPath);
+							const finalSpriteSheetPath = renderComponent.spriteSheetPath;
+
+							if (finalSpriteSheetPath) {
+								usedTilesets.add(finalSpriteSheetPath);
 							}
 
 							tiles.push({
@@ -252,38 +253,33 @@ export const useMapStore = create<MapStore>()(
 								tilesetY: renderComponent.y / tileSize,
 								entityId: entity.id,
 								layer: entity.layer,
-								spriteSheetPath: renderComponent.spriteSheetPath || '',
+								spriteSheetPath: finalSpriteSheetPath,
 							});
 						}
 					});
 
-					console.log('Tilesets detectados:', Array.from(usedTilesets));
-
 					const currentProject = useProjectStore.getState().currentProject;
 					const tileSetStore = useTileSetStore.getState();
 
-					if (!currentProject) {
-						return;
-					}
-
-					for (const spriteSheetPath of usedTilesets) {
-						if (tileSetStore.tilesets[spriteSheetPath]) {
-							console.log(`Tileset already loaded: ${spriteSheetPath}`);
-							continue;
-						}
-						try {
-							const tilesetData = await loadSingleTileset(spriteSheetPath, currentProject);
-
-							if (tilesetData) {
-								tileSetStore.addTileSet(tilesetData);
-								console.log(`Tileset auto-loaded: ${spriteSheetPath}`);
-							} else {
-								console.warn(`Tilset couldn't be onpen: ${spriteSheetPath}`);
+					if (currentProject) {
+						for (const path of usedTilesets) {
+							if (tileSetStore.tilesets[path]) {
+								continue;
 							}
-						} catch (error) {
-							console.error(`Error while loading tileset ${spriteSheetPath}:`, error);
+							try {
+								const tilesetData = await loadSingleTileset(path, currentProject);
+
+								if (tilesetData) {
+									tileSetStore.addTileSet(tilesetData);
+								} else {
+									console.warn(`No se pudo cargar: ${path}`);
+								}
+							} catch (error) {
+								console.error(`Error al auto-cargar ${path}:`, error);
+							}
 						}
 					}
+
 					set({
 						map,
 						paintedTiles: tiles,
@@ -497,8 +493,13 @@ export const useMapStore = create<MapStore>()(
 							)
 					);
 
+					const tileSetStore = useTileSetStore.getState();
+
 					tiles.forEach((tile) => {
-						newEntities[tile.entityId] = createTileEntity(
+						const currentTileSetData = tileSetStore.tilesets[tile.spriteSheetPath];
+						const subImages = currentTileSetData?.subImages;
+
+						const newEntity = createTileEntity(
 							tile.entityId,
 							tile.layer,
 							tile.mapX,
@@ -507,17 +508,20 @@ export const useMapStore = create<MapStore>()(
 							tile.tilesetY,
 							tile.tileSize,
 							tile.spriteSheetPath,
-							state.map!.tileSize
+							state.map!.tileSize,
+							subImages
 						);
+
+						newEntities[tile.entityId] = newEntity;
 
 						newPaintedTiles.push({
 							x: tile.mapX,
 							y: tile.mapY,
-							tilesetX: tile.tilesetX,
-							tilesetY: tile.tilesetY,
+							tilesetX: newEntity.components.RENDER!.x / tile.tileSize,
+							tilesetY: newEntity.components.RENDER!.y / tile.tileSize,
 							entityId: tile.entityId,
 							layer: tile.layer,
-							spriteSheetPath: tile.spriteSheetPath,
+							spriteSheetPath: newEntity.components.RENDER!.spriteSheetPath,
 						});
 					});
 

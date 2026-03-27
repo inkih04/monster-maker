@@ -3,6 +3,7 @@ import { GameConfig } from '../global/types/engineConfig';
 import FolderNode from '../global/types/folderNode';
 import { FileData } from '../global/types/fileData';
 import { ProjectFile } from '../global/types/projectFile';
+import { TileSetConfig, TileSetSubImage } from '../global/types/tileSetConfig';
 
 export {};
 
@@ -141,6 +142,19 @@ declare global {
 				pd: ProjectData,
 				gameConfig: GameConfig
 			) => Promise<{ success: boolean; error?: string }>;
+
+			splitTileset: (
+				imagePath: string,
+				configPath: string,
+				existingConfig: TileSetConfig,
+				maxGpuSize: number
+			) => Promise<{
+				success: boolean;
+				subImages?: TileSetSubImage[];
+				atlasWidth?: number;
+				atlasHeight?: number;
+				error?: string;
+			}>;
 		};
 	}
 }
