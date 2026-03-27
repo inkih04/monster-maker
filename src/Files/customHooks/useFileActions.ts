@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import FolderNode from '../../../global/types/folderNode';
 import { useEngineStore } from '../../ToolBar/EngineGState';
 import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
+import { TileSetConfig } from '../../../global/types/tileSetConfig';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -183,24 +184,7 @@ export function useFileActions() {
 			const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
 			const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
 			const configurationPath = await window.api.pathUnion(selectedFolder.path, jsonPath);
-			console.log(configurationPath);
 			const completeRelativePath = await window.api.pathUnion(selectedFolder.path, file.path);
-			console.log(completeRelativePath);
-
-			const result = await window.api.getFile(jsonPath, selectedFolder.path, currentProject);
-
-			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
-			const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
-
-			const sizeCheck = await validateImageSize(completePath);
-
-			if (!sizeCheck.valid) {
-				notify(
-					t('engine.notifications.warning_title'),
-					t('engine.notifications.texture_too_large', { height: sizeCheck.h, width: sizeCheck.w }),
-					'error'
-				);
-			}
 
 			const existingTileSet = useTileSetStore.getState().tilesets[completeRelativePath];
 			if (existingTileSet) {
@@ -208,40 +192,56 @@ export function useFileActions() {
 				return;
 			}
 
-			if (result.success) {
+			const result = await window.api.getFile(jsonPath, selectedFolder.path, currentProject);
+
+			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
+			const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
+
+			let config: TileSetConfig = {
+				tileSizeX: currentProject?.defaultTilesize || 16,
+				tileSizeY: currentProject?.defaultTilesize || 16,
+			};
+			let isLoaded = false;
+
+			if (result.success && result.content?.content) {
 				try {
-					if (result.content?.content) {
-						const config = JSON.parse(result.content?.content);
-
-						const newTileSet: TileSetData = {
-							id: crypto.randomUUID(),
-							pathImg: completePath,
-							pathTileMapConfig: configurationPath,
-							relativePath: completeRelativePath,
-							tileSizeX: config.tileSizeX || 16,
-							tileSizeY: config.tileSizeY || 16,
-							isLoaded: true,
-						};
-
-						addTileSet(newTileSet);
-						setCurrentTileSet(completeRelativePath);
-					}
+					config = JSON.parse(result.content.content);
+					isLoaded = true;
 				} catch (parseError) {
 					console.error('Configuration JSON is corrupted', parseError);
 				}
 			} else {
-				const newTileSet: TileSetData = {
-					id: crypto.randomUUID(),
-					pathImg: completePath,
-					pathTileMapConfig: configurationPath,
-					relativePath: completeRelativePath,
-					tileSizeX: currentProject?.defaultTilesize || 16,
-					tileSizeY: currentProject?.defaultTilesize || 16,
-					isLoaded: false,
-				};
+				const sizeCheck = await validateImageSize(completePath);
+				if (!sizeCheck.valid) {
+					notify(
+						t('engine.notifications.warning_title'),
+						t('engine.notifications.texture_too_large', {
+							height: sizeCheck.h,
+							width: sizeCheck.w,
+						}),
+						'error'
+					);
+				}
+			}
 
-				addTileSet(newTileSet);
-				setCurrentTileSet(completeRelativePath);
+			const newTileSet: TileSetData = {
+				id: crypto.randomUUID(),
+				pathImg: completePath,
+				pathTileMapConfig: configurationPath,
+				relativePath: completeRelativePath,
+				tileSizeX: config.tileSizeX || 16,
+				tileSizeY: config.tileSizeY || 16,
+				isLoaded: isLoaded,
+				atlasWidth: config.atlasWidth,
+				atlasHeight: config.atlasHeight,
+				subImages: config.subImages,
+			};
+
+			addTileSet(newTileSet);
+			setCurrentTileSet(completeRelativePath);
+
+			if (!isLoaded) {
+				useTileSetStore.getState().openTileSizeDialog();
 			}
 		} catch (error) {
 			console.error('Error while tileset:', error);
