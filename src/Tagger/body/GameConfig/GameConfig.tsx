@@ -50,7 +50,7 @@ function dataToGameConfig(data: GameConfigData): GameConfig {
 function TaggerGameConfigBody() {
 	const { t } = useTranslation();
 	const currentProject = useProjectStore((s) => s.currentProject);
-	const { gameConfig, isLoading, loadEngineConfig, saveGameConfig } = useEngineConfigStore();
+	const { gameConfig, tags, isLoading, loadEngineConfig, saveGameConfig } = useEngineConfigStore();
 	const [data, setData] = useState<GameConfigData>(() => gameConfigToData(gameConfig));
 	const skipNextSync = useRef(false);
 	const { handleDragOver, handleDragLeave, handleDrop, getDragClass } = useGameConfigDrag();
@@ -92,6 +92,8 @@ function TaggerGameConfigBody() {
 		return <div className="tagger-body--scroll tagger-body--loading">Loading…</div>;
 	}
 
+	const tagOptions = Object.keys(tags || {});
+
 	return (
 		<div className="tagger-body--scroll">
 			<div className="game-config--form">
@@ -129,6 +131,7 @@ function TaggerGameConfigBody() {
 						onDrop={(e) =>
 							handleDrop(e, 'initialMapPath', (path) => handleChange('initialMapPath', path))
 						}
+						options={tagOptions}
 					/>
 				</div>
 
@@ -145,6 +148,7 @@ function TaggerGameConfigBody() {
 						onDrop={(e) =>
 							handleDrop(e, 'imageIconPath', (path) => handleChange('imageIconPath', path))
 						}
+						options={tagOptions}
 					/>
 				</div>
 
@@ -161,6 +165,7 @@ function TaggerGameConfigBody() {
 						onDrop={(e) =>
 							handleDrop(e, 'defaultFont', (path) => handleChange('defaultFont', path))
 						}
+						options={tagOptions}
 					/>
 				</div>
 				<div
