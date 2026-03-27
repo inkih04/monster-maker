@@ -14,7 +14,6 @@ public:
 
 
     void setPosition(const glm::vec2& position);
-    void lerpTo(const glm::vec2& target, float alpha);
     glm::vec2 getPosition() const { return m_position; }
 
     void setZoom(float zoom);

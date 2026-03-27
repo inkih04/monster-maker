@@ -82,15 +82,15 @@ void MovementComponent::handleCollision(const Position &pos, CollisionService *c
     }
 }
 
-void MovementComponent::move(const Position& pos) {
-    if (!m_entity) return;
+bool MovementComponent::move(const Position& pos) {
+    if (!m_entity) return false;
 
     if (!m_positionComponent) m_positionComponent = getPosition();
     if (!m_animationComponent) m_animationComponent = getAnimation();
-    if (!m_positionComponent) return;
+    if (!m_positionComponent) return false;
 
     auto* collisionService = m_entity->getCollisionService();
-    if (!collisionService) return;
+    if (!collisionService) return false;
 
     Position oldPos = m_positionComponent->getPosition();
     auto* collider = static_cast<CollisionComponent*>(m_entity->getComponent(ComponentsType::COLLIDER));
@@ -102,9 +102,11 @@ void MovementComponent::move(const Position& pos) {
         updateAnimation(pos, oldPos);
         collisionService->updatePositionCollisionCache(oldPos, pos, m_entity);
         m_positionComponent->setPosition(pos);
+        return true;
     }
     else {
         if (m_animationComponent) m_animationComponent->play(getStandAnimation());
+        return false;
     }
 }
 
