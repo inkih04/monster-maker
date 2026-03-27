@@ -35,7 +35,7 @@ class MovementComponent : public Component {
         void handleCollision(const Position &pos, CollisionService *collisionService, CollisionComponent *collider,
                              bool &canMove);
 
-        void move(const Position& pos);
+        bool move(const Position& pos);
         void update(int deltaTime) override {};
         void render() override {};
 };

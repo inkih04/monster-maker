@@ -205,9 +205,6 @@ void ScriptBindings::registerCamera(sol::state& lua) {
         "setPosition", [](Camera& c, float x, float y) {
             c.setPosition(glm::vec2(x, y));
         },
-        "lerpTo", [](Camera& c, float x, float y, float alpha) {
-            c.lerpTo(glm::vec2(x, y), alpha);
-        },
         "setZoom", &Camera::setZoom,
         "getPosition", &Camera::getPosition,
         "getWidth",  &Camera::getWidth,
