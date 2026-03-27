@@ -1,5 +1,5 @@
 {
-  "htmlPath": "/home/inkih/Desktop/test/Test1/resources/ui/.text/text_HTML.rmli",
-  "cssPath": "/home/inkih/Desktop/test/Test1/resources/ui/.text/text_CSS.css",
+  "htmlPath": "resources/ui/.text/text_HTML.rmli",
+  "cssPath": "resources/ui/.text/text_CSS.css",
   "scriptPath": null
 }

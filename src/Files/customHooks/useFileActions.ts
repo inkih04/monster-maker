@@ -141,8 +141,8 @@ export function useFileActions() {
 			};
 
 			const [htmlResult, cssResult] = await Promise.all([
-				window.api.getFileFullPath(descriptor.htmlPath),
-				window.api.getFileFullPath(descriptor.cssPath),
+				window.api.getFile(descriptor.htmlPath, '', currentProject),
+				window.api.getFile(descriptor.cssPath, '', currentProject),
 			]);
 
 			if (!htmlResult.success || !cssResult.success) {
@@ -160,8 +160,8 @@ export function useFileActions() {
 				.setOpenUiFile(
 					descriptor.htmlPath,
 					descriptor.cssPath,
-					htmlResult.content ?? '',
-					cssResult.content ?? ''
+					htmlResult.content?.content ?? '',
+					cssResult.content?.content ?? ''
 				);
 		} catch (error) {
 			console.error('Error opening .ui file:', error);

@@ -115,10 +115,10 @@ export function FileListener() {
 
 				if (codeEditorMode === 'duo') {
 					const { openUiFile } = useCodeEditorStore.getState();
-					if (!openUiFile) return;
+					if (!openUiFile || !currentProject) return;
 					await Promise.all([
-						window.api.saveFileCompletePath('', openUiFile.htmlPath, openUiFile.htmlContent),
-						window.api.saveFileCompletePath('', openUiFile.cssPath, openUiFile.cssContent),
+						window.api.saveFile(openUiFile.htmlPath, openUiFile.htmlContent, currentProject),
+						window.api.saveFile(openUiFile.cssPath, openUiFile.cssContent, currentProject),
 					]);
 					useCodeEditorStore.getState().markUiSaved();
 					return;

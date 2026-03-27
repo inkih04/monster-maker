@@ -253,6 +253,8 @@ export class ProjectConfigManager {
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
 
+			console.log(completePath);
+
 			if (!this.fileSystemService.exists(completePath)) {
 				console.log(`File does not exist: ${completePath}`);
 				return { success: false, error: 'File does not exist' };
