@@ -22,7 +22,7 @@ Engine::Engine(int width, int height, const std::string& title)
     EditorConfig::getInstance().setVirtualResolution();
     setUpShaders();
     setUpCamera(width, height);
-    UiManager::getInstance().init(m_width, m_height, EditorConfig::getInstance().getTag(EditorConfig::getInstance().getDefaultFontPath()));
+    UiManager::getInstance().init(m_width, m_height, m_dpiScale, EditorConfig::getInstance().getTag(EditorConfig::getInstance().getDefaultFontPath()));
 
 }
 
@@ -43,6 +43,13 @@ void Engine::initGLFW() {
         glfwTerminate();
         exit(-1);
     }
+
+    float xscale, yscale;
+    glfwGetWindowContentScale(m_window, &xscale, &yscale);
+    m_dpiScale = xscale;
+
+    std::cout << "[ENGINE] dpiScale: " << m_dpiScale << "\n";
+
     glfwMakeContextCurrent(m_window);
     glfwSetWindowUserPointer(m_window, this);
     glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);

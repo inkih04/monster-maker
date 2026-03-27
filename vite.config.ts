@@ -23,6 +23,7 @@ export default defineConfig({
 					monaco: ['monaco-editor'],
 				},
 			},
+
 		},
 	},
 });

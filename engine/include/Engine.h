@@ -29,6 +29,7 @@ private:
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
     void onResize(int width, int height);
 
+    float m_dpiScale = 1;
     int m_width;
     int m_height;
     std::unique_ptr<Camera> m_camera;

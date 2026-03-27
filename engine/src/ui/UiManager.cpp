@@ -2,7 +2,7 @@
 #include "UiDocumentLoader.h"
 #include <iostream>
 
-void UiManager::init(int width, int height, const std::string& fontPath) {
+void UiManager::init(int width, int height, float dpiScale, const std::string& fontPath) {
     m_renderInterface.SetViewport(width, height);
 
     Rml::SetFileInterface(&m_fileInterface);
@@ -20,6 +20,13 @@ void UiManager::init(int width, int height, const std::string& fontPath) {
         std::cerr << "[ENGINE][WARNING] No font path provided, using default: " << defaultFont << std::endl;
         Rml::LoadFontFace(defaultFont);
     }
+
+    if (m_context)
+    {
+        m_context->SetDensityIndependentPixelRatio(dpiScale);
+
+    }
+
 }
 
 void UiManager::resize(int width, int height) {
