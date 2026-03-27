@@ -10,14 +10,14 @@ function onStart(entity)
     Audio:setMusicVolume(0.02)
     Audio:setMasterVolume(0.02)
     Audio:playMusic("resources/music/music_overworld.mp3", true)
-    
+
     Save:load("save_test.json")
-    
+
     local savedX = Save:get("player_x")
     local savedY = Save:get("player_y")
-    
+
     local moveComp = entity:getMove()
-    
+
     if savedX ~= nil and savedY ~= nil and moveComp then
         moveComp:move(Position.new(savedX, savedY))
         print("Posición cargada desde el archivo: X=" .. savedX .. " Y=" .. savedY)
@@ -49,7 +49,7 @@ function onUpdate(entity)
         newX = newX + speed
     end
 
-    moveComp:move(Position.new(newX, newY))
+    local hasMoved = moveComp:move(Position.new(newX, newY))
 
     if Input:isKeyPressed(Keys.Z) then
         entity:interact()
@@ -62,7 +62,7 @@ function onUpdate(entity)
         Save:set("player_x", posComp.x)
         Save:set("player_y", posComp.y)
         local success = Save:commit("save_test.json")
-        
+
         if success then
             print("¡Posición guardada correctamente en save_test.json!")
         else
@@ -70,10 +70,10 @@ function onUpdate(entity)
         end
     end
 
-    if MainCamera then
+    if MainCamera and hasMoved then
         local halfW = MainCamera:getWidth()  / 2
         local halfH = MainCamera:getHeight() / 2
         local clamped = Borders:clampCamera(Position.new(newX, newY), halfW, halfH)
-        MainCamera:lerpTo(clamped.x, clamped.y, cameraSmoothing)
+        MainCamera:setPosition(clamped.x, clamped.y)
     end
 end

@@ -18,7 +18,7 @@ Application::Application(int width, int height) {
     m_stateManager = StateManager();
     AudioService::getInstance().init();
     ScriptEngine::getInstance().init();
-    ScriptEngine::getInstance().setupBindingsStatic(m_sessionManager, m_saveManager);
+    ScriptEngine::getInstance().setupBindingsStatic(m_sessionManager, m_saveManager, m_dataManager);
     m_stateManager.pushState( std::make_unique<ExplorationState>());
 }
 

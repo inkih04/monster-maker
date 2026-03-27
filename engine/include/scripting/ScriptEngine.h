@@ -9,6 +9,7 @@
 #include <vector>
 #include <sol/state.hpp>
 #include "Camera.h"
+#include "DataManager.h"
 #include "SaveManager.h"
 #include "SessionManager.h"
 
@@ -19,7 +20,7 @@ public:
     static ScriptEngine& getInstance();
 
     void init();
-    void setupBindingsStatic(SessionManager &sessionManager, SaveManager &saveManager);
+    void setupBindingsStatic(SessionManager &sessionManager, SaveManager &saveManager, DataManager &dataManager);
     void setupBindingsDynamic(Camera* camera, EntityManager& entityManager);
     bool runScript(const std::string& filePath);
     void requestMapChange(const std::string& mapPath) { m_pendingMap = mapPath; }
