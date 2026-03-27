@@ -13116,6 +13116,182 @@
           "height": 32
         }
       }
+    },
+    {
+      "id": "tile_1774169748761_1y68knaaa",
+      "tag": "NPC",
+      "layer": "entities",
+      "components": {
+        "POSITION": {
+          "x": 1024,
+          "y": 576,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/sprites/1.png",
+          "x": 128,
+          "y": 64,
+          "w": 64,
+          "h": 64,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
+    },
+    {
+      "id": "tile_1774169758037_pzed792ci",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 64,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
+    },
+    {
+      "id": "tile_1774169758037_jibf79ik3",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 64,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
+    },
+    {
+      "id": "tile_1774169758037_ick1ox514",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 160,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 128,
+          "y": 96,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
+    },
+    {
+      "id": "tile_1774169758037_64c7wjjaa",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 192,
+          "y": 64,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 160,
+          "y": 96,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
+    },
+    {
+      "id": "tile_1774170602553_k5fq9l0yu",
+      "tag": "TILEMAP",
+      "layer": "foreground",
+      "components": {
+        "POSITION": {
+          "x": 288,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/sprites/1.png",
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 64,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
+    },
+    {
+      "id": "tile_1774170603667_bykil9n06",
+      "tag": "TILEMAP",
+      "layer": "foreground",
+      "components": {
+        "POSITION": {
+          "x": 256,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/sprites/1.png",
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 64,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
+    },
+    {
+      "id": "tile_1774170604365_jv41kg3gh",
+      "tag": "TILEMAP",
+      "layer": "foreground",
+      "components": {
+        "POSITION": {
+          "x": 320,
+          "y": 160,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/sprites/1.png",
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 64,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
     }
   ]
 }

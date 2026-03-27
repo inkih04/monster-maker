@@ -1,0 +1,13 @@
+<rml>
+<head>
+    <title>test2</title>
+    <link type="text/rcss" href="ui_CSS.css"/>
+</head>
+<body>
+    <div id="ventana-prueba">
+        <h1>¡Hola Motor!</h1>
+        <p>Si puedes  esto, tu sistema de UI está renderizando la geometría y la fuente Roboto correctamente por encima de tu juego.</p>
+        <button class="hola" id="btn-aceptar">¡Funciona!</button>
+    </div>
+</body>
+</rml>

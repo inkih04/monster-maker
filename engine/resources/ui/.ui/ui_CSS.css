@@ -1,8 +1,3 @@
-<rml>
-<head>
-    <title>Menu de Prueba</title>
-    <style>
-        /* El 'body' ocupa toda la pantalla por defecto */
         body {
             /* IMPORTANTE: Usa el mismo nombre de la fuente que cargaste en el init */
             font-family: Roboto;
@@ -18,6 +13,7 @@
         #ventana-prueba {
             display: block;
             position: absolute;
+            
 
             /* Tamaño de la ventana */
             width: 400px;
@@ -73,18 +69,11 @@
             background-color: #4488FF;
             cursor: pointer;
         }
+        .hola {
+            background-color: red;
+        }
 
         /* Efecto al hacer clic (Active) */
         button:active {
             background-color: #224488;
         }
-    </style>
-</head>
-<body>
-    <div id="ventana-prueba">
-        <h1>¡Hola Motor!</h1>
-        <p>Si puedes leer esto, tu sistema de UI está renderizando la geometría y la fuente Roboto correctamente por encima de tu juego.</p>
-        <button id="btn-aceptar">¡Funciona!</button>
-    </div>
-</body>
-</rml>
