@@ -10,6 +10,7 @@
 #include "EntityLoader.h"
 #include "InputManager.h"
 #include "PositionComponent.h"
+#include "Renderer.h"
 #include "ScriptEngine.h"
 
 

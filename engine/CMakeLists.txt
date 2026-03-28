@@ -172,7 +172,6 @@ add_executable(UnitTests
         src/core/StateManager.cpp
         src/entities/Entity.cpp
         src/entities/EntityManager.cpp
-        src/ui/DialogBox.cpp
         src/memory/SessionManager.cpp
         src/entities/service/CollisionService.cpp
         tests/mocks/MockScriptComponent.cpp
@@ -182,7 +181,6 @@ add_executable(UnitTests
         tests/unitary/EntityTest.cpp
         tests/unitary/EntityManagerTest.cpp
         tests/unitary/StateManagerTest.cpp
-        tests/unitary/DialogBoxTest.cpp
         tests/unitary/CollisionServiceTest.cpp
         tests/unitary/BorderMapServiceTest.cpp
         src/entities/service/BordersMapService.cpp
