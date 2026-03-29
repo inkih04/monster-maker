@@ -1,5 +1,10 @@
+//
+// Created by inkih on 16/3/26.
+//
+
 #include "UiManager.h"
 #include "UiDocumentLoader.h"
+#include <sol/sol.hpp>
 #include <iostream>
 
 void UiManager::init(int width, int height, float dpiScale, const std::string& fontPath) {
@@ -17,16 +22,13 @@ void UiManager::init(int width, int height, float dpiScale, const std::string& f
         Rml::LoadFontFace(fontPath);
     } else {
         const std::string defaultFont = "resources/fonts/Roboto/Roboto.ttf";
-        std::cerr << "[ENGINE][WARNING] No font path provided, using default: " << defaultFont << std::endl;
+        std::cerr << "[ENGINE][WARNING] No font path provided, using default: "
+                  << defaultFont << std::endl;
         Rml::LoadFontFace(defaultFont);
     }
 
     if (m_context)
-    {
         m_context->SetDensityIndependentPixelRatio(dpiScale);
-
-    }
-
 }
 
 void UiManager::resize(int width, int height) {
@@ -52,7 +54,7 @@ void UiManager::shutdown() {
     Rml::Shutdown();
 }
 
-UiDocument* UiManager::openDocument(const std::string& id, const std::string& uiFilePath) {
+UiDocument* UiManager::openDocument(const std::string& id, const std::string& uiFilePath, sol::optional<sol::table> initData) {
     UiDocumentDef def;
     try {
         def = UiDocumentLoader::loadDef(uiFilePath);
@@ -61,17 +63,21 @@ UiDocument* UiManager::openDocument(const std::string& id, const std::string& ui
         return nullptr;
     }
 
+    auto doc = std::make_unique<UiDocument>(nullptr, m_context, def.scriptPath);
+    if (initData.has_value()) {
+        doc->initModel(id, initData.value());
+    }
     auto* rmlDoc = m_context->LoadDocument(def.htmlPath);
     if (!rmlDoc) {
         std::cerr << "[ENGINE][ERROR] RmlUi failed to load: " << def.htmlPath << std::endl;
         return nullptr;
     }
+    doc->setRmlDocument(rmlDoc);
     rmlDoc->Show();
 
     if (m_documents.count(id))
         std::cerr << "[ENGINE][WARNING] Replacing already open document: " << id << std::endl;
 
-    auto doc = std::make_unique<UiDocument>(rmlDoc, def.scriptPath);
     auto* ptr = doc.get();
     m_documents[id] = std::move(doc);
     return ptr;

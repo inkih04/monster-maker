@@ -15,6 +15,7 @@ type GameConfigData = {
 	initialMapPath: string;
 	imageIconPath: string;
 	defaultFont: string;
+	defaultLanguage: string;
 	virtualWidth: number | '';
 	virtualHeight: number | '';
 	letterboxing: boolean;
@@ -27,6 +28,7 @@ function gameConfigToData(gc: GameConfig): GameConfigData {
 		initialMapPath: gc.initialMapPath,
 		imageIconPath: gc.imageIconPath,
 		defaultFont: gc.defaultFont,
+		defaultLanguage: gc.defaultLanguage ?? DEFAULT_GAME_CONFIG.defaultLanguage,
 		virtualWidth: gc.virtualWidth,
 		virtualHeight: gc.virtualHeight,
 		letterboxing: gc.letterboxing ?? DEFAULT_GAME_CONFIG.letterboxing,
@@ -40,6 +42,7 @@ function dataToGameConfig(data: GameConfigData): GameConfig {
 		initialMapPath: data.initialMapPath,
 		imageIconPath: data.imageIconPath,
 		defaultFont: data.defaultFont,
+		defaultLanguage: data.defaultLanguage,
 		virtualWidth: data.virtualWidth === '' ? DEFAULT_GAME_CONFIG.virtualWidth : data.virtualWidth,
 		virtualHeight:
 			data.virtualHeight === '' ? DEFAULT_GAME_CONFIG.virtualHeight : data.virtualHeight,
@@ -168,6 +171,26 @@ function TaggerGameConfigBody() {
 						options={tagOptions}
 					/>
 				</div>
+
+				<div className="game-config--field">
+					<label className="game-config--label">{t('gameConfig.defaultLanguage')}</label>
+					<ResetableInput
+						className={getDragClass?.('defaultLanguage')}
+						value={data.defaultLanguage}
+						defaultValue={DEFAULT_GAME_CONFIG.defaultLanguage}
+						placeholder="resources/.locals/es.json"
+						onChange={(v) => handleChange('defaultLanguage', v)}
+						onDragOver={(e) => handleDragOver(e, 'defaultLanguage')}
+						onDragLeave={handleDragLeave}
+						onDrop={(e) =>
+							handleDrop(e, 'defaultLanguage', (path) =>
+								handleChange('defaultLanguage', path)
+							)
+						}
+						options={tagOptions}
+					/>
+				</div>
+
 				<div
 					className="game-config--field game-config--field-group-start"
 					style={{ paddingBottom: '8px' }}

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useFolderStore } from '../../../../common/globalStores/useFolderStore';
 
-type DragFieldId = 'initialMapPath' | 'imageIconPath' | 'defaultFont';
+type DragFieldId = 'initialMapPath' | 'imageIconPath' | 'defaultFont' | 'defaultLanguage';
 
 const ALLOWED_TYPES: Record<DragFieldId, string> = {
 	initialMapPath: 'tilemap',
 	imageIconPath: 'tileset',
 	defaultFont: 'font',
+	defaultLanguage: 'dialog',
 };
 
 type DragState = {

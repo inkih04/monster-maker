@@ -30,6 +30,9 @@ export function useFileActions() {
 	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const changeCodeEditorMode = useEngineStore((state) => state.changeCodeEditorMode);
 
+	const isTranslateMode = useEngineStore((state) => state.translate);
+	const changeTranslateMode = useEngineStore((state) => state.changeTranslate);
+
 	const { notify } = useNotify();
 	const { t } = useTranslation();
 
@@ -91,11 +94,16 @@ export function useFileActions() {
 			}
 			return;
 		}
+
+		if (file.type === 'local') {
+			//handleOpenLocal(file);
+		}
 	};
 
 	const handleOpenScript = async (file: FileItem) => {
 		changeCodeEditorMode('single');
 		changeEditorMode('code');
+		changeTranslateMode(false);
 		if (!selectedFolder?.path || !currentProject) return;
 
 		useCodeEditorStore.getState().setIsLoadingFile(true);
@@ -115,6 +123,7 @@ export function useFileActions() {
 
 		changeEditorMode('code');
 		changeCodeEditorMode('duo');
+		changeTranslateMode(false);
 		useCodeEditorStore.getState().setIsLoadingFile(true);
 
 		try {
@@ -207,6 +216,7 @@ export function useFileActions() {
 				try {
 					config = JSON.parse(result.content.content);
 					isLoaded = true;
+					changeTranslateMode(false);
 				} catch (parseError) {
 					console.error('Configuration JSON is corrupted', parseError);
 				}
@@ -280,6 +290,7 @@ export function useFileActions() {
 					: parsedMap.entities,
 			};
 
+			changeTranslateMode(false);
 			loadMap(mapData);
 			setMapRelativePath(result.content.relativePath);
 			setShowSaveConfirm(false);

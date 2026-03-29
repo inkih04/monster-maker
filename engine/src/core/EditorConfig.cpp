@@ -17,6 +17,9 @@ void EditorConfig::setImageIconPath(const std::string& value) { imageIconPath = 
 const std::string& EditorConfig::getDefaultFontPath() const { return getTag(defaultFontPath); }
 void EditorConfig::setDefaultFontPath(const std::string& value) { defaultFontPath = value; }
 
+const std::string& EditorConfig::getDefaultLanguagePath() const { return getTag(defaultLanguage); }
+void EditorConfig::setDefaultLanguagePath(const std::string& value) { defaultLanguage = value; }
+
 int EditorConfig::getVirtualWidth() const { return virtualWidth; }
 void EditorConfig::setVirtualWidth(int value) { virtualWidth = value; }
 

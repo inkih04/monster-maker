@@ -7,6 +7,7 @@ import musicIcon from '../../assets/img/music.png';
 import undefined from '../../assets/img/Fichero.png';
 import rmlui from '../../assets/img/Rmlui.png';
 import fonts from '../../assets/img/fonts.png';
+import dialog from '../../assets/img/Dialog.png';
 
 export function getFileIcon(type: string) {
 	switch (type) {
@@ -26,6 +27,10 @@ export function getFileIcon(type: string) {
 			return <img src={rmlui} alt="ui" className="files--icon-img" />;
 		case 'font':
 			return <img src={fonts} alt="font" className="files--icon-img" />;
+		case 'dialog':
+			return <img src={dialog} alt="dialog" className="files--icon-img" />;
+		case 'local':
+			return <img src={dialog} alt="dialog" className="files--icon-img" />;
 
 		default:
 			return <img src={undefined} alt="File" className="files--icon-img" />;
@@ -43,11 +48,15 @@ export function getFileType(
 	| 'music'
 	| 'ui'
 	| 'font'
-	| 'undefined' {
+	| 'undefined'
+	| 'dialog'
+	| 'local' {
 	const extension = fileName.split('.').pop()?.toLowerCase();
 
 	if (extension === 'lua') return 'script';
-	if (extension === 'tmx' || extension === 'json') return 'tilemap';
+	if (extension === 'json') return 'dialog';
+	if (extension === 'local') return 'local';
+	if (extension === 'map') return 'tilemap';
 	if (extension === 'tsx' || extension === 'png' || extension === 'jpg') return 'tileset';
 	if (extension === 'vert') return 'vertex';
 	if (extension === 'frag') return 'fragment';

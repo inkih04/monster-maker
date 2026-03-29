@@ -13,7 +13,8 @@ import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
 import { updateLiveCssContent } from '../CodeEditor/monacoConfig';
 import { useEffect } from 'react';
 import { useEngineConfigStore } from '../Tagger/useEngineConfigStore';
-import UiScriptPanel from './UiScriptPanel'; 
+import UiScriptPanel from './UiScriptPanel';
+import { useTranslation } from 'react-i18next';
 
 function LayoutCodeEditor() {
 	const codeEditorMode = useEngineStore((state) => state.codeEditorMode);
@@ -28,11 +29,12 @@ function LayoutCodeEditor() {
 }
 
 function CodeEditorEmpty() {
+	const { t } = useTranslation();
 	return (
 		<div className="layoutCodeEditor--empty">
 			<div className="layoutCodeEditor--empty-bg" />
 			<div className="layoutCodeEditor--empty-hint">
-				<span>No file open</span>
+				<span>{t('noFileOpen')}</span>
 			</div>
 		</div>
 	);

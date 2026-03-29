@@ -67,6 +67,10 @@ void EditorConfigLoader::parseGameConfig(const json& gameConfigJson) {
         config.setDefaultFontPath(gameConfigJson["defaultFont"].get<std::string>());
     }
 
+    if (gameConfigJson.contains("defaultLanguage") && gameConfigJson["defaultLanguage"].is_string()) {
+        config.setDefaultLanguagePath(gameConfigJson["defaultLanguage"].get<std::string>());
+    }
+
     if (gameConfigJson.contains("virtualWidth") && gameConfigJson["virtualWidth"].is_number_integer()) {
         config.setVirtualWidth(gameConfigJson["virtualWidth"].get<int>());
     }

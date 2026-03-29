@@ -31,7 +31,7 @@ public:
     void render();
     void shutdown();
 
-    UiDocument* openDocument(const std::string& id, const std::string& uiFilePath);
+    UiDocument* openDocument(const std::string &id, const std::string &uiFilePath, sol::optional<sol::table> initData);
     void closeDocument(const std::string& id);
     UiDocument* getDocument(const std::string& id);
     bool isOpen(const std::string& id) const;

@@ -13,6 +13,10 @@
 #include "InteractionComponent.h"
 #include "ScriptEngine.h"
 #include "UiManager.h"
+#include "DialogTypes.h"
+#include "DialogLoader.h"
+#include "DialogManager.h"
+#include "LocalizationManager.h"
 
 void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionManager, SaveManager& save_manager, DataManager& dataManager) {
     registerKeys(lua);
@@ -28,10 +32,13 @@ void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionMana
     registerUiManager(lua);
     registerConfigTags(lua);
     registerConfig(lua);
+    registerDialog(lua);
+    registerLocalization(lua);
     registerSessionManager(lua, sessionManager);
     registerSaveManager(lua, save_manager);
     registerDataManager(lua, dataManager);
 }
+
 void ScriptBindings::registerDataManager(sol::state& lua, DataManager& dataManager) {
     lua.new_usertype<DataManager>("DataManager",
         sol::no_constructor,
@@ -68,7 +75,6 @@ void ScriptBindings::registerSaveManager(sol::state& lua, SaveManager& saveManag
     lua["Save"] = std::ref(saveManager);
 }
 
-
 void ScriptBindings::registerConfig(sol::state& lua) {
     lua.new_usertype<EditorConfig>("EditorConfig",
         sol::no_constructor,
@@ -90,22 +96,28 @@ void ScriptBindings::registerConfigTags(sol::state& lua) {
 
 void ScriptBindings::registerUiManager(sol::state& lua) {
     lua.new_usertype<UiDocument>("UiDocument",
+        sol::no_constructor,
         "isOpen", &UiDocument::isOpen,
-        "close",  &UiDocument::close
+        "close",  &UiDocument::close,
+        "update", &UiDocument::updateModel
     );
 
     lua.new_usertype<UiManager>("UiManager",
         sol::no_constructor,
-        "open",    [](UiManager& self, const std::string& id, const std::string& uiFilePath) -> UiDocument* {
-            return self.openDocument(id, EditorConfig::getInstance().getTag(uiFilePath));
+        "open", [](UiManager& self,
+                   const std::string& id,
+                   const std::string& uiFilePath,
+                   sol::optional<sol::table> data) -> UiDocument*
+        {
+            return self.openDocument(id, EditorConfig::getInstance().getTag(uiFilePath), data);
         },
-        "close",   [](UiManager& self, const std::string& id) {
+        "close",  [](UiManager& self, const std::string& id) {
             self.closeDocument(id);
         },
-        "isOpen",  [](UiManager& self, const std::string& id) {
+        "isOpen", [](UiManager& self, const std::string& id) {
             return self.isOpen(id);
         },
-        "get",     [](UiManager& self, const std::string& id) -> UiDocument* {
+        "get",    [](UiManager& self, const std::string& id) -> UiDocument* {
             return self.getDocument(id);
         }
     );
@@ -113,6 +125,83 @@ void ScriptBindings::registerUiManager(sol::state& lua) {
     lua["UI"] = &UiManager::getInstance();
 }
 
+void ScriptBindings::registerDialog(sol::state& lua) {
+    lua.new_usertype<DialogFile>("DialogFile",
+        sol::no_constructor,
+        sol::meta_function::index,
+        [](const DialogFile& self, sol::stack_object key) -> sol::optional<DialogChain>
+        {
+            if (key.is<std::string>()) {
+                const auto* chain = self.find(key.as<std::string>());
+                if (chain) return *chain;
+            } else if (key.is<int>()) {
+                const auto* chain = self.at(static_cast<std::size_t>(key.as<int>()));
+                if (chain) return *chain;
+            }
+            return sol::nullopt;
+        }
+    );
+
+    lua.new_usertype<DialogChain>("DialogChain",
+        sol::no_constructor,
+        "id",    sol::readonly(&DialogChain::id),
+        "count", [](const DialogChain& c) { return c.pages.size(); }
+    );
+
+    sol::table dialog = lua.create_named_table("Dialog");
+
+    dialog["load"] = [](const std::string& path) -> DialogFile {
+        try {
+            return DialogLoader::loadFile(EditorConfig::getInstance().getTag(path));
+        } catch (const std::exception& e) {
+            throw sol::error(e.what());
+        }
+    };
+
+    dialog["open"] = [](const std::string& id,
+                         const std::string& rmlPath,
+                         const DialogChain& chain,
+                         const sol::table& varMapping)
+    {
+        const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
+        const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
+
+        DialogManager::getInstance().open(
+            id,
+            EditorConfig::getInstance().getTag(rmlPath),
+            chain,
+            speakerVar,
+            textVar);
+    };
+
+    dialog["advance"] = [](const std::string& id) -> bool {
+        return DialogManager::getInstance().advance(id);
+    };
+
+    dialog["close"] = [](const std::string& id) {
+        DialogManager::getInstance().close(id);
+    };
+
+    dialog["isActive"] = [](const std::string& id) -> bool {
+        return DialogManager::getInstance().isActive(id);
+    };
+}
+
+void ScriptBindings::registerLocalization(sol::state& lua) {
+    sol::table lang = lua.create_named_table("Lang");
+
+    lang["load"] = [](const std::string& langCode) {
+        LocalizationManager::getInstance().load(langCode);
+    };
+
+    lang["get"] = [](const std::string& key) -> const std::string& {
+        return LocalizationManager::getInstance().get(key);
+    };
+
+    lang["current"] = []() -> const std::string& {
+        return LocalizationManager::getInstance().getCurrentLang();
+    };
+}
 
 void ScriptBindings::registerBordersMapService(sol::state& lua) {
     lua.new_usertype<BordersMapService>("BordersMapService",

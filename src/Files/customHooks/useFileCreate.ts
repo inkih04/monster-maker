@@ -18,7 +18,7 @@ export const CREATABLE_TYPE_TO_ICON: Record<CreatableFileType, string> = {
 };
 
 const FILE_EXTENSIONS: Record<CreatableFileType, string> = {
-	map: '.json',
+	map: '.map',
 	prefab: '.prefab',
 	script: '.lua',
 	ui: '.ui',

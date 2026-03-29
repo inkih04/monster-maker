@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-include_directories(include include/enums include/components include/structs include/scripting include/service include/ui include/memory)
+include_directories(include include/enums include/components include/structs include/scripting include/service include/ui include/memory include/ui/text)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -98,6 +98,13 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         src/memory/SaveManager.cpp
         include/memory/DataManager.h
         src/memory/DataManager.cpp
+        include/ui/text/LocalizationManager.h
+        src/ui/text/LocalizationManager.cpp
+        include/structs/DialogTypes.h
+        include/ui/text/DialogLoader.h
+        src/ui/text/DialogLoader.cpp
+        include/ui/text/DialogManager.h
+        src/ui/text/DialogManager.cpp
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD

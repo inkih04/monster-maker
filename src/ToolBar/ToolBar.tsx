@@ -11,6 +11,7 @@ import {
 	Bug,
 	CodeBrackets,
 	Codepen,
+	ChatBubbleTranslate,
 } from 'iconoir-react';
 import './ToolBar.css';
 import { useToolsStore } from './ToolBarGState';
@@ -29,7 +30,8 @@ function ToolBar() {
 	const isMapDirty = useMapStore((state) => state.isDirty);
 	const { undo, redo } = useMapStore.temporal.getState();
 	const { t } = useTranslation();
-
+	const isTranslateMode = useEngineStore((state) => state.translate);
+	const changeTranslateMode = useEngineStore((state) => state.changeTranslate);
 	const editorMode = useEngineStore((state) => state.editorMode);
 	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const isRunning = useEngineStore((state) => state.isRunning);
@@ -247,15 +249,30 @@ function ToolBar() {
 					</>
 				)}
 				{editorMode === 'map' && (
-					<button onClick={() => changeEditorMode('code')} className="tool-button">
+					<button
+						onClick={() => changeEditorMode('code')}
+						className={`tool-button ${isTranslateMode ? 'disabled' : ''}`}
+						disabled={isTranslateMode}
+					>
 						<CodeBrackets />
 					</button>
 				)}
 				{editorMode === 'code' && (
-					<button onClick={() => changeEditorMode('map')} className="tool-button">
+					<button
+						onClick={() => changeEditorMode('map')}
+						className={`tool-button ${isTranslateMode ? 'disabled' : ''}`}
+						disabled={isTranslateMode}
+					>
 						<Codepen />
 					</button>
 				)}
+
+				<button
+					onClick={() => changeTranslateMode(!isTranslateMode)}
+					className={`tool-button ${isTranslateMode ? 'active' : ''}`}
+				>
+					<ChatBubbleTranslate />
+				</button>
 			</div>
 			<div className="other-tools">
 				<button
