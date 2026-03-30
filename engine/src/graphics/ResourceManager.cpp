@@ -6,7 +6,6 @@
 
 std::unordered_map<std::string, std::unique_ptr<Texture>> ResourceManager::m_textures;
 std::unordered_map<ShaderPath, std::unique_ptr<Shader>> ResourceManager::m_shaders;
-std::unordered_map<std::string, std::unique_ptr<TextRenderer>> ResourceManager::m_fonts;
 std::unordered_map<std::string, std::unique_ptr<SoLoud::Wav>> ResourceManager::m_sounds;
 
 
@@ -52,15 +51,3 @@ Shader* ResourceManager::loadShader(const std::string& vertexShaderPath, const s
     return shaderPtr;
 }
 
-TextRenderer* ResourceManager::loadFont(const std::string& fontPath, unsigned int fontSize) {
-    std::string key = fontPath + std::to_string(fontSize);
-    auto it = m_fonts.find(key);
-    if (it != m_fonts.end()) {
-        return it->second.get();
-    }
-
-    std::unique_ptr<TextRenderer> font = std::make_unique<TextRenderer>(fontPath, fontSize);
-    TextRenderer* fontPtr = font.get();
-    m_fonts[key] = std::move(font);
-    return fontPtr;
-}

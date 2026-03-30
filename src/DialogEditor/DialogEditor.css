@@ -1,0 +1,313 @@
+dialogue-editor-wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+	padding: 8px;
+	min-width: 0;
+}
+
+.dialogue-card {
+	background-color: var(--color-1);
+	border: 1px solid var(--color-3);
+	border-radius: var(--radius);
+	padding: 10px;
+	margin-top: 8px;
+	margin-left: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-width: 320px;
+}
+
+.dialogue-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-width: 0;
+	width: 100%;
+}
+
+.dialogue-header-left {
+	display: flex;
+	align-items: center;
+	min-width: 0;
+	flex: 1;
+}
+
+.dialogue-id-display {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 2px 6px;
+	border-radius: var(--radius);
+	cursor: pointer;
+	color: var(--color-9);
+	font-weight: 600;
+	font-size: var(--font-sm);
+	transition: background-color 0.2s;
+	border: 1px solid transparent;
+	min-width: 0;
+	max-width: 100%;
+}
+
+.dialogue-id-display span {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	flex-shrink: 1;
+	min-width: 0;
+}
+
+.dialogue-id-display svg {
+	flex-shrink: 0;
+}
+
+.dialogue-id-input {
+	background-color: var(--color-2);
+	border: 1px solid var(--color-5);
+	border-radius: var(--radius);
+	color: var(--color-9);
+	font-weight: 600;
+	font-size: var(--font-sm);
+	padding: 2px 6px;
+	outline: none;
+	width: 100%;
+	max-width: 250px;
+	min-width: 100px;
+	flex-shrink: 1;
+}
+
+.dialogue-pages {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 0;
+}
+
+.dialogue-page-row {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	background-color: var(--bg-color);
+	border: 1px solid var(--color-3);
+	border-radius: var(--radius);
+	padding: 8px;
+	min-width: 0;
+}
+
+.dialogue-page-inputs {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	width: 100%;
+	min-width: 0;
+	flex-wrap: wrap;
+}
+
+.dialogue-speaker-input {
+	flex: 1 1 120px;
+	min-width: 100px;
+	max-width: 200px;
+}
+
+.dialogue-text-container {
+	flex: 999 1 200px;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	min-width: 150px;
+}
+
+.dialogue-text-input {
+	flex: 1 1 0%;
+	min-width: 0;
+}
+
+.dialogue-input {
+	background-color: var(--color-1);
+	border: 1px solid transparent;
+	border-radius: var(--radius);
+	color: var(--color-9);
+	font-size: var(--font-sm);
+	padding: 6px 8px;
+	outline: none;
+	transition:
+		background-color 0.2s,
+		border-color 0.2s;
+	min-width: 0;
+}
+
+.dialogue-add-main-btn-container {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+}
+
+.dialogue-input:focus {
+	border-color: var(--color-5);
+	background-color: var(--color-2);
+}
+
+.dialogue-input::placeholder {
+	color: var(--color-6);
+}
+
+.dialogue-icon-btn {
+	background: transparent;
+	border: none;
+	color: var(--color-6);
+	cursor: pointer;
+	padding: 6px;
+	border-radius: var(--radius);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition:
+		background-color 0.2s,
+		color 0.2s,
+		opacity 0.2s,
+		visibility 0.2s;
+	flex-shrink: 0;
+}
+
+.dialogue-icon-btn.delete-btn:hover {
+	background-color: rgba(255, 60, 60, 0.1);
+	color: #ff5555;
+}
+
+.action-btn-dialogue {
+	opacity: 0;
+	visibility: hidden;
+}
+
+.dialogue-card:hover > .dialogue-header .action-btn-dialogue {
+	opacity: 1;
+	visibility: visible;
+}
+
+.dialogue-choices-section {
+	margin-top: 2px;
+	padding-left: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.dialogue-choices-list {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 0;
+}
+
+.dialogue-choice-row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	width: 100%;
+	min-width: 0;
+	flex-wrap: wrap;
+}
+
+.choice-icon {
+	color: var(--color-5);
+	flex-shrink: 0;
+}
+
+.choice-inputs-wrapper {
+	flex: 1 1 150px;
+	display: flex;
+	gap: 6px;
+	min-width: 120px;
+	flex-wrap: wrap;
+}
+
+.choice-input {
+	height: 26px;
+	padding: 2px 6px;
+	font-size: var(--font-ssm);
+	flex: 1 1 80px;
+	min-width: 60px;
+}
+
+.dialogue-add-choice-btn {
+	align-self: flex-start;
+	background: transparent;
+	border: none;
+	color: var(--color-5);
+	font-size: var(--font-ssm);
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	cursor: pointer;
+	padding: 2px 6px;
+	border-radius: var(--radius);
+	transition: background-color 0.2s;
+	flex-shrink: 0;
+}
+
+.dialogue-add-choice-btn:hover {
+	background-color: var(--color-2);
+	color: var(--color-9);
+}
+
+.dialogue-footer {
+	display: flex;
+	justify-content: center;
+	padding-top: 4px;
+}
+
+.dialogue-add-page-btn {
+	width: 100%;
+	max-width: 200px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background-color: transparent;
+	border: 1px dashed var(--color-5);
+	border-radius: var(--radius);
+	color: var(--color-6);
+	font-size: var(--font-sm);
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	flex-shrink: 0;
+}
+
+.dialogue-add-page-btn:hover {
+	background-color: var(--color-2);
+	border-color: var(--color-9);
+	color: var(--color-9);
+	border-style: solid;
+}
+
+.dialogue-add-main-btn {
+	padding: 8px 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	background-color: var(--color-2);
+	border: 1px dashed var(--color-5);
+	border-radius: var(--radius);
+	color: var(--color-8);
+	font-size: var(--font-sm);
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	margin-top: 16px;
+	margin-left: 8px;
+	flex-shrink: 0;
+}
+
+.dialogue-add-main-btn:hover {
+	background-color: var(--color-3);
+	border-color: var(--color-9);
+	border-style: solid;
+}

@@ -53,7 +53,7 @@ export function FileListener() {
 
 			switch (fileType) {
 				case 'map':
-					extension = '.json';
+					extension = '.map';
 					defaultContent = JSON.stringify(
 						{
 							mapId: crypto.randomUUID(),
@@ -80,11 +80,6 @@ export function FileListener() {
 				case 'script':
 					extension = '.lua';
 					defaultContent = scriptContent;
-					break;
-
-				case 'ui':
-					extension = '.ui';
-					defaultContent = '';
 					break;
 			}
 

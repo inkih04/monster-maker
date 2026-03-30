@@ -24,7 +24,7 @@
 	"fileAlreadyExists": "Ya existe un archivo con ese nombre",
 	"saving": "Guardando...",
 	"save": "Guardar",
-	"defaultTileSize": "Tamaño de  tiles",
+	"defaultTileSize": "Tamaño de tiles",
 	"tileSizeTitle": "Definir tamaño de los tiles",
 	"tileSize": "Tamaño del tile",
 	"accept": "Aceptar",
@@ -92,7 +92,7 @@
 		"renameHint": "Doble clic para renombrar",
 		"deleteSet": "Eliminar set",
 		"newAnimation": "nueva animación",
-		"basicRenameHint": "Las animaciones básicas no se pueden renombrar",
+		"basicRenameHint": "Las animaciones básicas no se un renombrar",
 		"stopPreview": "Detener previsualización",
 		"preview": "Previsualizar",
 		"duration": "duración",
@@ -117,8 +117,11 @@
 		"virtualResolution": "Resolución Virtual",
 		"letterboxing": "Modo de Escalado",
 		"letterboxingOn": "Letterbox — mantener proporción con bandas negras",
-		"letterboxingOff": "Estirar — escalar para llenar la pantalla"
+		"letterboxingOff": "Estirar — escalar para llenar la pantalla",
+		"defaultLanguage": "Idioma por Defecto"
 	},
+	"addTag": "Añadir tag",
+	"noFileOpen": "No se ha abierto ningun archivo de código",
 	"rcssWarnings": {
 		"incompatibility": "incompatibilidad con RmlUi",
 		"incompatibilities": "incompatibilidades con RmlUi",
@@ -146,5 +149,35 @@
 			"message": "Las unidades vw/vh tienen soporte limitado en RmlUi. Pueden no funcionar en todos los contextos.",
 			"fix": "Verifica en el motor. Para layouts de pantalla completa, width: 100% / height: 100% suele ser más seguro."
 		}
+	},
+	"localizationTable": {
+		"keyColumn": "Clave (Key)",
+		"addWord": "+ Añadir Palabra",
+		"addLanguage": "+ Añadir Idioma",
+		"langPlaceholder": "Ej: fr, it, de...",
+		"keyPlaceholder": "Escribe una clave...",
+		"translationPlaceholder": "Traducción en {{lang}}",
+		"langExistsAlert": "Ese código de idioma ya existe o es inválido.",
+		"editHeaderHint": "Haz clic para editar el idioma",
+		"hideColumnTooltip": "Ocultar columna",
+		"showColumnTooltip": "Mostrar columna",
+		"hiddenColumns": "Columnas ocultas:",
+		"searchPlaceholder": "Buscar traducciones...",
+		"noResults": "No se encontraron resultados.",
+		"deleteColumnTooltip": "Eliminar idioma",
+		"deleteRowTooltip": "Eliminar clave",
+		"emptyKey": "Clave vacía"
+	},
+	"dialogueEditor": {
+		"speakerPlaceholder": "Hablante...",
+		"dialogueTextPlaceholder": "Texto del diálogo...",
+		"choiceTextPlaceholder": "Texto de la opción...",
+		"nextChainIdPlaceholder": "ID del siguiente nodo...",
+		"addChoice": "Añadir Opción",
+		"addPage": "Añadir Página",
+		"addDialogue": "Añadir Diálogo",
+		"deleteDialogueTooltip": "Eliminar diálogo",
+		"deletePageTooltip": "Eliminar página",
+		"deleteChoiceTooltip": "Eliminar opción"
 	}
 }

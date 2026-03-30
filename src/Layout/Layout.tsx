@@ -18,6 +18,7 @@ import Tagger from '../Tagger/Tagger';
 import LayoutCodeEditor from './LayoutCodeEditor';
 import { useLayoutCodeEditorResize } from './customHooks/useLayoutCodeEditorResize';
 import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
+import { LocalizationTable } from '../DialogEditor/LocalizationTable';
 
 function Layout() {
 	const {
@@ -39,6 +40,7 @@ function Layout() {
 	const { notify } = useNotify();
 	const { t } = useTranslation();
 
+	const isTranslateMode = useEngineStore((state) => state.translate);
 	const isRunning = useEngineStore((state) => state.isRunning);
 	const mode = useEngineStore((state) => state.runMode);
 	const editorMode = useEngineStore((state) => state.editorMode);
@@ -80,7 +82,7 @@ function Layout() {
 					<ToolBar />
 				</div>
 				<main className="main" style={{ minHeight: 0 }}>
-					<div style={{ display: editorMode === 'map' ? 'contents' : 'none' }}>
+					<div style={{ display: editorMode === 'map' && !isTranslateMode ? 'contents' : 'none' }}>
 						<aside
 							className="map-utility"
 							style={{ flex: `0 0 ${mapUtilityWidth}px`, minWidth: LIMITS.mapUtilityWidth.min }}
@@ -109,7 +111,12 @@ function Layout() {
 							</div>
 						</aside>
 					</div>
-					{editorMode === 'code' && <LayoutCodeEditor />}
+					{editorMode === 'code' && !isTranslateMode && <LayoutCodeEditor />}
+					{isTranslateMode && (
+						<div className="layoutCodeEditor--single" style={{ position: 'relative' }}>
+							<LocalizationTable />
+						</div>
+					)}
 				</main>
 				<Spacer direction="horizontal" resizable onResize={resizeFiles} />
 				<div

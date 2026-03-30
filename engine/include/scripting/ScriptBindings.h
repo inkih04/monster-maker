@@ -29,9 +29,11 @@ class ScriptBindings {
         static void registerCamera(sol::state &lua);
         static void registerEntity(sol::state &lua);
         static void registerAudioService(sol::state &lua);
+        static void registerLocalization(sol::state &lua);
         static void registerBordersMapService(sol::state &lua);
         static void registerAnimationComponent(sol::state &lua);
         static void registerUiManager(sol::state &lua);
+        static void registerDialog(sol::state &lua);
         static void registerConfig(sol::state &lua);
         static void registerSessionManager(sol::state &lua, SessionManager &sessionManager);
         static void registerSaveManager(sol::state &lua, SaveManager &saveManager);

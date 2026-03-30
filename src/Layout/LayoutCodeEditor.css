@@ -92,3 +92,41 @@
 	min-height: 0;
 	overflow: hidden;
 }
+
+
+.layoutCodeEditor--DialogEditor-root {
+	flex: 1 1 0;
+	min-width: 0;
+	min-height: 0;
+	display: flex;
+	flex-direction: row;
+	overflow: hidden;
+}
+
+.layoutCodeEditor--DialogEditor-aside {
+	flex-shrink: 0;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto; 
+	overflow-x: hidden;
+}
+
+.layoutCodeEditor--DialogEditor-aside::-webkit-scrollbar {
+	width: 6px;
+}
+
+.layoutCodeEditor--DialogEditor-aside::-webkit-scrollbar-thumb {
+	background-color: var(--color-4, #555);
+	border-radius: 4px;
+}
+
+.layoutCodeEditor--DialogEditor-aside::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.layoutCodeEditor--DialogEditor-main {
+	flex: 1 1 0;
+	min-width: 0;
+	display: flex;
+	overflow: hidden;
+}

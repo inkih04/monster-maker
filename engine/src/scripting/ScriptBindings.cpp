@@ -13,6 +13,10 @@
 #include "InteractionComponent.h"
 #include "ScriptEngine.h"
 #include "UiManager.h"
+#include "DialogTypes.h"
+#include "DialogLoader.h"
+#include "DialogManager.h"
+#include "LocalizationManager.h"
 
 void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionManager, SaveManager& save_manager, DataManager& dataManager) {
     registerKeys(lua);
@@ -28,10 +32,13 @@ void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionMana
     registerUiManager(lua);
     registerConfigTags(lua);
     registerConfig(lua);
+    registerDialog(lua);
+    registerLocalization(lua);
     registerSessionManager(lua, sessionManager);
     registerSaveManager(lua, save_manager);
     registerDataManager(lua, dataManager);
 }
+
 void ScriptBindings::registerDataManager(sol::state& lua, DataManager& dataManager) {
     lua.new_usertype<DataManager>("DataManager",
         sol::no_constructor,
@@ -68,7 +75,6 @@ void ScriptBindings::registerSaveManager(sol::state& lua, SaveManager& saveManag
     lua["Save"] = std::ref(saveManager);
 }
 
-
 void ScriptBindings::registerConfig(sol::state& lua) {
     lua.new_usertype<EditorConfig>("EditorConfig",
         sol::no_constructor,
@@ -90,22 +96,28 @@ void ScriptBindings::registerConfigTags(sol::state& lua) {
 
 void ScriptBindings::registerUiManager(sol::state& lua) {
     lua.new_usertype<UiDocument>("UiDocument",
+        sol::no_constructor,
         "isOpen", &UiDocument::isOpen,
-        "close",  &UiDocument::close
+        "close",  &UiDocument::close,
+        "update", &UiDocument::updateModel
     );
 
     lua.new_usertype<UiManager>("UiManager",
         sol::no_constructor,
-        "open",    [](UiManager& self, const std::string& id, const std::string& uiFilePath) -> UiDocument* {
-            return self.openDocument(id, EditorConfig::getInstance().getTag(uiFilePath));
+        "open", [](UiManager& self,
+                   const std::string& id,
+                   const std::string& uiFilePath,
+                   sol::optional<sol::table> data) -> UiDocument*
+        {
+            return self.openDocument(id, EditorConfig::getInstance().getTag(uiFilePath), data);
         },
-        "close",   [](UiManager& self, const std::string& id) {
+        "close",  [](UiManager& self, const std::string& id) {
             self.closeDocument(id);
         },
-        "isOpen",  [](UiManager& self, const std::string& id) {
+        "isOpen", [](UiManager& self, const std::string& id) {
             return self.isOpen(id);
         },
-        "get",     [](UiManager& self, const std::string& id) -> UiDocument* {
+        "get",    [](UiManager& self, const std::string& id) -> UiDocument* {
             return self.getDocument(id);
         }
     );
@@ -113,6 +125,153 @@ void ScriptBindings::registerUiManager(sol::state& lua) {
     lua["UI"] = &UiManager::getInstance();
 }
 
+void ScriptBindings::registerDialog(sol::state& lua) {
+
+    lua.new_usertype<DialogChoice>("DialogChoice",
+        sol::no_constructor,
+        "text",      sol::readonly(&DialogChoice::text),
+        "nextChain", sol::readonly(&DialogChoice::nextChain)
+    );
+
+    lua.new_usertype<DialogFile>("DialogFile",
+        sol::no_constructor,
+        sol::meta_function::index,
+        [](const DialogFile& self, sol::stack_object key) -> sol::optional<DialogChain>
+        {
+            if (key.is<std::string>()) {
+                const auto* chain = self.find(key.as<std::string>());
+                if (chain) return *chain;
+            } else if (key.is<int>()) {
+                const auto* chain = self.at(static_cast<std::size_t>(key.as<int>()));
+                if (chain) return *chain;
+            }
+            return sol::nullopt;
+        }
+    );
+
+    lua.new_usertype<DialogChain>("DialogChain",
+        sol::no_constructor,
+        "id",    sol::readonly(&DialogChain::id),
+        "count", [](const DialogChain& c) { return c.pages.size(); }
+    );
+
+    sol::table dialog = lua.create_named_table("Dialog");
+
+    dialog["load"] = [](const std::string& path) -> DialogFile {
+        try {
+            return DialogLoader::loadFile(EditorConfig::getInstance().getTag(path));
+        } catch (const std::exception& e) {
+            throw sol::error(e.what());
+        }
+    };
+
+    dialog["open"] = [](const std::string& id,
+                         const std::string& rmlPath,
+                         const DialogChain& chain,
+                         const sol::table& varMapping)
+    {
+        const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
+        const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
+
+        DialogManager::getInstance().open(
+            id,
+            EditorConfig::getInstance().getTag(rmlPath),
+            chain,
+            speakerVar,
+            textVar);
+    };
+
+    dialog["openFromFile"] = [](const std::string& id,
+                                 const std::string& rmlPath,
+                                 const DialogFile&  file,
+                                 const std::string& chainId,
+                                 const sol::table&  varMapping)
+    {
+        const DialogChain* chain = file.find(chainId);
+        if (!chain)
+            throw sol::error("[Dialog.openFromFile] chain id not found: " + chainId);
+
+        const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
+        const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
+
+        DialogManager::getInstance().registerFile(id, file);
+        DialogManager::getInstance().open(
+            id,
+            EditorConfig::getInstance().getTag(rmlPath),
+            *chain,
+            speakerVar,
+            textVar);
+    };
+
+    dialog["interact"] = [](const std::string& id,
+                             const std::string& rmlPath,
+                             const DialogFile& file,
+                             const std::string& startChainId,
+                             const sol::table& varMapping) -> bool
+    {
+        const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
+        const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
+        std::string resolvedPath = EditorConfig::getInstance().getTag(rmlPath);
+
+        return DialogManager::getInstance().interact(id, resolvedPath, file, startChainId, speakerVar, textVar);
+    };
+
+    dialog["updateNavigation"] = [](const std::string& id, int upKey, int downKey) {
+        DialogManager::getInstance().updateNavigation(id, upKey, downKey);
+    };
+
+    dialog["advance"] = [](const std::string& id) -> bool {
+        return DialogManager::getInstance().advance(id);
+    };
+
+    dialog["close"] = [](const std::string& id) {
+        DialogManager::getInstance().close(id);
+    };
+
+    dialog["isActive"] = [](const std::string& id) -> bool {
+        return DialogManager::getInstance().isActive(id);
+    };
+
+    dialog["hasChoices"] = [](const std::string& id) -> bool {
+        return DialogManager::getInstance().hasChoices(id);
+    };
+
+    dialog["moveChoice"] = [](const std::string& id, int delta) {
+        DialogManager::getInstance().moveChoice(id, delta);
+    };
+
+    dialog["getChoiceIndex"] = [](const std::string& id) -> int {
+        return DialogManager::getInstance().getChoiceIndex(id);
+    };
+
+    dialog["getSelectedTarget"] = [](const std::string& id) -> std::string {
+        return DialogManager::getInstance().getSelectedTarget(id);
+    };
+
+    dialog["jump"] = [](const std::string& id, const std::string& chainId) -> bool {
+        return DialogManager::getInstance().jumpToChain(id, chainId);
+    };
+
+    dialog["registerFile"] = [](const std::string& id, const DialogFile& file) {
+        DialogManager::getInstance().registerFile(id, file);
+    };
+}
+
+void ScriptBindings::registerLocalization(sol::state& lua) {
+    sol::table lang = lua.create_named_table("Lang");
+
+    lang["load"] = [](const std::string& langCode) {
+        LocalizationManager::getInstance().load(langCode);
+    };
+
+    lang["get"] = [](const std::string& key) -> const std::string& {
+        return LocalizationManager::getInstance().get(key);
+    };
+
+    lang["current"] = []() -> const std::string& {
+        return LocalizationManager::getInstance().getCurrentLang();
+    };
+}
 
 void ScriptBindings::registerBordersMapService(sol::state& lua) {
     lua.new_usertype<BordersMapService>("BordersMapService",
@@ -135,8 +294,8 @@ void ScriptBindings::registerAnimationComponent(sol::state& lua) {
         "resume", &AnimationComponent::resume,
         "stop",   &AnimationComponent::stop,
 
-        "isPlaying",       &AnimationComponent::isPlaying,
-        "currentAnim",     &AnimationComponent::getCurrentAnimationName
+        "isPlaying",   &AnimationComponent::isPlaying,
+        "currentAnim", &AnimationComponent::getCurrentAnimationName
     );
 }
 
@@ -152,17 +311,17 @@ void ScriptBindings::registerAudioService(sol::state& lua) {
         "pauseMusic", &AudioService::pauseMusic,
 
         "setMasterVolume", &AudioService::setMasterVolume,
-        "setMusicVolume", &AudioService::setMusicVolume,
-        "setSfxVolume", &AudioService::setSfxVolume
+        "setMusicVolume",  &AudioService::setMusicVolume,
+        "setSfxVolume",    &AudioService::setSfxVolume
     );
 
     lua["Audio"] = &AudioService::getInstance();
 }
 
 void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityManager& entityManager) {
-    lua["World"] = &entityManager;
+    lua["World"]      = &entityManager;
     lua["MainCamera"] = camera;
-    lua["Borders"] = entityManager.getBordersMapService();
+    lua["Borders"]    = entityManager.getBordersMapService();
 
     lua.set_function("GetEntity", [&entityManager](EntityTag tag) -> Entity* {
         auto entities = entityManager.getEntitiesByTag(tag);
@@ -214,10 +373,10 @@ void ScriptBindings::registerCamera(sol::state& lua) {
         "setPosition", [](Camera& c, float x, float y) {
             c.setPosition(glm::vec2(x, y));
         },
-        "setZoom", &Camera::setZoom,
-        "getPosition", &Camera::getPosition,
-        "getWidth",  &Camera::getWidth,
-        "getHeight", &Camera::getHeight
+        "setZoom",    &Camera::setZoom,
+        "getPosition",&Camera::getPosition,
+        "getWidth",   &Camera::getWidth,
+        "getHeight",  &Camera::getHeight
     );
 }
 
@@ -255,7 +414,7 @@ void ScriptBindings::registerLayers(sol::state& lua) {
 
 void ScriptBindings::registerEntityManager(sol::state& lua) {
     lua.new_usertype<EntityManager>("EntityManager",
-        "getEntitiesByTag", &EntityManager::getEntitiesByTag,
+        "getEntitiesByTag",   &EntityManager::getEntitiesByTag,
         "getEntitiesByLayer", &EntityManager::getEntitiesByLayer
     );
 }
@@ -288,9 +447,9 @@ void ScriptBindings::registerKeys(sol::state& lua) {
     keys["X"] = GLFW_KEY_X;
     keys["Y"] = GLFW_KEY_Y;
     keys["Z"] = GLFW_KEY_Z;
-    keys["UP"] = GLFW_KEY_UP;
-    keys["DOWN"] = GLFW_KEY_DOWN;
-    keys["LEFT"] = GLFW_KEY_LEFT;
+    keys["UP"]    = GLFW_KEY_UP;
+    keys["DOWN"]  = GLFW_KEY_DOWN;
+    keys["LEFT"]  = GLFW_KEY_LEFT;
     keys["RIGHT"] = GLFW_KEY_RIGHT;
 
     lua["Keys"] = keys;
@@ -298,7 +457,7 @@ void ScriptBindings::registerKeys(sol::state& lua) {
 
 void ScriptBindings::registerInputManager(sol::state& lua) {
     lua.new_usertype<InputManager>("InputManager",
-        "isKeyDown", &InputManager::isKeyDown,
+        "isKeyDown",    &InputManager::isKeyDown,
         "isKeyPressed", &InputManager::isKeyPressed
     );
     lua["Input"] = &InputManager::getInstance();
@@ -324,10 +483,10 @@ void ScriptBindings::registerRenderComponent(sol::state& lua) {
 
 void ScriptBindings::registerPositionComponent(sol::state& lua) {
     lua.new_enum<Direction>("Direction", {
-        {"TOP",    Direction::TOP},
-        {"BOTTOM", Direction::BOTTOM},
-        {"LEFT",   Direction::LEFT},
-        {"RIGHT",  Direction::RIGHT},
+        {"TOP",     Direction::TOP},
+        {"BOTTOM",  Direction::BOTTOM},
+        {"LEFT",    Direction::LEFT},
+        {"RIGHT",   Direction::RIGHT},
         {"UNKNOWN", Direction::UNKNOWN}
     });
 

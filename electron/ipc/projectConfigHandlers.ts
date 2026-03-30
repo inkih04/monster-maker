@@ -358,7 +358,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
-		ipcMain.handle(
+	ipcMain.handle(
 		'config:splitTileset',
 		async (
 			_event,
@@ -374,4 +374,43 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			}
 		}
 	);
+
+	ipcMain.handle(
+		'config:saveLocalFile',
+		async (_event, defaultFileName: string, content: string) => {
+			try {
+				const result = await dialog.showSaveDialog({
+					title: 'Guardar archivo de idioma',
+					defaultPath: defaultFileName,
+					filters: [{ name: 'Local Files', extensions: ['local', 'json'] }],
+				});
+				if (result.canceled || !result.filePath) {
+					return { success: false, error: 'Canceled' };
+				}
+				const fs = await import('fs');
+				fs.writeFileSync(result.filePath, content, 'utf-8');
+				return { success: true };
+			} catch (error) {
+				return { success: false, error: String(error) };
+			}
+		}
+	);
+
+	ipcMain.handle('config:importLocalFile', async () => {
+		try {
+			const result = await dialog.showOpenDialog({
+				title: 'Importar archivo de idioma',
+				properties: ['openFile'],
+				filters: [{ name: 'Local Files', extensions: ['local', 'json'] }],
+			});
+			if (result.canceled || result.filePaths.length === 0) {
+				return { success: false, error: 'Canceled' };
+			}
+			const fs = await import('fs');
+			const content = fs.readFileSync(result.filePaths[0], 'utf-8');
+			return { success: true, content };
+		} catch (error) {
+			return { success: false, error: String(error) };
+		}
+	});
 }

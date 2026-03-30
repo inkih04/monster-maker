@@ -25461,7 +25461,7 @@
     {
       "id": "tile_1774475972838_gn719yaeh",
       "tag": "TILEMAP",
-      "layer": "entities",
+      "layer": "decoration",
       "components": {
         "POSITION": {
           "x": 64,
@@ -25477,8 +25477,20 @@
           "width": 32,
           "height": 32,
           "shader": "default"
-        }
-      }
+        },
+        "SCRIPT": {
+          "path": "resources/scripts/apollo.lua"
+        },
+        "COLLIDER": {
+          "width": 24,
+          "height": 32,
+          "offsetX": 3,
+          "offsetY": 0,
+          "isTrigger": false
+        },
+        "INTERACTION": {}
+      },
+      "name": "Apollo"
     }
   ]
 }

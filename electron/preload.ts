@@ -186,4 +186,7 @@ contextBridge.exposeInMainWorld('api', {
 		existingConfig: Record<string, unknown>,
 		maxGpuSize: number
 	) => ipcRenderer.invoke('config:splitTileset', imagePath, configPath, existingConfig, maxGpuSize),
+	saveLocalFile: (defaultFileName: string, content: string) =>
+		ipcRenderer.invoke('config:saveLocalFile', defaultFileName, content),
+	importLocalFile: () => ipcRenderer.invoke('config:importLocalFile'),
 });

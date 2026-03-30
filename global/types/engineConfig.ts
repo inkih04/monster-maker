@@ -10,6 +10,7 @@ export interface GameConfig {
 	virtualWidth: number;
 	virtualHeight: number;
 	letterboxing: boolean;
+	defaultLanguage: string;
 }
 
 export interface EngineConfig {
@@ -27,6 +28,7 @@ export const DEFAULT_GAME_CONFIG: GameConfig = {
 	virtualWidth: 480,
 	virtualHeight: 270,
 	letterboxing: false,
+	defaultLanguage: 'resources/.locals/es.json',
 };
 
 export const DEFAULT_ENGINE_CONFIG: EngineConfig = {

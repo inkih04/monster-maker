@@ -117,8 +117,11 @@
 		"virtualResolution": "Virtual Resolution",
 		"letterboxing": "Scaling Mode",
 		"letterboxingOn": "Letterbox — keep aspect ratio with black bars",
-		"letterboxingOff": "Stretch — scale to fill the screen"
+		"letterboxingOff": "Stretch — scale to fill the screen",
+		"defaultLanguage": "Default Language"
 	},
+	"addTag": "Add Tag",
+	"noFileOpen": "No file open",
 	"rcssWarnings": {
 		"incompatibility": "incompatibility with RmlUi",
 		"incompatibilities": "incompatibilities with RmlUi",
@@ -146,5 +149,35 @@
 			"message": "vw/vh units have limited support in RmlUi. They may not work in all contexts.",
 			"fix": "Verify in the engine. For fullscreen layouts, width: 100% / height: 100% is usually safer."
 		}
+	},
+	"localizationTable": {
+		"keyColumn": "Key",
+		"addWord": "+ Add Word",
+		"addLanguage": "+ Add Language",
+		"langPlaceholder": "Ex: fr, it, de...",
+		"keyPlaceholder": "Type a key...",
+		"translationPlaceholder": "Translation in {{lang}}",
+		"langExistsAlert": "That language code already exists or is invalid.",
+		"editHeaderHint": "Click to edit language",
+		"hideColumnTooltip": "Hide column",
+		"showColumnTooltip": "Show column",
+		"hiddenColumns": "Hidden columns:",
+		"searchPlaceholder": "Search translations...",
+		"noResults": "No results found.",
+		"deleteColumnTooltip": "Delete language",
+		"deleteRowTooltip": "Delete key",
+		"emptyKey": "Empty key"
+	},
+	"dialogueEditor": {
+		"speakerPlaceholder": "Speaker...",
+		"dialogueTextPlaceholder": "Dialogue text...",
+		"choiceTextPlaceholder": "Choice text...",
+		"nextChainIdPlaceholder": "Next chain ID...",
+		"addChoice": "Add Choice",
+		"addPage": "Add Page",
+		"addDialogue": "Add Dialogue",
+		"deleteDialogueTooltip": "Delete dialogue",
+		"deletePageTooltip": "Delete page",
+		"deleteChoiceTooltip": "Delete choice"
 	}
 }

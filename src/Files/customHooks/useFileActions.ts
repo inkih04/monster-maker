@@ -13,6 +13,7 @@ import FolderNode from '../../../global/types/folderNode';
 import { useEngineStore } from '../../ToolBar/EngineGState';
 import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
 import { TileSetConfig } from '../../../global/types/tileSetConfig';
+import { useDialogueStore } from '../../DialogEditor/DialogueGState';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -29,6 +30,9 @@ export function useFileActions() {
 	const removeTileSet = useTileSetStore((state) => state.removeTileSet);
 	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const changeCodeEditorMode = useEngineStore((state) => state.changeCodeEditorMode);
+
+	const isTranslateMode = useEngineStore((state) => state.translate);
+	const changeTranslateMode = useEngineStore((state) => state.changeTranslate);
 
 	const { notify } = useNotify();
 	const { t } = useTranslation();
@@ -91,11 +95,50 @@ export function useFileActions() {
 			}
 			return;
 		}
+
+		if (file.type === 'dialog') {
+			handleOpenDialog(file);
+		}
 	};
+
+const handleOpenDialog = async (file: FileItem) => {
+    changeCodeEditorMode('dialog');
+    changeEditorMode('code');
+    changeTranslateMode(false);
+ 
+    if (!selectedFolder?.path || !currentProject) return;
+ 
+    useDialogueStore.getState().setLoading(true);
+    useDialogueStore.getState().setError(null);
+ 
+    try {
+        const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+ 
+        if (!result.success || !result.content) {
+            useDialogueStore.getState().setError(result.error ?? 'Failed to load dialogue file');
+            return;
+        }
+ 
+        const parsed = JSON.parse(result.content.content) as { dialogues: import('../../DialogEditor/DialogueGState').Dialogue[] };
+        const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
+ 
+        useDialogueStore.getState().loadDialogues(
+            parsed.dialogues ?? [],
+            relativePath,
+            selectedFolder.path
+        );
+    } catch (err) {
+        useDialogueStore.getState().setError(String(err));
+    } finally {
+        useDialogueStore.getState().setLoading(false);
+    }
+};
+ 
 
 	const handleOpenScript = async (file: FileItem) => {
 		changeCodeEditorMode('single');
 		changeEditorMode('code');
+		changeTranslateMode(false);
 		if (!selectedFolder?.path || !currentProject) return;
 
 		useCodeEditorStore.getState().setIsLoadingFile(true);
@@ -115,6 +158,7 @@ export function useFileActions() {
 
 		changeEditorMode('code');
 		changeCodeEditorMode('duo');
+		changeTranslateMode(false);
 		useCodeEditorStore.getState().setIsLoadingFile(true);
 
 		try {
@@ -207,6 +251,7 @@ export function useFileActions() {
 				try {
 					config = JSON.parse(result.content.content);
 					isLoaded = true;
+					changeTranslateMode(false);
 				} catch (parseError) {
 					console.error('Configuration JSON is corrupted', parseError);
 				}
@@ -280,6 +325,7 @@ export function useFileActions() {
 					: parsedMap.entities,
 			};
 
+			changeTranslateMode(false);
 			loadMap(mapData);
 			setMapRelativePath(result.content.relativePath);
 			setShowSaveConfirm(false);

@@ -22,7 +22,7 @@ Engine::Engine(int width, int height, const std::string& title)
     EditorConfig::getInstance().setVirtualResolution();
     setUpShaders();
     setUpCamera(width, height);
-    UiManager::getInstance().init(m_width, m_height, m_dpiScale, EditorConfig::getInstance().getTag(EditorConfig::getInstance().getDefaultFontPath()));
+    UiManager::getInstance().init(m_width, m_height, m_dpiScale, EditorConfig::getInstance().getDefaultFontPath());
 
 }
 

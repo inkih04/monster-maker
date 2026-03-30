@@ -1,0 +1,15 @@
+{
+  "dialogues": [
+    {
+      "id": "before_combat",
+      "pages": [
+        { "speaker": "npc.elder.name", "text": "npc.elder.combat_1" },
+        { "speaker": "npc.elder.name", "text": "npc.elder.combat_2" }
+      ]
+    },
+    {
+      "id": "after_combat",
+      "pages": [{ "speaker": "npc.elder.name", "text": "npc.elder.after_1" }]
+    }
+  ]
+}
