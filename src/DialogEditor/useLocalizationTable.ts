@@ -23,6 +23,8 @@ export function useLocalizationTable() {
 		deleteLanguage: storeDeleteLanguage,
 		addRow,
 		deleteRow: storeDeleteRow,
+		downloadLanguage,
+		importLanguage,
 	} = useLocalizationStore();
 
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -132,5 +134,7 @@ export function useLocalizationTable() {
 		updateCell,
 		saveAll,
 		renameLanguage,
+		downloadLanguage,
+		importLanguage,
 	};
 }

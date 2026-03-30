@@ -155,6 +155,11 @@ declare global {
 				atlasHeight?: number;
 				error?: string;
 			}>;
+			saveLocalFile: (
+				defaultFileName: string,
+				content: string
+			) => Promise<{ success: boolean; error?: string }>;
+			importLocalFile: () => Promise<{ success: boolean; content?: string; error?: string }>;
 		};
 	}
 }

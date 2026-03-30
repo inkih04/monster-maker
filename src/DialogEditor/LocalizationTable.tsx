@@ -9,7 +9,7 @@ import {
 	CellContext,
 } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
-import { EyeClosed, Plus, EditPencil, Search, Trash, Copy } from 'iconoir-react';
+import { EyeClosed, Plus, EditPencil, Search, Trash, Copy, Download, Upload } from 'iconoir-react';
 
 import './LocalizationTable.css';
 import DeleteConfirmation from '../common/components/delete/DeleteConfirmation';
@@ -23,6 +23,8 @@ declare module '@tanstack/react-table' {
 		renameLanguage: (oldLang: string, newLang: string) => void;
 		confirmDeleteLanguage: (lang: string) => void;
 		confirmDeleteRow: (rowIndex: number, key: string) => void;
+		downloadLanguage: (lang: string) => void;
+		importLanguage: (lang: string) => void;
 	}
 }
 
@@ -203,6 +205,8 @@ export const LocalizationTable: React.FC = () => {
 		updateCell,
 		saveAll,
 		renameLanguage,
+		downloadLanguage,
+		importLanguage,
 	} = useLocalizationTable();
 
 	const columns = useMemo<ColumnDef<TranslationRow>[]>(() => {
@@ -229,6 +233,24 @@ export const LocalizationTable: React.FC = () => {
 						onRename={(oldL, newL) => table.options.meta?.renameLanguage(oldL, newL)}
 					/>
 					<div className="edtable--header-actions">
+						{isTranslateMode && (
+							<>
+								<button
+									className="edtable--icon-btn"
+									onClick={() => table.options.meta?.downloadLanguage(lang)}
+									title={t('localizationTable.downloadTooltip', 'Descargar JSON')}
+								>
+									<Download width={16} height={16} />
+								</button>
+								<button
+									className="edtable--icon-btn"
+									onClick={() => table.options.meta?.importLanguage(lang)}
+									title={t('localizationTable.importTooltip', 'Importar JSON')}
+								>
+									<Upload width={16} height={16} />
+								</button>
+							</>
+						)}
 						<button
 							className="edtable--icon-btn"
 							onClick={() => column.toggleVisibility(false)}
@@ -236,13 +258,15 @@ export const LocalizationTable: React.FC = () => {
 						>
 							<EyeClosed width={16} height={16} />
 						</button>
-						<button
-							className="edtable--icon-btn edtable--icon-btn-danger"
-							onClick={() => table.options.meta?.confirmDeleteLanguage(lang)}
-							title={t('localizationTable.deleteColumnTooltip', 'Eliminar idioma')}
-						>
-							<Trash width={16} height={16} />
-						</button>
+						{isTranslateMode && (
+							<button
+								className="edtable--icon-btn edtable--icon-btn-danger"
+								onClick={() => table.options.meta?.confirmDeleteLanguage(lang)}
+								title={t('localizationTable.deleteColumnTooltip', 'Eliminar idioma')}
+							>
+								<Trash width={16} height={16} />
+							</button>
+						)}
 					</div>
 				</div>
 			),
@@ -273,6 +297,10 @@ export const LocalizationTable: React.FC = () => {
 			confirmDeleteRow: (rowIndex: number, key: string) => {
 				setRowToDelete({ index: rowIndex, key });
 				setDeleteRowDialogOpen(true);
+			},
+			downloadLanguage: (lang: string) => void downloadLanguage(lang),
+			importLanguage: (lang: string) => {
+				if (pd) void importLanguage(lang, pd);
 			},
 		},
 	});

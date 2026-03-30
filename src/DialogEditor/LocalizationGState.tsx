@@ -79,6 +79,8 @@ interface LocalizationStore {
 	deleteLanguage: (lang: string, pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 	addRow: () => void;
 	deleteRow: (rowIndex: number) => void;
+	downloadLanguage: (lang: string) => Promise<void>;
+	importLanguage: (lang: string, pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 }
 
 export const useLocalizationStore = create<LocalizationStore>((set, get) => ({
@@ -249,5 +251,45 @@ export const useLocalizationStore = create<LocalizationStore>((set, get) => ({
 		set((state) => ({
 			data: state.data.filter((_, i) => i !== rowIndex),
 		}));
+	},
+
+	downloadLanguage: async (lang: string) => {
+		const { data } = get();
+		const record = buildLangRecord(data, lang);
+		const content = JSON.stringify(record, null, 2);
+		await window.api.saveLocalFile(`${lang}.local`, content);
+	},
+
+	importLanguage: async (lang: string, pd: ProjectData) => {
+		const result = await window.api.importLocalFile();
+		if (!result.success || !result.content) {
+			return { success: false, error: result.error ?? 'No file selected' };
+		}
+		try {
+			const parsed = JSON.parse(result.content) as Record<string, string>;
+			const { data, languages } = get();
+
+			const newData = data.map((row) => ({
+				...row,
+				[lang]: parsed[row.key] ?? row[lang] ?? '',
+			}));
+
+			const existingKeys = new Set(data.map((r) => r.key));
+			const extraRows: TranslationRow[] = Object.keys(parsed)
+				.filter((k) => !existingKeys.has(k))
+				.map((k) => {
+					const row: TranslationRow = { key: k };
+					languages.forEach((l) => {
+						row[l] = l === lang ? parsed[k] : '';
+					});
+					return row;
+				});
+
+			set({ data: [...newData, ...extraRows] });
+			await get().saveAll(pd);
+			return { success: true };
+		} catch {
+			return { success: false, error: 'Invalid JSON file' };
+		}
 	},
 }));
