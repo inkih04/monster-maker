@@ -126,6 +126,13 @@ void ScriptBindings::registerUiManager(sol::state& lua) {
 }
 
 void ScriptBindings::registerDialog(sol::state& lua) {
+
+    lua.new_usertype<DialogChoice>("DialogChoice",
+        sol::no_constructor,
+        "text",      sol::readonly(&DialogChoice::text),
+        "nextChain", sol::readonly(&DialogChoice::nextChain)
+    );
+
     lua.new_usertype<DialogFile>("DialogFile",
         sol::no_constructor,
         sol::meta_function::index,
@@ -174,6 +181,45 @@ void ScriptBindings::registerDialog(sol::state& lua) {
             textVar);
     };
 
+    dialog["openFromFile"] = [](const std::string& id,
+                                 const std::string& rmlPath,
+                                 const DialogFile&  file,
+                                 const std::string& chainId,
+                                 const sol::table&  varMapping)
+    {
+        const DialogChain* chain = file.find(chainId);
+        if (!chain)
+            throw sol::error("[Dialog.openFromFile] chain id not found: " + chainId);
+
+        const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
+        const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
+
+        DialogManager::getInstance().registerFile(id, file);
+        DialogManager::getInstance().open(
+            id,
+            EditorConfig::getInstance().getTag(rmlPath),
+            *chain,
+            speakerVar,
+            textVar);
+    };
+
+    dialog["interact"] = [](const std::string& id,
+                             const std::string& rmlPath,
+                             const DialogFile& file,
+                             const std::string& startChainId,
+                             const sol::table& varMapping) -> bool
+    {
+        const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
+        const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
+        std::string resolvedPath = EditorConfig::getInstance().getTag(rmlPath);
+
+        return DialogManager::getInstance().interact(id, resolvedPath, file, startChainId, speakerVar, textVar);
+    };
+
+    dialog["updateNavigation"] = [](const std::string& id, int upKey, int downKey) {
+        DialogManager::getInstance().updateNavigation(id, upKey, downKey);
+    };
+
     dialog["advance"] = [](const std::string& id) -> bool {
         return DialogManager::getInstance().advance(id);
     };
@@ -184,6 +230,30 @@ void ScriptBindings::registerDialog(sol::state& lua) {
 
     dialog["isActive"] = [](const std::string& id) -> bool {
         return DialogManager::getInstance().isActive(id);
+    };
+
+    dialog["hasChoices"] = [](const std::string& id) -> bool {
+        return DialogManager::getInstance().hasChoices(id);
+    };
+
+    dialog["moveChoice"] = [](const std::string& id, int delta) {
+        DialogManager::getInstance().moveChoice(id, delta);
+    };
+
+    dialog["getChoiceIndex"] = [](const std::string& id) -> int {
+        return DialogManager::getInstance().getChoiceIndex(id);
+    };
+
+    dialog["getSelectedTarget"] = [](const std::string& id) -> std::string {
+        return DialogManager::getInstance().getSelectedTarget(id);
+    };
+
+    dialog["jump"] = [](const std::string& id, const std::string& chainId) -> bool {
+        return DialogManager::getInstance().jumpToChain(id, chainId);
+    };
+
+    dialog["registerFile"] = [](const std::string& id, const DialogFile& file) {
+        DialogManager::getInstance().registerFile(id, file);
     };
 }
 
@@ -224,8 +294,8 @@ void ScriptBindings::registerAnimationComponent(sol::state& lua) {
         "resume", &AnimationComponent::resume,
         "stop",   &AnimationComponent::stop,
 
-        "isPlaying",       &AnimationComponent::isPlaying,
-        "currentAnim",     &AnimationComponent::getCurrentAnimationName
+        "isPlaying",   &AnimationComponent::isPlaying,
+        "currentAnim", &AnimationComponent::getCurrentAnimationName
     );
 }
 
@@ -241,17 +311,17 @@ void ScriptBindings::registerAudioService(sol::state& lua) {
         "pauseMusic", &AudioService::pauseMusic,
 
         "setMasterVolume", &AudioService::setMasterVolume,
-        "setMusicVolume", &AudioService::setMusicVolume,
-        "setSfxVolume", &AudioService::setSfxVolume
+        "setMusicVolume",  &AudioService::setMusicVolume,
+        "setSfxVolume",    &AudioService::setSfxVolume
     );
 
     lua["Audio"] = &AudioService::getInstance();
 }
 
 void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityManager& entityManager) {
-    lua["World"] = &entityManager;
+    lua["World"]      = &entityManager;
     lua["MainCamera"] = camera;
-    lua["Borders"] = entityManager.getBordersMapService();
+    lua["Borders"]    = entityManager.getBordersMapService();
 
     lua.set_function("GetEntity", [&entityManager](EntityTag tag) -> Entity* {
         auto entities = entityManager.getEntitiesByTag(tag);
@@ -303,10 +373,10 @@ void ScriptBindings::registerCamera(sol::state& lua) {
         "setPosition", [](Camera& c, float x, float y) {
             c.setPosition(glm::vec2(x, y));
         },
-        "setZoom", &Camera::setZoom,
-        "getPosition", &Camera::getPosition,
-        "getWidth",  &Camera::getWidth,
-        "getHeight", &Camera::getHeight
+        "setZoom",    &Camera::setZoom,
+        "getPosition",&Camera::getPosition,
+        "getWidth",   &Camera::getWidth,
+        "getHeight",  &Camera::getHeight
     );
 }
 
@@ -344,7 +414,7 @@ void ScriptBindings::registerLayers(sol::state& lua) {
 
 void ScriptBindings::registerEntityManager(sol::state& lua) {
     lua.new_usertype<EntityManager>("EntityManager",
-        "getEntitiesByTag", &EntityManager::getEntitiesByTag,
+        "getEntitiesByTag",   &EntityManager::getEntitiesByTag,
         "getEntitiesByLayer", &EntityManager::getEntitiesByLayer
     );
 }
@@ -377,9 +447,9 @@ void ScriptBindings::registerKeys(sol::state& lua) {
     keys["X"] = GLFW_KEY_X;
     keys["Y"] = GLFW_KEY_Y;
     keys["Z"] = GLFW_KEY_Z;
-    keys["UP"] = GLFW_KEY_UP;
-    keys["DOWN"] = GLFW_KEY_DOWN;
-    keys["LEFT"] = GLFW_KEY_LEFT;
+    keys["UP"]    = GLFW_KEY_UP;
+    keys["DOWN"]  = GLFW_KEY_DOWN;
+    keys["LEFT"]  = GLFW_KEY_LEFT;
     keys["RIGHT"] = GLFW_KEY_RIGHT;
 
     lua["Keys"] = keys;
@@ -387,7 +457,7 @@ void ScriptBindings::registerKeys(sol::state& lua) {
 
 void ScriptBindings::registerInputManager(sol::state& lua) {
     lua.new_usertype<InputManager>("InputManager",
-        "isKeyDown", &InputManager::isKeyDown,
+        "isKeyDown",    &InputManager::isKeyDown,
         "isKeyPressed", &InputManager::isKeyPressed
     );
     lua["Input"] = &InputManager::getInstance();
@@ -413,10 +483,10 @@ void ScriptBindings::registerRenderComponent(sol::state& lua) {
 
 void ScriptBindings::registerPositionComponent(sol::state& lua) {
     lua.new_enum<Direction>("Direction", {
-        {"TOP",    Direction::TOP},
-        {"BOTTOM", Direction::BOTTOM},
-        {"LEFT",   Direction::LEFT},
-        {"RIGHT",  Direction::RIGHT},
+        {"TOP",     Direction::TOP},
+        {"BOTTOM",  Direction::BOTTOM},
+        {"LEFT",    Direction::LEFT},
+        {"RIGHT",   Direction::RIGHT},
         {"UNKNOWN", Direction::UNKNOWN}
     });
 

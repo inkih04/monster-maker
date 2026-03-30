@@ -2,14 +2,15 @@
 
 classDiagram
 
-    %% ----------------------------------------------------
-    %% UI Core (Actualizado)
-    %% ----------------------------------------------------
+    %% -------------------------------------------------------
+    %% UI Core
+    %% -------------------------------------------------------
     class UiManager {
         <<singleton>>
         -unordered_map~string, unique_ptr~UiDocument~~ m_documents
         -RmlSystemInterface m_systemInterface
         -RmlRenderInterface m_renderInterface
+        -RmlFileInterface   m_fileInterface
         -Rml::Context* m_context
 
         +init(width, height, dpiScale, fontPath) void
@@ -21,20 +22,22 @@ classDiagram
         +closeDocument(id) void
         +getDocument(id) UiDocument*
         +isOpen(id) bool
+        +getContext() Rml::Context*
     }
 
     class UiDocument {
         -Rml::ElementDocument* m_doc
-        -optional~string~ m_scriptPath
-        -sol::environment m_env
-        -sol::protected_function m_luaOnStart
-        -sol::protected_function m_luaOnDestroy
-        
-        %% Nuevos miembros para el Data Binding
-        -unordered_map~string, string~ m_modelVars
-        -Rml::DataModelHandle m_modelHandle
-        -string m_modelName
-        -Rml::Context* m_context
+        -Rml::Context*         m_context
+        -optional~string~      m_scriptPath
+        -string                m_modelName
+        -Rml::DataModelHandle  m_modelHandle
+        -unordered_map~string,string~          m_modelStrings
+        -unordered_map~string,bool~            m_modelBools
+        -unordered_map~string,int~             m_modelInts
+        -unordered_map~string,vector~string~~  m_modelStringLists
+        -sol::environment          m_env
+        -sol::protected_function   m_luaOnStart
+        -sol::protected_function   m_luaOnDestroy
 
         +UiDocument(doc, context, scriptPath)
         +~UiDocument()
@@ -47,24 +50,46 @@ classDiagram
         -callHook(fn, hookName) void
     }
 
-    %% ----------------------------------------------------
-    %% Dialog System (NUEVO)
-    %% ----------------------------------------------------
+    class UiDocumentLoader {
+        <<static>>
+        +loadDef(uiFilePath) UiDocumentDef
+    }
+
+    class UiDocumentDef {
+        <<struct>>
+        +string htmlPath
+        +string cssPath
+        +optional~string~ scriptPath
+    }
+
+    %% -------------------------------------------------------
+    %% Dialog System
+    %% -------------------------------------------------------
     class DialogManager {
         <<singleton>>
         -unordered_map~string, ActiveChain~ m_activeChains
+        -unordered_map~string, DialogFile~  m_files
 
-        +open(uiDocumentId, rmlPath, chain, speakerVar, textVar) void
-        +advance(uiDocumentId) bool
-        +close(uiDocumentId) void
-        +isActive(uiDocumentId) bool
-        -showCurrentPage(uiDocumentId) void
+        +interact(uiDocId, rmlPath, file, startChainId, speakerVar, textVar) bool
+        +open(uiDocId, rmlPath, chain, speakerVar, textVar) void
+        +advance(uiDocId) bool
+        +close(uiDocId) void
+        +isActive(uiDocId) bool
+        +hasChoices(uiDocId) bool
+        +moveChoice(uiDocId, delta) void
+        +getChoiceIndex(uiDocId) int
+        +getSelectedTarget(uiDocId) string
+        +jumpToChain(uiDocId, chainId) bool
+        +registerFile(uiDocId, file) void
+        +updateNavigation(uiDocId, upKey, downKey) void
+        -showCurrentPage(uiDocId) void
     }
 
     class ActiveChain {
         <<struct>>
         +DialogChain chain
         +int currentPage
+        +int choiceCursor
         +string speakerVar
         +string textVar
     }
@@ -92,35 +117,31 @@ classDiagram
         <<struct>>
         +string speaker
         +string text
+        +vector~DialogChoice~ choices
     }
 
-    %% ----------------------------------------------------
-    %% Localization System (NUEVO)
-    %% ----------------------------------------------------
+    class DialogChoice {
+        <<struct>>
+        +string text
+        +string nextChain
+    }
+
+    %% -------------------------------------------------------
+    %% Localization
+    %% -------------------------------------------------------
     class LocalizationManager {
         <<singleton>>
         -unordered_map~string, string~ m_table
         -string m_currentLang
 
         +load(lang) void
-        +get(key) string
+        +get(key) string&
         +getCurrentLang() string
     }
 
-    %% ----------------------------------------------------
-    %% Interfaces y Helpers Originales
-    %% ----------------------------------------------------
-    class UiDocumentLoader {
-        <<static>>
-        +loadDef(uiFilePath) UiDocumentDef
-    }
-
-    class UiDocumentDef {
-        +string htmlPath
-        +string cssPath
-        +optional~string~ scriptPath
-    }
-
+    %% -------------------------------------------------------
+    %% Scripting
+    %% -------------------------------------------------------
     class ScriptEngine {
         <<singleton>>
         -sol::state m_lua
@@ -128,10 +149,24 @@ classDiagram
         +runScript(filePath) bool
     }
 
+    %% -------------------------------------------------------
+    %% Render & Interfaces
+    %% -------------------------------------------------------
     class RmlRenderInterface {
+        -int m_width
+        -int m_height
+        -glm::mat4 m_projection
         +SetViewport(width, height) void
         +BeginFrame() void
         +EndFrame() void
+        +CompileGeometry(vertices, indices) CompiledGeometryHandle
+        +RenderGeometry(handle, translation, texture) void
+        +ReleaseGeometry(handle) void
+        +LoadTexture(dimensions, source) TextureHandle
+        +GenerateTexture(source, dimensions) TextureHandle
+        +ReleaseTexture(handle) void
+        +EnableScissorRegion(enable) void
+        +SetScissorRegion(region) void
     }
 
     class RmlSystemInterface {
@@ -139,23 +174,36 @@ classDiagram
         +LogMessage(type, message) bool
     }
 
-    %% ----------------------------------------------------
-    %% Relaciones
-    %% ----------------------------------------------------
-    UiManager "1" *-- "*" UiDocument : owns
-    UiManager ..> UiDocumentLoader : uses
+    class RmlFileInterface {
+        +Open(path) FileHandle
+        +Close(handle) void
+        +Read(buffer, size, handle) size_t
+        +Seek(handle, offset, origin) bool
+        +Tell(handle) size_t
+    }
+
+    %% -------------------------------------------------------
+    %% Relaciones UI Core
+    %% -------------------------------------------------------
+    UiManager "1" *-- "*" UiDocument       : owns
     UiManager *-- RmlRenderInterface
     UiManager *-- RmlSystemInterface
-    UiDocumentLoader ..> UiDocumentDef : creates
-    UiDocument ..> ScriptEngine : uses
-    UiDocument ..> UiDocumentDef : built from
-    
-    %% Relaciones Nuevas
-    DialogManager ..> UiManager : calls openDocument / updateModel
-    DialogManager ..> LocalizationManager : resolves translation keys
-    DialogManager *-- ActiveChain : tracks state
+    UiManager *-- RmlFileInterface
+    UiManager ..> UiDocumentLoader         : uses
+    UiDocumentLoader ..> UiDocumentDef     : creates
+    UiDocument ..> ScriptEngine            : uses (getState)
+    UiDocument ..> UiDocumentDef           : built from
+
+    %% -------------------------------------------------------
+    %% Relaciones Dialog System
+    %% -------------------------------------------------------
+    DialogManager *-- ActiveChain          : tracks state
+    DialogManager "1" o-- "*" DialogFile   : registered files
+    DialogManager ..> UiManager            : openDocument / getDocument / closeDocument
+    DialogManager ..> LocalizationManager  : get(key)
     ActiveChain *-- DialogChain
+    DialogFile "1" *-- "*" DialogChain     : contains
     DialogChain "1" *-- "*" DialogPage
-    DialogLoader ..> DialogFile : creates
-    DialogFile "1" *-- "*" DialogChain : contains
+    DialogPage "1" *-- "*" DialogChoice
+    DialogLoader ..> DialogFile            : creates
 ```mermaid

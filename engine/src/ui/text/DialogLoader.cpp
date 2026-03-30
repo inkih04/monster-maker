@@ -2,7 +2,6 @@
 // Created by inkih on 28/3/26.
 //
 #include "DialogLoader.h"
-
 #include <fstream>
 #include <stdexcept>
 #include <nlohmann/json.hpp>
@@ -15,9 +14,8 @@ DialogFile DialogLoader::loadFile(const std::string& path) {
         throw std::runtime_error("[DialogueLoader] Cannot open: " + path);
 
     json data;
-    try {
-        file >> data;
-    } catch (const json::exception& e) {
+    try { file >> data; }
+    catch (const json::exception& e) {
         throw std::runtime_error(
             std::string("[DialogueLoader] Parse error in ") + path + ": " + e.what());
     }
@@ -32,13 +30,21 @@ DialogFile DialogLoader::loadFile(const std::string& path) {
         DialogChain chain;
         chain.id = chainJson.at("id").get<std::string>();
 
-        if (chainJson.contains("pages") && chainJson["pages"].is_array()) {
-            for (const auto& pageJson : chainJson["pages"]) {
-                DialogPage page;
-                page.speaker = pageJson.value("speaker", "");
-                page.text    = pageJson.at("text").get<std::string>();
-                chain.pages.push_back(std::move(page));
+        for (const auto& pageJson : chainJson.value("pages", json::array())) {
+            DialogPage page;
+            page.speaker = pageJson.value("speaker", "");
+            page.text    = pageJson.at("text").get<std::string>();
+
+            if (pageJson.contains("choices") && pageJson["choices"].is_array()) {
+                for (const auto& c : pageJson["choices"]) {
+                    DialogChoice choice;
+                    choice.text      = c.at("text").get<std::string>();
+                    choice.nextChain = c.at("next_chain").get<std::string>();
+                    page.choices.push_back(std::move(choice));
+                }
             }
+
+            chain.pages.push_back(std::move(page));
         }
 
         result.indexById[chain.id] = result.dialogues.size();

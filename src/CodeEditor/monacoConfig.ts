@@ -630,6 +630,85 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(monaco, 'Data.get', 'Data:get("${1:category}")', 'get(category) → value', range),
 				fn(monaco, 'Data.has', 'Data:has("${1:category}")', 'has(category) → bool', range),
 
+				fn(monaco, 'Dialog.load', 'Dialog.load("${1:path}")', 'load(path) → DialogFile', range),
+				fn(
+					monaco,
+					'Dialog.open',
+					'Dialog.open("${1:id}", tags.${2:uiFile}, ${3:chain}, ${4:vars})',
+					'open(id, rmlPath, chain, vars)',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.openFromFile',
+					'Dialog.openFromFile("${1:id}", tags.${2:uiFile}, ${3:file}, "${4:chainId}", ${5:vars})',
+					'openFromFile(id, rmlPath, file, chainId, vars)',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.interact',
+					'Dialog.interact("${1:id}", tags.${2:uiFile}, ${3:file}, "${4:startChain}", ${5:vars})',
+					'interact(id, rmlPath, file, startChain, vars) → bool',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.updateNavigation',
+					'Dialog.updateNavigation("${1:id}", Keys.${2:UP}, Keys.${3:DOWN})',
+					'updateNavigation(id, upKey, downKey)',
+					range
+				),
+				fn(monaco, 'Dialog.advance', 'Dialog.advance("${1:id}")', 'advance(id) → bool', range),
+				fn(monaco, 'Dialog.close', 'Dialog.close("${1:id}")', 'close(id)', range),
+				fn(monaco, 'Dialog.isActive', 'Dialog.isActive("${1:id}")', 'isActive(id) → bool', range),
+				fn(
+					monaco,
+					'Dialog.hasChoices',
+					'Dialog.hasChoices("${1:id}")',
+					'hasChoices(id) → bool',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.moveChoice',
+					'Dialog.moveChoice("${1:id}", ${2:delta})',
+					'moveChoice(id, delta)',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.getChoiceIndex',
+					'Dialog.getChoiceIndex("${1:id}")',
+					'getChoiceIndex(id) → int',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.getSelectedTarget',
+					'Dialog.getSelectedTarget("${1:id}")',
+					'getSelectedTarget(id) → string',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.jump',
+					'Dialog.jump("${1:id}", "${2:chainId}")',
+					'jump(id, chainId) → bool',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.registerFile',
+					'Dialog.registerFile("${1:id}", ${2:file})',
+					'registerFile(id, file)',
+					range
+				),
+
+				fn(monaco, 'Lang.load', 'Lang.load("${1:langCode}")', 'load(langCode)', range),
+				fn(monaco, 'Lang.get', 'Lang.get("${1:key}")', 'get(key) → string', range),
+				fn(monaco, 'Lang.current', 'Lang.current()', 'current() → string', range),
+
 				...(
 					[
 						'PLAYER',

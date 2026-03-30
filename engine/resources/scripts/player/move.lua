@@ -1,26 +1,23 @@
 local speed = 2
 local cameraSmoothing = 0.15
 
+
 function onCollision(collidedEntity)
     print("OnCollision called in player move component")
 end
 
 function onStart(entity)
-    UI:open("dialogTest", tags.text)
+
     Audio:setMusicVolume(0.02)
     Audio:setMasterVolume(0.02)
     Audio:playMusic("resources/music/music_overworld.mp3", true)
 
     Save:load("save_test.json")
-
     local savedX = Save:get("player_x")
     local savedY = Save:get("player_y")
-
     local moveComp = entity:getMove()
-
     if savedX ~= nil and savedY ~= nil and moveComp then
         moveComp:move(Position.new(savedX, savedY))
-        print("Posición cargada desde el archivo: X=" .. savedX .. " Y=" .. savedY)
     end
 
     local posComp = entity:getPos()
@@ -33,7 +30,6 @@ end
 function onUpdate(entity)
     local posComp = entity:getPos()
     local moveComp = entity:getMove()
-
     if not posComp or not moveComp then return end
 
     local newX = posComp.x
@@ -51,23 +47,17 @@ function onUpdate(entity)
 
     local hasMoved = moveComp:move(Position.new(newX, newY))
 
+    -- Z: abrir diálogo en primera pulsación, avanzar en las siguientes
     if Input:isKeyPressed(Keys.Z) then
-        entity:interact()
-        Session:set("isDialogClosed", true)
-        UI:close("dialogTest")
+     entity:interact()
+
     end
 
     if Input:isKeyPressed(Keys.P) then
-      print("He dado a la p")
         Save:set("player_x", posComp.x)
         Save:set("player_y", posComp.y)
         local success = Save:commit("save_test.json")
-
-        if success then
-            print("¡Posición guardada correctamente en save_test.json!")
-        else
-            print("Hubo un error al intentar crear el archivo de guardado.")
-        end
+        print(success and "¡Posición guardada!" or "Error al guardar.")
     end
 
     if MainCamera and hasMoved then

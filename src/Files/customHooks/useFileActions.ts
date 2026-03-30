@@ -13,6 +13,7 @@ import FolderNode from '../../../global/types/folderNode';
 import { useEngineStore } from '../../ToolBar/EngineGState';
 import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
 import { TileSetConfig } from '../../../global/types/tileSetConfig';
+import { useDialogueStore } from '../../DialogEditor/DialogueGState';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -95,10 +96,44 @@ export function useFileActions() {
 			return;
 		}
 
-		if (file.type === 'local') {
-			//handleOpenLocal(file);
+		if (file.type === 'dialog') {
+			handleOpenDialog(file);
 		}
 	};
+
+const handleOpenDialog = async (file: FileItem) => {
+    changeCodeEditorMode('dialog');
+    changeEditorMode('code');
+    changeTranslateMode(false);
+ 
+    if (!selectedFolder?.path || !currentProject) return;
+ 
+    useDialogueStore.getState().setLoading(true);
+    useDialogueStore.getState().setError(null);
+ 
+    try {
+        const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+ 
+        if (!result.success || !result.content) {
+            useDialogueStore.getState().setError(result.error ?? 'Failed to load dialogue file');
+            return;
+        }
+ 
+        const parsed = JSON.parse(result.content.content) as { dialogues: import('../../DialogEditor/DialogueGState').Dialogue[] };
+        const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
+ 
+        useDialogueStore.getState().loadDialogues(
+            parsed.dialogues ?? [],
+            relativePath,
+            selectedFolder.path
+        );
+    } catch (err) {
+        useDialogueStore.getState().setError(String(err));
+    } finally {
+        useDialogueStore.getState().setLoading(false);
+    }
+};
+ 
 
 	const handleOpenScript = async (file: FileItem) => {
 		changeCodeEditorMode('single');

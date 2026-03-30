@@ -92,7 +92,7 @@
 		"renameHint": "Doble clic para renombrar",
 		"deleteSet": "Eliminar set",
 		"newAnimation": "nueva animación",
-		"basicRenameHint": "Las animaciones básicas no se pueden renombrar",
+		"basicRenameHint": "Las animaciones básicas no se un renombrar",
 		"stopPreview": "Detener previsualización",
 		"preview": "Previsualizar",
 		"duration": "duración",
@@ -167,5 +167,17 @@
 		"deleteColumnTooltip": "Eliminar idioma",
 		"deleteRowTooltip": "Eliminar clave",
 		"emptyKey": "Clave vacía"
+	},
+	"dialogueEditor": {
+		"speakerPlaceholder": "Hablante...",
+		"dialogueTextPlaceholder": "Texto del diálogo...",
+		"choiceTextPlaceholder": "Texto de la opción...",
+		"nextChainIdPlaceholder": "ID del siguiente nodo...",
+		"addChoice": "Añadir Opción",
+		"addPage": "Añadir Página",
+		"addDialogue": "Añadir Diálogo",
+		"deleteDialogueTooltip": "Eliminar diálogo",
+		"deletePageTooltip": "Eliminar página",
+		"deleteChoiceTooltip": "Eliminar opción"
 	}
 }

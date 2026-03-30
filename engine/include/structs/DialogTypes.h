@@ -9,16 +9,28 @@
 #include <vector>
 #include <unordered_map>
 
-
+struct DialogChoice {
+    std::string text;
+    std::string nextChain;
+};
 
 struct DialogPage {
     std::string speaker;
     std::string text;
+    std::vector<DialogChoice> choices;
 };
 
 struct DialogChain {
     std::string id;
-    std::vector<DialogPage> pages;
+    std::vector<DialogPage>  pages;
+};
+
+struct ActiveChain {
+    DialogChain chain;
+    int currentPage  = 0;
+    int choiceCursor = 0;
+    std::string speakerVar;
+    std::string textVar;
 };
 
 struct DialogFile {
@@ -37,4 +49,4 @@ struct DialogFile {
     }
 };
 
-#endif //MONSTERMAKERENGINE_DIALOGTYPES_H
+#endif

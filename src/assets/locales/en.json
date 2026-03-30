@@ -167,5 +167,17 @@
 		"deleteColumnTooltip": "Delete language",
 		"deleteRowTooltip": "Delete key",
 		"emptyKey": "Empty key"
+	},
+	"dialogueEditor": {
+		"speakerPlaceholder": "Speaker...",
+		"dialogueTextPlaceholder": "Dialogue text...",
+		"choiceTextPlaceholder": "Choice text...",
+		"nextChainIdPlaceholder": "Next chain ID...",
+		"addChoice": "Add Choice",
+		"addPage": "Add Page",
+		"addDialogue": "Add Dialogue",
+		"deleteDialogueTooltip": "Delete dialogue",
+		"deletePageTooltip": "Delete page",
+		"deleteChoiceTooltip": "Delete choice"
 	}
 }
