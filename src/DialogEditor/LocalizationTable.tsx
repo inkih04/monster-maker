@@ -209,22 +209,14 @@ export const LocalizationTable: React.FC = () => {
 		const baseColumns: ColumnDef<TranslationRow>[] = [
 			{
 				accessorKey: 'key',
-				header: ({ column }) => (
+				header: () => (
 					<div className="edtable--header-content">
 						<span>{t('localizationTable.keyColumn', 'Clave (Key)')}</span>
-						<div className="edtable--header-actions">
-							<button
-								className="edtable--icon-btn"
-								onClick={() => column.toggleVisibility(false)}
-								title={t('localizationTable.hideColumnTooltip', 'Ocultar columna')}
-							>
-								<EyeClosed width={16} height={16} />
-							</button>
-						</div>
 					</div>
 				),
 				cell: (props) => <EditableCell {...props} />,
 				size: 250,
+				enableHiding: false,
 			},
 		];
 
