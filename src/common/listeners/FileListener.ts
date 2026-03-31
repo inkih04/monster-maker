@@ -111,15 +111,25 @@ export function FileListener() {
 				if (codeEditorMode === 'duo') {
 					const { openUiFile } = useCodeEditorStore.getState();
 					if (!openUiFile || !currentProject) return;
+
+					const rmliContent = JSON.stringify(
+						{
+							htmlPath: openUiFile.htmlPath,
+							cssPath: openUiFile.cssPath,
+							scriptPath: openUiFile.scriptPath,
+						},
+						null,
+						2
+					);
+
 					await Promise.all([
 						window.api.saveFile(openUiFile.htmlPath, openUiFile.htmlContent, currentProject),
 						window.api.saveFile(openUiFile.cssPath, openUiFile.cssContent, currentProject),
+						window.api.saveFile(openUiFile.rmliPath, rmliContent, currentProject),
 					]);
 					useCodeEditorStore.getState().markUiSaved();
 					return;
 				}
-
-				return;
 			}
 			const contentMap = exportToEngineFormat();
 			if (mapRelativePath && currentProject) {
