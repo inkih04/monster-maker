@@ -101,39 +101,38 @@ export function useFileActions() {
 		}
 	};
 
-const handleOpenDialog = async (file: FileItem) => {
-    changeCodeEditorMode('dialog');
-    changeEditorMode('code');
-    changeTranslateMode(false);
- 
-    if (!selectedFolder?.path || !currentProject) return;
- 
-    useDialogueStore.getState().setLoading(true);
-    useDialogueStore.getState().setError(null);
- 
-    try {
-        const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
- 
-        if (!result.success || !result.content) {
-            useDialogueStore.getState().setError(result.error ?? 'Failed to load dialogue file');
-            return;
-        }
- 
-        const parsed = JSON.parse(result.content.content) as { dialogues: import('../../DialogEditor/DialogueGState').Dialogue[] };
-        const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
- 
-        useDialogueStore.getState().loadDialogues(
-            parsed.dialogues ?? [],
-            relativePath,
-            selectedFolder.path
-        );
-    } catch (err) {
-        useDialogueStore.getState().setError(String(err));
-    } finally {
-        useDialogueStore.getState().setLoading(false);
-    }
-};
- 
+	const handleOpenDialog = async (file: FileItem) => {
+		changeCodeEditorMode('dialog');
+		changeEditorMode('code');
+		changeTranslateMode(false);
+
+		if (!selectedFolder?.path || !currentProject) return;
+
+		useDialogueStore.getState().setLoading(true);
+		useDialogueStore.getState().setError(null);
+
+		try {
+			const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+
+			if (!result.success || !result.content) {
+				useDialogueStore.getState().setError(result.error ?? 'Failed to load dialogue file');
+				return;
+			}
+
+			const parsed = JSON.parse(result.content.content) as {
+				dialogues: import('../../DialogEditor/DialogueGState').Dialogue[];
+			};
+			const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
+
+			useDialogueStore
+				.getState()
+				.loadDialogues(parsed.dialogues ?? [], relativePath, selectedFolder.path);
+		} catch (err) {
+			useDialogueStore.getState().setError(String(err));
+		} finally {
+			useDialogueStore.getState().setLoading(false);
+		}
+	};
 
 	const handleOpenScript = async (file: FileItem) => {
 		changeCodeEditorMode('single');
@@ -198,14 +197,17 @@ const handleOpenDialog = async (file: FileItem) => {
 				);
 				return;
 			}
+			const rmliPath = await window.api.pathUnion(selectedFolder.path, file.path);
 
 			useCodeEditorStore
 				.getState()
 				.setOpenUiFile(
+					rmliPath,
 					descriptor.htmlPath,
 					descriptor.cssPath,
 					htmlResult.content?.content ?? '',
-					cssResult.content?.content ?? ''
+					cssResult.content?.content ?? '',
+					descriptor.scriptPath
 				);
 		} catch (error) {
 			console.error('Error opening .ui file:', error);
