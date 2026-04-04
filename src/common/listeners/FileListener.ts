@@ -81,6 +81,22 @@ export function FileListener() {
 					extension = '.lua';
 					defaultContent = scriptContent;
 					break;
+				case 'dialog':
+					extension = '.json';
+					defaultContent = `{
+  "dialogues": [
+    {
+      "id": "new_dialogue_1",
+      "pages": [
+        {
+          "speaker": "",
+          "text": ""
+        }
+      ]
+    }
+  ]
+}`;
+					break;
 			}
 
 			setFileExtension(extension);

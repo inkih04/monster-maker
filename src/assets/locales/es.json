@@ -55,6 +55,7 @@
 	"essentialFolder": "Las carpetas esenciales no se pueden eliminar",
 	"errorFolder": "Se produjo un error al eliminar la carpeta",
 	"menu": {
+		"dialog": "Diálogo",
 		"view": "Vista",
 		"showCollisions": "Mostrar Colisiones",
 		"resetLayout": "Restablecer Layout",

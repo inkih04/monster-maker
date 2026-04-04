@@ -52,10 +52,12 @@ contextBridge.exposeInMainWorld('api', {
 	showFileContextMenu: (fileData: { name: string; path: string; type: string }) =>
 		ipcRenderer.send('show-file-context-menu', fileData),
 	showFileListContextMenu: () => ipcRenderer.send('show-filelist-context-menu'),
-	onCreateFileInline: (callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void) => {
+	onCreateFileInline: (
+		callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog') => void
+	) => {
 		const subscription = (
 			_event: Electron.IpcRendererEvent,
-			fileType: 'map' | 'prefab' | 'script' | 'ui'
+			fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog'
 		) => callback(fileType);
 		ipcRenderer.on('create-file-inline', subscription);
 		return () => ipcRenderer.removeListener('create-file-inline', subscription);

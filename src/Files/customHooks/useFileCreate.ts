@@ -8,13 +8,14 @@ import { uiCssDefaultContent } from '../defaultContentFiles/ui/uiCssDefaultConte
 import { scriptContent } from '../defaultContentFiles/scripts/scriptDefaultContent';
 import { useEngineConfigStore } from '../../Tagger/useEngineConfigStore';
 
-export type CreatableFileType = 'map' | 'prefab' | 'script' | 'ui';
+export type CreatableFileType = 'map' | 'prefab' | 'script' | 'ui' | 'dialog';
 
 export const CREATABLE_TYPE_TO_ICON: Record<CreatableFileType, string> = {
 	map: 'tilemap',
 	prefab: 'undefined',
 	script: 'script',
 	ui: 'ui',
+	dialog: 'dialog',
 };
 
 const FILE_EXTENSIONS: Record<CreatableFileType, string> = {
@@ -22,6 +23,7 @@ const FILE_EXTENSIONS: Record<CreatableFileType, string> = {
 	prefab: '.prefab',
 	script: '.lua',
 	ui: '.ui',
+	dialog: '.json',
 };
 
 export const UI_HTML_DEFAULT_CONTENT = (fileName: string, cssPath: string): string =>
@@ -44,6 +46,19 @@ const FILE_DEFAULT_CONTENT: Record<CreatableFileType, (tilesize: number) => stri
 	prefab: () => JSON.stringify({ prefabId: crypto.randomUUID(), components: [] }, null, 2),
 	script: () => scriptContent,
 	ui: () => '',
+	dialog: () => `{
+  "dialogues": [
+    {
+      "id": "new_dialogue_1",
+      "pages": [
+        {
+          "speaker": "",
+          "text": ""
+        }
+      ]
+    }
+  ]
+}`,
 };
 
 export function useFileCreate() {

@@ -92,7 +92,7 @@ declare global {
 			) => Promise<{ success: boolean; error?: string }>;
 
 			onCreateNewFile: (
-				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void
+				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog') => void
 			) => () => void;
 			onAddNewFile: (callback: () => void) => () => void;
 			onCloseProject: (callback: () => void) => () => void;
