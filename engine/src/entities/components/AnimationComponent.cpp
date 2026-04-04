@@ -103,7 +103,7 @@ void AnimationComponent::stop() {
 }
 
 void AnimationComponent::update(int deltaTime) {
-    if (!m_isPlaying || m_currentAnimation.empty()) return;
+    if (!m_isPlaying || !m_isActive || m_currentAnimation.empty()) return;
 
     auto setIt = m_sets.find(m_activeSet);
     if (setIt == m_sets.end()) return;

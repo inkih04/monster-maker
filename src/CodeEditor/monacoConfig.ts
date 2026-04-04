@@ -709,6 +709,21 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(monaco, 'Lang.get', 'Lang.get("${1:key}")', 'get(key) → string', range),
 				fn(monaco, 'Lang.current', 'Lang.current()', 'current() → string', range),
 
+				fn(
+					monaco,
+					'BlockEntityComponentByTag.block',
+					'BlockEntityComponentByTag.block(${1:entities}, ComponentsType.${2:MOVEMENT})',
+					'block(entities, componentType) → bool',
+					range
+				),
+				fn(
+					monaco,
+					'BlockEntityComponentByTag.unblock',
+					'BlockEntityComponentByTag.unblock(${1:entities}, ComponentsType.${2:MOVEMENT})',
+					'unblock(entities, componentType) → bool',
+					range
+				),
+
 				...(
 					[
 						'PLAYER',
@@ -742,6 +757,17 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				...(['TOP', 'BOTTOM', 'LEFT', 'RIGHT', 'UNKNOWN'] as const).map((d) =>
 					constant(monaco, `Direction.${d}`, 'Direction enum', range)
 				),
+				...(
+					[
+						'POSITION',
+						'RENDER',
+						'COLLIDER',
+						'ANIMATION',
+						'MOVEMENT',
+						'SCRIPT',
+						'INTERACTION',
+					] as const
+				).map((c) => constant(monaco, `ComponentsType.${c}`, 'ComponentsType enum', range)),
 
 				fn(monaco, 'entity.getPos', '${1:entity}:getPos()', 'getPos() → PositionComponent', range),
 				fn(
@@ -751,18 +777,47 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					'getMove() → MovementComponent',
 					range
 				),
+				fn(
+					monaco,
+					'entity.getRender',
+					'${1:entity}:getRender()',
+					'getRender() → RenderComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.getAnim',
+					'${1:entity}:getAnim()',
+					'getAnim() → AnimationComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.getInteract',
+					'${1:entity}:getInteract()',
+					'getInteract() → InteractionComponent',
+					range
+				),
 				fn(monaco, 'entity.interact', '${1:entity}:interact()', 'interact()', range),
 				fn(monaco, 'entity.disable', '${1:entity}:disable()', 'disable()', range),
 				fn(
 					monaco,
 					'entity.hasComponent',
-					'${1:entity}:hasComponent()',
-					'hasComponent() → bool',
+					'${1:entity}:hasComponent(ComponentsType.${2:MOVEMENT})',
+					'hasComponent(componentType) → bool',
 					range
 				),
 				fn(monaco, 'pos.get', '${1:pos}:get()', 'get() → Position', range),
 				fn(monaco, 'pos.direction', '${1:pos}.direction', 'direction: Direction', range),
 				fn(monaco, 'move.move', '${1:move}:move(Direction.${2:RIGHT})', 'move(direction)', range),
+				fn(
+					monaco,
+					'move.setIsActive',
+					'${1:move}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(monaco, 'move.getIsActive', '${1:move}:getIsActive()', 'getIsActive() → bool', range),
 				fn(
 					monaco,
 					'render.setIsActive',
@@ -774,6 +829,40 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					monaco,
 					'render.getIsActive',
 					'${1:render}:getIsActive()',
+					'getIsActive() → bool',
+					range
+				),
+				fn(
+					monaco,
+					'anim.play',
+					'${1:anim}:play("${2:animName}", ${3:false})',
+					'play(name, forceRestart?)',
+					range
+				),
+				fn(monaco, 'anim.pause', '${1:anim}:pause()', 'pause()', range),
+				fn(monaco, 'anim.resume', '${1:anim}:resume()', 'resume()', range),
+				fn(monaco, 'anim.stop', '${1:anim}:stop()', 'stop()', range),
+				fn(monaco, 'anim.isPlaying', '${1:anim}:isPlaying()', 'isPlaying() → bool', range),
+				fn(monaco, 'anim.currentAnim', '${1:anim}:currentAnim()', 'currentAnim() → string', range),
+				fn(
+					monaco,
+					'anim.setIsActive',
+					'${1:anim}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(monaco, 'anim.getIsActive', '${1:anim}:getIsActive()', 'getIsActive() → bool', range),
+				fn(
+					monaco,
+					'interact.setIsActive',
+					'${1:interact}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(
+					monaco,
+					'interact.getIsActive',
+					'${1:interact}:getIsActive()',
 					'getIsActive() → bool',
 					range
 				),

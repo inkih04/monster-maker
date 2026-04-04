@@ -106,6 +106,7 @@ void ScriptComponent::executeOnTriggerEnter(Entity *other) {
 }
 
 void ScriptComponent::update(int deltaTime) {
+    if (!m_isActive) return;
     if (!m_initialized) init();
 
     if (!m_startCalled) {

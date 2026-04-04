@@ -20,16 +20,13 @@ class RenderComponent: public Component {
         float m_width;
         glm::vec2 getPrettyPosition() const;
         void draw() const;
-        bool isActive;
 
     public:
         void setSpriteRect(const SpriteRect& rect) { spriteRect = rect; }
         void render() override;
         void update(int deltaTime) override;
-        RenderComponent(const std::string& sheetPath, const SpriteRect& spriteRect, const float width, const float height, int shaderMode): m_spriteSheetPath(sheetPath), spriteRect(spriteRect), m_height(width), m_width(height), isActive(true), shaderMode(shaderMode) {};
-        RenderComponent(const std::string& sheetPath, const float x, const float y,const float w, const float h ,const float width, const float height, int shaderMode): m_spriteSheetPath (sheetPath), spriteRect(x, y, w, h), m_width(width), m_height(height), isActive(true), shaderMode(shaderMode) {};
-        void setIsActive(bool active) {isActive = active;}
-        bool getIsActive() {return isActive;}
+        RenderComponent(const std::string& sheetPath, const SpriteRect& spriteRect, const float width, const float height, int shaderMode): m_spriteSheetPath(sheetPath), spriteRect(spriteRect), m_height(width), m_width(height), shaderMode(shaderMode) {};
+        RenderComponent(const std::string& sheetPath, const float x, const float y,const float w, const float h ,const float width, const float height, int shaderMode): m_spriteSheetPath (sheetPath), spriteRect(x, y, w, h), m_width(width), m_height(height), shaderMode(shaderMode) {};
 
 
 

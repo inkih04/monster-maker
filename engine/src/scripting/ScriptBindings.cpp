@@ -17,6 +17,8 @@
 #include "DialogLoader.h"
 #include "DialogManager.h"
 #include "LocalizationManager.h"
+#include "AnimationComponent.h"
+#include "BlockEntityComponentByTag.h"
 
 void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionManager, SaveManager& save_manager, DataManager& dataManager) {
     registerKeys(lua);
@@ -37,6 +39,7 @@ void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionMana
     registerSessionManager(lua, sessionManager);
     registerSaveManager(lua, save_manager);
     registerDataManager(lua, dataManager);
+    registerBlockEntityComponentByTagService(lua);
 }
 
 void ScriptBindings::registerDataManager(sol::state& lua, DataManager& dataManager) {
@@ -68,7 +71,6 @@ void ScriptBindings::registerSaveManager(sol::state& lua, SaveManager& saveManag
         "has",    &SaveManager::has,
         "remove", &SaveManager::remove,
         "clear",  &SaveManager::clear,
-
         "load",   &SaveManager::loadFromFile,
         "commit", &SaveManager::commitToFile
     );
@@ -126,7 +128,6 @@ void ScriptBindings::registerUiManager(sol::state& lua) {
 }
 
 void ScriptBindings::registerDialog(sol::state& lua) {
-
     lua.new_usertype<DialogChoice>("DialogChoice",
         sol::no_constructor,
         "text",      sol::readonly(&DialogChoice::text),
@@ -172,7 +173,6 @@ void ScriptBindings::registerDialog(sol::state& lua) {
     {
         const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
         const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
-
         DialogManager::getInstance().open(
             id,
             EditorConfig::getInstance().getTag(rmlPath),
@@ -193,7 +193,6 @@ void ScriptBindings::registerDialog(sol::state& lua) {
 
         const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
         const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
-
         DialogManager::getInstance().registerFile(id, file);
         DialogManager::getInstance().open(
             id,
@@ -212,7 +211,6 @@ void ScriptBindings::registerDialog(sol::state& lua) {
         const std::string speakerVar = varMapping.get_or<std::string>("speaker", "speaker");
         const std::string textVar    = varMapping.get_or<std::string>("text",    "text");
         std::string resolvedPath = EditorConfig::getInstance().getTag(rmlPath);
-
         return DialogManager::getInstance().interact(id, resolvedPath, file, startChainId, speakerVar, textVar);
     };
 
@@ -286,30 +284,28 @@ void ScriptBindings::registerAnimationComponent(sol::state& lua) {
     lua.new_usertype<AnimationComponent>("AnimationComponent",
         "setSet",  &AnimationComponent::setActiveSet,
         "getSet",  &AnimationComponent::getActiveSet,
-
         "play", [](AnimationComponent& anim, const std::string& name, sol::optional<bool> forceRestart) {
             anim.play(name, forceRestart.value_or(false));
         },
         "pause",  &AnimationComponent::pause,
         "resume", &AnimationComponent::resume,
         "stop",   &AnimationComponent::stop,
-
         "isPlaying",   &AnimationComponent::isPlaying,
-        "currentAnim", &AnimationComponent::getCurrentAnimationName
+        "currentAnim", &AnimationComponent::getCurrentAnimationName,
+        "setIsActive", &AnimationComponent::setIsActive,
+        "getIsActive", &AnimationComponent::isActive
     );
 }
 
 void ScriptBindings::registerAudioService(sol::state& lua) {
     lua.new_usertype<AudioService>("AudioService",
         sol::no_constructor,
-
         "playMusic", [](AudioService& self, const std::string& path, sol::optional<bool> loop) {
             self.playMusic(EditorConfig::getInstance().getTag(path), loop.value_or(true));
         },
         "playSound", &AudioService::playSound,
         "stopMusic", &AudioService::stopMusic,
         "pauseMusic", &AudioService::pauseMusic,
-
         "setMasterVolume", &AudioService::setMasterVolume,
         "setMusicVolume",  &AudioService::setMusicVolume,
         "setSfxVolume",    &AudioService::setSfxVolume
@@ -352,6 +348,30 @@ void ScriptBindings::registerEntity(sol::state& lua) {
                 return nullptr;
             }
             return static_cast<MovementComponent*>(comp);
+        },
+        "getRender", [](Entity& e) -> RenderComponent* {
+            auto* comp = e.getComponent(ComponentsType::RENDER);
+            if (!comp) {
+                std::cout << "[ENGINE][WARNING] Trying to access a component that the entity does not have: RenderComponent" << std::endl;
+                return nullptr;
+            }
+            return static_cast<RenderComponent*>(comp);
+        },
+        "getAnim", [](Entity& e) -> AnimationComponent* {
+            auto* comp = e.getComponent(ComponentsType::ANIMATION);
+            if (!comp) {
+                std::cout << "[ENGINE][WARNING] Trying to access a component that the entity does not have: AnimationComponent" << std::endl;
+                return nullptr;
+            }
+            return static_cast<AnimationComponent*>(comp);
+        },
+        "getInteract", [](Entity& e) -> InteractionComponent* {
+            auto* comp = e.getComponent(ComponentsType::INTERACTION);
+            if (!comp) {
+                std::cout << "[ENGINE][WARNING] Trying to access a component that the entity does not have: InteractionComponent" << std::endl;
+                return nullptr;
+            }
+            return static_cast<InteractionComponent*>(comp);
         },
         "interact", [](Entity& e) {
             auto* service = e.getInteractionService();
@@ -451,7 +471,6 @@ void ScriptBindings::registerKeys(sol::state& lua) {
     keys["DOWN"]  = GLFW_KEY_DOWN;
     keys["LEFT"]  = GLFW_KEY_LEFT;
     keys["RIGHT"] = GLFW_KEY_RIGHT;
-
     lua["Keys"] = keys;
 }
 
@@ -468,16 +487,21 @@ void ScriptBindings::registerComponents(sol::state& lua) {
     registerMovementComponent(lua);
     registerRenderComponent(lua);
     registerInteractionComponent(lua);
+    registerAnimationComponent(lua);
+    registerComponentsTypeEnum(lua);
 }
 
 void ScriptBindings::registerInteractionComponent(sol::state& lua) {
-    lua.new_usertype<InteractionComponent>("InteractionComponent");
+    lua.new_usertype<InteractionComponent>("InteractionComponent",
+        "setIsActive", &InteractionComponent::setIsActive,
+        "getIsActive", &InteractionComponent::isActive
+    );
 }
 
 void ScriptBindings::registerRenderComponent(sol::state& lua) {
     lua.new_usertype<RenderComponent>("RenderComponent",
         "setIsActive", &RenderComponent::setIsActive,
-        "getIsActive", &RenderComponent::getIsActive
+        "getIsActive", &RenderComponent::isActive
     );
 }
 
@@ -500,12 +524,36 @@ void ScriptBindings::registerPositionComponent(sol::state& lua) {
         "x", sol::readonly_property([](PositionComponent& p) { return p.getPosition().x; }),
         "y", sol::readonly_property([](PositionComponent& p) { return p.getPosition().y; }),
         "direction", sol::property(&PositionComponent::getDirection, &PositionComponent::setDirection),
-        "get", &PositionComponent::getPosition
+        "get", &PositionComponent::getPosition,
+        "setIsActive", &PositionComponent::setIsActive,
+        "getIsActive", &PositionComponent::isActive
     );
 }
 
 void ScriptBindings::registerMovementComponent(sol::state& lua) {
     lua.new_usertype<MovementComponent>("MovementComponent",
-        "move", &MovementComponent::move
+        "move", &MovementComponent::move,
+        "setIsActive", &MovementComponent::setIsActive,
+        "getIsActive", &MovementComponent::isActive
+    );
+}
+
+void ScriptBindings::registerComponentsTypeEnum(sol::state& lua) {
+    lua.new_enum<ComponentsType>("ComponentsType", {
+        {"POSITION",    ComponentsType::POSITION},
+        {"RENDER",      ComponentsType::RENDER},
+        {"COLLIDER",    ComponentsType::COLLIDER},
+        {"ANIMATION",   ComponentsType::ANIMATION},
+        {"MOVEMENT",    ComponentsType::MOVEMENT},
+        {"SCRIPT",      ComponentsType::SCRIPT},
+        {"INTERACTION", ComponentsType::INTERACTION}
+    });
+}
+
+void ScriptBindings::registerBlockEntityComponentByTagService(sol::state& lua) {
+    lua.new_usertype<BlockEntityComponentByTag>("BlockEntityComponentByTag",
+        sol::no_constructor,
+        "block",   &BlockEntityComponentByTag::blockComponent,
+        "unblock", &BlockEntityComponentByTag::unblockComponent
     );
 }

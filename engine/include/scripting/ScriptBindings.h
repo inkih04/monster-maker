@@ -23,6 +23,8 @@ class ScriptBindings {
         static void registerRenderComponent(sol::state &lua);
         static void registerPositionComponent(sol::state &lua);
         static void registerMovementComponent(sol::state &lua);
+        static void registerComponentsTypeEnum(sol::state &lua);
+        static void registerBlockEntityComponentByTagService(sol::state &lua);
         static void registerTags(sol::state &lua);
         static void registerLayers(sol::state &lua);
         static void registerEntityManager(sol::state &lua);
