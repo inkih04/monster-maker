@@ -9,6 +9,7 @@ import {
 	registerHtmlEmmetCompletions,
 	updateLuaTags,
 } from './monacoConfig';
+import { validateLua } from './luaDiagnostics';
 import './CodeEditor.css';
 
 loader.config({ monaco });
@@ -35,6 +36,7 @@ function CodeEditor({
 	const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 	const monacoRef = useRef<typeof monaco | null>(null);
 	const pendingValueRef = useRef<string | null>(null);
+	const validateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	useEffect(() => {
 		const editor = editorRef.current;
@@ -78,14 +80,31 @@ function CodeEditor({
 		[language]
 	);
 
-	const handleMount: OnMount = useCallback((editor) => {
-		editorRef.current = editor;
-		if (pendingValueRef.current !== null) {
-			editor.setValue(pendingValueRef.current);
-			pendingValueRef.current = null;
-		}
-		editor.focus();
-	}, []);
+	const handleMount: OnMount = useCallback(
+		(editor) => {
+			editorRef.current = editor;
+			if (pendingValueRef.current !== null) {
+				editor.setValue(pendingValueRef.current);
+				pendingValueRef.current = null;
+			}
+			editor.focus();
+
+			if (language === 'lua' && monacoRef.current) {
+				const m = monacoRef.current;
+				const model = editor.getModel();
+				if (model) validateLua(m, model);
+
+				editor.onDidChangeModelContent(() => {
+					if (validateTimerRef.current) clearTimeout(validateTimerRef.current);
+					validateTimerRef.current = setTimeout(() => {
+						const currentModel = editor.getModel();
+						if (currentModel) validateLua(m, currentModel);
+					}, 600);
+				});
+			}
+		},
+		[language]
+	);
 
 	const handleChange = useCallback(
 		(val: string | undefined) => {

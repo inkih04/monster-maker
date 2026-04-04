@@ -19,6 +19,7 @@
 #include "LocalizationManager.h"
 #include "AnimationComponent.h"
 #include "BlockEntityComponentByTag.h"
+#include "ColliderComponent.h"
 
 void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionManager, SaveManager& save_manager, DataManager& dataManager) {
     registerKeys(lua);
@@ -373,11 +374,59 @@ void ScriptBindings::registerEntity(sol::state& lua) {
             }
             return static_cast<InteractionComponent*>(comp);
         },
+        "getCollider", [](Entity& e) -> CollisionComponent* {
+            auto* comp = e.getComponent(ComponentsType::COLLIDER);
+            if (!comp) {
+                std::cout << "[ENGINE][WARNING] Trying to access a component that the entity does not have: CollisionComponent" << std::endl;
+                return nullptr;
+            }
+            return static_cast<CollisionComponent*>(comp);
+        },
         "interact", [](Entity& e) {
             auto* service = e.getInteractionService();
             if (service) {
                 service->tryInteract(&e);
             }
+        },
+        "addPosition", [](Entity& e, float x, float y) {
+            e.addComponent(ComponentsType::POSITION, std::make_unique<PositionComponent>(x, y));
+        },
+        "addRender", [](Entity& e, const std::string& spriteSheetPath,
+                         sol::optional<float> x, sol::optional<float> y,
+                         sol::optional<float> w, sol::optional<float> h,
+                         sol::optional<float> width, sol::optional<float> height) {
+            int shaderMode = EditorConfig::getInstance().getShaderMode("default");
+            e.addComponent(ComponentsType::RENDER, std::make_unique<RenderComponent>(
+                EditorConfig::getInstance().getTag(spriteSheetPath),
+                x.value_or(-1.0f), y.value_or(-1.0f),
+                w.value_or(-1.0f), h.value_or(-1.0f),
+                width.value_or(32.0f), height.value_or(32.0f),
+                shaderMode
+            ));
+        },
+        "addMovement", [](Entity& e) {
+            e.addComponent(ComponentsType::MOVEMENT, std::make_unique<MovementComponent>());
+        },
+        "addInteraction", [](Entity& e) {
+            e.addComponent(ComponentsType::INTERACTION, std::make_unique<InteractionComponent>());
+        },
+        "addAnimation", [](Entity& e) -> AnimationComponent* {
+            auto anim = std::make_unique<AnimationComponent>();
+            AnimationComponent* ptr = anim.get();
+            e.addComponent(ComponentsType::ANIMATION, std::move(anim));
+            return ptr;
+        },
+        "addCollider", [](Entity& e, int width, int height, sol::optional<int> offsetX, sol::optional<int> offsetY, sol::optional<bool> trigger) -> CollisionComponent* {
+            auto collider = std::make_unique<CollisionComponent>(
+                width,
+                height,
+                offsetX.value_or(0),
+                offsetY.value_or(0),
+                trigger.value_or(false)
+            );
+            CollisionComponent* ptr = collider.get();
+            e.addComponent(ComponentsType::COLLIDER, std::move(collider));
+            return ptr;
         }
     );
 }
@@ -435,7 +484,24 @@ void ScriptBindings::registerLayers(sol::state& lua) {
 void ScriptBindings::registerEntityManager(sol::state& lua) {
     lua.new_usertype<EntityManager>("EntityManager",
         "getEntitiesByTag",   &EntityManager::getEntitiesByTag,
-        "getEntitiesByLayer", &EntityManager::getEntitiesByLayer
+        "getEntitiesByLayer", &EntityManager::getEntitiesByLayer,
+        "createEntity", [](EntityManager& em, EntityTag tag, EntityLayer layer) -> Entity* {
+            return em.createEntity(tag, layer);
+        },
+        "destroyEntity", [](EntityManager& em, Entity* entity) {
+            if (!entity) {
+                std::cout << "[ENGINE][WARNING] World:destroyEntity called with nil entity." << std::endl;
+                return;
+            }
+            em.destroyEntity(entity);
+        },
+        "registerCollider", [](EntityManager& em, Entity* entity) {
+            if (!entity) {
+                std::cout << "[ENGINE][WARNING] World:registerCollider called with nil entity." << std::endl;
+                return;
+            }
+            em.registerCollisionEntity(entity);
+        }
     );
 }
 
