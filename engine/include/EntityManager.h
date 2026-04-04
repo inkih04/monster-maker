@@ -47,6 +47,7 @@ class EntityManager {
         BordersMapService* getBordersMapService() const { return m_bordersMapService.get(); }
         Entity* adoptEntity(std::unique_ptr<Entity> entity, EntityTag tag, EntityLayer layer);
 
+        void registerCollisionEntity(Entity *entity);
 };
 
 #endif //POKEMONGAMEENGINE_ENTITYMANAGER_H

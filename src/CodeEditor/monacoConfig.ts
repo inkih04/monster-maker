@@ -839,6 +839,70 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					'play(name, forceRestart?)',
 					range
 				),
+				fn(
+					monaco,
+					'entity.getCollider',
+					'${1:entity}:getCollider()',
+					'getCollider() → CollisionComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.addPosition',
+					'${1:entity}:addPosition(${2:x}, ${3:y})',
+					'addPosition(x, y)',
+					range
+				),
+				fn(
+					monaco,
+					'entity.addRender',
+					'${1:entity}:addRender(tags.${2:spriteSheet}, ${3:x}, ${4:y}, ${5:w}, ${6:h}, ${7:width}, ${8:height})',
+					'addRender(spriteSheetPath, x, y, w, h, width, height)',
+					range
+				),
+				fn(monaco, 'entity.addMovement', '${1:entity}:addMovement()', 'addMovement()', range),
+				fn(
+					monaco,
+					'entity.addInteraction',
+					'${1:entity}:addInteraction()',
+					'addInteraction()',
+					range
+				),
+				fn(
+					monaco,
+					'entity.addAnimation',
+					'${1:entity}:addAnimation()',
+					'addAnimation() → AnimationComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.addCollider',
+					'${1:entity}:addCollider(${2:width}, ${3:height}, ${4:offsetX}, ${5:offsetY}, ${6:trigger})',
+					'addCollider(width, height, offsetX, offsetY, trigger) → CollisionComponent',
+					range
+				),
+				fn(
+					monaco,
+					'World.createEntity',
+					'World:createEntity(EntityTag.${1:UNKNOWN}, Layer.${2:ENTITIES})',
+					'createEntity(tag, layer) → Entity',
+					range
+				),
+				fn(
+					monaco,
+					'World.destroyEntity',
+					'World:destroyEntity(${1:entity})',
+					'destroyEntity(entity)',
+					range
+				),
+				fn(
+					monaco,
+					'World.registerCollider',
+					'World:registerCollider(${1:entity})',
+					'registerCollider(entity)',
+					range
+				),
 				fn(monaco, 'anim.pause', '${1:anim}:pause()', 'pause()', range),
 				fn(monaco, 'anim.resume', '${1:anim}:resume()', 'resume()', range),
 				fn(monaco, 'anim.stop', '${1:anim}:stop()', 'stop()', range),
