@@ -18,6 +18,9 @@ class ScriptBindings {
     private:
         static void registerKeys(sol::state& lua);
         static void registerInputManager(sol::state &lua);
+
+        static void registerPersistentComponent(sol::state &lua);
+
         static void registerComponents(sol::state &lua);
         static void registerInteractionComponent(sol::state &lua);
         static void registerRenderComponent(sol::state &lua);

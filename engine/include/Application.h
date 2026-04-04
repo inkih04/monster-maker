@@ -24,9 +24,6 @@ public:
 private:
     std::unique_ptr<Engine> m_engine;
     StateManager m_stateManager;
-    SessionManager m_sessionManager;
-    SaveManager m_saveManager;
-    DataManager m_dataManager;
 };
 
 #endif //POKEMONGAMEENGINE_APPLICATION_H

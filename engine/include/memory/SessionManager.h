@@ -5,27 +5,30 @@
 #ifndef MONSTERMAKERENGINE_SESSIONMANAGER_H
 #define MONSTERMAKERENGINE_SESSIONMANAGER_H
 
-
 #include <string>
 #include <unordered_map>
 #include <sol/sol.hpp>
 
 class SessionManager {
-    public:
-        SessionManager() = default;
-        ~SessionManager() = default;
+public:
+    static SessionManager& getInstance() {
+        static SessionManager instance;
+        return instance;
+    }
 
-        SessionManager(const SessionManager&) = delete;
-        SessionManager& operator=(const SessionManager&) = delete;
+    SessionManager(const SessionManager&) = delete;
+    SessionManager& operator=(const SessionManager&) = delete;
 
-        void set(const std::string& key, sol::object value);
-        sol::object get(const std::string& key, sol::this_state s);
-        bool has(const std::string& key) const;
-        void remove(const std::string& key);
-        void clear();
+    void set(const std::string& key, sol::object value);
+    sol::object get(const std::string& key, sol::this_state s);
+    bool has(const std::string& key) const;
+    void remove(const std::string& key);
+    void clear();
 
-    private:
-        std::unordered_map<std::string, sol::object> m_data;
-    };
+private:
+    SessionManager() = default;
+    ~SessionManager() = default;
+    std::unordered_map<std::string, sol::object> m_data;
+};
 
 #endif //MONSTERMAKERENGINE_SESSIONMANAGER_H

@@ -35,6 +35,15 @@
 		0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+.enityt--id {
+	font-size: var(--font-ssm);
+	font-style: italic;
+}
+.enityt--id-container {
+	margin-left: 3rem;
+	margin-top: 8px;
+}
+
 .entity--entity.is-empty::before {
 	content: '';
 	position: absolute;
@@ -102,7 +111,6 @@
 
 .entity--row2 {
 	display: flex;
-	margin-top: 10px;
 	align-items: center;
 	justify-content: space-evenly;
 	position: relative;

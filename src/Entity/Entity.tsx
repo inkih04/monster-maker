@@ -12,6 +12,7 @@ import { Tag } from '../domain/ecs/tags';
 import './Entity.css';
 import InteractionComponent from './Components/Interaction/InteractionComponent';
 import AnimationInspector from './Components/Animation/AnimatorInspector';
+import PersistenceComponent from './Components/Persistence/PersistenceComponent';
 
 const COMPONENT_UI_MAP: Partial<Record<ComponentType, React.ComponentType>> = {
 	RENDER: RendererComponent,
@@ -20,6 +21,7 @@ const COMPONENT_UI_MAP: Partial<Record<ComponentType, React.ComponentType>> = {
 	MOVEMENT: MovementComponent,
 	INTERACTION: InteractionComponent,
 	ANIMATION: AnimationInspector,
+	PERSISTENCE: PersistenceComponent,
 };
 
 const RENDER_ORDER: ComponentType[] = [
@@ -29,6 +31,7 @@ const RENDER_ORDER: ComponentType[] = [
 	'SCRIPT',
 	'MOVEMENT',
 	'INTERACTION',
+	'PERSISTENCE',
 ];
 
 function Entity() {

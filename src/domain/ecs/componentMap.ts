@@ -6,6 +6,7 @@ import {
 	CollisionComponent,
 	ScriptComponent,
 	InteractionComponent,
+	PersistanceComponent,
 } from './components';
 
 export type ComponentMap = {
@@ -16,6 +17,7 @@ export type ComponentMap = {
 	COLLIDER: CollisionComponent;
 	SCRIPT: ScriptComponent;
 	INTERACTION: InteractionComponent;
+	PERSISTENCE: PersistanceComponent;
 };
 
 export type ComponentType = keyof ComponentMap;

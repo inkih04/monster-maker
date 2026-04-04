@@ -25,8 +25,8 @@ Entity* EntityManager::createEntity() {
     return entityPtr;
 }
 
-Entity* EntityManager::createEntity(EntityTag tag, EntityLayer layer) {
-    auto entity = std::make_unique<Entity>();
+Entity* EntityManager::createEntity(EntityTag tag, EntityLayer layer, std::string id) {
+    auto entity = std::make_unique<Entity>(id);
     Entity* entityPtr = entity.get();
     entity->setCollisionService(m_collisionService.get());
     entity->setInteractionService(m_interactionService.get());

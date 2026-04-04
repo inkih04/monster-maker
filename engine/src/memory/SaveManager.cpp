@@ -1,12 +1,28 @@
 //
 // Created by inkih on 24/3/26.
 //
+
 #include "SaveManager.h"
 #include <fstream>
 #include <iostream>
 
 void SaveManager::set(const std::string& key, sol::object value) {
     m_data[key] = luaToJson(value);
+}
+
+void SaveManager::setTrue(const std::string& key) {
+    m_data[key] = true;
+}
+
+void SaveManager::setFalse(const std::string& key) {
+    m_data[key] = false;
+}
+
+bool SaveManager::isTrue(const std::string& key) const {
+    if (!m_data.contains(key)) return false;
+    const auto& val = m_data[key];
+    if (val.is_boolean()) return val.get<bool>();
+    return false;
 }
 
 sol::object SaveManager::get(const std::string& key, sol::this_state s) {
@@ -49,15 +65,13 @@ bool SaveManager::commitToFile(const std::string& filepath) const {
         std::cerr << "[ENGINE][ERROR] Could not open file for writing: " << filepath << std::endl;
         return false;
     }
-
     file << m_data.dump(4);
     return file.good();
 }
 
-
 nlohmann::json SaveManager::luaToJson(sol::object obj) const {
     if (obj.get_type() == sol::type::lua_nil) {
-        return nullptr;
+        return false;
     } else if (obj.get_type() == sol::type::boolean) {
         return obj.as<bool>();
     } else if (obj.get_type() == sol::type::number) {
@@ -98,9 +112,8 @@ nlohmann::json SaveManager::luaToJson(sol::object obj) const {
     }
 
     std::cerr << "[ENGINE][WARNING] Attempted to save a non-serializable type in SaveManager." << std::endl;
-    return nullptr;
+    return false;
 }
-
 
 sol::object SaveManager::jsonToLua(const nlohmann::json& j, sol::this_state s) const {
     sol::state_view lua(s);

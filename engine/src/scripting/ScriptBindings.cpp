@@ -20,6 +20,7 @@
 #include "AnimationComponent.h"
 #include "BlockEntityComponentByTag.h"
 #include "ColliderComponent.h"
+#include "PersistenceComponent.h"
 
 void ScriptBindings::registerStatic(sol::state& lua, SessionManager& sessionManager, SaveManager& save_manager, DataManager& dataManager) {
     registerKeys(lua);
@@ -73,7 +74,9 @@ void ScriptBindings::registerSaveManager(sol::state& lua, SaveManager& saveManag
         "remove", &SaveManager::remove,
         "clear",  &SaveManager::clear,
         "load",   &SaveManager::loadFromFile,
-        "commit", &SaveManager::commitToFile
+        "commit", &SaveManager::commitToFile,
+        "setTrue",  &SaveManager::setTrue,
+        "setFalse", &SaveManager::setFalse
     );
     lua["Save"] = std::ref(saveManager);
 }
@@ -333,6 +336,7 @@ void ScriptBindings::registerDynamic(sol::state& lua, Camera* camera, EntityMana
 void ScriptBindings::registerEntity(sol::state& lua) {
     lua.new_usertype<Entity>("Entity",
         "hasComponent", &Entity::hasComponent,
+        "getId", &Entity::getId,
         "disable", &Entity::disableEntity,
         "getPos", [](Entity& e) -> PositionComponent* {
             auto* comp = e.getComponent(ComponentsType::POSITION);
@@ -382,6 +386,14 @@ void ScriptBindings::registerEntity(sol::state& lua) {
             }
             return static_cast<CollisionComponent*>(comp);
         },
+        "getPersistence", [](Entity& e) -> PersistentComponent* {
+            auto* comp = e.getComponent(ComponentsType::PERSISTENCE);
+            if (!comp) {
+                std::cout << "[ENGINE][WARNING] Trying to access a component that the entity does not have: PersistentComponent" << std::endl;
+                return nullptr;
+            }
+            return static_cast<PersistentComponent*>(comp);
+        },
         "interact", [](Entity& e) {
             auto* service = e.getInteractionService();
             if (service) {
@@ -427,6 +439,9 @@ void ScriptBindings::registerEntity(sol::state& lua) {
             CollisionComponent* ptr = collider.get();
             e.addComponent(ComponentsType::COLLIDER, std::move(collider));
             return ptr;
+        },
+        "addPersistence", [](Entity& e, const std::string& saveFlag) {
+            e.addComponent(ComponentsType::PERSISTENCE, std::make_unique<PersistentComponent>(saveFlag));
         }
     );
 }
@@ -486,7 +501,7 @@ void ScriptBindings::registerEntityManager(sol::state& lua) {
         "getEntitiesByTag",   &EntityManager::getEntitiesByTag,
         "getEntitiesByLayer", &EntityManager::getEntitiesByLayer,
         "createEntity", [](EntityManager& em, EntityTag tag, EntityLayer layer) -> Entity* {
-            return em.createEntity(tag, layer);
+            return em.createEntity(tag, layer, "");
         },
         "destroyEntity", [](EntityManager& em, Entity* entity) {
             if (!entity) {
@@ -554,6 +569,7 @@ void ScriptBindings::registerComponents(sol::state& lua) {
     registerRenderComponent(lua);
     registerInteractionComponent(lua);
     registerAnimationComponent(lua);
+    registerPersistentComponent(lua);
     registerComponentsTypeEnum(lua);
 }
 
@@ -568,6 +584,14 @@ void ScriptBindings::registerRenderComponent(sol::state& lua) {
     lua.new_usertype<RenderComponent>("RenderComponent",
         "setIsActive", &RenderComponent::setIsActive,
         "getIsActive", &RenderComponent::isActive
+    );
+}
+
+ void ScriptBindings::registerPersistentComponent(sol::state& lua) {
+    lua.new_usertype<PersistentComponent>("PersistentComponent",
+        "getSaveFlag", &PersistentComponent::get_save_flag,
+        "setIsActive", &PersistentComponent::setIsActive,
+        "getIsActive", &PersistentComponent::isActive
     );
 }
 
@@ -612,7 +636,8 @@ void ScriptBindings::registerComponentsTypeEnum(sol::state& lua) {
         {"ANIMATION",   ComponentsType::ANIMATION},
         {"MOVEMENT",    ComponentsType::MOVEMENT},
         {"SCRIPT",      ComponentsType::SCRIPT},
-        {"INTERACTION", ComponentsType::INTERACTION}
+        {"INTERACTION", ComponentsType::INTERACTION},
+        {"PERSISTENCE", ComponentsType::PERSISTENCE}
     });
 }
 
