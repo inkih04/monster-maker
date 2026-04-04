@@ -55,6 +55,7 @@
 	"essentialFolder": "Essential folders cannot be deleted",
 	"errorFolder": "An error occurred while deleting the folder",
 	"menu": {
+		"dialog":"Dialog",
 		"view": "View",
 		"showCollisions": "Show Collisions",
 		"resetLayout": "Reset Layout",

@@ -124,6 +124,11 @@ function buildAppMenu() {
 						type: 'normal',
 						click: () => win?.webContents.send('create-new-file', 'script'),
 					},
+					{
+						label: t('menu.dialog'),
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'dialog'),
+					},
 				],
 			},
 			{
