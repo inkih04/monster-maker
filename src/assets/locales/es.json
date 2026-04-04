@@ -54,6 +54,7 @@
 	"files": "Archivos",
 	"essentialFolder": "Las carpetas esenciales no se pueden eliminar",
 	"errorFolder": "Se produjo un error al eliminar la carpeta",
+	"persistenceComponent": "El **`PersistentComponent`** permite definir un flag que el motor que se consulta al cargar un mapa para decidir si la entidad debe instanciarse o si ya fue recogida/destruida previamente.",
 	"menu": {
 		"dialog": "Diálogo",
 		"view": "Vista",

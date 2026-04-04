@@ -47,6 +47,10 @@ export interface ScriptComponent {
 	path: string;
 }
 
+export interface PersistanceComponent {
+	saveFlag: string;
+}
+
 export interface CollisionComponent {
 	width: number;
 	height: number;

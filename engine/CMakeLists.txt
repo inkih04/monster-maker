@@ -107,6 +107,7 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         src/ui/text/DialogManager.cpp
         src/entities/service/BlockEntityComponentByTag.cpp
         include/service/BlockEntityComponentByTag.h
+        include/components/PersistenceComponent.h
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD

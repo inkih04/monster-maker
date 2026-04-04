@@ -1,5 +1,14 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Plus, Search, ViewGrid, Code, Play, FastArrowRight, Keyframe } from 'iconoir-react';
+import {
+	Plus,
+	Search,
+	ViewGrid,
+	Code,
+	Play,
+	FastArrowRight,
+	Keyframe,
+	Database,
+} from 'iconoir-react';
 import { useMapStore } from '../../../Map/MapGState';
 import { ComponentType, ComponentMap } from '../../../domain/ecs/componentMap';
 import './AddComponent.css';
@@ -44,12 +53,17 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 	MOVEMENT: {
 		icon: FastArrowRight,
 		label: 'Movement',
-		initData: {},
+		initData: {} ,
 	},
 	INTERACTION: {
 		icon: Keyframe,
 		label: 'Interaction',
 		initData: {},
+	},
+	PERSISTENCE: {
+		icon: Database,
+		label: 'Persistence',
+		initData: { saveFlag: '' } ,
 	},
 };
 
@@ -102,7 +116,12 @@ export default function AddComponent() {
 
 		const config = ADDABLE_COMPONENTS[type];
 		if (config) {
-			addComponent(selectedEntityId, type, config.initData);
+			const componentData =
+				type === 'PERSISTENCE'
+					? { ...config.initData, saveFlag: selectedEntityId }
+					: config.initData;
+
+			addComponent(selectedEntityId, type, componentData );
 			setIsOpen(false);
 			setSearchTerm('');
 		}

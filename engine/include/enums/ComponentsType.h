@@ -13,6 +13,7 @@ enum class ComponentsType {
     MOVEMENT,
     SCRIPT,
     INTERACTION,
+    PERSISTENCE,
 };
 
 #endif //POKEMONGAMEENGINE_COMPONENTSTYPE_H

@@ -11,8 +11,10 @@
 
 class DataManager {
 public:
-    DataManager() = default;
-    ~DataManager() = default;
+    static DataManager& getInstance() {
+        static DataManager instance;
+        return instance;
+    }
 
     DataManager(const DataManager&) = delete;
     DataManager& operator=(const DataManager&) = delete;
@@ -24,6 +26,8 @@ public:
     void clear();
 
 private:
+    DataManager() = default;
+    ~DataManager() = default;
     nlohmann::json m_data = nlohmann::json::object();
 
     sol::object jsonToLua(const nlohmann::json& j, sol::this_state s) const;

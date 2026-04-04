@@ -11,13 +11,22 @@
 
 class SaveManager {
 public:
-    SaveManager() = default;
-    ~SaveManager() = default;
+    static SaveManager& getInstance() {
+        static SaveManager instance;
+        return instance;
+    }
 
     SaveManager(const SaveManager&) = delete;
     SaveManager& operator=(const SaveManager&) = delete;
 
     void set(const std::string& key, sol::object value);
+
+    void setTrue(const std::string &key);
+
+    void setFalse(const std::string &key);
+
+    bool isTrue(const std::string &key) const;
+
     sol::object get(const std::string& key, sol::this_state s);
     bool has(const std::string& key) const;
     void remove(const std::string& key);
@@ -27,6 +36,8 @@ public:
     bool commitToFile(const std::string& filepath) const;
 
 private:
+    SaveManager() = default;
+    ~SaveManager() = default;
     nlohmann::json m_data = nlohmann::json::object();
 
     nlohmann::json luaToJson(sol::object obj) const;

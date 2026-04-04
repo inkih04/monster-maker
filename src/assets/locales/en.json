@@ -54,8 +54,9 @@
 	"files": "Files",
 	"essentialFolder": "Essential folders cannot be deleted",
 	"errorFolder": "An error occurred while deleting the folder",
+	"persistenceComponent": "The PersistentComponent allows you to define a save flag that the engine checks when loading a map to decide if the entity should be instantiated or if it was already collected/destroyed.",
 	"menu": {
-		"dialog":"Dialog",
+		"dialog": "Dialog",
 		"view": "View",
 		"showCollisions": "Show Collisions",
 		"resetLayout": "Reset Layout",

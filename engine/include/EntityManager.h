@@ -31,7 +31,7 @@ class EntityManager {
 
     public:
         EntityManager();
-        Entity* createEntity(EntityTag tag, EntityLayer layer);
+        Entity* createEntity(EntityTag tag, EntityLayer layer, std::string id = "");
         Entity* createEntity();
 
         void destroyEntity(Entity* entity);

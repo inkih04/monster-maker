@@ -1,7 +1,7 @@
 //
 // Created by inkih on 30/11/25.
 //
-//todo: Añadir mas tests cuando existan los componentes
+
 
 #include <gtest/gtest.h>
 #include "Entity.h"
