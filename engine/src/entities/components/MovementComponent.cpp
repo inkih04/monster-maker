@@ -83,7 +83,7 @@ void MovementComponent::handleCollision(const Position &pos, CollisionService *c
 }
 
 bool MovementComponent::move(const Position& pos) {
-    if (!m_entity) return false;
+    if (!m_entity || !m_isActive) return false;
 
     if (!m_positionComponent) m_positionComponent = getPosition();
     if (!m_animationComponent) m_animationComponent = getAnimation();
