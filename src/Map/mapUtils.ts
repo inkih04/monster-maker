@@ -97,7 +97,7 @@ export const createTileEntity = (
 	tilesetX: number,
 	tilesetY: number,
 	tileSize: number,
-	originalImagePath: string, 
+	originalImagePath: string,
 	mapSize: number,
 	subImages?: TileSetSubImage[],
 	name?: string
@@ -135,7 +135,7 @@ export const createTileEntity = (
 				rotation: 0,
 			},
 			RENDER: {
-				spriteSheetPath: finalSpriteSheetPath, 
+				spriteSheetPath: finalSpriteSheetPath,
 				x: localX,
 				y: localY,
 				w: tileSize,
@@ -381,25 +381,32 @@ export function drawSelectionPreview({
 
 interface DrawSelectionOverlayParams {
 	ctx: CanvasRenderingContext2D;
-	selectedTilePosition: SelectedTilePosition | null;
+	selectedTilePositions: SelectedTilePosition[];
 	tileSize: number;
 	zoom: number;
 }
 
 export function drawSelectionOverlay({
 	ctx,
-	selectedTilePosition,
+	selectedTilePositions,
 	tileSize,
 	zoom,
 }: DrawSelectionOverlayParams): void {
-	if (!selectedTilePosition) return;
+	if (!selectedTilePositions || selectedTilePositions.length === 0) return;
 
 	const scaledTileSize = tileSize * zoom;
-	const x = selectedTilePosition.x * scaledTileSize;
-	const y = selectedTilePosition.y * scaledTileSize;
 
-	ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
-	ctx.fillRect(x, y, scaledTileSize, scaledTileSize);
+	selectedTilePositions.forEach((pos, index) => {
+		const x = pos.x * scaledTileSize;
+		const y = pos.y * scaledTileSize;
+
+		ctx.fillStyle = index === 0 ? 'rgba(0, 255, 0, 0.45)' : 'rgba(0, 200, 255, 0.35)';
+		ctx.fillRect(x, y, scaledTileSize, scaledTileSize);
+
+		ctx.strokeStyle = index === 0 ? 'rgba(0, 255, 80, 0.9)' : 'rgba(0, 180, 255, 0.8)';
+		ctx.lineWidth = 1.5;
+		ctx.strokeRect(x + 0.75, y + 0.75, scaledTileSize - 1.5, scaledTileSize - 1.5);
+	});
 }
 
 export async function loadSingleTileset(

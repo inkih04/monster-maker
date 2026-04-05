@@ -1,39 +1,22 @@
 import { Component, ComponentBody, ComponentHeader } from '../basic/InspectorComponent';
 import { ViewGrid } from 'iconoir-react';
-import { useMapStore } from '../../../Map/MapGState';
 import NumberInput from '../../../common/components/numericInput/NumericInput';
 import './Collision.css';
 import '../Renderer/Renderer.css';
+import { useComponentEditor } from '../basic/useComponentEditor';
 
 function Collision() {
-	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
-	const map = useMapStore((state) => state.map);
-	const setIsDirty = useMapStore((state) => state.setIsDirty)
-	const updateComponent = useMapStore((state) => state.updateComponent);
-	const removeComponent = useMapStore((state) => state.removeComponent);
-
-	const entity = selectedEntityId && map ? map.entities[selectedEntityId] : null;
+	const { entity, entityId, isMulti, count, update, remove } = useComponentEditor('COLLIDER');
 
 	const collisionComponent = entity?.components.COLLIDER;
 
-	if (!collisionComponent || !selectedEntityId) {
-		return null;
-	}
+	if (!collisionComponent || !entityId) return null;
 
 	const width = collisionComponent.width ?? 0;
 	const height = collisionComponent.height ?? 0;
 	const offsetX = collisionComponent.offsetX ?? 0;
 	const offsetY = collisionComponent.offsetY ?? 0;
 	const isTrigger = collisionComponent.isTrigger ?? false;
-
-	const handleUpdate = (field: string, value: number | boolean) => {
-		updateComponent(selectedEntityId, 'COLLIDER', { [field]: value });
-		setIsDirty(true);
-	};
-
-	const handleDelete = () => {
-		removeComponent(selectedEntityId, 'COLLIDER');
-	};
 
 	const TriggerSwitch = (
 		<div className="trigger-container">
@@ -42,15 +25,15 @@ function Collision() {
 				type="checkbox"
 				className="trigger-checkbox"
 				checked={isTrigger}
-				onChange={(e) => handleUpdate('isTrigger', e.target.checked)}
+				onChange={(e) => update({ isTrigger: e.target.checked })}
 			/>
 		</div>
 	);
 
 	return (
 		<Component id="Collision">
-			<ComponentHeader icon={ViewGrid} action={TriggerSwitch} onDelete={handleDelete}>
-				Collision
+			<ComponentHeader icon={ViewGrid} action={TriggerSwitch} onDelete={remove}>
+				Collision{isMulti && <span className="component-header--batch-badge">×{count}</span>}
 			</ComponentHeader>
 
 			<ComponentBody>
@@ -62,7 +45,7 @@ function Collision() {
 								value={width}
 								step={8}
 								min={1}
-								onChange={(val) => handleUpdate('width', val)}
+								onChange={(val) => update({ width: val })}
 							/>
 						</div>
 						<div className="Componet-input-row">
@@ -71,7 +54,7 @@ function Collision() {
 								value={height}
 								step={8}
 								min={1}
-								onChange={(val) => handleUpdate('height', val)}
+								onChange={(val) => update({ height: val })}
 							/>
 						</div>
 					</div>
@@ -79,19 +62,11 @@ function Collision() {
 					<div className="collision-column">
 						<div className="Componet-input-row">
 							<span>OX:</span>
-							<NumberInput
-								value={offsetX}
-								step={1}
-								onChange={(val) => handleUpdate('offsetX', val)}
-							/>
+							<NumberInput value={offsetX} step={1} onChange={(val) => update({ offsetX: val })} />
 						</div>
 						<div className="Componet-input-row">
 							<span>OY:</span>
-							<NumberInput
-								value={offsetY}
-								step={1}
-								onChange={(val) => handleUpdate('offsetY', val)}
-							/>
+							<NumberInput value={offsetY} step={1} onChange={(val) => update({ offsetY: val })} />
 						</div>
 					</div>
 				</div>

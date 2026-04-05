@@ -1,45 +1,29 @@
 import React, { useState } from 'react';
 import { Code, Folder } from 'iconoir-react';
-import { useMapStore } from '../../../Map/MapGState';
 import { Component, ComponentHeader, ComponentBody } from '../basic/InspectorComponent';
 import './ScriptComponent.css';
 import { useProjectStore } from '../../../Project/ProjectConfigGState';
 import { useFolderStore } from '../../../common/globalStores/useFolderStore';
+import { useComponentEditor } from '../basic/useComponentEditor';
 
 const ScriptComponent = () => {
-	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
-	const map = useMapStore((state) => state.map);
-	const updateComponent = useMapStore((state) => state.updateComponent);
-	const removeComponent = useMapStore((state) => state.removeComponent);
+	const { entity, entityId, isMulti, count, update, remove } = useComponentEditor('SCRIPT');
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
 	const [dragState, setDragState] = useState<'none' | 'valid' | 'invalid'>('none');
-	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
-	if (!selectedEntityId || !map) return null;
-	const entity = map.entities[selectedEntityId];
+	if (!entityId) return null;
 	const scriptData = entity?.components?.SCRIPT;
-
 	if (!scriptData) return null;
 
-	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		updateComponent(selectedEntityId, 'SCRIPT', {
-			path: e.target.value,
-		});
-		setIsDirty(true);
-	};
-
 	const handleSelectFile = async () => {
-		if (!window.api?.selectFile) return;
-		if (!currentProject) return;
-		const currentDir = await window.api.pathUnion(currentProject?.path, currentProject?.name);
+		if (!window.api?.selectFile || !currentProject) return;
+		const currentDir = await window.api.pathUnion(currentProject.path, currentProject.name);
 		const result = await window.api.selectFile(currentDir || undefined);
 		if (!result.success || !result.path) return;
-
 		const relative = await window.api.toRelativePath(result.path);
 		const finalPath = relative.success ? relative.path : result.path;
-
-		updateComponent(selectedEntityId, 'SCRIPT', { path: finalPath });
+		update({ path: finalPath });
 	};
 
 	const handleDragOver = (e: React.DragEvent) => {
@@ -57,28 +41,18 @@ const ScriptComponent = () => {
 		e.preventDefault();
 		e.stopPropagation();
 		setDragState('none');
-
 		const fileData = e.dataTransfer.getData('application/file-item');
 		if (!fileData) return;
-
 		const file = JSON.parse(fileData);
-		if (file.type !== 'script') return;
-
-		if (!selectedFolder) return;
-
-		const finalPath = await window.api.pathUnion(selectedFolder?.path, file.path);
-		updateComponent(selectedEntityId, 'SCRIPT', { path: finalPath });
-	};
-
-	const handleDelete = () => {
-		removeComponent(selectedEntityId, 'SCRIPT');
-		setIsDirty(true);
+		if (file.type !== 'script' || !selectedFolder) return;
+		const finalPath = await window.api.pathUnion(selectedFolder.path, file.path);
+		update({ path: finalPath });
 	};
 
 	return (
 		<Component>
-			<ComponentHeader icon={Code} onDelete={handleDelete}>
-				Script
+			<ComponentHeader icon={Code} onDelete={remove}>
+				Script{isMulti && <span className="component-header--batch-badge">×{count}</span>}
 			</ComponentHeader>
 			<ComponentBody>
 				<div className="Componet-input-row-path">
@@ -93,7 +67,7 @@ const ScriptComponent = () => {
 							type="text"
 							className="render-input script--input-path"
 							value={scriptData.path}
-							onChange={handleChange}
+							onChange={(e) => update({ path: e.target.value })}
 							placeholder="path/to/script.lua"
 							spellCheck={false}
 						/>

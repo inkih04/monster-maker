@@ -7,16 +7,17 @@ import { useMapStore } from '../../../Map/MapGState';
 import NumberInput from '../../../common/components/numericInput/NumericInput';
 import { useEngineConfigStore } from '../../../Tagger/useEngineConfigStore';
 import { DEFAULT_SHADER_TAG } from '../../../Tagger/body/Shaders/shaderEntryUtils';
+import { useComponentEditor } from '../basic/useComponentEditor';
 
 function ShaderSelect({
 	value,
 	options,
 	onChange,
-}: {
+}: Readonly<{
 	value: string;
 	options: string[];
 	onChange: (val: string) => void;
-}) {
+}>) {
 	const [open, setOpen] = useState(false);
 	const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
 	const triggerRef = useRef<HTMLButtonElement>(null);
@@ -78,16 +79,12 @@ function ShaderSelect({
 }
 
 function RendererComponent() {
-	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
-	const map = useMapStore((state) => state.map);
-	const updateComponent = useMapStore((state) => state.updateComponent);
-	const setIsDirty = useMapStore((state) => state.setIsDirty);
+	const { entity, entityId, isMulti, count, update } = useComponentEditor('RENDER');
 	const shaders = useEngineConfigStore((state) => state.shaders);
 
-	const entity = selectedEntityId && map ? map.entities[selectedEntityId] : null;
 	const renderComponent = entity?.components.RENDER;
 
-	if (!renderComponent || !selectedEntityId) return null;
+	if (!renderComponent || !entityId) return null;
 
 	const width = renderComponent.width ?? 0;
 	const height = renderComponent.height ?? 0;
@@ -99,7 +96,9 @@ function RendererComponent() {
 
 	return (
 		<Component id="Render">
-			<ComponentHeader icon={VideoCamera}>Render</ComponentHeader>
+			<ComponentHeader icon={VideoCamera}>
+				Render{isMulti && <span className="component-header--batch-badge">×{count}</span>}
+			</ComponentHeader>
 			<ComponentBody>
 				<div className="Componet-input-row">
 					<span>Width: </span>
@@ -107,10 +106,7 @@ function RendererComponent() {
 						value={width}
 						step={8}
 						min={8}
-						onChange={(newWidth) => {
-							updateComponent(selectedEntityId, 'RENDER', { width: newWidth });
-							setIsDirty(true);
-						}}
+						onChange={(newWidth) => update({ width: newWidth })}
 					/>
 				</div>
 				<div className="Componet-input-row">
@@ -119,10 +115,7 @@ function RendererComponent() {
 						value={height}
 						step={8}
 						min={8}
-						onChange={(newHeight) => {
-							updateComponent(selectedEntityId, 'RENDER', { height: newHeight });
-							setIsDirty(true);
-						}}
+						onChange={(newHeight) => update({ height: newHeight })}
 					/>
 				</div>
 				<div className="Componet-input-row">
@@ -130,10 +123,7 @@ function RendererComponent() {
 					<ShaderSelect
 						value={shaderValue}
 						options={shaderOptions}
-						onChange={(val) => {
-							updateComponent(selectedEntityId, 'RENDER', { shader: val });
-							setIsDirty(true);
-						}}
+						onChange={(val) => update({ shader: val })}
 					/>
 				</div>
 			</ComponentBody>
