@@ -64,3 +64,37 @@ bool ScriptEngine::runScript(const std::string& filePath) {
 
     return true;
 }
+
+void ScriptEngine::initMapScript() {
+    m_mapEnv = sol::environment{};
+
+    if (m_currentMapScript.empty()) return;
+
+    m_mapEnv = sol::environment(m_lua, sol::create, m_lua.globals());
+    auto loadResult = m_lua.load_file(m_currentMapScript);
+
+    if (!loadResult.valid()) {
+        sol::error err = loadResult;
+        std::cerr << "[ENGINE][ERROR] Map script load failed (" << m_currentMapScript << "): " << err.what() << std::endl;
+        return;
+    }
+
+    sol::function script = loadResult;
+    sol::set_environment(m_mapEnv, script);
+    auto execResult = script();
+
+    if (!execResult.valid()) {
+        sol::error err = execResult;
+        std::cerr << "[ENGINE][ERROR] Map script exec failed (" << m_currentMapScript << "): " << err.what() << std::endl;
+        return;
+    }
+
+    sol::protected_function onStart = m_mapEnv["onStart"];
+    if (onStart.valid()) {
+        auto result = onStart();
+        if (!result.valid()) {
+            sol::error err = result;
+            std::cerr << "[ENGINE][ERROR] Map script onStart failed: " << err.what() << std::endl;
+        }
+    }
+}

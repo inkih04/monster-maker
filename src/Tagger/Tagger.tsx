@@ -20,7 +20,7 @@ function Tagger() {
 							className={`tagger--tab-button ${activeTab === 'layers' ? 'tagger--tab-active' : ''}`}
 							onClick={() => setActiveTab('layers')}
 						>
-							{t('layers')}
+							{t('menu.map')}
 						</button>
 						<button
 							className={`tagger--tab-button ${activeTab === 'shaders' ? 'tagger--tab-active' : ''}`}

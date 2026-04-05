@@ -16,10 +16,6 @@ class Engine;
 Application::Application(int width, int height) {
     EditorConfigLoader::loadFromFile(".engineConfig.json");
     LocalizationManager::getInstance().load(EditorConfig::getInstance().getDefaultLanguagePath());
-    //todo: Quitar una vez que pueda ejecutar scripts previos a la carga del mapa
-    SaveManager::getInstance().loadFromFile("save_test.json");
-
-    //todo:----------------------------------------------------
     m_engine = std::make_unique<Engine>(width, height, EditorConfig::getInstance().getGameName());
     m_stateManager = StateManager();
     AudioService::getInstance().init();

@@ -23,6 +23,7 @@ export interface MapData {
 	height: number;
 	tileSize: number;
 	entities: Record<string, Entity>;
+	mapScript?: string | null;
 }
 
 export interface SelectedTilePosition {
@@ -34,8 +35,8 @@ export interface SelectedTilePosition {
 interface MapStore {
 	map: MapData | null;
 	paintedTiles: PaintedTile[];
-	selectedEntityIds: string[]; 
-	selectedTilePositions: SelectedTilePosition[]; 
+	selectedEntityIds: string[];
+	selectedTilePositions: SelectedTilePosition[];
 	mapRelativePath: string | null;
 	zoom: number;
 	activeLayer: Layer;
@@ -44,6 +45,7 @@ interface MapStore {
 	showCollisions: boolean;
 	visibleLayers: Record<Layer, boolean>;
 	lockedLayers: Record<Layer, boolean>;
+	mapScript: string | null;
 
 	readonly selectedEntityId: string | null;
 	readonly selectedTilePosition: SelectedTilePosition | null;
@@ -52,6 +54,7 @@ interface MapStore {
 	toggleShowCollisions: () => void;
 	toggleLayerVisibility: (layer: Layer) => void;
 	toggleLayerLocked: (layer: Layer) => void;
+	setMapScript: (path: string | null) => void;
 
 	setSelectedTilePosition: (position: SelectedTilePosition | null) => void;
 	toggleSelectedTilePosition: (position: SelectedTilePosition) => void;
@@ -122,6 +125,7 @@ const INITIAL_MAP: MapData = {
 	height: 100,
 	tileSize: 16,
 	entities: {},
+	mapScript: null,
 };
 
 export const useMapStore = create<MapStore>()(
@@ -139,6 +143,7 @@ export const useMapStore = create<MapStore>()(
 			showCollisions: false,
 			visibleLayers: { ...DEFAULT_VISIBLE_LAYERS },
 			lockedLayers: { ...DEFAULT_LOCKED_LAYERS },
+			mapScript: null,
 
 			get selectedEntityId() {
 				return get().selectedEntityIds[0] ?? null;
@@ -161,6 +166,7 @@ export const useMapStore = create<MapStore>()(
 					showCollisions: false,
 					visibleLayers: { ...DEFAULT_VISIBLE_LAYERS },
 					lockedLayers: { ...DEFAULT_LOCKED_LAYERS },
+					mapScript: null,
 				});
 				useMapStore.temporal.getState().clear();
 			},
@@ -179,6 +185,13 @@ export const useMapStore = create<MapStore>()(
 					lockedLayers: { ...state.lockedLayers, [layer]: !state.lockedLayers[layer] },
 				})),
 
+			setMapScript: (path) =>
+				set((state) => ({
+					mapScript: path,
+					isDirty: true,
+					map: state.map ? { ...state.map, mapScript: path } : state.map,
+				})),
+
 			setMapRelativePath: (relativePath) => set({ mapRelativePath: relativePath }),
 
 			setIsLoadingMap: (loading) => set({ isLoadingMap: loading }),
@@ -188,7 +201,6 @@ export const useMapStore = create<MapStore>()(
 			setActiveLayer: (layer) => set({ activeLayer: layer }),
 
 			setZoom: (zoom) => set({ zoom }),
-
 
 			setSelectedTilePosition: (position) => {
 				if (!position) {
@@ -250,14 +262,13 @@ export const useMapStore = create<MapStore>()(
 
 			clearSelection: () => set({ selectedTilePositions: [], selectedEntityIds: [] }),
 
-
 			selectEntity: (id) => {
 				set({ selectedEntityIds: id ? [id] : [] });
 			},
 
 			createMap: (mapId, width, height, tileSize) => {
 				set({
-					map: { mapId, width, height, tileSize, entities: {} },
+					map: { mapId, width, height, tileSize, entities: {}, mapScript: null },
 					paintedTiles: [],
 					selectedEntityIds: [],
 					mapRelativePath: null,
@@ -265,6 +276,7 @@ export const useMapStore = create<MapStore>()(
 					zoom: 1,
 					activeLayer: 'ground',
 					selectedTilePositions: [],
+					mapScript: null,
 				});
 			},
 
@@ -319,6 +331,7 @@ export const useMapStore = create<MapStore>()(
 						selectedEntityIds: [],
 						isDirty: false,
 						selectedTilePositions: [],
+						mapScript: map.mapScript ?? null,
 					});
 				} finally {
 					set({ isLoadingMap: false });
@@ -573,7 +586,11 @@ export const useMapStore = create<MapStore>()(
 				const state = get();
 				if (!state.map) return '{}';
 				return JSON.stringify(
-					{ mapId: state.map.mapId, entities: Object.values(state.map.entities) },
+					{
+						mapId: state.map.mapId,
+						mapScript: state.map.mapScript ?? null,
+						entities: Object.values(state.map.entities),
+					},
 					null,
 					2
 				);
