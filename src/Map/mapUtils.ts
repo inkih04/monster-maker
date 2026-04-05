@@ -454,3 +454,91 @@ export async function loadSingleTileset(
 		return null;
 	}
 }
+
+interface DrawAreaCopyPreviewParams {
+	ctx: CanvasRenderingContext2D;
+	previewPosition: { x: number; y: number } | null;
+	selectedTilePositions: SelectedTilePosition[];
+	paintedTiles: PaintedTile[];
+	tilesetImages: Record<string, HTMLImageElement>;
+	entities: Record<string, import('../domain/ecs/entity').default>;
+	tileSize: number;
+	zoom: number;
+}
+
+export function drawAreaCopyPreview({
+	ctx,
+	previewPosition,
+	selectedTilePositions,
+	paintedTiles,
+	tilesetImages,
+	entities,
+	tileSize,
+	zoom,
+}: DrawAreaCopyPreviewParams): void {
+	if (selectedTilePositions.length > 0) {
+		const scaledTileSize = tileSize * zoom;
+		selectedTilePositions.forEach((pos, index) => {
+			const x = pos.x * scaledTileSize;
+			const y = pos.y * scaledTileSize;
+			ctx.fillStyle = index === 0 ? 'rgba(203, 166, 247, 0.35)' : 'rgba(180, 140, 240, 0.28)';
+			ctx.fillRect(x, y, scaledTileSize, scaledTileSize);
+			ctx.strokeStyle = 'rgba(203, 166, 247, 0.85)';
+			ctx.lineWidth = 1.5;
+			ctx.strokeRect(x + 0.75, y + 0.75, scaledTileSize - 1.5, scaledTileSize - 1.5);
+		});
+	}
+
+	if (!previewPosition || selectedTilePositions.length === 0) return;
+
+	const minX = Math.min(...selectedTilePositions.map((p) => p.x));
+	const minY = Math.min(...selectedTilePositions.map((p) => p.y));
+
+	ctx.globalAlpha = 0.55;
+
+	selectedTilePositions.forEach((pos) => {
+		const offsetX = pos.x - minX;
+		const offsetY = pos.y - minY;
+		const destX = previewPosition.x + offsetX;
+		const destY = previewPosition.y + offsetY;
+
+		const srcTile = paintedTiles.find(
+			(t) => t.x === pos.x && t.y === pos.y && t.layer === pos.layer
+		);
+		if (!srcTile) return;
+
+		const entityData = entities[srcTile.entityId];
+		const renderComponent = entityData?.components.RENDER;
+		if (!renderComponent) return;
+
+		const img = tilesetImages[renderComponent.spriteSheetPath];
+		if (!img) return;
+
+		const destWidth = renderComponent.width * zoom;
+		const destHeight = renderComponent.height * zoom;
+
+		ctx.drawImage(
+			img,
+			renderComponent.x,
+			renderComponent.y,
+			renderComponent.w,
+			renderComponent.h,
+			destX * destWidth,
+			destY * destHeight,
+			destWidth,
+			destHeight
+		);
+	});
+
+	const scaledTileSize = tileSize * zoom;
+	selectedTilePositions.forEach((pos) => {
+		const offsetX = pos.x - minX;
+		const offsetY = pos.y - minY;
+		const destX = previewPosition.x + offsetX;
+		const destY = previewPosition.y + offsetY;
+		ctx.fillStyle = 'rgba(137, 220, 235, 0.25)';
+		ctx.fillRect(destX * scaledTileSize, destY * scaledTileSize, scaledTileSize, scaledTileSize);
+	});
+
+	ctx.globalAlpha = 1;
+}

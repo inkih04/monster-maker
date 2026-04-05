@@ -28,6 +28,10 @@
 	"tileSizeTitle": "Define tile size",
 	"tileSize": "Tile size",
 	"accept": "Accept",
+	"areaCopy": {
+		"title": "Area Copy",
+		"notifyBody": "Ctrl+Click to select tiles · Click to paste · Esc to clear selection. Components are preserved, new IDs are assigned on paste."
+	},
 	"engine": {
 		"notifications": {
 			"title": "Engine",
