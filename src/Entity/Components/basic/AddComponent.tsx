@@ -73,7 +73,6 @@ export default function AddComponent() {
 	const menuRef = useRef<HTMLDivElement>(null);
 	const { t } = useTranslation();
 
-	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
 	const selectedEntityIds = useMapStore((state) => state.selectedEntityIds);
 	const map = useMapStore((state) => state.map);
 	const addComponent = useMapStore((state) => state.addComponent);
@@ -106,6 +105,7 @@ export default function AddComponent() {
 			return allowedKeys.filter((type) => {
 				const noneHasIt = entities.every((e) => e.components[type] == null);
 				if (!noneHasIt) return false;
+
 				if (type === 'MOVEMENT' || type === 'INTERACTION') {
 					const allHaveDeps = entities.every(
 						(e) => e.components.COLLIDER != null && e.components.SCRIPT != null
@@ -113,10 +113,17 @@ export default function AddComponent() {
 					if (!allHaveDeps) return false;
 				}
 
+				if (type === 'ANIMATION') {
+					const paths = entities.map((e) => e.components.RENDER?.spriteSheetPath ?? '');
+					const firstPath = paths[0];
+					if (!firstPath || !paths.every((p) => p === firstPath)) return false;
+				}
+
 				const config = ADDABLE_COMPONENTS[type];
 				return config ? config.label.toLowerCase().includes(searchTerm.toLowerCase()) : false;
 			});
 		}
+
 		const singleId = selectedEntityIds[0];
 		if (!singleId) return [];
 		const entity = map.entities[singleId];
@@ -133,7 +140,7 @@ export default function AddComponent() {
 				const config = ADDABLE_COMPONENTS[type];
 				return config ? config.label.toLowerCase().includes(searchTerm.toLowerCase()) : false;
 			});
-	}, [map, selectedEntityId, selectedEntityIds, isMulti, searchTerm]);
+	}, [map, selectedEntityIds, isMulti, searchTerm]);
 
 	const handleAddComponent = (type: ComponentType) => {
 		const config = ADDABLE_COMPONENTS[type];
@@ -150,14 +157,13 @@ export default function AddComponent() {
 				addComponent(id, type, componentData);
 			});
 		} else {
-			if (!selectedEntityId) return;
+			const singleId = selectedEntityIds[0];
+			if (!singleId) return;
 
 			const componentData =
-				type === 'PERSISTENCE'
-					? { ...config.initData, saveFlag: selectedEntityId }
-					: config.initData;
+				type === 'PERSISTENCE' ? { ...config.initData, saveFlag: singleId } : config.initData;
 
-			addComponent(selectedEntityId, type, componentData);
+			addComponent(singleId, type, componentData);
 		}
 
 		setIsOpen(false);

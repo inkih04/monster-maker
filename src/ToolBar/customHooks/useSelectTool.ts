@@ -31,7 +31,6 @@ export function useSelectTool(): UseSelectToolResult {
 	const toggleSelectedTilePosition = useMapStore((state) => state.toggleSelectedTilePosition);
 	const setSelectedTilePositions = useMapStore((state) => state.setSelectedTilePositions);
 	const clearSelection = useMapStore((state) => state.clearSelection);
-	const selectEntity = useMapStore((state) => state.selectEntity);
 
 	const [isActive, setIsActive] = useState(false);
 	const [previewPosition, setPreviewPosition] = useState<PreviewPosition | null>(null);
@@ -55,19 +54,11 @@ export function useSelectTool(): UseSelectToolResult {
 				if (entity) {
 					setSelectedTilePosition({ x: tileX, y: tileY, layer: activeLayer });
 
-					console.log('Tile selected:', {
-						entityId: entity.id,
-						position: { x: tileX, y: tileY },
-						layer: activeLayer,
-						components: entity.components,
-						tag: entity.tag,
-					});
 					return;
 				}
 			}
 
 			clearSelection();
-			console.log('No tile at position:', { x: tileX, y: tileY, layer: activeLayer });
 		},
 		[getTileAt, map, activeLayer, setSelectedTilePosition, clearSelection]
 	);
@@ -96,7 +87,6 @@ export function useSelectTool(): UseSelectToolResult {
 
 			if (positions.length > 0) {
 				setSelectedTilePositions(positions);
-				console.log(`Area selection: ${positions.length} tiles selected`);
 			} else {
 				clearSelection();
 			}

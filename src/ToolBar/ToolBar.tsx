@@ -46,8 +46,6 @@ function ToolBar() {
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			console.log(editorMode);
-			console.log(isTranslateMode);
 			if (!isTranslateMode && editorMode === 'map' && e.ctrlKey && e.key === 'z') {
 				e.preventDefault();
 				undo();
