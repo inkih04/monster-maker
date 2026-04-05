@@ -27,6 +27,10 @@
 	"defaultTileSize": "Tamaño de tiles",
 	"tileSizeTitle": "Definir tamaño de los tiles",
 	"tileSize": "Tamaño del tile",
+	"selectedTiles": "tiles seleccionados",
+	"commmonComponents": "Editando componentes comunes",
+	"no_common_components_title": "Sin componentes en común",
+	"no_common_components_description": "Los tiles seleccionados no comparten ningún componente editable.",
 	"accept": "Aceptar",
 	"engine": {
 		"notifications": {

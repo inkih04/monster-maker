@@ -92,3 +92,18 @@
 	padding: 0 var(--space-md) var(--space-md) var(--space-md);
 	font-size: var(--font-sm);
 }
+.component-header--batch-badge {
+	display: inline-flex;
+	align-items: center;
+	margin-left: 6px;
+	padding: 1px 6px;
+	border-radius: 10px;
+	background-color: rgba(110, 142, 245, 0.12);
+	border: 1px solid rgba(110, 142, 245, 0.3);
+	color: #6e8ef5;
+	font-size: var(--font-sssm);
+	font-weight: 700;
+	letter-spacing: 0.03em;
+	vertical-align: middle;
+	line-height: 1.6;
+}

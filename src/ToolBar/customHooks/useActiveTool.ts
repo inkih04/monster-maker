@@ -13,8 +13,16 @@ interface UseActiveToolResult {
 	previewPosition: PreviewPosition | null;
 	setIsActive: (value: boolean) => void;
 	setPreviewPosition: (pos: PreviewPosition | null) => void;
-	onTileClick: (tileX: number, tileY: number) => void;
-	onTileDrag: (tileX: number, tileY: number) => void;
+	onTileClick: (
+		tileX: number,
+		tileY: number,
+		modifiers?: { ctrl?: boolean; shift?: boolean }
+	) => void;
+	onTileDrag: (
+		tileX: number,
+		tileY: number,
+		modifiers?: { ctrl?: boolean; shift?: boolean }
+	) => void;
 }
 
 export function useActiveTool(): UseActiveToolResult {

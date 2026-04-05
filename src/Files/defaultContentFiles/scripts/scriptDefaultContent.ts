@@ -8,7 +8,7 @@ end
 function onDestroy(entity)
 end
  
-function onCollision(entity, other)
+function onCollision(entity, collidedEntity)
 end
  
 function onTriggerEnter(entity, other)

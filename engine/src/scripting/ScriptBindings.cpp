@@ -558,7 +558,8 @@ void ScriptBindings::registerKeys(sol::state& lua) {
 void ScriptBindings::registerInputManager(sol::state& lua) {
     lua.new_usertype<InputManager>("InputManager",
         "isKeyDown",    &InputManager::isKeyDown,
-        "isKeyPressed", &InputManager::isKeyPressed
+        "isKeyPressed", &InputManager::isKeyPressed,
+        "getAxis2D",    &InputManager::getAxis2D
     );
     lua["Input"] = &InputManager::getInstance();
 }

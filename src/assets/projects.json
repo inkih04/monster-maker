@@ -1,10 +1,16 @@
 {
-  "projects": [
-    {
-      "path": "/home/inkih/Desktop/test",
-      "name": "Test1",
-      "defaultTilesize": 32,
-      "color": "#F7DC6F"
-    }
-  ]
+	"projects": [
+		{
+			"path": "/home/inkih/Desktop/test",
+			"name": "Test1",
+			"defaultTilesize": 32,
+			"color": "#F7DC6F"
+		},
+		{
+			"path": "/home/inkih/Desktop/test",
+			"name": "Base",
+			"color": "#F8B195",
+			"defaultTilesize": 32
+		}
+	]
 }

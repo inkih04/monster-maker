@@ -53,7 +53,7 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 	MOVEMENT: {
 		icon: FastArrowRight,
 		label: 'Movement',
-		initData: {} ,
+		initData: {},
 	},
 	INTERACTION: {
 		icon: Keyframe,
@@ -63,7 +63,7 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 	PERSISTENCE: {
 		icon: Database,
 		label: 'Persistence',
-		initData: { saveFlag: '' } ,
+		initData: { saveFlag: '' },
 	},
 };
 
@@ -74,9 +74,12 @@ export default function AddComponent() {
 	const { t } = useTranslation();
 
 	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
+	const selectedEntityIds = useMapStore((state) => state.selectedEntityIds);
 	const map = useMapStore((state) => state.map);
 	const addComponent = useMapStore((state) => state.addComponent);
 	const setIsDirty = useMapStore((state) => state.setIsDirty);
+
+	const isMulti = selectedEntityIds.length > 1;
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -89,14 +92,36 @@ export default function AddComponent() {
 	}, []);
 
 	const availableComponents = useMemo(() => {
-		if (!selectedEntityId || !map) return [];
-
-		const entity = map.entities[selectedEntityId];
-		if (!entity) return [];
-		const currentKeys = Object.keys(entity.components) as ComponentType[];
+		if (!map) return [];
 
 		const allowedKeys = Object.keys(ADDABLE_COMPONENTS) as ComponentType[];
 
+		if (isMulti) {
+			const entities = selectedEntityIds
+				.map((id) => map.entities[id])
+				.filter((e): e is NonNullable<typeof e> => e != null);
+
+			if (entities.length === 0) return [];
+
+			return allowedKeys.filter((type) => {
+				const noneHasIt = entities.every((e) => e.components[type] == null);
+				if (!noneHasIt) return false;
+				if (type === 'MOVEMENT' || type === 'INTERACTION') {
+					const allHaveDeps = entities.every(
+						(e) => e.components.COLLIDER != null && e.components.SCRIPT != null
+					);
+					if (!allHaveDeps) return false;
+				}
+
+				const config = ADDABLE_COMPONENTS[type];
+				return config ? config.label.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+			});
+		}
+		const singleId = selectedEntityIds[0];
+		if (!singleId) return [];
+		const entity = map.entities[singleId];
+		if (!entity) return [];
+		const currentKeys = Object.keys(entity.components) as ComponentType[];
 		const hasDependencies = currentKeys.includes('COLLIDER') && currentKeys.includes('SCRIPT');
 
 		return allowedKeys
@@ -105,30 +130,42 @@ export default function AddComponent() {
 				if (type === 'MOVEMENT' || type === 'INTERACTION') {
 					if (!hasDependencies) return false;
 				}
-
 				const config = ADDABLE_COMPONENTS[type];
 				return config ? config.label.toLowerCase().includes(searchTerm.toLowerCase()) : false;
 			});
-	}, [map, selectedEntityId, searchTerm]);
+	}, [map, selectedEntityId, selectedEntityIds, isMulti, searchTerm]);
 
 	const handleAddComponent = (type: ComponentType) => {
-		if (!selectedEntityId) return;
-
 		const config = ADDABLE_COMPONENTS[type];
-		if (config) {
+		if (!config) return;
+
+		if (isMulti) {
+			selectedEntityIds.forEach((id) => {
+				const entity = map?.entities[id];
+				if (!entity || entity.components[type] != null) return;
+
+				const componentData =
+					type === 'PERSISTENCE' ? { ...config.initData, saveFlag: id } : config.initData;
+
+				addComponent(id, type, componentData);
+			});
+		} else {
+			if (!selectedEntityId) return;
+
 			const componentData =
 				type === 'PERSISTENCE'
 					? { ...config.initData, saveFlag: selectedEntityId }
 					: config.initData;
 
-			addComponent(selectedEntityId, type, componentData );
-			setIsOpen(false);
-			setSearchTerm('');
+			addComponent(selectedEntityId, type, componentData);
 		}
+
+		setIsOpen(false);
+		setSearchTerm('');
 		setIsDirty(true);
 	};
 
-	if (!selectedEntityId) return null;
+	if (selectedEntityIds.length === 0) return null;
 
 	return (
 		<div className="component--Add-container" ref={menuRef}>

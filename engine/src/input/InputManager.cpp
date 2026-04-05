@@ -65,6 +65,24 @@ glm::vec2 InputManager::getMousePosition() const {
     return glm::vec2(x, y);
 }
 
+glm::vec2 InputManager::getAxis2D(int up, int down, int left, int right, bool allowDiagonal) const {
+    glm::vec2 direction(0.0f, 0.0f);
+
+    if (isKeyDown(up))    direction.y -= 1.0f;
+    if (isKeyDown(down))  direction.y += 1.0f;
+    if (isKeyDown(left))  direction.x -= 1.0f;
+    if (isKeyDown(right)) direction.x += 1.0f;
+
+    if (direction.x != 0.0f && direction.y != 0.0f) {
+        if (allowDiagonal) {
+            direction = glm::normalize(direction);
+        } else {
+            direction.x = 0.0f;
+        }
+    }
+    return direction;
+}
+
 bool InputManager::isMouseButtonDown(int button) const {
     return glfwGetMouseButton(window, button) == GLFW_PRESS;
 }
