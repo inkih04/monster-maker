@@ -315,6 +315,7 @@ export function useFileActions() {
 				mapId: parsedMap.mapId,
 				width: parsedMap.width || 100,
 				height: parsedMap.height || 100,
+				mapScript: parsedMap.mapScript,
 				tileSize: parsedMap.tileSize || currentProject.defaultTilesize || 16,
 				entities: Array.isArray(parsedMap.entities)
 					? parsedMap.entities.reduce(

@@ -27,6 +27,9 @@ public:
     bool hasPendingMapChange() const { return !m_pendingMap.empty(); }
     std::string consumePendingMap();
 
+    void setMapScript(const std::string& path) { m_currentMapScript = path; }
+    void initMapScript();
+
     sol::state& getState() { return m_lua; }
 
 private:
@@ -37,6 +40,9 @@ private:
     ScriptEngine& operator=(const ScriptEngine&) = delete;
     std::string m_pendingMap;
     sol::state m_lua;
+
+    std::string m_currentMapScript;
+    sol::environment m_mapEnv;
 };
 
 #endif //POKEMONGAMEENGINE_SCRIPTENGINE_H

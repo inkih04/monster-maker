@@ -11,6 +11,7 @@
 #include "ScriptComponet.h"
 #include "PersistenceComponent.h"
 #include "SaveManager.h"
+#include "ScriptEngine.h" 
 
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
     std::ifstream file(filePath);
@@ -24,6 +25,13 @@ void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManag
     } catch (const json::exception& e) {
         std::cout << "[ENGINE][ERROR] Error parsing JSON: " << e.what() << std::endl; return;
     }
+    std::string mapScriptPath = "";
+    if (mapData.contains("mapScript") && !mapData["mapScript"].is_null()) {
+        mapScriptPath = mapData["mapScript"].get<std::string>();
+    }
+
+    ScriptEngine::getInstance().setMapScript(mapScriptPath);
+    ScriptEngine::getInstance().initMapScript();
 
     if (!mapData.contains("entities")) {
         std::cout << "[ENGINE][ERROR] No 'entities' array found in " << filePath << std::endl;
