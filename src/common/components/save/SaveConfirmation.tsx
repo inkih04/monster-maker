@@ -53,7 +53,7 @@ function SaveConfirmation({ open, onOpenChange, onConfirm }: Readonly<ConfirmDia
 				onOpenChange(false);
 			} else {
 				reset();
-				setFileExtension('.json');
+				setFileExtension('.map');
 				setContent(contentMap);
 				setOnOpenChange((isOpen: boolean) => {
 					if (!isOpen) {

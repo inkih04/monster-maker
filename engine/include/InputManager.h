@@ -27,6 +27,7 @@ public:
         delete instance;
         instance = nullptr;
     }};
+    glm::vec2 getAxis2D(int up, int down, int left, int right, bool allowDiagonal) const;
 
     bool isKeyDown(int key) const;
     bool isKeyPressed(int key);
