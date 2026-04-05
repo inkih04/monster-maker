@@ -113,6 +113,11 @@ function ToolBar() {
 		return (isRunning && runMode === 'play') || currentMapPath === null;
 	};
 
+	const handleSelectAreaCopy = () => {
+		setActiveTool('area-copy');
+		notify(t('areaCopy.title'), t('areaCopy.notifyBody'), 'success', 5000);
+	};
+
 	const handlePlay = async () => {
 		if (!currentProject) {
 			return;
@@ -245,7 +250,7 @@ function ToolBar() {
 
 				<button
 					className={`tool-button ${activeTool === 'area-copy' ? 'active' : ''}`}
-					onClick={() => setActiveTool('area-copy')}
+					onClick={handleSelectAreaCopy}
 				>
 					<DragHandGesture />
 				</button>

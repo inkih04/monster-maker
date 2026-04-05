@@ -1,6 +1,7 @@
 import { useBrushTool } from './useBrushTool';
 import { useEraserTool } from './useEraserTool';
 import { useSelectTool } from './useSelectTool';
+import { useAreaCopyTool } from './useAreaCopyTool';
 import { useToolsStore } from '../ToolBarGState';
 
 interface PreviewPosition {
@@ -31,6 +32,7 @@ export function useActiveTool(): UseActiveToolResult {
 	const brushTool = useBrushTool();
 	const eraserTool = useEraserTool();
 	const selectTool = useSelectTool();
+	const areaCopyTool = useAreaCopyTool();
 
 	switch (activeTool) {
 		case 'brush':
@@ -43,6 +45,8 @@ export function useActiveTool(): UseActiveToolResult {
 			return selectTool;
 
 		case 'area-copy':
+			return areaCopyTool;
+
 		case 'entity':
 			return {
 				isActive: false,

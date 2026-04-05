@@ -16,6 +16,7 @@ import {
 	drawEraserPreview,
 	drawSelectionOverlay,
 	drawSelectionPreview,
+	drawAreaCopyPreview,
 } from './mapUtils';
 import { MapLoadingOverlay } from './MapLoadingOverlay';
 
@@ -99,7 +100,6 @@ function Map() {
 			const tilesInLayer = paintedTiles.filter((tile) => tile.layer === layer);
 
 			tilesInLayer.forEach((tile) => {
-				const tileTileset = tileSets[tile.spriteSheetPath];
 				const tilesetImage = tilesetImages[tile.spriteSheetPath];
 
 				if (!tilesetImage) return;
@@ -190,6 +190,17 @@ function Map() {
 					zoom,
 				});
 			}
+		} else if (activeTool === 'area-copy' && !isCapturingRef.current) {
+			drawAreaCopyPreview({
+				ctx,
+				previewPosition: isActive ? null : previewPosition,
+				selectedTilePositions,
+				paintedTiles,
+				tilesetImages,
+				entities: mapState.map?.entities || {},
+				tileSize,
+				zoom,
+			});
 		}
 
 		if (showCollisions && !isCapturingRef.current) {
@@ -235,11 +246,16 @@ function Map() {
 		onTileClick: (x, y, modifiers) => {
 			if (isBrushBlocked) return;
 			if (!visibleLayers[activeLayer]) return;
+			if (activeTool === 'area-copy') {
+				onTileClick(x, y, modifiers);
+				return;
+			}
 			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileClick(x, y, modifiers);
 		},
 		onTileDrag: (x, y, modifiers) => {
 			if (isBrushBlocked) return;
 			if (!visibleLayers[activeLayer]) return;
+			if (activeTool === 'area-copy') return; // no drag for area-copy
 			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileDrag(x, y, modifiers);
 		},
 	});

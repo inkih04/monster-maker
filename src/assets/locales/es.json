@@ -32,6 +32,10 @@
 	"no_common_components_title": "Sin componentes en común",
 	"no_common_components_description": "Los tiles seleccionados no comparten ningún componente editable.",
 	"accept": "Aceptar",
+	"areaCopy": {
+		"title": "Copiar Área",
+		"notifyBody": "Ctrl+Clic para seleccionar tiles · Clic para pegar · Esc para limpiar la selección. Los componentes se conservan y se asignan nuevos IDs al pegar."
+	},
 	"engine": {
 		"notifications": {
 			"title": "Motor",
