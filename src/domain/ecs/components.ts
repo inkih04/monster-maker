@@ -43,8 +43,11 @@ export interface MovementComponent {}
 
 export interface InteractionComponent {}
 
+export type ScriptPropValue = string | number | boolean;
+
 export interface ScriptComponent {
 	path: string;
+	properties?: Record<string, ScriptPropValue>;
 }
 
 export interface PersistanceComponent {

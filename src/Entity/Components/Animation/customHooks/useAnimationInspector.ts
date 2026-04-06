@@ -7,7 +7,6 @@ import {
 	AnimationSet,
 } from '../../../../domain/ecs/components';
 
-
 export const DEFAULT_SET = 'default';
 
 export const BASIC_ANIMATION_NAMES = [
@@ -23,7 +22,6 @@ export const BASIC_ANIMATION_NAMES = [
 
 export type BasicAnimationName = (typeof BASIC_ANIMATION_NAMES)[number];
 
-
 function makeEmptyAnimation(name: string): Animation {
 	return { name, frames: [], frameDuration: 150, loop: true };
 }
@@ -36,15 +34,15 @@ export function makeEmptySet(): AnimationSet {
 	return { animations: makeDefaultAnimations() };
 }
 
-
 export interface ActiveSelection {
 	setName: string;
 	animIndex: number | null;
 }
 
-
 export function useAnimationInspector() {
-	const selectedEntityId = useMapStore((s) => s.selectedEntityId);
+	const selectedEntityIds = useMapStore((s) => s.selectedEntityIds);
+	const selectedEntityId = selectedEntityIds[0] ?? null;
+
 	const map = useMapStore((s) => s.map);
 	const updateComponent = useMapStore((s) => s.updateComponent);
 	const removeComponent = useMapStore((s) => s.removeComponent);
@@ -56,11 +54,12 @@ export function useAnimationInspector() {
 
 	const spriteSheetPath = renderComp?.spriteSheetPath ?? '';
 
+	const sets: Record<string, AnimationSet> = animComp?.sets ?? { [DEFAULT_SET]: makeEmptySet() };
+	const defaultAnimation = animComp?.defaultAnimation;
+
+	const [cellW, setCellW] = useState<number>(renderComp?.w ?? 64);
+	const [cellH, setCellH] = useState<number>(renderComp?.h ?? 64);
 	const [imageUrl, setImageUrl] = useState<string>('');
-	const [cellW, setCellW] = useState<number>(64);
-	const [cellH, setCellH] = useState<number>(64);
-	const [sets, setSets] = useState<Record<string, AnimationSet>>({});
-	const [defaultAnimation, setDefaultAnimation] = useState<string | undefined>(undefined);
 	const [selection, setSelection] = useState<ActiveSelection>({
 		setName: DEFAULT_SET,
 		animIndex: null,
@@ -69,17 +68,21 @@ export function useAnimationInspector() {
 	const [isPreviewRunning, setIsPreviewRunning] = useState<boolean>(false);
 	const previewTimer = useRef<ReturnType<typeof setInterval> | null>(null);
 
+	const stopPreview = useCallback(() => {
+		if (previewTimer.current) {
+			clearInterval(previewTimer.current);
+			previewTimer.current = null;
+		}
+		setPreviewFrame(0);
+		setIsPreviewRunning(false);
+	}, []);
 
 	useEffect(() => {
-		if (animComp?.sets) {
-			setSets(animComp.sets);
-			setDefaultAnimation(animComp.defaultAnimation);
-		} else {
-			setSets({ [DEFAULT_SET]: makeEmptySet() });
-			setDefaultAnimation(undefined);
-		}
+		setCellW(renderComp?.w ?? 64);
+		setCellH(renderComp?.h ?? 64);
 		setSelection({ setName: DEFAULT_SET, animIndex: null });
-	}, [selectedEntityId]); 
+		stopPreview();
+	}, [selectedEntityId]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	useEffect(() => {
 		if (!spriteSheetPath || !currentProject) {
@@ -90,7 +93,7 @@ export function useAnimationInspector() {
 			.pathUnion(`${currentProject.path}/${currentProject.name}`, spriteSheetPath)
 			.then((absPath: string) => setImageUrl(`project-file://${absPath}`))
 			.catch(() => setImageUrl(''));
-	}, [spriteSheetPath, currentProject]);
+	}, [spriteSheetPath, currentProject, selectedEntityId]);
 
 	const persist = useCallback(
 		(nextSets: Record<string, AnimationSet>, nextDefault?: string) => {
@@ -102,15 +105,6 @@ export function useAnimationInspector() {
 		},
 		[selectedEntityId, updateComponent]
 	);
-
-	const stopPreview = useCallback(() => {
-		if (previewTimer.current) {
-			clearInterval(previewTimer.current);
-			previewTimer.current = null;
-		}
-		setPreviewFrame(0);
-		setIsPreviewRunning(false);
-	}, []);
 
 	const startPreview = useCallback(
 		(anim: Animation) => {
@@ -139,7 +133,6 @@ export function useAnimationInspector() {
 	const addSet = (name: string) => {
 		if (!name || sets[name]) return;
 		const next = { ...sets, [name]: makeEmptySet() };
-		setSets(next);
 		persist(next, defaultAnimation);
 		setSelection({ setName: name, animIndex: null });
 	};
@@ -148,7 +141,6 @@ export function useAnimationInspector() {
 		if (name === DEFAULT_SET) return;
 		const next = { ...sets };
 		delete next[name];
-		setSets(next);
 		persist(next, defaultAnimation);
 		setSelection({ setName: DEFAULT_SET, animIndex: null });
 	};
@@ -159,7 +151,6 @@ export function useAnimationInspector() {
 		for (const [k, v] of Object.entries(sets)) {
 			next[k === oldName ? newName : k] = v;
 		}
-		setSets(next);
 		persist(next, defaultAnimation);
 		if (selection.setName === oldName) setSelection((s) => ({ ...s, setName: newName }));
 	};
@@ -173,7 +164,6 @@ export function useAnimationInspector() {
 			loop: true,
 		};
 		const nextSets = { ...sets, [setName]: { animations: [...currentAnims, next] } };
-		setSets(nextSets);
 		persist(nextSets, defaultAnimation);
 		setSelection({ setName, animIndex: currentAnims.length });
 	};
@@ -182,7 +172,6 @@ export function useAnimationInspector() {
 		if (setName === DEFAULT_SET && index < BASIC_ANIMATION_NAMES.length) return;
 		const anims = sets[setName]?.animations ?? [];
 		const nextSets = { ...sets, [setName]: { animations: anims.filter((_, i) => i !== index) } };
-		setSets(nextSets);
 		persist(nextSets, defaultAnimation);
 		setSelection((s) => ({ ...s, animIndex: null }));
 	};
@@ -191,7 +180,6 @@ export function useAnimationInspector() {
 		const anims = [...(sets[setName]?.animations ?? [])];
 		anims[index] = { ...anims[index], ...patch };
 		const nextSets = { ...sets, [setName]: { animations: anims } };
-		setSets(nextSets);
 		persist(nextSets, defaultAnimation);
 	};
 
@@ -221,15 +209,13 @@ export function useAnimationInspector() {
 		updateAnim(setName, animIndex, { frames });
 	};
 
-
 	const handleSetDefault = (name: string | undefined) => {
-		setDefaultAnimation(name);
 		persist(sets, name);
 	};
 
 	const handleDelete = () => {
-		if (!selectedEntityId) return;
-		removeComponent(selectedEntityId, 'ANIMATION');
+		if (selectedEntityIds.length === 0) return;
+		selectedEntityIds.forEach((id) => removeComponent(id, 'ANIMATION'));
 	};
 
 	const currentAnim =

@@ -147,13 +147,56 @@ std::unique_ptr<Component> EntityLoader::createPositionComponent(const json& dat
 
 std::unique_ptr<Component> EntityLoader::createScriptComponent(const json& data) {
     if (!data.contains("path")) {
-        std::cout << "[ENGINE][ERROR] ScriptComponent requires a 'path' field with the .lua file path" << std::endl; return nullptr;
+        std::cout << "[ENGINE][ERROR] ScriptComponent requires a 'path' field" << std::endl;
     }
-    std::string path = data["path"];
+    std::string path = data["path"].get<std::string>();
     if (path.empty()) {
-        std::cout << "[ENGINE][ERROR] ScriptComponent 'path' cannot be empty" << std::endl; return nullptr;
+        std::cout << "[ENGINE][ERROR] ScriptComponent 'path' cannot be empty" << std::endl;
+    }
+    if (data.contains("properties") && data["properties"].is_object()) {
+        sol::table props = jsonToSolTable(data["properties"]);
+        return std::make_unique<ScriptComponent>(path, std::move(props));
     }
     return std::make_unique<ScriptComponent>(path);
+}
+
+sol::table EntityLoader::jsonToSolTable(const json& obj) {
+    auto& lua = ScriptEngine::getInstance().getState();
+    sol::table table = lua.create_table();
+
+    for (const auto& [key, value] : obj.items()) {
+        if (value.is_string()) {
+            table[key] = value.get<std::string>();
+
+        } else if (value.is_boolean()) {
+            table[key] = value.get<bool>();
+
+        } else if (value.is_number_integer()) {
+            table[key] = value.get<int>();
+
+        } else if (value.is_number_float()) {
+            table[key] = value.get<double>();
+
+        } else if (value.is_object()) {
+            table[key] = jsonToSolTable(value);
+
+        } else if (value.is_array()) {
+            sol::table arr = lua.create_table();
+            int i = 1;
+            for (const auto& elem : value) {
+                if      (elem.is_string())          arr[i] = elem.get<std::string>();
+                else if (elem.is_boolean())         arr[i] = elem.get<bool>();
+                else if (elem.is_number_integer())  arr[i] = elem.get<int>();
+                else if (elem.is_number_float())    arr[i] = elem.get<double>();
+                else if (elem.is_object())          arr[i] = jsonToSolTable(elem);
+                ++i;
+            }
+            table[key] = arr;
+
+        }
+    }
+
+    return table;
 }
 
 std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data) {

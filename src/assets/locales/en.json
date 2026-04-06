@@ -91,6 +91,7 @@
 		},
 		"closeProject": "Close Project"
 	},
+	"properties": "No properties",
 	"animation": {
 		"selectSpritesheet": "+ select spritesheet…",
 		"spritesheet": "Spritesheet",

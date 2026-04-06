@@ -11,9 +11,10 @@ import { useFolderStore } from '../../../common/globalStores/useFolderStore';
 import { useTranslation } from 'react-i18next';
 
 function AnimationInspector() {
-	const selectedEntityId = useMapStore((s) => s.selectedEntityId);
-	const isMulti = useMapStore((s) => s.selectedEntityIds.length > 1);
-	const count = useMapStore((s) => s.selectedEntityIds.length);
+	const selectedEntityIds = useMapStore((s) => s.selectedEntityIds);
+	const selectedEntityId = selectedEntityIds[0] ?? null;
+	const isMulti = selectedEntityIds.length > 1;
+	const count = selectedEntityIds.length;
 	const updateComponent = useMapStore((s) => s.updateComponent);
 	const { t } = useTranslation();
 
