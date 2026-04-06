@@ -49,3 +49,140 @@
 	border-color: #ef4444;
 	background-color: rgba(239, 68, 68, 0.08);
 }
+
+.script--props-section {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	margin-top: 16px;
+}
+
+.script--props-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.script--props-title {
+	font-size: var(--font-ssm);
+	color: var(--color-6);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	font-weight: 500;
+}
+
+.script--props-add {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	border-radius: var(--radius);
+	border: 1px solid var(--color-3);
+	background: transparent;
+	color: var(--color-6);
+	cursor: pointer;
+	padding: 0;
+	transition:
+		background 0.15s,
+		color 0.15s,
+		border-color 0.15s;
+}
+
+.script--props-add:hover {
+	background: var(--color-3);
+	color: var(--color-8);
+	border-color: var(--color-4);
+}
+
+.script--props-list {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.script--prop-row {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.script--prop-key {
+	flex: 2;
+	min-width: 0;
+	font-size: var(--font-ssm);
+	padding: 3px 6px;
+	border-radius: var(--radius);
+	border: 1px solid var(--color-3);
+	background: var(--color-1);
+	color: var(--color-9);
+	outline: none;
+	transition: border-color 0.15s;
+}
+
+.script--prop-key:focus {
+	border-color: var(--color-5);
+}
+
+.script--prop-sep {
+	font-size: var(--font-ssm);
+	color: var(--color-4);
+	flex-shrink: 0;
+}
+
+.script--prop-value {
+	flex: 3;
+	min-width: 0;
+	font-size: var(--font-ssm);
+	padding: 3px 6px;
+	border-radius: var(--radius);
+	border: 1px solid var(--color-3);
+	background: var(--color-1);
+	color: var(--color-9);
+	outline: none;
+	transition: border-color 0.15s;
+}
+
+.script--prop-value:focus {
+	border-color: var(--color-5);
+}
+
+.script--prop-type {
+	font-size: var(--font-sssm);
+	color: var(--color-5);
+	background: var(--color-2);
+	border-radius: 3px;
+	padding: 1px 4px;
+	flex-shrink: 0;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.02em;
+}
+
+.script--prop-delete {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+	border: none;
+	background: transparent;
+	color: var(--color-4);
+	cursor: pointer;
+	border-radius: var(--radius);
+	padding: 0;
+	transition:
+		background 0.15s,
+		color 0.15s;
+}
+
+.script--prop-delete:hover {
+	background: #fde8e8;
+	color: #c0392b;
+}
+
+.script--props-empty {
+	font-size: var(--font-ssm);
+	color: var(--color-4);
+	font-style: italic;
+}

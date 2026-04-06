@@ -91,6 +91,7 @@
 		},
 		"closeProject": "Cerrar Proyecto"
 	},
+	"properties": "No tiene propiedades",
 	"animation": {
 		"selectSpritesheet": "+ seleccionar spritesheet…",
 		"spritesheet": "Spritesheet",

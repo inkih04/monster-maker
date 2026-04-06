@@ -1,19 +1,19 @@
 export const scriptContent = `
-function onStart(entity)
+function onStart(self, props)
 end
  
-function onUpdate(entity, deltaTime)
+function onUpdate(self, deltaTime, props)
 end
  
-function onDestroy(entity)
+function onDestroy(self, props)
 end
  
-function onCollision(entity, collidedEntity)
+function onCollision(self, collidedEntity, props)
 end
  
-function onTriggerEnter(entity, other)
+function onTriggerEnter(self, other, props)
 end
  
-function onInteract(entity, other)
+function onInteract(self, other, props)
 end
 `;
