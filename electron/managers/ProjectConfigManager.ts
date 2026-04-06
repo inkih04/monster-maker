@@ -201,14 +201,64 @@ export class ProjectConfigManager {
 			if (!this.fileSystemService.exists(dirPath)) {
 				return { success: false, error: `Directory does not exist: ${dirPath}` };
 			}
+			const exists = this.fileSystemService.exists(completePath);
+			const shouldCompress = exists && this.fileSystemService.isCompressed(completePath);
+			let success = false;
+			if (shouldCompress) {
+				success = this.fileSystemService.saveCompressedFile(completePath, content);
+			} else {
+				success = this.fileSystemService.saveFile(completePath, content);
+			}
 
-			const ok = this.isMapFile(completePath)
-				? this.fileSystemService.saveCompressedFile(completePath, content)
-				: this.fileSystemService.saveFile(completePath, content);
-
-			return ok ? { success: true } : { success: false };
+			if (success) {
+				return { success: true };
+			} else {
+				return { success: false };
+			}
 		} catch (error) {
 			return { success: false, error: String(error) };
+		}
+	}
+
+	public async compressAllMaps(
+		pd: ProjectData
+	): Promise<{ success: boolean; count: number; error?: string }> {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const mapFiles = this.fileSystemService.findFilesByExtension(projectPath, '.map');
+			let count = 0;
+
+			for (const filePath of mapFiles) {
+				if (this.fileSystemService.isCompressed(filePath)) continue;
+				const content = this.fileSystemService.readFile(filePath);
+				const ok = this.fileSystemService.saveCompressedFile(filePath, content);
+				if (ok) count++;
+			}
+
+			return { success: true, count };
+		} catch (error) {
+			return { success: false, count: 0, error: String(error) };
+		}
+	}
+
+	public async decompressAllMaps(
+		pd: ProjectData
+	): Promise<{ success: boolean; count: number; error?: string }> {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const mapFiles = this.fileSystemService.findFilesByExtension(projectPath, '.map');
+			let count = 0;
+
+			for (const filePath of mapFiles) {
+				if (!this.fileSystemService.isCompressed(filePath)) continue;
+				const content = this.fileSystemService.readCompressedFile(filePath);
+				const ok = this.fileSystemService.saveFile(filePath, content);
+				if (ok) count++;
+			}
+
+			return { success: true, count };
+		} catch (error) {
+			return { success: false, count: 0, error: String(error) };
 		}
 	}
 
@@ -265,12 +315,12 @@ export class ProjectConfigManager {
 				return { success: false, error: 'Path is a directory' };
 			}
 
-			const cont = this.isMapFile(completePath)
+			const content = this.fileSystemService.isCompressed(completePath)
 				? this.fileSystemService.readCompressedFile(completePath)
 				: this.fileSystemService.readFile(completePath);
 
 			const relativeP = path.join(folderPath, fileRelativePath);
-			return { success: true, content: { relativePath: relativeP, content: cont } };
+			return { success: true, content: { relativePath: relativeP, content: content } };
 		} catch (error) {
 			return { success: false, error: String(error) };
 		}

@@ -86,7 +86,7 @@ void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManag
     }
     json mapData;
     try {
-        mapData = json::parse(fileContent);  
+        mapData = json::parse(fileContent);
     } catch (const json::exception& e) {
         std::cout << "[ENGINE][ERROR] Error parsing JSON: " << e.what() << std::endl;
         return;

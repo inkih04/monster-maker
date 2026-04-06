@@ -94,6 +94,15 @@ declare global {
 			onCreateNewFile: (
 				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog') => void
 			) => () => void;
+
+			onCompressMapsRequest: (callback: () => void) => () => void;
+			onDecompressMapsRequest: (callback: () => void) => () => void;
+			compressAllMaps: (
+				pd: ProjectData
+			) => Promise<{ success: boolean; count: number; error?: string }>;
+			decompressAllMaps: (
+				pd: ProjectData
+			) => Promise<{ success: boolean; count: number; error?: string }>;
 			onAddNewFile: (callback: () => void) => () => void;
 			onCloseProject: (callback: () => void) => () => void;
 			onSaveFile: (callback: () => void) => () => void;

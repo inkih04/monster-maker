@@ -144,6 +144,17 @@ function buildAppMenu() {
 			},
 			{ type: 'separator' },
 			{
+				label: t('menu.compressMaps'),
+				type: 'normal',
+				click: () => win?.webContents.send('compress-maps-request'),
+			},
+			{
+				label: t('menu.decompressMaps'),
+				type: 'normal',
+				click: () => win?.webContents.send('decompress-maps-request'),
+			},
+			{ type: 'separator' },
+			{
 				label: t('menu.exportMapJSON'),
 				accelerator: 'CmdOrCtrl+E',
 				click: () => {

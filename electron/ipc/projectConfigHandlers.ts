@@ -396,6 +396,22 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle('config:compressAllMaps', async (_event, pd: ProjectData) => {
+		try {
+			return await configManager.compressAllMaps(pd);
+		} catch (error) {
+			return { success: false, count: 0, error: String(error) };
+		}
+	});
+
+	ipcMain.handle('config:decompressAllMaps', async (_event, pd: ProjectData) => {
+		try {
+			return await configManager.decompressAllMaps(pd);
+		} catch (error) {
+			return { success: false, count: 0, error: String(error) };
+		}
+	});
+
 	ipcMain.handle('config:importLocalFile', async () => {
 		try {
 			const result = await dialog.showOpenDialog({

@@ -96,6 +96,38 @@ export class FileSystemService {
 		}
 	}
 
+	public isCompressed(filePath: string): boolean {
+		try {
+			const buf = Buffer.alloc(2);
+			const fd = fs.openSync(filePath, 'r'); 
+			fs.readSync(fd, buf, 0, 2, 0); 
+			fs.closeSync(fd); 
+			return buf[0] === 0x78;
+		} catch (error) {
+			console.error('Error comprobando compresión en:', filePath, error);
+			return false;
+		}
+	}
+
+	public findFilesByExtension(basePath: string, ext: string): string[] {
+		const results: string[] = [];
+
+		const walk = (dir: string) => {
+			const items = fs.readdirSync(dir);
+			for (const item of items) {
+				const fullPath = path.join(dir, item);
+				if (this.isDirectory(fullPath)) {
+					walk(fullPath);
+				} else if (path.extname(item).toLowerCase() === ext) {
+					results.push(fullPath);
+				}
+			}
+		};
+
+		if (this.exists(basePath)) walk(basePath);
+		return results;
+	}
+
 	public saveCompressedFile(filePath: string, content: string): boolean {
 		try {
 			if (this.isDirectory(filePath)) return false;
