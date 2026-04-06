@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ProjectData } from '../../global/types/projectData';
+import * as zlib from 'zlib';
 import FolderNode from '../../global/types/folderNode';
 import { log } from 'console';
 
@@ -93,6 +94,33 @@ export class FileSystemService {
 			log(error);
 			return false;
 		}
+	}
+
+	public saveCompressedFile(filePath: string, content: string): boolean {
+		try {
+			if (this.isDirectory(filePath)) return false;
+
+			const parentDir = path.dirname(filePath);
+			if (!this.exists(parentDir)) {
+				fs.mkdirSync(parentDir, { recursive: true });
+			}
+
+			const compressed = zlib.deflateSync(Buffer.from(content, 'utf-8'));
+			fs.writeFileSync(filePath, compressed);
+			return true;
+		} catch (error) {
+			log(error);
+			return false;
+		}
+	}
+
+	public readCompressedFile(filePath: string): string {
+		const raw = fs.readFileSync(filePath);
+		const isCompressed = raw.length >= 2 && raw[0] === 0x78;
+		if (isCompressed) {
+			return zlib.inflateSync(raw).toString('utf-8');
+		}
+		return raw.toString('utf-8');
 	}
 
 	public deleteFile(filePath: string): boolean {

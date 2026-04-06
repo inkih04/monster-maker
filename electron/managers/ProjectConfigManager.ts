@@ -60,6 +60,10 @@ export class ProjectConfigManager {
 		}
 	}
 
+	private isMapFile(filePath: string): boolean {
+		return path.extname(filePath).toLowerCase() === '.map';
+	}
+
 	public updateShaders(
 		pd: ProjectData,
 		shaders: Record<string, number>
@@ -198,11 +202,11 @@ export class ProjectConfigManager {
 				return { success: false, error: `Directory does not exist: ${dirPath}` };
 			}
 
-			if (this.fileSystemService.saveFile(completePath, content)) {
-				return { success: true };
-			} else {
-				return { success: false };
-			}
+			const ok = this.isMapFile(completePath)
+				? this.fileSystemService.saveCompressedFile(completePath, content)
+				: this.fileSystemService.saveFile(completePath, content);
+
+			return ok ? { success: true } : { success: false };
 		} catch (error) {
 			return { success: false, error: String(error) };
 		}
@@ -253,24 +257,21 @@ export class ProjectConfigManager {
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
 
-			console.log(completePath);
-
 			if (!this.fileSystemService.exists(completePath)) {
-				console.log(`File does not exist: ${completePath}`);
 				return { success: false, error: 'File does not exist' };
 			}
 
 			if (this.fileSystemService.isDirectory(completePath)) {
-				console.log(`Path is a directory, not a file: ${completePath}`);
 				return { success: false, error: 'Path is a directory' };
 			}
 
-			const cont = this.fileSystemService.readFile(completePath);
-			const relativeP = path.join(folderPath, fileRelativePath);
+			const cont = this.isMapFile(completePath)
+				? this.fileSystemService.readCompressedFile(completePath)
+				: this.fileSystemService.readFile(completePath);
 
+			const relativeP = path.join(folderPath, fileRelativePath);
 			return { success: true, content: { relativePath: relativeP, content: cont } };
 		} catch (error) {
-			console.log(`Error getting file: ${error}`);
 			return { success: false, error: String(error) };
 		}
 	}

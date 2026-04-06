@@ -11,20 +11,87 @@
 #include "ScriptComponet.h"
 #include "PersistenceComponent.h"
 #include "SaveManager.h"
-#include "ScriptEngine.h" 
+#include "ScriptEngine.h"
+#include <zlib.h>
+#include <vector>
+#include <stdexcept>
+
+
+static std::string readMapFile(const std::string& filePath) {
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open file: " + filePath);
+    }
+
+    std::vector<uint8_t> raw(
+        (std::istreambuf_iterator<char>(file)),
+        std::istreambuf_iterator<char>()
+    );
+
+    if (raw.empty()) {
+        return "";
+    }
+    const bool isCompressed = (raw.size() >= 2 && raw[0] == 0x78);
+
+    if (!isCompressed) {
+        return std::string(raw.begin(), raw.end());
+    }
+
+    std::vector<uint8_t> decompressed;
+    decompressed.resize(raw.size() * 8);
+
+    z_stream zs{};
+    if (inflateInit(&zs) != Z_OK) {
+        throw std::runtime_error("zlib inflateInit failed");
+    }
+
+    zs.next_in  = raw.data();
+    zs.avail_in = static_cast<uInt>(raw.size());
+
+    int ret = Z_OK;
+    while (ret != Z_STREAM_END) {
+        zs.next_out  = decompressed.data() + zs.total_out;
+        zs.avail_out = static_cast<uInt>(decompressed.size() - zs.total_out);
+
+        ret = inflate(&zs, Z_NO_FLUSH);
+
+        if (ret == Z_BUF_ERROR || zs.avail_out == 0) {
+            decompressed.resize(decompressed.size() * 2);
+            continue;
+        }
+
+        if (ret != Z_OK && ret != Z_STREAM_END) {
+            inflateEnd(&zs);
+            throw std::runtime_error("zlib inflate failed with code: " + std::to_string(ret));
+        }
+    }
+
+    const size_t decompressedSize = zs.total_out;
+    inflateEnd(&zs);
+
+    return std::string(
+        reinterpret_cast<char*>(decompressed.data()),
+        decompressedSize
+    );
+}
+
 
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
-    std::ifstream file(filePath);
-    if (!file.is_open()) {
-        std::cout << "[ENGINE][ERROR] Could not open file: " << filePath << std::endl; return;
+    std::string fileContent;
+    try {
+        fileContent = readMapFile(filePath);
+    } catch (const std::exception& e) {
+        std::cout << "[ENGINE][ERROR] Could not open file: " << e.what() << std::endl;
+        return;
     }
-
     json mapData;
     try {
-        file >> mapData;
+        mapData = json::parse(fileContent);  
     } catch (const json::exception& e) {
-        std::cout << "[ENGINE][ERROR] Error parsing JSON: " << e.what() << std::endl; return;
+        std::cout << "[ENGINE][ERROR] Error parsing JSON: " << e.what() << std::endl;
+        return;
     }
+
     std::string mapScriptPath = "";
     if (mapData.contains("mapScript") && !mapData["mapScript"].is_null()) {
         mapScriptPath = mapData["mapScript"].get<std::string>();
