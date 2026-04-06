@@ -1,6 +1,7 @@
 import { useBrushTool } from './useBrushTool';
 import { useEraserTool } from './useEraserTool';
 import { useSelectTool } from './useSelectTool';
+import { useAreaCopyTool } from './useAreaCopyTool';
 import { useToolsStore } from '../ToolBarGState';
 
 interface PreviewPosition {
@@ -13,8 +14,16 @@ interface UseActiveToolResult {
 	previewPosition: PreviewPosition | null;
 	setIsActive: (value: boolean) => void;
 	setPreviewPosition: (pos: PreviewPosition | null) => void;
-	onTileClick: (tileX: number, tileY: number) => void;
-	onTileDrag: (tileX: number, tileY: number) => void;
+	onTileClick: (
+		tileX: number,
+		tileY: number,
+		modifiers?: { ctrl?: boolean; shift?: boolean }
+	) => void;
+	onTileDrag: (
+		tileX: number,
+		tileY: number,
+		modifiers?: { ctrl?: boolean; shift?: boolean }
+	) => void;
 }
 
 export function useActiveTool(): UseActiveToolResult {
@@ -23,6 +32,7 @@ export function useActiveTool(): UseActiveToolResult {
 	const brushTool = useBrushTool();
 	const eraserTool = useEraserTool();
 	const selectTool = useSelectTool();
+	const areaCopyTool = useAreaCopyTool();
 
 	switch (activeTool) {
 		case 'brush':
@@ -35,6 +45,8 @@ export function useActiveTool(): UseActiveToolResult {
 			return selectTool;
 
 		case 'area-copy':
+			return areaCopyTool;
+
 		case 'entity':
 			return {
 				isActive: false,

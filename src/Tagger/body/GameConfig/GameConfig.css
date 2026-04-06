@@ -35,7 +35,7 @@
 	max-width: 120px;
 }
 
-/* Wrapper used by ResetableInput for text fields */
+
 .game-config--input-wrapper {
 	position: relative;
 	display: flex;
@@ -47,7 +47,7 @@
 	padding-right: 26px;
 }
 
-/* Wrapper used for the numeric resolution inputs */
+
 .game-config--num-wrapper {
 	position: relative;
 	display: flex;
@@ -118,4 +118,58 @@
 .game-config--drag-invalid {
 	border-color: #ef4444;
 	background-color: rgba(239, 68, 68, 0.08);
+}
+
+.game-config--checkbox-row {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	cursor: pointer;
+	width: fit-content;
+}
+
+.game-config--checkbox {
+	width: 13px;
+	height: 13px;
+	accent-color: var(--color-accent, #6366f1);
+	cursor: pointer;
+	flex-shrink: 0;
+	margin: 0;
+}
+
+.game-config--checkbox-hint {
+	font-size: 11px;
+	color: var(--color-5);
+	user-select: none;
+}
+
+
+.game-config--select-dropdown {
+	z-index: 9999;
+	margin: 0;
+	padding: 3px;
+	list-style: none;
+	border-radius: var(--radius);
+	background-color: var(--color-3);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	max-height: 250px;
+	overflow-y: auto;
+}
+
+.game-config--select-option {
+	padding: 5px 8px;
+	border-radius: var(--radius);
+	font-size: 14px;
+	color: var(--color-9);
+	cursor: pointer;
+	transition: background-color 0.15s;
+}
+
+.game-config--select-option:hover {
+	background-color: var(--color-4);
+}
+
+.game-config--select-option.is-selected {
+	background-color: var(--color-5);
+	color: var(--color-1);
 }

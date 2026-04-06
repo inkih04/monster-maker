@@ -8,6 +8,9 @@
 #include <sol/sol.hpp>
 
 #include "Camera.h"
+#include "DataManager.h"
+#include "SaveManager.h"
+#include "SessionManager.h"
 
 class EntityManager;
 
@@ -15,27 +18,35 @@ class ScriptBindings {
     private:
         static void registerKeys(sol::state& lua);
         static void registerInputManager(sol::state &lua);
+
+        static void registerPersistentComponent(sol::state &lua);
+
         static void registerComponents(sol::state &lua);
         static void registerInteractionComponent(sol::state &lua);
         static void registerRenderComponent(sol::state &lua);
         static void registerPositionComponent(sol::state &lua);
         static void registerMovementComponent(sol::state &lua);
+        static void registerComponentsTypeEnum(sol::state &lua);
+        static void registerBlockEntityComponentByTagService(sol::state &lua);
         static void registerTags(sol::state &lua);
         static void registerLayers(sol::state &lua);
         static void registerEntityManager(sol::state &lua);
         static void registerCamera(sol::state &lua);
         static void registerEntity(sol::state &lua);
         static void registerAudioService(sol::state &lua);
+        static void registerLocalization(sol::state &lua);
         static void registerBordersMapService(sol::state &lua);
         static void registerAnimationComponent(sol::state &lua);
         static void registerUiManager(sol::state &lua);
+        static void registerDialog(sol::state &lua);
+        static void registerConfig(sol::state &lua);
+        static void registerSessionManager(sol::state &lua, SessionManager &sessionManager);
+        static void registerSaveManager(sol::state &lua, SaveManager &saveManager);
+        static void registerDataManager(sol::state &lua, DataManager &dataManager);
 
     public:
-        static void registerStatic(sol::state& lua);
-
+        static void registerStatic(sol::state &lua, SessionManager &sessionManager, SaveManager &save_manager, DataManager &dataManager);
         static void registerConfigTags(sol::state &lua);
-
-
         static void registerDynamic(sol::state& lua,Camera* camera, EntityManager& entityManager);
 
 

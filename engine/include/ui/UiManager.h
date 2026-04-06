@@ -25,13 +25,13 @@ public:
     UiManager(const UiManager&) = delete;
     UiManager& operator=(const UiManager&) = delete;
 
-    void init(int width, int height, const std::string& fontPath);
+    void init(int width, int height, float dpiScale, const std::string& fontPath);
     void resize(int width, int height);
     void update();
     void render();
     void shutdown();
 
-    UiDocument* openDocument(const std::string& id, const std::string& uiFilePath);
+    UiDocument* openDocument(const std::string &id, const std::string &uiFilePath, sol::optional<sol::table> initData);
     void closeDocument(const std::string& id);
     UiDocument* getDocument(const std::string& id);
     bool isOpen(const std::string& id) const;

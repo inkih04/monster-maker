@@ -6,7 +6,6 @@
 #define POKEMONGAMEENGINE_EXPLORATIONSTATE_H
 
 
-#include "DialogBox.h"
 #include "State.h"
 
 

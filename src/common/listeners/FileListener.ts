@@ -53,7 +53,7 @@ export function FileListener() {
 
 			switch (fileType) {
 				case 'map':
-					extension = '.json';
+					extension = '.map';
 					defaultContent = JSON.stringify(
 						{
 							mapId: crypto.randomUUID(),
@@ -81,10 +81,21 @@ export function FileListener() {
 					extension = '.lua';
 					defaultContent = scriptContent;
 					break;
-
-				case 'ui':
-					extension = '.ui';
-					defaultContent = '';
+				case 'dialog':
+					extension = '.json';
+					defaultContent = `{
+  "dialogues": [
+    {
+      "id": "new_dialogue_1",
+      "pages": [
+        {
+          "speaker": "",
+          "text": ""
+        }
+      ]
+    }
+  ]
+}`;
 					break;
 			}
 
@@ -115,16 +126,26 @@ export function FileListener() {
 
 				if (codeEditorMode === 'duo') {
 					const { openUiFile } = useCodeEditorStore.getState();
-					if (!openUiFile) return;
+					if (!openUiFile || !currentProject) return;
+
+					const rmliContent = JSON.stringify(
+						{
+							htmlPath: openUiFile.htmlPath,
+							cssPath: openUiFile.cssPath,
+							scriptPath: openUiFile.scriptPath,
+						},
+						null,
+						2
+					);
+
 					await Promise.all([
-						window.api.saveFileCompletePath('', openUiFile.htmlPath, openUiFile.htmlContent),
-						window.api.saveFileCompletePath('', openUiFile.cssPath, openUiFile.cssContent),
+						window.api.saveFile(openUiFile.htmlPath, openUiFile.htmlContent, currentProject),
+						window.api.saveFile(openUiFile.cssPath, openUiFile.cssContent, currentProject),
+						window.api.saveFile(openUiFile.rmliPath, rmliContent, currentProject),
 					]);
 					useCodeEditorStore.getState().markUiSaved();
 					return;
 				}
-
-				return;
 			}
 			const contentMap = exportToEngineFormat();
 			if (mapRelativePath && currentProject) {

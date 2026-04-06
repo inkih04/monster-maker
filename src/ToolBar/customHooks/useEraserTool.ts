@@ -11,8 +11,16 @@ interface UseEraserToolResult {
 	previewPosition: PreviewPosition | null;
 	setIsActive: (value: boolean) => void;
 	setPreviewPosition: (pos: PreviewPosition | null) => void;
-	onTileClick: (tileX: number, tileY: number) => void;
-	onTileDrag: (tileX: number, tileY: number) => void;
+	onTileClick: (
+		tileX: number,
+		tileY: number,
+		modifiers?: { ctrl?: boolean; shift?: boolean }
+	) => void;
+	onTileDrag: (
+		tileX: number,
+		tileY: number,
+		modifiers?: { ctrl?: boolean; shift?: boolean }
+	) => void;
 }
 
 export function useEraserTool(): UseEraserToolResult {
@@ -41,14 +49,14 @@ export function useEraserTool(): UseEraserToolResult {
 	);
 
 	const onTileClick = useCallback(
-		(tileX: number, tileY: number) => {
+		(tileX: number, tileY: number, _modifiers?: { ctrl?: boolean; shift?: boolean }) => {
 			eraseTile(tileX, tileY);
 		},
 		[eraseTile]
 	);
 
 	const onTileDrag = useCallback(
-		(tileX: number, tileY: number) => {
+		(tileX: number, tileY: number, _modifiers?: { ctrl?: boolean; shift?: boolean }) => {
 			eraseTile(tileX, tileY);
 		},
 		[eraseTile]

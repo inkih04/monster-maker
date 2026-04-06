@@ -104,6 +104,10 @@ export function setupContextMenuHandlers(): void {
 						label: 'UI',
 						click: () => event.sender.send('create-file-inline', 'ui'),
 					},
+					{
+						label: t('menu.dialog'),
+						click: () => event.sender.send('create-file-inline', 'dialog'),
+					},
 				],
 			},
 			{

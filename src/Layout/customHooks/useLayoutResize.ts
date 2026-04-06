@@ -9,11 +9,11 @@ const DEFAULTS = {
 };
 
 export const LIMITS = {
-	mapUtilityWidth: { min: 240, max: 640 },
-	entityWidth: { min: 440, max: 700 },
-	filesHeight: { min: 100, max: 500 },
-	filesMenuWidth: { min: 100, max: 400 },
-	tilesetHeight: { min: 80, max: 620 },
+	mapUtilityWidth: { min: 140, max: 940 },
+	entityWidth: { min: 140, max: 900 },
+	filesHeight: { min: 20, max: 700 },
+	filesMenuWidth: { min: 20, max: 700 },
+	tilesetHeight: { min: 10, max: 720 },
 } as const;
 
 function clamp(value: number, min: number, max: number): number {

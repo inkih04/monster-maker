@@ -1,16 +1,14 @@
 import { useMemo } from 'react';
-import { useMapStore } from '../../../Map/MapGState';
 import { Component, ComponentBody, ComponentHeader } from '../basic/InspectorComponent';
 import { Keyframe, WarningTriangle } from 'iconoir-react';
 import { useTranslation } from 'react-i18next';
+import { useComponentEditor } from '../basic/useComponentEditor';
 
 function InteractionComponent() {
-	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
-	const removeComponent = useMapStore((state) => state.removeComponent);
-	const setIsDirty = useMapStore((state) => state.setIsDirty);
-	const map = useMapStore((state) => state.map);
+	const { entity, entityId, isMulti, count, remove } = useComponentEditor('INTERACTION');
 	const { t } = useTranslation();
-	const entity = selectedEntityId ? map?.entities[selectedEntityId] : null;
+
+	const interactionData = entity?.components?.INTERACTION;
 
 	const isMissingDependencies = useMemo(() => {
 		if (!entity) return false;
@@ -18,17 +16,7 @@ function InteractionComponent() {
 		return !comps.POSITION || !comps.COLLIDER;
 	}, [entity]);
 
-	if (!selectedEntityId) return;
-	if (!map) return;
-
-	const interactionData = entity?.components?.INTERACTION;
-
-	if (!interactionData) return;
-
-	const handleDelete = () => {
-		removeComponent(selectedEntityId, 'INTERACTION');
-		setIsDirty(true);
-	};
+	if (!entityId || !interactionData) return null;
 
 	const WarningIcon = isMissingDependencies ? (
 		<WarningTriangle
@@ -37,10 +25,15 @@ function InteractionComponent() {
 			style={{ filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.2))' }}
 		/>
 	) : null;
+
 	return (
 		<Component id="Render">
-			<ComponentHeader icon={Keyframe} onDelete={handleDelete} action={WarningIcon}>
-				Interaction
+			<ComponentHeader
+				icon={Keyframe}
+				onDelete={!isMulti ? remove : undefined}
+				action={WarningIcon}
+			>
+				Interaction{isMulti && <span className="component-header--batch-badge">×{count}</span>}
 			</ComponentHeader>
 			<ComponentBody>
 				<div>{t('interactionComponent')}</div>

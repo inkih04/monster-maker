@@ -15,8 +15,10 @@ type GameConfigData = {
 	initialMapPath: string;
 	imageIconPath: string;
 	defaultFont: string;
+	defaultLanguage: string;
 	virtualWidth: number | '';
 	virtualHeight: number | '';
+	letterboxing: boolean;
 };
 
 function gameConfigToData(gc: GameConfig): GameConfigData {
@@ -26,8 +28,10 @@ function gameConfigToData(gc: GameConfig): GameConfigData {
 		initialMapPath: gc.initialMapPath,
 		imageIconPath: gc.imageIconPath,
 		defaultFont: gc.defaultFont,
+		defaultLanguage: gc.defaultLanguage ?? DEFAULT_GAME_CONFIG.defaultLanguage,
 		virtualWidth: gc.virtualWidth,
 		virtualHeight: gc.virtualHeight,
+		letterboxing: gc.letterboxing ?? DEFAULT_GAME_CONFIG.letterboxing,
 	};
 }
 
@@ -38,16 +42,18 @@ function dataToGameConfig(data: GameConfigData): GameConfig {
 		initialMapPath: data.initialMapPath,
 		imageIconPath: data.imageIconPath,
 		defaultFont: data.defaultFont,
+		defaultLanguage: data.defaultLanguage,
 		virtualWidth: data.virtualWidth === '' ? DEFAULT_GAME_CONFIG.virtualWidth : data.virtualWidth,
 		virtualHeight:
 			data.virtualHeight === '' ? DEFAULT_GAME_CONFIG.virtualHeight : data.virtualHeight,
+		letterboxing: data.letterboxing,
 	};
 }
 
 function TaggerGameConfigBody() {
 	const { t } = useTranslation();
 	const currentProject = useProjectStore((s) => s.currentProject);
-	const { gameConfig, isLoading, loadEngineConfig, saveGameConfig } = useEngineConfigStore();
+	const { gameConfig, tags, isLoading, loadEngineConfig, saveGameConfig } = useEngineConfigStore();
 	const [data, setData] = useState<GameConfigData>(() => gameConfigToData(gameConfig));
 	const skipNextSync = useRef(false);
 	const { handleDragOver, handleDragLeave, handleDrop, getDragClass } = useGameConfigDrag();
@@ -89,6 +95,8 @@ function TaggerGameConfigBody() {
 		return <div className="tagger-body--scroll tagger-body--loading">Loading…</div>;
 	}
 
+	const tagOptions = Object.keys(tags || {});
+
 	return (
 		<div className="tagger-body--scroll">
 			<div className="game-config--form">
@@ -126,6 +134,7 @@ function TaggerGameConfigBody() {
 						onDrop={(e) =>
 							handleDrop(e, 'initialMapPath', (path) => handleChange('initialMapPath', path))
 						}
+						options={tagOptions}
 					/>
 				</div>
 
@@ -142,6 +151,7 @@ function TaggerGameConfigBody() {
 						onDrop={(e) =>
 							handleDrop(e, 'imageIconPath', (path) => handleChange('imageIconPath', path))
 						}
+						options={tagOptions}
 					/>
 				</div>
 
@@ -158,7 +168,45 @@ function TaggerGameConfigBody() {
 						onDrop={(e) =>
 							handleDrop(e, 'defaultFont', (path) => handleChange('defaultFont', path))
 						}
+						options={tagOptions}
 					/>
+				</div>
+
+				<div className="game-config--field">
+					<label className="game-config--label">{t('gameConfig.defaultLanguage')}</label>
+					<ResetableInput
+						className={getDragClass?.('defaultLanguage')}
+						value={data.defaultLanguage}
+						defaultValue={DEFAULT_GAME_CONFIG.defaultLanguage}
+						placeholder="resources/.locals/es.json"
+						onChange={(v) => handleChange('defaultLanguage', v)}
+						onDragOver={(e) => handleDragOver(e, 'defaultLanguage')}
+						onDragLeave={handleDragLeave}
+						onDrop={(e) =>
+							handleDrop(e, 'defaultLanguage', (path) =>
+								handleChange('defaultLanguage', path)
+							)
+						}
+						options={tagOptions}
+					/>
+				</div>
+
+				<div
+					className="game-config--field game-config--field-group-start"
+					style={{ paddingBottom: '8px' }}
+				>
+					<label className="game-config--label">{t('gameConfig.letterboxing')}</label>
+					<label className="game-config--checkbox-row">
+						<input
+							type="checkbox"
+							className="game-config--checkbox"
+							checked={data.letterboxing}
+							onChange={(e) => handleChange('letterboxing', e.target.checked)}
+						/>
+						<span className="game-config--checkbox-hint">
+							{data.letterboxing ? t('gameConfig.letterboxingOn') : t('gameConfig.letterboxingOff')}
+						</span>
+					</label>
 				</div>
 
 				<div className="game-config--field game-config--field-group-start game-config--field-no-border">

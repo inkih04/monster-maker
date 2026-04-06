@@ -592,6 +592,138 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				),
 				fn(monaco, 'Audio.setSfxVolume', 'Audio:setSfxVolume(${1:1.0})', 'setSfxVolume(v)', range),
 
+				fn(
+					monaco,
+					'Config.setLetterboxing',
+					'Config:setLetterboxing(${1:true})',
+					'setLetterboxing(bool)',
+					range
+				),
+				fn(
+					monaco,
+					'Config.getLetterboxing',
+					'Config:getLetterboxing()',
+					'getLetterboxing() → bool',
+					range
+				),
+				fn(monaco, 'Config.getGameName', 'Config:getGameName()', 'getGameName() → string', range),
+				fn(
+					monaco,
+					'Config.getGameVersion',
+					'Config:getGameVersion()',
+					'getGameVersion() → string',
+					range
+				),
+
+				fn(monaco, 'Session.set', 'Session:set("${1:key}", ${2:value})', 'set(key, value)', range),
+				fn(monaco, 'Session.get', 'Session:get("${1:key}")', 'get(key) → value', range),
+				fn(monaco, 'Session.has', 'Session:has("${1:key}")', 'has(key) → bool', range),
+				fn(monaco, 'Session.remove', 'Session:remove("${1:key}")', 'remove(key)', range),
+				fn(monaco, 'Session.clear', 'Session:clear()', 'clear()', range),
+				fn(monaco, 'Save.set', 'Save:set("${1:key}", ${2:value})', 'set(key, value)', range),
+				fn(monaco, 'Save.get', 'Save:get("${1:key}")', 'get(key) → value', range),
+				fn(monaco, 'Save.has', 'Save:has("${1:key}")', 'has(key) → bool', range),
+				fn(monaco, 'Save.remove', 'Save:remove("${1:key}")', 'remove(key)', range),
+				fn(monaco, 'Save.clear', 'Save:clear()', 'clear()', range),
+				fn(monaco, 'Save.load', 'Save:load("${1:filepath}")', 'load(filepath) → bool', range),
+				fn(monaco, 'Save.commit', 'Save:commit("${1:filepath}")', 'commit(filepath) → bool', range),
+				fn(monaco, 'Data.get', 'Data:get("${1:category}")', 'get(category) → value', range),
+				fn(monaco, 'Data.has', 'Data:has("${1:category}")', 'has(category) → bool', range),
+
+				fn(monaco, 'Dialog.load', 'Dialog.load("${1:path}")', 'load(path) → DialogFile', range),
+				fn(
+					monaco,
+					'Dialog.open',
+					'Dialog.open("${1:id}", tags.${2:uiFile}, ${3:chain}, ${4:vars})',
+					'open(id, rmlPath, chain, vars)',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.openFromFile',
+					'Dialog.openFromFile("${1:id}", tags.${2:uiFile}, ${3:file}, "${4:chainId}", ${5:vars})',
+					'openFromFile(id, rmlPath, file, chainId, vars)',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.interact',
+					'Dialog.interact("${1:id}", tags.${2:uiFile}, ${3:file}, "${4:startChain}", ${5:vars})',
+					'interact(id, rmlPath, file, startChain, vars) → bool',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.updateNavigation',
+					'Dialog.updateNavigation("${1:id}", Keys.${2:UP}, Keys.${3:DOWN})',
+					'updateNavigation(id, upKey, downKey)',
+					range
+				),
+				fn(monaco, 'Dialog.advance', 'Dialog.advance("${1:id}")', 'advance(id) → bool', range),
+				fn(monaco, 'Dialog.close', 'Dialog.close("${1:id}")', 'close(id)', range),
+				fn(monaco, 'Dialog.isActive', 'Dialog.isActive("${1:id}")', 'isActive(id) → bool', range),
+				fn(
+					monaco,
+					'Dialog.hasChoices',
+					'Dialog.hasChoices("${1:id}")',
+					'hasChoices(id) → bool',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.moveChoice',
+					'Dialog.moveChoice("${1:id}", ${2:delta})',
+					'moveChoice(id, delta)',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.getChoiceIndex',
+					'Dialog.getChoiceIndex("${1:id}")',
+					'getChoiceIndex(id) → int',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.getSelectedTarget',
+					'Dialog.getSelectedTarget("${1:id}")',
+					'getSelectedTarget(id) → string',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.jump',
+					'Dialog.jump("${1:id}", "${2:chainId}")',
+					'jump(id, chainId) → bool',
+					range
+				),
+				fn(
+					monaco,
+					'Dialog.registerFile',
+					'Dialog.registerFile("${1:id}", ${2:file})',
+					'registerFile(id, file)',
+					range
+				),
+
+				fn(monaco, 'Lang.load', 'Lang.load("${1:langCode}")', 'load(langCode)', range),
+				fn(monaco, 'Lang.get', 'Lang.get("${1:key}")', 'get(key) → string', range),
+				fn(monaco, 'Lang.current', 'Lang.current()', 'current() → string', range),
+
+				fn(
+					monaco,
+					'BlockEntityComponentByTag.block',
+					'BlockEntityComponentByTag.block(${1:entities}, ComponentsType.${2:MOVEMENT})',
+					'block(entities, componentType) → bool',
+					range
+				),
+				fn(
+					monaco,
+					'BlockEntityComponentByTag.unblock',
+					'BlockEntityComponentByTag.unblock(${1:entities}, ComponentsType.${2:MOVEMENT})',
+					'unblock(entities, componentType) → bool',
+					range
+				),
+
 				...(
 					[
 						'PLAYER',
@@ -625,6 +757,17 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				...(['TOP', 'BOTTOM', 'LEFT', 'RIGHT', 'UNKNOWN'] as const).map((d) =>
 					constant(monaco, `Direction.${d}`, 'Direction enum', range)
 				),
+				...(
+					[
+						'POSITION',
+						'RENDER',
+						'COLLIDER',
+						'ANIMATION',
+						'MOVEMENT',
+						'SCRIPT',
+						'INTERACTION',
+					] as const
+				).map((c) => constant(monaco, `ComponentsType.${c}`, 'ComponentsType enum', range)),
 
 				fn(monaco, 'entity.getPos', '${1:entity}:getPos()', 'getPos() → PositionComponent', range),
 				fn(
@@ -634,18 +777,47 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					'getMove() → MovementComponent',
 					range
 				),
+				fn(
+					monaco,
+					'entity.getRender',
+					'${1:entity}:getRender()',
+					'getRender() → RenderComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.getAnim',
+					'${1:entity}:getAnim()',
+					'getAnim() → AnimationComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.getInteract',
+					'${1:entity}:getInteract()',
+					'getInteract() → InteractionComponent',
+					range
+				),
 				fn(monaco, 'entity.interact', '${1:entity}:interact()', 'interact()', range),
 				fn(monaco, 'entity.disable', '${1:entity}:disable()', 'disable()', range),
 				fn(
 					monaco,
 					'entity.hasComponent',
-					'${1:entity}:hasComponent()',
-					'hasComponent() → bool',
+					'${1:entity}:hasComponent(ComponentsType.${2:MOVEMENT})',
+					'hasComponent(componentType) → bool',
 					range
 				),
 				fn(monaco, 'pos.get', '${1:pos}:get()', 'get() → Position', range),
 				fn(monaco, 'pos.direction', '${1:pos}.direction', 'direction: Direction', range),
 				fn(monaco, 'move.move', '${1:move}:move(Direction.${2:RIGHT})', 'move(direction)', range),
+				fn(
+					monaco,
+					'move.setIsActive',
+					'${1:move}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(monaco, 'move.getIsActive', '${1:move}:getIsActive()', 'getIsActive() → bool', range),
 				fn(
 					monaco,
 					'render.setIsActive',
@@ -660,13 +832,152 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					'getIsActive() → bool',
 					range
 				),
+				fn(
+					monaco,
+					'anim.play',
+					'${1:anim}:play("${2:animName}", ${3:false})',
+					'play(name, forceRestart?)',
+					range
+				),
+				fn(
+					monaco,
+					'entity.getCollider',
+					'${1:entity}:getCollider()',
+					'getCollider() → CollisionComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.addPosition',
+					'${1:entity}:addPosition(${2:x}, ${3:y})',
+					'addPosition(x, y)',
+					range
+				),
+				fn(
+					monaco,
+					'entity.addRender',
+					'${1:entity}:addRender(tags.${2:spriteSheet}, ${3:x}, ${4:y}, ${5:w}, ${6:h}, ${7:width}, ${8:height})',
+					'addRender(spriteSheetPath, x, y, w, h, width, height)',
+					range
+				),
+				fn(monaco, 'entity.addMovement', '${1:entity}:addMovement()', 'addMovement()', range),
+				fn(
+					monaco,
+					'entity.addInteraction',
+					'${1:entity}:addInteraction()',
+					'addInteraction()',
+					range
+				),
+				fn(
+					monaco,
+					'entity.addAnimation',
+					'${1:entity}:addAnimation()',
+					'addAnimation() → AnimationComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.addCollider',
+					'${1:entity}:addCollider(${2:width}, ${3:height}, ${4:offsetX}, ${5:offsetY}, ${6:trigger})',
+					'addCollider(width, height, offsetX, offsetY, trigger) → CollisionComponent',
+					range
+				),
+				fn(
+					monaco,
+					'World.createEntity',
+					'World:createEntity(EntityTag.${1:UNKNOWN}, Layer.${2:ENTITIES})',
+					'createEntity(tag, layer) → Entity',
+					range
+				),
+				fn(
+					monaco,
+					'World.destroyEntity',
+					'World:destroyEntity(${1:entity})',
+					'destroyEntity(entity)',
+					range
+				),
+				fn(
+					monaco,
+					'World.registerCollider',
+					'World:registerCollider(${1:entity})',
+					'registerCollider(entity)',
+					range
+				),
+				fn(monaco, 'anim.pause', '${1:anim}:pause()', 'pause()', range),
+				fn(monaco, 'anim.resume', '${1:anim}:resume()', 'resume()', range),
+				fn(monaco, 'anim.stop', '${1:anim}:stop()', 'stop()', range),
+				fn(monaco, 'anim.isPlaying', '${1:anim}:isPlaying()', 'isPlaying() → bool', range),
+				fn(monaco, 'anim.currentAnim', '${1:anim}:currentAnim()', 'currentAnim() → string', range),
+				fn(
+					monaco,
+					'anim.setIsActive',
+					'${1:anim}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(monaco, 'anim.getIsActive', '${1:anim}:getIsActive()', 'getIsActive() → bool', range),
+				fn(
+					monaco,
+					'interact.setIsActive',
+					'${1:interact}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(
+					monaco,
+					'interact.getIsActive',
+					'${1:interact}:getIsActive()',
+					'getIsActive() → bool',
+					range
+				),
 
 				...Object.entries(_luaTags).map(([name, path]) =>
 					constant(monaco, `tags.${name}`, path, range)
 				),
 			];
 
-			return { suggestions };
+			const text = model.getValue();
+			const matches = text.match(/\b[a-zA-Z_]\w*\b/g) || [];
+			const uniqueWords = new Set(matches);
+			uniqueWords.delete(word.word);
+
+			const luaKeywords = [
+				'and',
+				'break',
+				'do',
+				'else',
+				'elseif',
+				'end',
+				'false',
+				'for',
+				'function',
+				'goto',
+				'if',
+				'in',
+				'local',
+				'nil',
+				'not',
+				'or',
+				'repeat',
+				'return',
+				'then',
+				'true',
+				'until',
+				'while',
+			];
+			luaKeywords.forEach((k) => uniqueWords.delete(k));
+
+			const dynamicSuggestions: Monaco.languages.CompletionItem[] = Array.from(uniqueWords).map(
+				(w) => ({
+					label: w,
+					kind: monaco.languages.CompletionItemKind.Variable,
+					insertText: w,
+					detail: 'Variable',
+					range,
+				})
+			);
+
+			return { suggestions: [...suggestions, ...dynamicSuggestions] };
 		},
 	});
 }

@@ -11,7 +11,10 @@ import { useFolderStore } from '../../../common/globalStores/useFolderStore';
 import { useTranslation } from 'react-i18next';
 
 function AnimationInspector() {
-	const selectedEntityId = useMapStore((s) => s.selectedEntityId);
+	const selectedEntityIds = useMapStore((s) => s.selectedEntityIds);
+	const selectedEntityId = selectedEntityIds[0] ?? null;
+	const isMulti = selectedEntityIds.length > 1;
+	const count = selectedEntityIds.length;
 	const updateComponent = useMapStore((s) => s.updateComponent);
 	const { t } = useTranslation();
 
@@ -75,12 +78,8 @@ function AnimationInspector() {
 		const fileData = e.dataTransfer.getData('application/file-item');
 		if (!fileData) return;
 		const file = JSON.parse(fileData);
-		if (file.type !== 'tileset') return;
-
-		if (!selectedFolder) return;
-
+		if (file.type !== 'tileset' || !selectedFolder) return;
 		const finalPath = await window.api.pathUnion(selectedFolder?.path, file.path);
-
 		if (selectedEntityId)
 			updateComponent(selectedEntityId, 'RENDER', { spriteSheetPath: finalPath });
 	};
@@ -91,7 +90,7 @@ function AnimationInspector() {
 		<div className="animation--wrapper">
 			<Component id="Animation">
 				<ComponentHeader icon={MediaImage} onDelete={handleDelete}>
-					Animation
+					Animation{isMulti && <span className="component-header--batch-badge">×{count}</span>}
 				</ComponentHeader>
 
 				<ComponentBody>

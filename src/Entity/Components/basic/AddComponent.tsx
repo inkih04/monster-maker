@@ -1,5 +1,14 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { Plus, Search, ViewGrid, Code, Play, FastArrowRight, Keyframe } from 'iconoir-react';
+import {
+	Plus,
+	Search,
+	ViewGrid,
+	Code,
+	Play,
+	FastArrowRight,
+	Keyframe,
+	Database,
+} from 'iconoir-react';
 import { useMapStore } from '../../../Map/MapGState';
 import { ComponentType, ComponentMap } from '../../../domain/ecs/componentMap';
 import './AddComponent.css';
@@ -51,6 +60,11 @@ const ADDABLE_COMPONENTS: AddableComponentConfig = {
 		label: 'Interaction',
 		initData: {},
 	},
+	PERSISTENCE: {
+		icon: Database,
+		label: 'Persistence',
+		initData: { saveFlag: '' },
+	},
 };
 
 export default function AddComponent() {
@@ -59,10 +73,12 @@ export default function AddComponent() {
 	const menuRef = useRef<HTMLDivElement>(null);
 	const { t } = useTranslation();
 
-	const selectedEntityId = useMapStore((state) => state.selectedEntityId);
+	const selectedEntityIds = useMapStore((state) => state.selectedEntityIds);
 	const map = useMapStore((state) => state.map);
 	const addComponent = useMapStore((state) => state.addComponent);
 	const setIsDirty = useMapStore((state) => state.setIsDirty);
+
+	const isMulti = selectedEntityIds.length > 1;
 
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
@@ -75,14 +91,44 @@ export default function AddComponent() {
 	}, []);
 
 	const availableComponents = useMemo(() => {
-		if (!selectedEntityId || !map) return [];
-
-		const entity = map.entities[selectedEntityId];
-		if (!entity) return [];
-		const currentKeys = Object.keys(entity.components) as ComponentType[];
+		if (!map) return [];
 
 		const allowedKeys = Object.keys(ADDABLE_COMPONENTS) as ComponentType[];
 
+		if (isMulti) {
+			const entities = selectedEntityIds
+				.map((id) => map.entities[id])
+				.filter((e): e is NonNullable<typeof e> => e != null);
+
+			if (entities.length === 0) return [];
+
+			return allowedKeys.filter((type) => {
+				const noneHasIt = entities.every((e) => e.components[type] == null);
+				if (!noneHasIt) return false;
+
+				if (type === 'MOVEMENT' || type === 'INTERACTION') {
+					const allHaveDeps = entities.every(
+						(e) => e.components.COLLIDER != null && e.components.SCRIPT != null
+					);
+					if (!allHaveDeps) return false;
+				}
+
+				if (type === 'ANIMATION') {
+					const paths = entities.map((e) => e.components.RENDER?.spriteSheetPath ?? '');
+					const firstPath = paths[0];
+					if (!firstPath || !paths.every((p) => p === firstPath)) return false;
+				}
+
+				const config = ADDABLE_COMPONENTS[type];
+				return config ? config.label.toLowerCase().includes(searchTerm.toLowerCase()) : false;
+			});
+		}
+
+		const singleId = selectedEntityIds[0];
+		if (!singleId) return [];
+		const entity = map.entities[singleId];
+		if (!entity) return [];
+		const currentKeys = Object.keys(entity.components) as ComponentType[];
 		const hasDependencies = currentKeys.includes('COLLIDER') && currentKeys.includes('SCRIPT');
 
 		return allowedKeys
@@ -91,25 +137,41 @@ export default function AddComponent() {
 				if (type === 'MOVEMENT' || type === 'INTERACTION') {
 					if (!hasDependencies) return false;
 				}
-
 				const config = ADDABLE_COMPONENTS[type];
 				return config ? config.label.toLowerCase().includes(searchTerm.toLowerCase()) : false;
 			});
-	}, [map, selectedEntityId, searchTerm]);
+	}, [map, selectedEntityIds, isMulti, searchTerm]);
 
 	const handleAddComponent = (type: ComponentType) => {
-		if (!selectedEntityId) return;
-
 		const config = ADDABLE_COMPONENTS[type];
-		if (config) {
-			addComponent(selectedEntityId, type, config.initData);
-			setIsOpen(false);
-			setSearchTerm('');
+		if (!config) return;
+
+		if (isMulti) {
+			selectedEntityIds.forEach((id) => {
+				const entity = map?.entities[id];
+				if (!entity || entity.components[type] != null) return;
+
+				const componentData =
+					type === 'PERSISTENCE' ? { ...config.initData, saveFlag: id } : config.initData;
+
+				addComponent(id, type, componentData);
+			});
+		} else {
+			const singleId = selectedEntityIds[0];
+			if (!singleId) return;
+
+			const componentData =
+				type === 'PERSISTENCE' ? { ...config.initData, saveFlag: singleId } : config.initData;
+
+			addComponent(singleId, type, componentData);
 		}
+
+		setIsOpen(false);
+		setSearchTerm('');
 		setIsDirty(true);
 	};
 
-	if (!selectedEntityId) return null;
+	if (selectedEntityIds.length === 0) return null;
 
 	return (
 		<div className="component--Add-container" ref={menuRef}>

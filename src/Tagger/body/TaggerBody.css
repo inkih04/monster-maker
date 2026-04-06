@@ -267,3 +267,101 @@
 	border-color: #22c55e;
 	background-color: rgba(34, 197, 94, 0.08);
 }
+
+.tagger-map-script--section {
+	margin-top: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+.tagger-map-script--header {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.tagger-map-script--header-icon {
+	color: var(--color-6);
+	flex-shrink: 0;
+}
+
+.tagger-map-script--label {
+	flex: 1;
+	font-size: 10px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--color-6);
+}
+
+.tagger-map-script--clear-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	background: transparent;
+	border: none;
+	border-radius: var(--radius);
+	color: var(--color-5);
+	cursor: pointer;
+	padding: 0;
+	transition: all 0.15s;
+}
+
+.tagger-map-script--clear-btn:hover {
+	background-color: var(--color-4);
+	color: var(--color-9);
+}
+
+.tagger-map-script--input-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+	border-radius: var(--radius);
+	transition:
+		border-color 0.15s,
+		background-color 0.15s;
+}
+
+.tagger-map-script--input {
+	flex: 1;
+	padding-right: 30px !important;
+}
+
+.tagger-map-script--folder-btn {
+	position: absolute;
+	right: 3px;
+	top: 50%;
+	transform: translateY(-50%);
+	height: calc(100% - 6px);
+	width: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: transparent;
+	color: var(--color-6);
+	border: none;
+	border-radius: var(--radius);
+	cursor: pointer;
+	transition: all 0.2s;
+	padding: 0;
+}
+
+.tagger-map-script--folder-btn:hover {
+	background-color: var(--color-4);
+	color: var(--color-9);
+}
+
+.tagger-map-script--input-wrapper.script--drag-valid .tagger-kv--input {
+	border-color: #22c55e;
+	background-color: rgba(34, 197, 94, 0.08);
+}
+
+.tagger-map-script--input-wrapper.script--drag-invalid .tagger-kv--input {
+	border-color: #ef4444;
+	background-color: rgba(239, 68, 68, 0.08);
+}

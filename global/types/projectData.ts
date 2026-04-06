@@ -3,4 +3,5 @@ export interface ProjectData {
 	path: string;
 	color?: string;
 	defaultTilesize?: number;
+	maxGpuTextureSize?: number;
 }

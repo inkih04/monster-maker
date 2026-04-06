@@ -34,11 +34,17 @@ public:
     const std::string& getDefaultFontPath() const;
     void setDefaultFontPath(const std::string& value);
 
+    const std::string& getDefaultLanguagePath() const;
+    void setDefaultLanguagePath(const std::string& value);
+
     int getVirtualWidth() const;
     void setVirtualWidth(int value);
 
     int getVirtualHeight() const;
     void setVirtualHeight(int value);
+
+    bool getLetterboxing() const;
+    void setLetterboxing(bool value);
 
     const std::unordered_map<std::string, std::string>& getTags() const;
     void setTags(const std::unordered_map<std::string, std::string>& value);
@@ -59,8 +65,10 @@ private:
     std::string gameVersion = "1.0.0";
     std::string imageIconPath;
     std::string defaultFontPath;
+    std::string defaultLanguage = "resources/locals/es.local";
     int virtualWidth = 480;
     int virtualHeight = 270;
+    bool letterboxing = false;
     std::unordered_map<std::string, std::string> maps;
     std::unordered_map<std::string, int> shaderTags;
 };

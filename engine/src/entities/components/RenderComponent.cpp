@@ -11,7 +11,7 @@
 
 void RenderComponent::render() {
     Renderer::getInstance().setShader("sprite");
-    if (!isActive) return;
+    if (!m_isActive) return;
     draw();
 }
 

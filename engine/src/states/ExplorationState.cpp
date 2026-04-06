@@ -10,6 +10,7 @@
 #include "EntityLoader.h"
 #include "InputManager.h"
 #include "PositionComponent.h"
+#include "Renderer.h"
 #include "ScriptEngine.h"
 
 
@@ -52,12 +53,13 @@ void ExplorationState::changeMap(const std::string& mapPath) {
     auto playerEntity = m_entityManager->extractEntity(EntityTag::PLAYER, EntityLayer::ENTITIES);
 
     m_entityManager = std::make_unique<EntityManager>();
+    applyScriptContext();
+
     EntityLoader::loadEntitiesFromFile(mapPath, *m_entityManager);
 
     if (playerEntity) {
         m_entityManager->adoptEntity(std::move(playerEntity), EntityTag::PLAYER, EntityLayer::ENTITIES);
     }
-    applyScriptContext();
 
     std::cout << "[ENGINE][WARNING] Map changed to: " << mapPath << std::endl;
 }
@@ -81,11 +83,12 @@ void ExplorationState::moveDebugCamera() {
     if (input.isKeyDown(GLFW_KEY_A) || input.isKeyDown(GLFW_KEY_LEFT))  targetPos.x -= speed;
     if (input.isKeyDown(GLFW_KEY_D) || input.isKeyDown(GLFW_KEY_RIGHT)) targetPos.x += speed;
 
-    camera->lerpTo(targetPos, smoothness);
+    camera->setPosition(targetPos);
 }
 
 void ExplorationState::setEntityManager() {
     m_entityManager = std::make_unique<EntityManager>();
+    applyScriptContext();
     std::string debugMap = DebugHelper::getInstance().getCurrentMap();
     if (debugMap.empty()) {
         if (!EditorConfig::getInstance().getInitialMapPath().empty()) {

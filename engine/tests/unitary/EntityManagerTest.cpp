@@ -26,9 +26,9 @@ TEST(EntityManagerTest, CreateEntityStoresEntityInManager) {
 TEST(EntityManagerTest, CreateEntityWithTagAndLayerStoresCorrectly) {
     EntityManager manager;
 
-    Entity* e1 = manager.createEntity(EntityTag::PLAYER, EntityLayer::ENTITIES);
-    Entity* e2 = manager.createEntity(EntityTag::ENEMY, EntityLayer::ENTITIES);
-    Entity* e3 = manager.createEntity(EntityTag::ITEM, EntityLayer::GROUND);
+    Entity* e1 = manager.createEntity(EntityTag::PLAYER, EntityLayer::ENTITIES, " ");
+    Entity* e2 = manager.createEntity(EntityTag::ENEMY, EntityLayer::ENTITIES, " ");
+    Entity* e3 = manager.createEntity(EntityTag::ITEM, EntityLayer::GROUND, " ");
 
     auto playerEntities = manager.getEntitiesByTag(EntityTag::PLAYER);
     auto enemyEntities = manager.getEntitiesByTag(EntityTag::ENEMY);
@@ -75,8 +75,8 @@ TEST(EntityManagerTest, GetEntitiesByComponentReturnsCorrectEntities) {
 TEST(EntityManagerTest, DestroyEntityRemovesFromManagerAndCaches) {
     EntityManager manager;
 
-    Entity* e1 = manager.createEntity(EntityTag::PLAYER, EntityLayer::ENTITIES);
-    Entity* e2 = manager.createEntity(EntityTag::ENEMY, EntityLayer::ENTITIES);
+    Entity* e1 = manager.createEntity(EntityTag::PLAYER, EntityLayer::ENTITIES, " ");
+    Entity* e2 = manager.createEntity(EntityTag::ENEMY, EntityLayer::ENTITIES, " ");
 
     manager.destroyEntity(e1);
 

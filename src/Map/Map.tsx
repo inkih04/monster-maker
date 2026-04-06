@@ -16,6 +16,7 @@ import {
 	drawEraserPreview,
 	drawSelectionOverlay,
 	drawSelectionPreview,
+	drawAreaCopyPreview,
 } from './mapUtils';
 import { MapLoadingOverlay } from './MapLoadingOverlay';
 
@@ -32,8 +33,9 @@ function Map() {
 	const selectedArea = useTileSetStore((state) => state.selectedArea);
 	const createMap = useMapStore((state) => state.createMap);
 	const activeTool = useToolsStore((state) => state.activeTool);
-	const selectedTilePosition = useMapStore((state) => state.selectedTilePosition);
+	const selectedTilePositions = useMapStore((state) => state.selectedTilePositions);
 	const toggleShowCollisions = useMapStore((state) => state.toggleShowCollisions);
+	const clearSelection = useMapStore((state) => state.clearSelection);
 	const showCollisions = useMapStore((state) => state.showCollisions);
 	const isDirty = useMapStore((state) => state.isDirty);
 	const visibleLayers = useMapStore((state) => state.visibleLayers);
@@ -80,12 +82,13 @@ function Map() {
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if (e.key === 'Escape') {
 				useTileSetStore.getState().setSelectedArea(null);
+				clearSelection();
 			}
 		};
 
 		window.addEventListener('keydown', handleKeyDown);
 		return () => window.removeEventListener('keydown', handleKeyDown);
-	}, []);
+	}, [clearSelection]);
 
 	const drawBackground = (ctx: CanvasRenderingContext2D) => {
 		const layerOrder: Layer[] = ['ground', 'decoration', 'entities', 'shadows', 'foreground'];
@@ -97,10 +100,9 @@ function Map() {
 			const tilesInLayer = paintedTiles.filter((tile) => tile.layer === layer);
 
 			tilesInLayer.forEach((tile) => {
-				const tileTileset = tileSets[tile.spriteSheetPath];
 				const tilesetImage = tilesetImages[tile.spriteSheetPath];
 
-				if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
+				if (!tilesetImage) return;
 
 				const entityData = mapState.map?.entities[tile.entityId];
 				const renderComponent = entityData?.components.RENDER;
@@ -162,9 +164,7 @@ function Map() {
 				isActive,
 				paintedTiles,
 				activeLayer,
-				tileSets,
 				tilesetImages,
-				tileSize,
 				zoom,
 				entities: mapState.map?.entities || {},
 				isLayerLocked: lockedLayers[activeLayer],
@@ -177,9 +177,7 @@ function Map() {
 					isActive,
 					paintedTiles,
 					activeLayer,
-					tileSets,
 					tilesetImages,
-					tileSize,
 					zoom,
 					entities: mapState.map?.entities || {},
 				});
@@ -187,11 +185,22 @@ function Map() {
 			if (!isCapturingRef.current) {
 				drawSelectionOverlay({
 					ctx,
-					selectedTilePosition,
+					selectedTilePositions,
 					tileSize,
 					zoom,
 				});
 			}
+		} else if (activeTool === 'area-copy' && !isCapturingRef.current) {
+			drawAreaCopyPreview({
+				ctx,
+				previewPosition: isActive ? null : previewPosition,
+				selectedTilePositions,
+				paintedTiles,
+				tilesetImages,
+				entities: mapState.map?.entities || {},
+				tileSize,
+				zoom,
+			});
 		}
 
 		if (showCollisions && !isCapturingRef.current) {
@@ -210,7 +219,14 @@ function Map() {
 		drawBackground,
 		minWidth,
 		minHeight,
-		redrawTrigger: [paintedTiles, tilesetImages, previewPosition, showCollisions, visibleLayers],
+		redrawTrigger: [
+			paintedTiles,
+			tilesetImages,
+			previewPosition,
+			showCollisions,
+			visibleLayers,
+			selectedTilePositions,
+		],
 	});
 
 	const { isCapturingRef } = useMapCapture({
@@ -227,15 +243,20 @@ function Map() {
 		isToolActive: isActive,
 		setIsToolActive: setIsActive,
 		setPreviewPosition,
-		onTileClick: (x, y) => {
+		onTileClick: (x, y, modifiers) => {
 			if (isBrushBlocked) return;
 			if (!visibleLayers[activeLayer]) return;
-			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileClick(x, y);
+			if (activeTool === 'area-copy') {
+				onTileClick(x, y, modifiers);
+				return;
+			}
+			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileClick(x, y, modifiers);
 		},
-		onTileDrag: (x, y) => {
+		onTileDrag: (x, y, modifiers) => {
 			if (isBrushBlocked) return;
 			if (!visibleLayers[activeLayer]) return;
-			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileDrag(x, y);
+			if (activeTool === 'area-copy') return; // no drag for area-copy
+			if (activeTool === 'select' || !lockedLayers[activeLayer]) onTileDrag(x, y, modifiers);
 		},
 	});
 

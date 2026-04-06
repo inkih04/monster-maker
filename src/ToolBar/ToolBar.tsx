@@ -11,6 +11,7 @@ import {
 	Bug,
 	CodeBrackets,
 	Codepen,
+	ChatBubbleTranslate,
 } from 'iconoir-react';
 import './ToolBar.css';
 import { useToolsStore } from './ToolBarGState';
@@ -20,6 +21,7 @@ import { useProjectStore } from '../Project/ProjectConfigGState';
 import { useEngineStore } from './EngineGState';
 import { useNotify } from '../common/components/toast/ToastContext';
 import { useTranslation } from 'react-i18next';
+import { useDialogueStore } from '../DialogEditor/DialogueGState';
 
 function ToolBar() {
 	const activeTool = useToolsStore((state) => state.activeTool);
@@ -28,9 +30,13 @@ function ToolBar() {
 	const currentMapPath = useMapStore((state) => state.mapRelativePath);
 	const isMapDirty = useMapStore((state) => state.isDirty);
 	const { undo, redo } = useMapStore.temporal.getState();
+	const { undo: dialogueUndo, redo: dialogueRedo } = useDialogueStore.temporal.getState();
 	const { t } = useTranslation();
-
+	const isTranslateMode = useEngineStore((state) => state.translate);
+	const changeTranslateMode = useEngineStore((state) => state.changeTranslate);
 	const editorMode = useEngineStore((state) => state.editorMode);
+
+	const codeEditorMode = useEngineStore((state) => state.codeEditorMode);
 	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const isRunning = useEngineStore((state) => state.isRunning);
 	const runMode = useEngineStore((state) => state.runMode);
@@ -40,19 +46,64 @@ function ToolBar() {
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			console.log(editorMode);
-			if (editorMode === 'map' && e.ctrlKey && e.key === 'z') {
+			if (!isTranslateMode && editorMode === 'map' && e.ctrlKey && e.key === 'z') {
 				e.preventDefault();
 				undo();
 			}
-			if (editorMode === 'map' && e.ctrlKey && (e.key === 'y' || (e.shiftKey && e.key === 'Z'))) {
+			if (
+				!isTranslateMode &&
+				editorMode === 'map' &&
+				e.ctrlKey &&
+				(e.key === 'y' || (e.shiftKey && e.key === 'Z'))
+			) {
 				e.preventDefault();
 				redo();
+			} else if (
+				!isTranslateMode &&
+				editorMode === 'code' &&
+				codeEditorMode === 'dialog' &&
+				e.ctrlKey &&
+				e.key === 'z'
+			) {
+				e.preventDefault();
+				dialogueUndo();
+			} else if (
+				!isTranslateMode &&
+				editorMode === 'code' &&
+				codeEditorMode === 'dialog' &&
+				e.ctrlKey &&
+				(e.key === 'y' || (e.shiftKey && e.key === 'Z'))
+			) {
+				e.preventDefault();
+				dialogueRedo();
 			}
 		};
 		window.addEventListener('keydown', handleKeyDown);
 		return () => window.removeEventListener('keydown', handleKeyDown);
-	}, [undo, redo]);
+	}, [undo, redo, editorMode, codeEditorMode, dialogueUndo, dialogueRedo, isTranslateMode]);
+
+	const doUndo = () => {
+		if (editorMode === 'map') {
+			undo();
+		} else if (editorMode === 'code' && codeEditorMode === 'dialog') {
+			dialogueUndo();
+		}
+	};
+
+	const doRedo = () => {
+		if (editorMode === 'map') {
+			redo();
+		} else if (editorMode === 'code' && codeEditorMode === 'dialog') {
+			dialogueRedo();
+		}
+	};
+
+	const canUndo = () => {
+		return (
+			!isTranslateMode &&
+			(editorMode === 'map' || (editorMode === 'code' && codeEditorMode === 'dialog'))
+		);
+	};
 
 	const shouldDisablePlay = (): boolean => {
 		return isRunning && runMode === 'debug';
@@ -60,6 +111,11 @@ function ToolBar() {
 
 	const shouldDisableDebug = (): boolean => {
 		return (isRunning && runMode === 'play') || currentMapPath === null;
+	};
+
+	const handleSelectAreaCopy = () => {
+		setActiveTool('area-copy');
+		notify(t('areaCopy.title'), t('areaCopy.notifyBody'), 'success', 5000);
 	};
 
 	const handlePlay = async () => {
@@ -194,7 +250,7 @@ function ToolBar() {
 
 				<button
 					className={`tool-button ${activeTool === 'area-copy' ? 'active' : ''}`}
-					onClick={() => setActiveTool('area-copy')}
+					onClick={handleSelectAreaCopy}
 				>
 					<DragHandGesture />
 				</button>
@@ -247,32 +303,47 @@ function ToolBar() {
 					</>
 				)}
 				{editorMode === 'map' && (
-					<button onClick={() => changeEditorMode('code')} className="tool-button">
+					<button
+						onClick={() => changeEditorMode('code')}
+						className={`tool-button ${isTranslateMode ? 'disabled' : ''}`}
+						disabled={isTranslateMode}
+					>
 						<CodeBrackets />
 					</button>
 				)}
 				{editorMode === 'code' && (
-					<button onClick={() => changeEditorMode('map')} className="tool-button">
+					<button
+						onClick={() => changeEditorMode('map')}
+						className={`tool-button ${isTranslateMode ? 'disabled' : ''}`}
+						disabled={isTranslateMode}
+					>
 						<Codepen />
 					</button>
 				)}
+
+				<button
+					onClick={() => changeTranslateMode(!isTranslateMode)}
+					className={`tool-button ${isTranslateMode ? 'active' : ''}`}
+				>
+					<ChatBubbleTranslate />
+				</button>
 			</div>
 			<div className="other-tools">
 				<button
 					onClick={() => {
-						redo();
+						doRedo();
 					}}
-					className={`tool-button ${editorMode === 'code' ? 'disabled' : ''}`}
-					disabled={editorMode === 'code'}
+					className={`tool-button ${!canUndo() ? 'disabled' : ''}`}
+					disabled={!canUndo()}
 				>
 					<Redo />
 				</button>
 				<button
 					onClick={() => {
-						undo();
+						doUndo();
 					}}
-					className={`tool-button ${editorMode === 'code' ? 'disabled' : ''}`}
-					disabled={editorMode === 'code'}
+					className={`tool-button ${!canUndo() ? 'disabled' : ''}`}
+					disabled={!canUndo()}
 				>
 					<Undo />
 				</button>

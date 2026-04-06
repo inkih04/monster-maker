@@ -8,14 +8,15 @@ interface OpenFile {
 }
 
 interface OpenUiFile {
+	rmliPath: string;
 	htmlPath: string;
 	cssPath: string;
-	scriptPath: string | null; 
+	scriptPath: string | null;
 	htmlContent: string;
 	cssContent: string;
 	savedHtmlContent: string;
 	savedCssContent: string;
-	savedScriptPath: string | null; 
+	savedScriptPath: string | null;
 	isDirty: boolean;
 }
 
@@ -30,6 +31,7 @@ interface CodeEditorStore {
 	closeFile: () => void;
 
 	setOpenUiFile: (
+		rmliPath: string,
 		htmlPath: string,
 		cssPath: string,
 		htmlContent: string,
@@ -38,7 +40,7 @@ interface CodeEditorStore {
 	) => void;
 	updateHtmlContent: (content: string) => void;
 	updateCssContent: (content: string) => void;
-	updateScriptPath: (path: string | null) => void; 
+	updateScriptPath: (path: string | null) => void;
 	markUiSaved: () => void;
 	closeUiFile: () => void;
 
@@ -83,10 +85,11 @@ export const useCodeEditorStore = create<CodeEditorStore>((set) => ({
 
 	closeFile: () => set({ openFile: null }),
 
-	setOpenUiFile: (htmlPath, cssPath, htmlContent, cssContent, scriptPath = null) =>
+	setOpenUiFile: (rmliPath, htmlPath, cssPath, htmlContent, cssContent, scriptPath = null) =>
 		set({
 			openFile: null,
 			openUiFile: {
+				rmliPath,
 				htmlPath,
 				cssPath,
 				scriptPath,

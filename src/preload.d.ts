@@ -3,6 +3,7 @@ import { GameConfig } from '../global/types/engineConfig';
 import FolderNode from '../global/types/folderNode';
 import { FileData } from '../global/types/fileData';
 import { ProjectFile } from '../global/types/projectFile';
+import { TileSetConfig, TileSetSubImage } from '../global/types/tileSetConfig';
 
 export {};
 
@@ -91,7 +92,7 @@ declare global {
 			) => Promise<{ success: boolean; error?: string }>;
 
 			onCreateNewFile: (
-				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void
+				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog') => void
 			) => () => void;
 			onAddNewFile: (callback: () => void) => () => void;
 			onCloseProject: (callback: () => void) => () => void;
@@ -141,6 +142,24 @@ declare global {
 				pd: ProjectData,
 				gameConfig: GameConfig
 			) => Promise<{ success: boolean; error?: string }>;
+
+			splitTileset: (
+				imagePath: string,
+				configPath: string,
+				existingConfig: TileSetConfig,
+				maxGpuSize: number
+			) => Promise<{
+				success: boolean;
+				subImages?: TileSetSubImage[];
+				atlasWidth?: number;
+				atlasHeight?: number;
+				error?: string;
+			}>;
+			saveLocalFile: (
+				defaultFileName: string,
+				content: string
+			) => Promise<{ success: boolean; error?: string }>;
+			importLocalFile: () => Promise<{ success: boolean; content?: string; error?: string }>;
 		};
 	}
 }

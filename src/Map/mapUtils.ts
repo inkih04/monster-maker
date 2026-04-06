@@ -3,6 +3,7 @@ import { Layer } from '../domain/ecs/layer';
 import { PaintedTile, SelectedTilePosition } from './MapGState';
 import { TileSetData, TileSelection } from '../Tileset/TileSetGState';
 import { ProjectData } from '../../global/types/projectData';
+import { TileSetSubImage } from '../../global/types/tileSetConfig';
 
 interface PreviewPosition {
 	x: number;
@@ -56,6 +57,38 @@ interface DrawSelectionPreviewParams {
 	isLayerLocked?: boolean;
 }
 
+export function getSubImageForTile(
+	tilesetX: number,
+	tilesetY: number,
+	tileSize: number,
+	subImages?: TileSetSubImage[]
+): { subImagePath: string | null; localX: number; localY: number } {
+	if (!subImages || subImages.length === 0) {
+		return { subImagePath: null, localX: tilesetX * tileSize, localY: tilesetY * tileSize };
+	}
+
+	const pixelX = tilesetX * tileSize;
+	const pixelY = tilesetY * tileSize;
+
+	for (const subImage of subImages) {
+		const subImageEndX = subImage.atlasOffsetX + subImage.widthInTiles * tileSize;
+		const subImageEndY = subImage.atlasOffsetY + subImage.heightInTiles * tileSize;
+
+		if (
+			pixelX >= subImage.atlasOffsetX &&
+			pixelX < subImageEndX &&
+			pixelY >= subImage.atlasOffsetY &&
+			pixelY < subImageEndY
+		) {
+			const localX = pixelX - subImage.atlasOffsetX;
+			const localY = pixelY - subImage.atlasOffsetY;
+			return { subImagePath: subImage.file, localX, localY };
+		}
+	}
+
+	return { subImagePath: null, localX: pixelX, localY: pixelY };
+}
+
 export const createTileEntity = (
 	entityId: string,
 	layer: Layer,
@@ -64,32 +97,56 @@ export const createTileEntity = (
 	tilesetX: number,
 	tilesetY: number,
 	tileSize: number,
-	spriteSheetPath: string,
+	originalImagePath: string,
 	mapSize: number,
+	subImages?: TileSetSubImage[],
 	name?: string
-): Entity => ({
-	id: entityId,
-	tag: 'TILEMAP',
-	layer,
-	name,
-	components: {
-		POSITION: {
-			x: mapX * mapSize,
-			y: mapY * mapSize,
-			rotation: 0,
+): Entity => {
+	const { subImagePath, localX, localY } = getSubImageForTile(
+		tilesetX,
+		tilesetY,
+		tileSize,
+		subImages
+	);
+
+	let finalSpriteSheetPath = originalImagePath;
+
+	if (subImagePath) {
+		const lastSlash = Math.max(
+			originalImagePath.lastIndexOf('/'),
+			originalImagePath.lastIndexOf('\\')
+		);
+		const dir = lastSlash >= 0 ? originalImagePath.substring(0, lastSlash + 1) : '';
+
+		const cleanDir = dir.replace(/\\/g, '/');
+		const cleanSub = subImagePath.replace(/\\/g, '/');
+		finalSpriteSheetPath = cleanDir + cleanSub;
+	}
+
+	return {
+		id: entityId,
+		tag: 'TILEMAP',
+		layer,
+		name,
+		components: {
+			POSITION: {
+				x: mapX * mapSize,
+				y: mapY * mapSize,
+				rotation: 0,
+			},
+			RENDER: {
+				spriteSheetPath: finalSpriteSheetPath,
+				x: localX,
+				y: localY,
+				w: tileSize,
+				h: tileSize,
+				width: mapSize,
+				height: mapSize,
+				shader: 'default',
+			},
 		},
-		RENDER: {
-			spriteSheetPath,
-			x: tilesetX * tileSize,
-			y: tilesetY * tileSize,
-			w: tileSize,
-			h: tileSize,
-			width: mapSize,
-			height: mapSize,
-			shader: 'default',
-		},
-	},
-});
+	};
+};
 
 export function drawCollisionDebug({ ctx, entities, zoom }: DrawCollisionDebugParams): void {
 	Object.values(entities).forEach((entity) => {
@@ -210,13 +267,11 @@ export function drawEraserPreview({
 	isActive,
 	paintedTiles,
 	activeLayer,
-	tileSets,
 	tilesetImages,
-	tileSize,
 	zoom,
 	entities,
 	isLayerLocked = false,
-}: DrawEraserPreviewParams): void {
+}: Omit<DrawEraserPreviewParams, 'tileSize' | 'tileSets'>): void {
 	if (isActive || !previewPosition) return;
 
 	const tileUnderCursor = paintedTiles.find(
@@ -226,15 +281,14 @@ export function drawEraserPreview({
 
 	if (!tileUnderCursor) return;
 
-	const tileTileset = tileSets[tileUnderCursor.spriteSheetPath];
-	const tilesetImage = tilesetImages[tileUnderCursor.spriteSheetPath];
-
-	if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
-
 	const entityData = entities[tileUnderCursor.entityId];
 	const renderComponent = entityData?.components.RENDER;
-
 	if (!renderComponent) return;
+
+	const finalPath = renderComponent.spriteSheetPath;
+	const subImageElement = tilesetImages[finalPath];
+
+	if (!subImageElement) return;
 
 	const sourceX = renderComponent.x;
 	const sourceY = renderComponent.y;
@@ -244,12 +298,12 @@ export function drawEraserPreview({
 	const destWidth = renderComponent.width * zoom;
 	const destHeight = renderComponent.height * zoom;
 
-	const posX = Math.floor(tileUnderCursor.x) * tileSize * zoom;
-	const posY = Math.floor(tileUnderCursor.y) * tileSize * zoom;
+	const posX = Math.floor(tileUnderCursor.x) * renderComponent.width * zoom;
+	const posY = Math.floor(tileUnderCursor.y) * renderComponent.height * zoom;
 
 	ctx.globalAlpha = 0.5;
 	ctx.drawImage(
-		tilesetImage,
+		subImageElement,
 		sourceX,
 		sourceY,
 		sourceWidth,
@@ -272,13 +326,11 @@ export function drawSelectionPreview({
 	isActive,
 	paintedTiles,
 	activeLayer,
-	tileSets,
 	tilesetImages,
-	tileSize,
 	zoom,
 	entities,
 	isLayerLocked = false,
-}: DrawSelectionPreviewParams): void {
+}: Omit<DrawSelectionPreviewParams, 'tileSize' | 'tileSets'>): void {
 	if (isActive || !previewPosition) return;
 
 	const tileUnderCursor = paintedTiles.find(
@@ -288,15 +340,14 @@ export function drawSelectionPreview({
 
 	if (!tileUnderCursor) return;
 
-	const tileTileset = tileSets[tileUnderCursor.spriteSheetPath];
-	const tilesetImage = tilesetImages[tileUnderCursor.spriteSheetPath];
-
-	if (!tileTileset || !tilesetImage || !tileTileset.isLoaded) return;
-
 	const entityData = entities[tileUnderCursor.entityId];
 	const renderComponent = entityData?.components.RENDER;
-
 	if (!renderComponent) return;
+
+	const finalPath = renderComponent.spriteSheetPath;
+	const subImageElement = tilesetImages[finalPath];
+
+	if (!subImageElement) return;
 
 	const sourceX = renderComponent.x;
 	const sourceY = renderComponent.y;
@@ -306,12 +357,12 @@ export function drawSelectionPreview({
 	const destWidth = renderComponent.width * zoom;
 	const destHeight = renderComponent.height * zoom;
 
-	const posX = Math.floor(tileUnderCursor.x) * tileSize * zoom;
-	const posY = Math.floor(tileUnderCursor.y) * tileSize * zoom;
+	const posX = Math.floor(tileUnderCursor.x) * renderComponent.width * zoom;
+	const posY = Math.floor(tileUnderCursor.y) * renderComponent.height * zoom;
 
 	ctx.globalAlpha = 0.5;
 	ctx.drawImage(
-		tilesetImage,
+		subImageElement,
 		sourceX,
 		sourceY,
 		sourceWidth,
@@ -330,25 +381,32 @@ export function drawSelectionPreview({
 
 interface DrawSelectionOverlayParams {
 	ctx: CanvasRenderingContext2D;
-	selectedTilePosition: SelectedTilePosition | null;
+	selectedTilePositions: SelectedTilePosition[];
 	tileSize: number;
 	zoom: number;
 }
 
 export function drawSelectionOverlay({
 	ctx,
-	selectedTilePosition,
+	selectedTilePositions,
 	tileSize,
 	zoom,
 }: DrawSelectionOverlayParams): void {
-	if (!selectedTilePosition) return;
+	if (!selectedTilePositions || selectedTilePositions.length === 0) return;
 
 	const scaledTileSize = tileSize * zoom;
-	const x = selectedTilePosition.x * scaledTileSize;
-	const y = selectedTilePosition.y * scaledTileSize;
 
-	ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
-	ctx.fillRect(x, y, scaledTileSize, scaledTileSize);
+	selectedTilePositions.forEach((pos, index) => {
+		const x = pos.x * scaledTileSize;
+		const y = pos.y * scaledTileSize;
+
+		ctx.fillStyle = index === 0 ? 'rgba(0, 255, 0, 0.45)' : 'rgba(0, 200, 255, 0.35)';
+		ctx.fillRect(x, y, scaledTileSize, scaledTileSize);
+
+		ctx.strokeStyle = index === 0 ? 'rgba(0, 255, 80, 0.9)' : 'rgba(0, 180, 255, 0.8)';
+		ctx.lineWidth = 1.5;
+		ctx.strokeRect(x + 0.75, y + 0.75, scaledTileSize - 1.5, scaledTileSize - 1.5);
+	});
 }
 
 export async function loadSingleTileset(
@@ -368,7 +426,16 @@ export async function loadSingleTileset(
 
 		const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
 		const completePath = await window.api.pathUnion(fullProjectPath, spriteSheetPath);
-		console.log(spriteSheetPath);
+
+		const result = await window.api.getFile(jsonPath, '', currentProject);
+		let config = {};
+		if (result.success && result.content?.content) {
+			try {
+				config = JSON.parse(result.content.content);
+			} catch (e) {
+				console.error('Error parsing config on loadSingleTileset', e);
+			}
+		}
 
 		const newTileSet: TileSetData = {
 			id: crypto.randomUUID(),
@@ -378,6 +445,7 @@ export async function loadSingleTileset(
 			tileSizeX: currentProject?.defaultTilesize || 16,
 			tileSizeY: currentProject?.defaultTilesize || 16,
 			isLoaded: true,
+			...config,
 		};
 
 		return newTileSet;
@@ -385,4 +453,92 @@ export async function loadSingleTileset(
 		console.error(`Error loading tileset ${spriteSheetPath}:`, error);
 		return null;
 	}
+}
+
+interface DrawAreaCopyPreviewParams {
+	ctx: CanvasRenderingContext2D;
+	previewPosition: { x: number; y: number } | null;
+	selectedTilePositions: SelectedTilePosition[];
+	paintedTiles: PaintedTile[];
+	tilesetImages: Record<string, HTMLImageElement>;
+	entities: Record<string, import('../domain/ecs/entity').default>;
+	tileSize: number;
+	zoom: number;
+}
+
+export function drawAreaCopyPreview({
+	ctx,
+	previewPosition,
+	selectedTilePositions,
+	paintedTiles,
+	tilesetImages,
+	entities,
+	tileSize,
+	zoom,
+}: DrawAreaCopyPreviewParams): void {
+	if (selectedTilePositions.length > 0) {
+		const scaledTileSize = tileSize * zoom;
+		selectedTilePositions.forEach((pos, index) => {
+			const x = pos.x * scaledTileSize;
+			const y = pos.y * scaledTileSize;
+			ctx.fillStyle = index === 0 ? 'rgba(203, 166, 247, 0.35)' : 'rgba(180, 140, 240, 0.28)';
+			ctx.fillRect(x, y, scaledTileSize, scaledTileSize);
+			ctx.strokeStyle = 'rgba(203, 166, 247, 0.85)';
+			ctx.lineWidth = 1.5;
+			ctx.strokeRect(x + 0.75, y + 0.75, scaledTileSize - 1.5, scaledTileSize - 1.5);
+		});
+	}
+
+	if (!previewPosition || selectedTilePositions.length === 0) return;
+
+	const minX = Math.min(...selectedTilePositions.map((p) => p.x));
+	const minY = Math.min(...selectedTilePositions.map((p) => p.y));
+
+	ctx.globalAlpha = 0.55;
+
+	selectedTilePositions.forEach((pos) => {
+		const offsetX = pos.x - minX;
+		const offsetY = pos.y - minY;
+		const destX = previewPosition.x + offsetX;
+		const destY = previewPosition.y + offsetY;
+
+		const srcTile = paintedTiles.find(
+			(t) => t.x === pos.x && t.y === pos.y && t.layer === pos.layer
+		);
+		if (!srcTile) return;
+
+		const entityData = entities[srcTile.entityId];
+		const renderComponent = entityData?.components.RENDER;
+		if (!renderComponent) return;
+
+		const img = tilesetImages[renderComponent.spriteSheetPath];
+		if (!img) return;
+
+		const destWidth = renderComponent.width * zoom;
+		const destHeight = renderComponent.height * zoom;
+
+		ctx.drawImage(
+			img,
+			renderComponent.x,
+			renderComponent.y,
+			renderComponent.w,
+			renderComponent.h,
+			destX * destWidth,
+			destY * destHeight,
+			destWidth,
+			destHeight
+		);
+	});
+
+	const scaledTileSize = tileSize * zoom;
+	selectedTilePositions.forEach((pos) => {
+		const offsetX = pos.x - minX;
+		const offsetY = pos.y - minY;
+		const destX = previewPosition.x + offsetX;
+		const destY = previewPosition.y + offsetY;
+		ctx.fillStyle = 'rgba(137, 220, 235, 0.25)';
+		ctx.fillRect(destX * scaledTileSize, destY * scaledTileSize, scaledTileSize, scaledTileSize);
+	});
+
+	ctx.globalAlpha = 1;
 }

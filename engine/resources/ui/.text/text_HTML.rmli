@@ -3,16 +3,16 @@
     <title>Dialogue UI</title>
     <link type="text/rcss" href="text_CSS.css"/>
 </head>
-<body class="screen-container">
+<body class="screen-container" data-model="dialogue_box">
     <div class="dialogue-container">
         <div class="speaker-tag">
-            <p>Anciano</p>
+            <p>{{ nombre_personaje }}</p>
         </div>
-        
+
         <div class="message-body">
-            <p class="message-text">Bienvenido, joven aventurero. Este camino es peligroso si decides ir solo.</p>
+            <p class="message-text">{{ texto_dialogo }}</p>
         </div>
-        
+
         <div class="action-footer">
             <p class="blink-cursor">v</p>
         </div>

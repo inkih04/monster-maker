@@ -1,7 +1,3 @@
-//
-// Created by inkih on 6/12/25.
-//
-
 #include "EntityLoader.h"
 #include "PositionComponent.h"
 #include "RenderComponent.h"
@@ -13,6 +9,9 @@
 #include "InteractionComponent.h"
 #include "MovementComponent.h"
 #include "ScriptComponet.h"
+#include "PersistenceComponent.h"
+#include "SaveManager.h"
+#include "ScriptEngine.h" 
 
 void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManager& entityManager) {
     std::ifstream file(filePath);
@@ -26,6 +25,13 @@ void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManag
     } catch (const json::exception& e) {
         std::cout << "[ENGINE][ERROR] Error parsing JSON: " << e.what() << std::endl; return;
     }
+    std::string mapScriptPath = "";
+    if (mapData.contains("mapScript") && !mapData["mapScript"].is_null()) {
+        mapScriptPath = mapData["mapScript"].get<std::string>();
+    }
+
+    ScriptEngine::getInstance().setMapScript(mapScriptPath);
+    ScriptEngine::getInstance().initMapScript();
 
     if (!mapData.contains("entities")) {
         std::cout << "[ENGINE][ERROR] No 'entities' array found in " << filePath << std::endl;
@@ -45,6 +51,7 @@ void EntityLoader::loadEntitiesFromFile(const std::string& filePath, EntityManag
 void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityManager) {
     EntityTag tag = EntityTag::UNKNOWN;
     EntityLayer layer = EntityLayer::UNKNOWN;
+    std::string id = "";
 
     if (entityJson.contains("tag")) {
         std::string tagStr = entityJson["tag"].get<std::string>();
@@ -56,7 +63,24 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
         layer = stringToLayer(layerStr);
     }
 
-    Entity* entity = entityManager.createEntity(tag, layer);
+    if (entityJson.contains("id")) {
+        id = entityJson["id"].get<std::string>();
+    }
+
+    if (entityJson.contains("components") && entityJson["components"].contains("PERSISTENCE")) {
+        const std::string& saveFlag = entityJson["components"]["PERSISTENCE"].value("saveFlag", "");
+        if (!saveFlag.empty()) {
+            auto& save = SaveManager::getInstance();
+            if (!save.has(saveFlag)) {
+                save.setFalse(saveFlag);
+            }
+            if (save.isTrue(saveFlag)) {
+                return;
+            }
+        }
+    }
+
+    Entity* entity = entityManager.createEntity(tag, layer, id);
 
     if (!entityJson.contains("components")) {
         std::cout << "[ENGINE][ERROR] Entity with no components found" << std::endl;
@@ -86,8 +110,9 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
             entity->addComponent(ComponentsType::COLLIDER, std::move(colliderComponent));
         }
     }
+
     if (components.contains("INTERACTION")) {
-        entity->addComponent(ComponentsType::INTERACTION, std::move(std::make_unique<InteractionComponent>()));
+        entity->addComponent(ComponentsType::INTERACTION, std::make_unique<InteractionComponent>());
     }
 
     if (components.contains("ANIMATION")) {
@@ -96,7 +121,7 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
     }
 
     if (components.contains("MOVEMENT")) {
-        entity->addComponent(ComponentsType::MOVEMENT, std::move(std::make_unique<MovementComponent>()));
+        entity->addComponent(ComponentsType::MOVEMENT, std::make_unique<MovementComponent>());
     }
 
     if (components.contains("SCRIPT")) {
@@ -105,26 +130,73 @@ void EntityLoader::parseEntity(const json& entityJson, EntityManager& entityMana
             entity->addComponent(ComponentsType::SCRIPT, std::move(scriptComponent));
         }
     }
+
+    if (components.contains("PERSISTENCE")) {
+        const std::string& saveFlag = components["PERSISTENCE"].value("saveFlag", "");
+        if (!saveFlag.empty()) {
+            entity->addComponent(ComponentsType::PERSISTENCE, std::make_unique<PersistentComponent>(saveFlag));
+        }
+    }
 }
 
 std::unique_ptr<Component> EntityLoader::createPositionComponent(const json& data) {
     float x = data.value("x", 0.0f);
     float y = data.value("y", 0.0f);
-
     return std::make_unique<PositionComponent>(x, y);
 }
 
 std::unique_ptr<Component> EntityLoader::createScriptComponent(const json& data) {
     if (!data.contains("path")) {
-        std::cout << "[ENGINE][ERROR] ScriptComponent requires a 'path' field with the .lua file path" << std::endl; return nullptr;
+        std::cout << "[ENGINE][ERROR] ScriptComponent requires a 'path' field" << std::endl;
     }
-
-    std::string path = data["path"];
-
+    std::string path = data["path"].get<std::string>();
     if (path.empty()) {
-        std::cout << "[ENGINE][ERROR] ScriptComponent 'path' cannot be empty" << std::endl; return nullptr;
+        std::cout << "[ENGINE][ERROR] ScriptComponent 'path' cannot be empty" << std::endl;
+    }
+    if (data.contains("properties") && data["properties"].is_object()) {
+        sol::table props = jsonToSolTable(data["properties"]);
+        return std::make_unique<ScriptComponent>(path, std::move(props));
     }
     return std::make_unique<ScriptComponent>(path);
+}
+
+sol::table EntityLoader::jsonToSolTable(const json& obj) {
+    auto& lua = ScriptEngine::getInstance().getState();
+    sol::table table = lua.create_table();
+
+    for (const auto& [key, value] : obj.items()) {
+        if (value.is_string()) {
+            table[key] = value.get<std::string>();
+
+        } else if (value.is_boolean()) {
+            table[key] = value.get<bool>();
+
+        } else if (value.is_number_integer()) {
+            table[key] = value.get<int>();
+
+        } else if (value.is_number_float()) {
+            table[key] = value.get<double>();
+
+        } else if (value.is_object()) {
+            table[key] = jsonToSolTable(value);
+
+        } else if (value.is_array()) {
+            sol::table arr = lua.create_table();
+            int i = 1;
+            for (const auto& elem : value) {
+                if      (elem.is_string())          arr[i] = elem.get<std::string>();
+                else if (elem.is_boolean())         arr[i] = elem.get<bool>();
+                else if (elem.is_number_integer())  arr[i] = elem.get<int>();
+                else if (elem.is_number_float())    arr[i] = elem.get<double>();
+                else if (elem.is_object())          arr[i] = jsonToSolTable(elem);
+                ++i;
+            }
+            table[key] = arr;
+
+        }
+    }
+
+    return table;
 }
 
 std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data) {
@@ -133,16 +205,13 @@ std::unique_ptr<Component> EntityLoader::createRenderComponent(const json& data)
     }
 
     std::string spriteSheetPath = data["spriteSheetPath"];
-
     float x = data.value("x", -1.0f);
     float y = data.value("y", -1.0f);
     float w = data.value("w", -1.0f);
     float h = data.value("h", -1.0f);
     std::string shader = data.value("shader", "default");
-
     float width = data.value("width", 32.0f);
     float height = data.value("height", 32.0f);
-
     int shaderMode = EditorConfig::getInstance().getShaderMode(shader);
 
     return std::make_unique<RenderComponent>(spriteSheetPath, x, y, w, h, width, height, shaderMode);
@@ -154,7 +223,6 @@ std::unique_ptr<Component> EntityLoader::createColliderComponent(const json& dat
     int offsetX = data.value("offsetX", 0.0f);
     int offsetY = data.value("offsetY", 0.0f);
     bool isTrigger = data.value("isTrigger", false);
-
     return std::make_unique<CollisionComponent>(width, height, offsetX, offsetY, isTrigger);
 }
 
@@ -167,22 +235,18 @@ std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& da
                 std::cout << "[ENGINE][WARN] Set '" << setName << "' has no 'animations' array, skipping" << std::endl;
                 continue;
             }
-
             for (const auto& animJson : setJson["animations"]) {
                 std::string name = animJson.value("name", "");
                 if (!animJson.contains("frames")) {
                     std::cout << "[ENGINE][ERROR] Animation '" << name << "' in set '" << setName << "' requires 'frames'" << std::endl;
                     continue;
                 }
-
                 std::vector<SpriteRect> frames = parseFrames(animJson["frames"]);
                 float frameDuration = animJson.value("frameDuration", 100.0f);
                 bool loop = animJson.value("loop", true);
-
                 animComponent->addAnimation(name, frames, frameDuration, loop, setName);
             }
         }
-
         std::string activeSet = data.value("activeSet", "default");
         animComponent->setActiveSet(activeSet);
 
@@ -193,14 +257,11 @@ std::unique_ptr<Component> EntityLoader::createAnimationComponent(const json& da
                 std::cout << "[ENGINE][ERROR] Animation '" << name << "' requires 'frames'" << std::endl;
                 continue;
             }
-
             std::vector<SpriteRect> frames = parseFrames(animJson["frames"]);
             float frameDuration = animJson.value("frameDuration", 100.0f);
             bool loop = animJson.value("loop", true);
-
             animComponent->addAnimation(name, frames, frameDuration, loop);
         }
-
     } else {
         std::cout << "[ENGINE][ERROR] AnimationComponent requires either 'sets' or 'animations'" << std::endl;
         return nullptr;

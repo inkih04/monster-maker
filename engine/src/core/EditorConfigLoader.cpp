@@ -1,7 +1,3 @@
-//
-// Created by inkih on 07/3/26.
-//
-
 #include "EditorConfigLoader.h"
 #include "EditorConfig.h"
 #include <fstream>
@@ -71,11 +67,19 @@ void EditorConfigLoader::parseGameConfig(const json& gameConfigJson) {
         config.setDefaultFontPath(gameConfigJson["defaultFont"].get<std::string>());
     }
 
+    if (gameConfigJson.contains("defaultLanguage") && gameConfigJson["defaultLanguage"].is_string()) {
+        config.setDefaultLanguagePath(gameConfigJson["defaultLanguage"].get<std::string>());
+    }
+
     if (gameConfigJson.contains("virtualWidth") && gameConfigJson["virtualWidth"].is_number_integer()) {
         config.setVirtualWidth(gameConfigJson["virtualWidth"].get<int>());
     }
 
     if (gameConfigJson.contains("virtualHeight") && gameConfigJson["virtualHeight"].is_number_integer()) {
         config.setVirtualHeight(gameConfigJson["virtualHeight"].get<int>());
+    }
+
+    if (gameConfigJson.contains("letterboxing") && gameConfigJson["letterboxing"].is_boolean()) {
+        config.setLetterboxing(gameConfigJson["letterboxing"].get<bool>());
     }
 }

@@ -1,12 +1,8 @@
-//
-// Created by inkih on 07/3/26.
-//
-
 #include "EditorConfig.h"
 
 #include "GameConfig.h"
 
-const std::string& EditorConfig::getInitialMapPath() const { return initialMapPath; }
+const std::string& EditorConfig::getInitialMapPath() const { return getTag(initialMapPath); }
 void EditorConfig::setInitialMapPath(const std::string& value) { initialMapPath = value; }
 
 const std::string& EditorConfig::getGameName() const { return gameName; }
@@ -15,17 +11,23 @@ void EditorConfig::setGameName(const std::string& value) { gameName = value; }
 const std::string& EditorConfig::getGameVersion() const { return gameVersion; }
 void EditorConfig::setGameVersion(const std::string& value) { gameVersion = value; }
 
-const std::string& EditorConfig::getImageIconPath() const { return imageIconPath; }
+const std::string& EditorConfig::getImageIconPath() const { return getTag(imageIconPath); }
 void EditorConfig::setImageIconPath(const std::string& value) { imageIconPath = value; }
 
-const std::string& EditorConfig::getDefaultFontPath() const { return defaultFontPath; }
+const std::string& EditorConfig::getDefaultFontPath() const { return getTag(defaultFontPath); }
 void EditorConfig::setDefaultFontPath(const std::string& value) { defaultFontPath = value; }
+
+const std::string& EditorConfig::getDefaultLanguagePath() const { return getTag(defaultLanguage); }
+void EditorConfig::setDefaultLanguagePath(const std::string& value) { defaultLanguage = value; }
 
 int EditorConfig::getVirtualWidth() const { return virtualWidth; }
 void EditorConfig::setVirtualWidth(int value) { virtualWidth = value; }
 
 int EditorConfig::getVirtualHeight() const { return virtualHeight; }
 void EditorConfig::setVirtualHeight(int value) { virtualHeight = value; }
+
+bool EditorConfig::getLetterboxing() const { return letterboxing; }
+void EditorConfig::setLetterboxing(bool value) { letterboxing = value; }
 
 const std::unordered_map<std::string, std::string>& EditorConfig::getTags() const { return maps; }
 void EditorConfig::setTags(const std::unordered_map<std::string, std::string>& value) { maps = value; }

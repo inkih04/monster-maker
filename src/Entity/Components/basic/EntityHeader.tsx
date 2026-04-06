@@ -2,8 +2,6 @@ import { Cube } from 'iconoir-react';
 import { useState, useRef, useEffect } from 'react';
 import Entity from '../../../domain/ecs/entity';
 import { Tag, TAG_OPTIONS } from '../../../domain/ecs/tags';
-;
-
 interface EntityHeaderProps {
 	entity: Entity;
 	onUpdateName: (name: string) => void;
@@ -89,6 +87,10 @@ function EntityHeader({ entity, onUpdateName, onUpdateTag }: EntityHeaderProps) 
 					)}
 				</div>
 			</div>
+			<div className="enityt--id-container">
+				<span className="enityt--id">id : {entity.id} </span>
+			</div>
+			<div className="entity--separator"></div>
 			<div className="entity--row2">
 				<div className="entity--tag" ref={tagDropdownRef}>
 					<span>Tag :</span>

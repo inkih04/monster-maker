@@ -13,7 +13,10 @@ import { useCodeEditorStore } from '../CodeEditor/CodeEditorGState';
 import { updateLiveCssContent } from '../CodeEditor/monacoConfig';
 import { useEffect } from 'react';
 import { useEngineConfigStore } from '../Tagger/useEngineConfigStore';
-import UiScriptPanel from './UiScriptPanel'; 
+import UiScriptPanel from './UiScriptPanel';
+import { useTranslation } from 'react-i18next';
+import { LocalizationTable } from '../DialogEditor/LocalizationTable';
+import DialogEditor from '../DialogEditor/DialogEditor';
 
 function LayoutCodeEditor() {
 	const codeEditorMode = useEngineStore((state) => state.codeEditorMode);
@@ -23,16 +26,18 @@ function LayoutCodeEditor() {
 			{codeEditorMode === null && <CodeEditorEmpty />}
 			{codeEditorMode === 'single' && <CodeEditorSingle />}
 			{codeEditorMode === 'duo' && <CodeEditorDuo />}
+			{codeEditorMode === 'dialog' && <CodeEditorDialogDuo />}
 		</div>
 	);
 }
 
 function CodeEditorEmpty() {
+	const { t } = useTranslation();
 	return (
 		<div className="layoutCodeEditor--empty">
 			<div className="layoutCodeEditor--empty-bg" />
 			<div className="layoutCodeEditor--empty-hint">
-				<span>No file open</span>
+				<span>{t('noFileOpen')}</span>
 			</div>
 		</div>
 	);
@@ -118,6 +123,32 @@ function CodeEditorDuo() {
 				</div>
 			</aside>
 
+			<CodeEditorLoadingOverlay />
+		</div>
+	);
+}
+
+function CodeEditorDialogDuo() {
+	const { leftPanelWidth, resizeLeftPanel } = useLayoutCodeEditorResize();
+
+	return (
+		<div className="layoutCodeEditor--DialogEditor-root" style={{ position: 'relative' }}>
+			<aside
+				className="layoutCodeEditor--DialogEditor-aside"
+				style={{
+					flex: `0 0 ${leftPanelWidth}px`,
+					marginTop: '10px',
+					minWidth: CODE_EDITOR_LIMITS.leftPanelWidth.min,
+				}}
+			>
+				<DialogEditor />
+			</aside>
+
+			<Spacer direction="vertical" resizable onResize={resizeLeftPanel} />
+
+			<div className="layoutCodeEditor--DialogEditor-main">
+				<LocalizationTable />
+			</div>
 			<CodeEditorLoadingOverlay />
 		</div>
 	);

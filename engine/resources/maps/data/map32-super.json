@@ -2900,37 +2900,6 @@
       }
     },
     {
-      "id": "tile_1769196403878_lygscm7pn",
-      "tag": "TILEMAP",
-      "layer": "ground",
-      "components": {
-        "POSITION": {
-          "x": 352,
-          "y": 32,
-          "rotation": 0
-        },
-        "RENDER": {
-          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
-          "x": 128,
-          "y": 2304,
-          "w": 32,
-          "h": 32,
-          "width": 32,
-          "height": 32
-        },
-        "SCRIPT": {
-          "path": "/home/inkih/Desktop/test/Test1/resources/scripts/items/item.lua"
-        },
-        "COLLIDER": {
-          "width": 32,
-          "height": 32,
-          "offsetX": 0,
-          "offsetY": 0,
-          "isTrigger": false
-        }
-      }
-    },
-    {
       "id": "tile_1769196404883_5janvi3dq",
       "tag": "TILEMAP",
       "layer": "ground",
@@ -10838,9 +10807,11 @@
           "rotation": 0
         },
         "COLLIDER": {
-          "width": 32,
-          "height": 32,
-          "isTrigger": true
+          "width": 16,
+          "height": 8,
+          "isTrigger": true,
+          "offsetX": 15,
+          "offsetY": 21
         },
         "SCRIPT": {
           "path": "resources/scripts/trigger/trigger.lua"
@@ -10934,9 +10905,10 @@
           "height": 32
         },
         "COLLIDER": {
-          "width": 32,
+          "width": 8,
           "height": 32,
-          "isTrigger": true
+          "isTrigger": true,
+          "offsetX": 19
         },
         "SCRIPT": {
           "path": "resources/scripts/trigger/trigger.lua"
@@ -11021,9 +10993,10 @@
           "height": 32
         },
         "COLLIDER": {
-          "width": 32,
-          "height": 32,
-          "isTrigger": true
+          "width": 8,
+          "height": 8,
+          "isTrigger": true,
+          "offsetX": 19
         },
         "SCRIPT": {
           "path": "resources/scripts/trigger/trigger.lua"
@@ -12942,9 +12915,6 @@
           "h": 32,
           "width": 32,
           "height": 32
-        },
-        "SCRIPT": {
-          "path": "resources/scripts/items/item.lua"
         },
         "COLLIDER": {
           "width": 32,
@@ -18060,7 +18030,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18081,7 +18052,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18102,7 +18074,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18145,7 +18118,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18166,7 +18140,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18187,7 +18162,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18384,7 +18360,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18405,7 +18382,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18426,7 +18404,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18489,7 +18468,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18531,7 +18511,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18552,7 +18533,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18573,7 +18555,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18594,7 +18577,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18615,7 +18599,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18658,7 +18643,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18679,7 +18665,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18700,7 +18687,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18721,7 +18709,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18826,7 +18815,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -18847,7 +18837,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -19561,7 +19552,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -19582,7 +19574,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -19603,7 +19596,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -19624,7 +19618,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -21808,7 +21803,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -21913,7 +21909,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -21934,7 +21931,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -21976,7 +21974,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -21997,7 +21996,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -22018,7 +22018,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -22039,7 +22040,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -22081,7 +22083,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -22102,7 +22105,8 @@
           "w": 32,
           "h": 32,
           "width": 32,
-          "height": 32
+          "height": 32,
+          "shader": "water"
         }
       }
     },
@@ -25305,6 +25309,188 @@
           "shader": "grass"
         }
       }
+    },
+    {
+      "id": "tile_1773483458471_bycbbqm35",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 704,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 416,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1773483458471_z65jy3ryd",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 736,
+          "y": 256,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 224,
+          "y": 416,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1773483458471_pr5ggnq7p",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 704,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 448,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1773483458471_w16hkmkm4",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 736,
+          "y": 288,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 224,
+          "y": 448,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1773483462859_is9d2lljq",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 704,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 192,
+          "y": 384,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1773483462859_7ubhc57b6",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 736,
+          "y": 224,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 224,
+          "y": 384,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32
+        }
+      }
+    },
+    {
+      "id": "tile_1774369543222_o6wy1hb3i",
+      "tag": "TILEMAP",
+      "layer": "ground",
+      "components": {
+        "POSITION": {
+          "x": 352,
+          "y": 32,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/maps/tilesets/tileset32.png",
+          "x": 96,
+          "y": 2240,
+          "w": 32,
+          "h": 32,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        }
+      }
+    },
+    {
+      "id": "tile_1774475972838_gn719yaeh",
+      "tag": "TILEMAP",
+      "layer": "decoration",
+      "components": {
+        "POSITION": {
+          "x": 64,
+          "y": 96,
+          "rotation": 0
+        },
+        "RENDER": {
+          "spriteSheetPath": "resources/sprites/apoloPechamen.png",
+          "x": 0,
+          "y": 0,
+          "w": 64,
+          "h": 64,
+          "width": 32,
+          "height": 32,
+          "shader": "default"
+        },
+        "SCRIPT": {
+          "path": "resources/scripts/apollo.lua"
+        },
+        "COLLIDER": {
+          "width": 24,
+          "height": 32,
+          "offsetX": 3,
+          "offsetY": 0,
+          "isTrigger": false
+        },
+        "INTERACTION": {}
+      },
+      "name": "Apollo"
     }
   ]
 }

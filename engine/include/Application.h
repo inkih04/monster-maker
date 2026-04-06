@@ -6,6 +6,10 @@
 #define POKEMONGAMEENGINE_APPLICATION_H
 #include "Engine.h"
 #include <memory>
+
+#include "DataManager.h"
+#include "SaveManager.h"
+#include "SessionManager.h"
 #include "StateManager.h"
 
 

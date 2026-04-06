@@ -11,12 +11,20 @@ interface PreviewPosition {
 interface UseBrushToolResult {
 	isActive: boolean;
 	previewPosition: PreviewPosition | null;
-	
+
 	setIsActive: (value: boolean) => void;
 	setPreviewPosition: (pos: PreviewPosition | null) => void;
-	
-	onTileClick: (tileX: number, tileY: number) => void;
-	onTileDrag: (tileX: number, tileY: number) => void;
+
+	onTileClick: (
+		tileX: number,
+		tileY: number,
+		modifiers?: { ctrl?: boolean; shift?: boolean }
+	) => void;
+	onTileDrag: (
+		tileX: number,
+		tileY: number,
+		modifiers?: { ctrl?: boolean; shift?: boolean }
+	) => void;
 }
 
 export function useBrushTool(): UseBrushToolResult {
@@ -99,14 +107,14 @@ export function useBrushTool(): UseBrushToolResult {
 	);
 
 	const onTileClick = useCallback(
-		(tileX: number, tileY: number) => {
+		(tileX: number, tileY: number, _modifiers?: { ctrl?: boolean; shift?: boolean }) => {
 			paintTile(tileX, tileY);
 		},
 		[paintTile]
 	);
 
 	const onTileDrag = useCallback(
-		(tileX: number, tileY: number) => {
+		(tileX: number, tileY: number, _modifiers?: { ctrl?: boolean; shift?: boolean }) => {
 			paintTile(tileX, tileY);
 		},
 		[paintTile]

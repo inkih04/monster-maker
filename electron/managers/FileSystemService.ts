@@ -60,6 +60,8 @@ export class FileSystemService {
 			base,
 			path.join(base, 'ui'),
 			path.join(base, 'fonts'),
+			path.join(base, 'dialogues'),
+			path.join(base, '.locals'),
 			path.join(base, 'shaders'),
 			path.join(base, 'maps'),
 			path.join(base, 'maps', 'data'),

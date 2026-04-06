@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import './UiFilePreview.css';
 import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
+import { useEngineConfigStore } from '../../Tagger/useEngineConfigStore';
 import { useTranslation } from 'react-i18next';
 
 interface RmluiWarning {
@@ -97,6 +98,8 @@ function buildSrcDoc(htmlContent: string, cssContent: string): string {
 	const { bodyHtml, bodyAttrs, headStyle } = extractRmlParts(htmlContent);
 	const normalizedCss = injectBorderStyleWhereNeeded(cssContent);
 
+	const baseFontSize = '8px';
+
 	return `<!DOCTYPE html>
 <html>
 <head>
@@ -110,6 +113,7 @@ html, body {
   padding: 0;
   overflow: hidden;
   background: transparent;
+  font-size: ${baseFontSize};
 }
 ${headStyle}
 ${normalizedCss}
@@ -156,6 +160,9 @@ function UiFilePreview() {
 	const cssContent = useCodeEditorStore((s) => s.openUiFile?.cssContent ?? '');
 	const htmlPath = useCodeEditorStore((s) => s.openUiFile?.htmlPath ?? '');
 
+	const virtualWidth = useEngineConfigStore((s) => s.gameConfig.virtualWidth);
+	const virtualHeight = useEngineConfigStore((s) => s.gameConfig.virtualHeight);
+
 	const warnings = useMemo(() => getRmluiWarnings(t), [t]);
 	const srcDoc = useMemo(() => buildSrcDoc(htmlContent, cssContent), [htmlContent, cssContent]);
 	const detectedWarnings = useMemo(
@@ -163,15 +170,50 @@ function UiFilePreview() {
 		[cssContent, warnings]
 	);
 
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [scale, setScale] = useState(1);
+
+	useEffect(() => {
+		const container = containerRef.current;
+		if (!container) return;
+
+		const observer = new ResizeObserver((entries) => {
+			for (const entry of entries) {
+				const { width, height } = entry.contentRect;
+				const scaleX = width / virtualWidth;
+				const scaleY = height / virtualHeight;
+				setScale(Math.min(scaleX, scaleY) * 1.15);
+			}
+		});
+
+		observer.observe(container);
+		return () => observer.disconnect();
+	}, [virtualWidth, virtualHeight]);
+
 	return (
-		<div className="uiFilePreview--overlay">
-			<iframe
-				key={htmlPath}
-				srcDoc={srcDoc}
-				className="uiFilePreview--frame"
-				sandbox="allow-same-origin"
-				title="Live preview"
-			/>
+		<div className="uiFilePreview--overlay" ref={containerRef}>
+			<div
+				style={{
+					width: `${virtualWidth}px`,
+					height: `${virtualHeight}px`,
+					transformOrigin: 'center center',
+					position: 'absolute',
+					top: '50%',
+					left: '50%',
+					transform: `translate(-50%, -50%) scale(${scale})`,
+					pointerEvents: 'none',
+				}}
+			>
+				<iframe
+					key={htmlPath}
+					srcDoc={srcDoc}
+					className="uiFilePreview--frame"
+					sandbox="allow-same-origin"
+					title="Live preview"
+					style={{ pointerEvents: 'auto', width: '100%', height: '100%' }}
+				/>
+			</div>
+
 			<WarningBanner warnings={detectedWarnings} />
 		</div>
 	);

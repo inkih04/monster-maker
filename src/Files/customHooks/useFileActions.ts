@@ -12,6 +12,8 @@ import { useTranslation } from 'react-i18next';
 import FolderNode from '../../../global/types/folderNode';
 import { useEngineStore } from '../../ToolBar/EngineGState';
 import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
+import { TileSetConfig } from '../../../global/types/tileSetConfig';
+import { useDialogueStore } from '../../DialogEditor/DialogueGState';
 
 export function useFileActions() {
 	const selectedFolder = useFolderStore((state) => state.selectedFolder);
@@ -28,6 +30,9 @@ export function useFileActions() {
 	const removeTileSet = useTileSetStore((state) => state.removeTileSet);
 	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const changeCodeEditorMode = useEngineStore((state) => state.changeCodeEditorMode);
+
+	const isTranslateMode = useEngineStore((state) => state.translate);
+	const changeTranslateMode = useEngineStore((state) => state.changeTranslate);
 
 	const { notify } = useNotify();
 	const { t } = useTranslation();
@@ -90,11 +95,49 @@ export function useFileActions() {
 			}
 			return;
 		}
+
+		if (file.type === 'dialog') {
+			handleOpenDialog(file);
+		}
+	};
+
+	const handleOpenDialog = async (file: FileItem) => {
+		changeCodeEditorMode('dialog');
+		changeEditorMode('code');
+		changeTranslateMode(false);
+
+		if (!selectedFolder?.path || !currentProject) return;
+
+		useDialogueStore.getState().setLoading(true);
+		useDialogueStore.getState().setError(null);
+
+		try {
+			const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+
+			if (!result.success || !result.content) {
+				useDialogueStore.getState().setError(result.error ?? 'Failed to load dialogue file');
+				return;
+			}
+
+			const parsed = JSON.parse(result.content.content) as {
+				dialogues: import('../../DialogEditor/DialogueGState').Dialogue[];
+			};
+			const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
+
+			useDialogueStore
+				.getState()
+				.loadDialogues(parsed.dialogues ?? [], relativePath, selectedFolder.path);
+		} catch (err) {
+			useDialogueStore.getState().setError(String(err));
+		} finally {
+			useDialogueStore.getState().setLoading(false);
+		}
 	};
 
 	const handleOpenScript = async (file: FileItem) => {
 		changeCodeEditorMode('single');
 		changeEditorMode('code');
+		changeTranslateMode(false);
 		if (!selectedFolder?.path || !currentProject) return;
 
 		useCodeEditorStore.getState().setIsLoadingFile(true);
@@ -114,6 +157,7 @@ export function useFileActions() {
 
 		changeEditorMode('code');
 		changeCodeEditorMode('duo');
+		changeTranslateMode(false);
 		useCodeEditorStore.getState().setIsLoadingFile(true);
 
 		try {
@@ -140,8 +184,8 @@ export function useFileActions() {
 			};
 
 			const [htmlResult, cssResult] = await Promise.all([
-				window.api.getFileFullPath(descriptor.htmlPath),
-				window.api.getFileFullPath(descriptor.cssPath),
+				window.api.getFile(descriptor.htmlPath, '', currentProject),
+				window.api.getFile(descriptor.cssPath, '', currentProject),
 			]);
 
 			if (!htmlResult.success || !cssResult.success) {
@@ -153,14 +197,17 @@ export function useFileActions() {
 				);
 				return;
 			}
+			const rmliPath = await window.api.pathUnion(selectedFolder.path, file.path);
 
 			useCodeEditorStore
 				.getState()
 				.setOpenUiFile(
+					rmliPath,
 					descriptor.htmlPath,
 					descriptor.cssPath,
-					htmlResult.content ?? '',
-					cssResult.content ?? ''
+					htmlResult.content?.content ?? '',
+					cssResult.content?.content ?? '',
+					descriptor.scriptPath
 				);
 		} catch (error) {
 			console.error('Error opening .ui file:', error);
@@ -183,24 +230,7 @@ export function useFileActions() {
 			const hiddenJsonName = '.' + fileName.replace(/\.[^/.]+$/, '.json');
 			const jsonPath = await window.api.pathUnion(directory, hiddenJsonName);
 			const configurationPath = await window.api.pathUnion(selectedFolder.path, jsonPath);
-			console.log(configurationPath);
 			const completeRelativePath = await window.api.pathUnion(selectedFolder.path, file.path);
-			console.log(completeRelativePath);
-
-			const result = await window.api.getFile(jsonPath, selectedFolder.path, currentProject);
-
-			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
-			const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
-
-			const sizeCheck = await validateImageSize(completePath);
-
-			if (!sizeCheck.valid) {
-				notify(
-					t('engine.notifications.warning_title'),
-					t('engine.notifications.texture_too_large', { height: sizeCheck.h, width: sizeCheck.w }),
-					'error'
-				);
-			}
 
 			const existingTileSet = useTileSetStore.getState().tilesets[completeRelativePath];
 			if (existingTileSet) {
@@ -208,40 +238,57 @@ export function useFileActions() {
 				return;
 			}
 
-			if (result.success) {
+			const result = await window.api.getFile(jsonPath, selectedFolder.path, currentProject);
+
+			const fullProjectPath = await window.api.pathUnion(currentProject.path, currentProject.name);
+			const completePath = await window.api.pathUnion(fullProjectPath, completeRelativePath);
+
+			let config: TileSetConfig = {
+				tileSizeX: currentProject?.defaultTilesize || 16,
+				tileSizeY: currentProject?.defaultTilesize || 16,
+			};
+			let isLoaded = false;
+
+			if (result.success && result.content?.content) {
 				try {
-					if (result.content?.content) {
-						const config = JSON.parse(result.content?.content);
-
-						const newTileSet: TileSetData = {
-							id: crypto.randomUUID(),
-							pathImg: completePath,
-							pathTileMapConfig: configurationPath,
-							relativePath: completeRelativePath,
-							tileSizeX: config.tileSizeX || 16,
-							tileSizeY: config.tileSizeY || 16,
-							isLoaded: true,
-						};
-
-						addTileSet(newTileSet);
-						setCurrentTileSet(completeRelativePath);
-					}
+					config = JSON.parse(result.content.content);
+					isLoaded = true;
+					changeTranslateMode(false);
 				} catch (parseError) {
 					console.error('Configuration JSON is corrupted', parseError);
 				}
 			} else {
-				const newTileSet: TileSetData = {
-					id: crypto.randomUUID(),
-					pathImg: completePath,
-					pathTileMapConfig: configurationPath,
-					relativePath: completeRelativePath,
-					tileSizeX: currentProject?.defaultTilesize || 16,
-					tileSizeY: currentProject?.defaultTilesize || 16,
-					isLoaded: false,
-				};
+				const sizeCheck = await validateImageSize(completePath);
+				if (!sizeCheck.valid) {
+					notify(
+						t('engine.notifications.warning_title'),
+						t('engine.notifications.texture_too_large', {
+							height: sizeCheck.h,
+							width: sizeCheck.w,
+						}),
+						'error'
+					);
+				}
+			}
 
-				addTileSet(newTileSet);
-				setCurrentTileSet(completeRelativePath);
+			const newTileSet: TileSetData = {
+				id: crypto.randomUUID(),
+				pathImg: completePath,
+				pathTileMapConfig: configurationPath,
+				relativePath: completeRelativePath,
+				tileSizeX: config.tileSizeX || 16,
+				tileSizeY: config.tileSizeY || 16,
+				isLoaded: isLoaded,
+				atlasWidth: config.atlasWidth,
+				atlasHeight: config.atlasHeight,
+				subImages: config.subImages,
+			};
+
+			addTileSet(newTileSet);
+			setCurrentTileSet(completeRelativePath);
+
+			if (!isLoaded) {
+				useTileSetStore.getState().openTileSizeDialog();
 			}
 		} catch (error) {
 			console.error('Error while tileset:', error);
@@ -268,6 +315,7 @@ export function useFileActions() {
 				mapId: parsedMap.mapId,
 				width: parsedMap.width || 100,
 				height: parsedMap.height || 100,
+				mapScript: parsedMap.mapScript,
 				tileSize: parsedMap.tileSize || currentProject.defaultTilesize || 16,
 				entities: Array.isArray(parsedMap.entities)
 					? parsedMap.entities.reduce(
@@ -280,6 +328,7 @@ export function useFileActions() {
 					: parsedMap.entities,
 			};
 
+			changeTranslateMode(false);
 			loadMap(mapData);
 			setMapRelativePath(result.content.relativePath);
 			setShowSaveConfirm(false);

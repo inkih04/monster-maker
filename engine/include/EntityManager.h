@@ -31,7 +31,7 @@ class EntityManager {
 
     public:
         EntityManager();
-        Entity* createEntity(EntityTag tag, EntityLayer layer);
+        Entity* createEntity(EntityTag tag, EntityLayer layer, std::string id = "");
         Entity* createEntity();
 
         void destroyEntity(Entity* entity);
@@ -47,6 +47,7 @@ class EntityManager {
         BordersMapService* getBordersMapService() const { return m_bordersMapService.get(); }
         Entity* adoptEntity(std::unique_ptr<Entity> entity, EntityTag tag, EntityLayer layer);
 
+        void registerCollisionEntity(Entity *entity);
 };
 
 #endif //POKEMONGAMEENGINE_ENTITYMANAGER_H

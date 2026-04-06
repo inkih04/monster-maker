@@ -35,6 +35,15 @@
 		0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+.enityt--id {
+	font-size: var(--font-ssm);
+	font-style: italic;
+}
+.enityt--id-container {
+	margin-left: 3rem;
+	margin-top: 8px;
+}
+
 .entity--entity.is-empty::before {
 	content: '';
 	position: absolute;
@@ -102,7 +111,6 @@
 
 .entity--row2 {
 	display: flex;
-	margin-top: 10px;
 	align-items: center;
 	justify-content: space-evenly;
 	position: relative;
@@ -216,4 +224,34 @@
 	font-family: inherit;
 	font-size: inherit;
 	padding: 0;
+}
+.entity--multiselect-header {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 12px 14px 10px;
+	margin-bottom: 4px;
+	background-color: var(--color-2);
+	border-radius: var(--radius);
+	border-left: 3px solid #6e8ef5;
+}
+
+.entity--multiselect-count {
+	font-size: var(--font-sm);
+	font-weight: 700;
+	color: #6e8ef5;
+	letter-spacing: 0.01em;
+}
+
+.entity--multiselect-hint {
+	font-size: var(--font-ssm);
+	color: var(--color-6);
+}
+
+
+.entity--multiselect-empty {
+	padding: var(--space-lg) var(--space-md);
+	color: var(--color-5);
+	font-size: var(--font-ssm);
+	text-align: center;
 }
