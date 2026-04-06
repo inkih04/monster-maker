@@ -10,7 +10,8 @@
     "nlohmann-json",
     "lua",
     "sol2",
-    "rmlui"
+    "rmlui",
+    "zlib"
   ],
   "overrides": [
     {

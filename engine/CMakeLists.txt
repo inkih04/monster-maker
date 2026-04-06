@@ -55,6 +55,7 @@ find_package(lua CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(RmlUi CONFIG REQUIRED)
+find_package(ZLIB REQUIRED)
 
 if(APPLE)
     find_library(OPENGL_FRAMEWORK OpenGL)

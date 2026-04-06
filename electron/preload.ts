@@ -62,6 +62,16 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.on('create-file-inline', subscription);
 		return () => ipcRenderer.removeListener('create-file-inline', subscription);
 	},
+	compressAllMaps: (pd: ProjectData) => ipcRenderer.invoke('config:compressAllMaps', pd),
+	decompressAllMaps: (pd: ProjectData) => ipcRenderer.invoke('config:decompressAllMaps', pd),
+	onCompressMapsRequest: (callback: () => void) => {
+		ipcRenderer.on('compress-maps-request', callback);
+		return () => ipcRenderer.removeAllListeners('compress-maps-request');
+	},
+	onDecompressMapsRequest: (callback: () => void) => {
+		ipcRenderer.on('decompress-maps-request', callback);
+		return () => ipcRenderer.removeAllListeners('decompress-maps-request');
+	},
 	onFileAction: (
 		callback: (action: string, fileData: { name: string; path: string; type: string }) => void
 	) => {

@@ -64,6 +64,8 @@
 	"errorFolder": "An error occurred while deleting the folder",
 	"persistenceComponent": "The PersistentComponent allows you to define a save flag that the engine checks when loading a map to decide if the entity should be instantiated or if it was already collected/destroyed.",
 	"menu": {
+		"compressMaps": "Compress maps",
+		"decompressMaps": "Decompress maps",
 		"dialog": "Dialog",
 		"view": "View",
 		"showCollisions": "Show Collisions",
