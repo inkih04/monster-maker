@@ -30,7 +30,6 @@
 	border-radius: 8px;
 }
 
-
 .tagger-header {
 	display: flex;
 	flex-shrink: 0;
@@ -73,7 +72,6 @@
 	opacity: 1;
 	font-weight: 600;
 }
-
 
 .tagger--bodycontainer {
 	flex: 1 1 0;

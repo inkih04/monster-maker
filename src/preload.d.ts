@@ -169,6 +169,9 @@ declare global {
 				content: string
 			) => Promise<{ success: boolean; error?: string }>;
 			importLocalFile: () => Promise<{ success: boolean; content?: string; error?: string }>;
+			sendEngineCommand: (
+				command: 'PAUSE' | 'RESUME'
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

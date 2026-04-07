@@ -12,11 +12,15 @@
 #include "PositionComponent.h"
 #include "Renderer.h"
 #include "ScriptEngine.h"
+#include "EngineCommandListener.h"
 
 
 ExplorationState::ExplorationState() {
     setEntityManager();
     debugMode = !DebugHelper::getInstance().getCurrentMap().empty();
+    if (debugMode) {
+        EngineCommandListener::start();
+    }
 }
 
 void ExplorationState::applyScriptContext()  {
@@ -37,6 +41,10 @@ void ExplorationState::showColliders() {
 }
 
 void ExplorationState::update(int deltaTime) {
+    if (debugMode && EngineCommandListener::isPaused()) {
+        return;
+    }
+
     m_entityManager->updateEntities(deltaTime);
 
     if (ScriptEngine::getInstance().hasPendingMapChange()) {

@@ -1,5 +1,5 @@
 .tools-container {
-	padding: 15px;
+	padding: 1.2rem;
 	width: 100%;
 	background-color: var(--color-3);
 	display: flex;
@@ -121,6 +121,14 @@
 .pause-button {
 	fill: #f08784;
 	stroke-width: 1.5;
+}
+
+.pause-button2 {
+	fill: #b59828;
+	stroke-width: 1.5;
+	display: inline-block;
+	transform: scale(1.1);
+	transform-origin: left;
 }
 
 .debug-botton {

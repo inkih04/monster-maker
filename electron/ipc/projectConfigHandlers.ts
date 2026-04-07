@@ -411,6 +411,9 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			return { success: false, count: 0, error: String(error) };
 		}
 	});
+	ipcMain.handle('config:sendEngineCommand', (_event, command: 'PAUSE' | 'RESUME') =>
+		configManager.sendEngineCommand(command)
+	);
 
 	ipcMain.handle('config:importLocalFile', async () => {
 		try {
