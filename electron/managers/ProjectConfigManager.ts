@@ -745,7 +745,7 @@ export class ProjectConfigManager {
 			const child = spawn(executablePath, args, {
 				cwd: projectPath,
 				detached: false,
-				stdio: ['ignore', 'pipe', 'pipe'],
+				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 
 			this.engineProcess = child;
@@ -768,6 +768,21 @@ export class ProjectConfigManager {
 		} catch (error) {
 			console.error(`Error running engine: ${error}`);
 			this.engineProcess = null;
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public sendEngineCommand(command: 'PAUSE' | 'RESUME'): { success: boolean; error?: string } {
+		if (!this.engineProcess || this.engineProcess.killed) {
+			return { success: false, error: 'No engine process is running' };
+		}
+		if (!this.engineProcess.stdin) {
+			return { success: false, error: 'Engine stdin is not available' };
+		}
+		try {
+			this.engineProcess.stdin.write(command + '\n');
+			return { success: true };
+		} catch (error) {
 			return { success: false, error: String(error) };
 		}
 	}

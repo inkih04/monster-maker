@@ -6,6 +6,7 @@
 #include <memory>
 #include <stb_image.h>
 
+#include "DebugHelper.h"
 #include "EditorConfig.h"
 #include "InputManager.h"
 #include "Renderer.h"
@@ -38,15 +39,21 @@ void Engine::initGLFW() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    if (!DebugHelper::getInstance().getCurrentMap().empty()) {
+        glfwWindowHint(GLFW_FLOATING, GLFW_TRUE);
+    }
+
     m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
     if (!m_window) {
         glfwTerminate();
         exit(-1);
     }
 
-    float xscale, yscale;
-    glfwGetWindowContentScale(m_window, &xscale, &yscale);
-    m_dpiScale = xscale;
+    int widthMM, heightMM;
+    glfwGetMonitorPhysicalSize(glfwGetPrimaryMonitor(), &widthMM, &heightMM);
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    double dpi = mode->width / (widthMM / 25.4);
+    m_dpiScale = dpi / 96.0;
 
     std::cout << "[ENGINE] dpiScale: " << m_dpiScale << "\n";
 

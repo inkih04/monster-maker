@@ -201,4 +201,6 @@ contextBridge.exposeInMainWorld('api', {
 	saveLocalFile: (defaultFileName: string, content: string) =>
 		ipcRenderer.invoke('config:saveLocalFile', defaultFileName, content),
 	importLocalFile: () => ipcRenderer.invoke('config:importLocalFile'),
+	sendEngineCommand: (command: 'PAUSE' | 'RESUME') =>
+		ipcRenderer.invoke('config:sendEngineCommand', command),
 });
