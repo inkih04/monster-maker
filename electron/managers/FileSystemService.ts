@@ -60,6 +60,7 @@ export class FileSystemService {
 		return [
 			base,
 			path.join(base, 'ui'),
+			path.join(base, 'data'),
 			path.join(base, 'fonts'),
 			path.join(base, 'dialogues'),
 			path.join(base, '.locals'),
@@ -99,9 +100,9 @@ export class FileSystemService {
 	public isCompressed(filePath: string): boolean {
 		try {
 			const buf = Buffer.alloc(2);
-			const fd = fs.openSync(filePath, 'r'); 
-			fs.readSync(fd, buf, 0, 2, 0); 
-			fs.closeSync(fd); 
+			const fd = fs.openSync(filePath, 'r');
+			fs.readSync(fd, buf, 0, 2, 0);
+			fs.closeSync(fd);
 			return buf[0] === 0x78;
 		} catch (error) {
 			console.error('Error comprobando compresión en:', filePath, error);

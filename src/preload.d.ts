@@ -92,7 +92,7 @@ declare global {
 			) => Promise<{ success: boolean; error?: string }>;
 
 			onCreateNewFile: (
-				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog') => void
+				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog' | 'data') => void
 			) => () => void;
 
 			onCompressMapsRequest: (callback: () => void) => () => void;

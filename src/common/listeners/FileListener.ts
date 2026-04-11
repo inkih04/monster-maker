@@ -101,6 +101,13 @@ export function FileListener() {
 					extension = '.lua';
 					defaultContent = scriptContent;
 					break;
+
+				case 'data':
+					extension = '.data';
+					defaultContent = `{
+					
+}`;
+					break;
 				case 'dialog':
 					extension = '.json';
 					defaultContent = `{
@@ -136,7 +143,7 @@ export function FileListener() {
 			if (editorMode === 'code') {
 				const codeEditorMode = useEngineStore.getState().codeEditorMode;
 
-				if (codeEditorMode === 'single') {
+				if (codeEditorMode === 'single' || codeEditorMode === 'json') {
 					const { openFile } = useCodeEditorStore.getState();
 					if (!openFile || !currentProject) return;
 					await window.api.saveFile(openFile.relativePath, openFile.content, currentProject);

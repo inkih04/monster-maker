@@ -53,11 +53,11 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.send('show-file-context-menu', fileData),
 	showFileListContextMenu: () => ipcRenderer.send('show-filelist-context-menu'),
 	onCreateFileInline: (
-		callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog') => void
+		callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog' | 'data') => void
 	) => {
 		const subscription = (
 			_event: Electron.IpcRendererEvent,
-			fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog'
+			fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog' | 'data'
 		) => callback(fileType);
 		ipcRenderer.on('create-file-inline', subscription);
 		return () => ipcRenderer.removeListener('create-file-inline', subscription);
@@ -104,10 +104,10 @@ contextBridge.exposeInMainWorld('api', {
 	saveFileCompletePath: (name: string, completePath: string, content: string) =>
 		ipcRenderer.invoke('config:saveFileCompletePath', name, completePath, content),
 
-	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void) => {
+	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'data') => void) => {
 		const subscription = (
 			_event: Electron.IpcRendererEvent,
-			fileType: 'map' | 'prefab' | 'script' | 'ui'
+			fileType: 'map' | 'prefab' | 'script' | 'ui' | 'data'
 		) => callback(fileType);
 		ipcRenderer.on('create-new-file', subscription);
 		return () => ipcRenderer.removeListener('create-new-file', subscription);

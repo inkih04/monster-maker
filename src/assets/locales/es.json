@@ -179,7 +179,8 @@
 		"noResults": "No se encontraron resultados.",
 		"deleteColumnTooltip": "Eliminar idioma",
 		"deleteRowTooltip": "Eliminar clave",
-		"emptyKey": "Clave vacía"
+		"emptyKey": "Clave vacía",
+		"loadingTable": "Cargando traducciones"
 	},
 	"dialogueEditor": {
 		"speakerPlaceholder": "Hablante...",
