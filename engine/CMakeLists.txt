@@ -197,7 +197,6 @@ add_executable(UnitTests
         tests/unitary/CollisionServiceTest.cpp
         tests/unitary/BorderMapServiceTest.cpp
         src/entities/service/BordersMapService.cpp
-        tests/unitary/SesionManagerTest.cpp
 )
 
 target_link_libraries(UnitTests

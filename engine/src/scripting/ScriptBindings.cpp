@@ -516,7 +516,15 @@ void ScriptBindings::registerEntityManager(sol::state& lua) {
                 return;
             }
             em.registerCollisionEntity(entity);
-        }
+        },
+
+        "hasLineOfSight", [](EntityManager& em, Entity* entity, Direction direction,sol::optional<int> maxRange) -> Entity*{
+                if (!entity) {
+                    std::cout << "[ENGINE][WARNING] World:hasLineOfSight called with nil entity." << std::endl;
+                    return nullptr;
+                }
+                return em.getCollisionService()->getEntityInLineOfSight(entity, direction, maxRange.value_or(10));
+            }
     );
 }
 

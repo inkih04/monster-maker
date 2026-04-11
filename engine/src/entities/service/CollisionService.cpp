@@ -47,6 +47,58 @@ void CollisionService::initCollisionCache(const std::vector<Entity*>& collisionE
     }
 }
 
+Entity* CollisionService::getEntityInLineOfSight(
+    const Entity* source,
+    Direction direction,
+    int maxRange) const
+{
+    if (!source) return nullptr;
+
+    auto* posComp  = static_cast<PositionComponent*>(
+        const_cast<Entity*>(source)->getComponent(ComponentsType::POSITION));
+    auto* collComp = static_cast<CollisionComponent*>(
+        const_cast<Entity*>(source)->getComponent(ComponentsType::COLLIDER));
+
+    if (!posComp) return nullptr;
+
+    Position srcPos = posComp->getPosition();
+    int baseX = srcPos.x + (collComp ? collComp->getOffsetX() : 0);
+    int baseY = srcPos.y + (collComp ? collComp->getOffsetY() : 0);
+
+    int stepX = 0;
+    int stepY = 0;
+    switch (direction) {
+        case Direction::RIGHT:  stepX =  GameConfig::GridSize; break;
+        case Direction::LEFT:   stepX = -GameConfig::GridSize; break;
+        case Direction::BOTTOM: stepY =  GameConfig::GridSize; break;
+        case Direction::TOP:    stepY = -GameConfig::GridSize; break;
+        default: return nullptr;
+    }
+
+    int curX = baseX + stepX;
+    int curY = baseY + stepY;
+
+    for (int step = 0; step <= maxRange; ++step) {
+        int cellX = (curX / GameConfig::GridSize) * GameConfig::GridSize;
+        int cellY = (curY / GameConfig::GridSize) * GameConfig::GridSize;
+
+        if (curX < 0) cellX = ((curX - GameConfig::GridSize + 1) / GameConfig::GridSize) * GameConfig::GridSize;
+        if (curY < 0) cellY = ((curY - GameConfig::GridSize + 1) / GameConfig::GridSize) * GameConfig::GridSize;
+
+        Position key(cellX, cellY);
+
+        auto it = m_collisionEntities.find(key);
+        if (it != m_collisionEntities.end() && it->second != source) {
+            return it->second;
+        }
+
+        curX += stepX;
+        curY += stepY;
+    }
+
+    return nullptr;
+}
+
 void CollisionService::updatePositionCollisionCache(const Position& oldPos, const Position& newPos, Entity* entity) {
     auto* collComp = static_cast<CollisionComponent*>(entity->getComponent(ComponentsType::COLLIDER));
     if (!collComp) return;

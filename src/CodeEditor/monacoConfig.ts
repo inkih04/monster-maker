@@ -528,6 +528,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				),
 				fn(monaco, 'MainCamera.getWidth', 'MainCamera:getWidth()', 'getWidth() → number', range),
 				fn(monaco, 'MainCamera.getHeight', 'MainCamera:getHeight()', 'getHeight() → number', range),
+
 				fn(
 					monaco,
 					'World.getEntitiesByTag',
@@ -544,6 +545,35 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				),
 				fn(
 					monaco,
+					'World.createEntity',
+					'World:createEntity(EntityTag.${1:UNKNOWN}, Layer.${2:ENTITIES})',
+					'createEntity(tag, layer) → Entity',
+					range
+				),
+				fn(
+					monaco,
+					'World.destroyEntity',
+					'World:destroyEntity(${1:entity})',
+					'destroyEntity(entity)',
+					range
+				),
+				fn(
+					monaco,
+					'World.registerCollider',
+					'World:registerCollider(${1:entity})',
+					'registerCollider(entity)',
+					range
+				),
+				fn(
+					monaco,
+					'World.hasLineOfSight',
+					'World:hasLineOfSight(${1:entity}, Direction.${2:RIGHT}, ${3:10})',
+					'hasLineOfSight(entity, direction, maxRange?) → Entity | nil',
+					range
+				),
+
+				fn(
+					monaco,
 					'Borders.isOutOfBounds',
 					'Borders:isOutOfBounds(${1:pos}, ${2:offsetX}, ${3:offsetY})',
 					'isOutOfBounds(pos, ox, oy) → bool',
@@ -556,6 +586,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					'clampCamera(pos)',
 					range
 				),
+
 				fn(
 					monaco,
 					'UI.open',
@@ -566,6 +597,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(monaco, 'UI.close', 'UI:close("${1:id}")', 'close(id)', range),
 				fn(monaco, 'UI.isOpen', 'UI:isOpen("${1:id}")', 'isOpen(id) → bool', range),
 				fn(monaco, 'UI.get', 'UI:get("${1:id}")', 'get(id) → UiDocument', range),
+
 				fn(
 					monaco,
 					'Audio.playMusic',
@@ -620,6 +652,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(monaco, 'Session.has', 'Session:has("${1:key}")', 'has(key) → bool', range),
 				fn(monaco, 'Session.remove', 'Session:remove("${1:key}")', 'remove(key)', range),
 				fn(monaco, 'Session.clear', 'Session:clear()', 'clear()', range),
+
 				fn(monaco, 'Save.set', 'Save:set("${1:key}", ${2:value})', 'set(key, value)', range),
 				fn(monaco, 'Save.get', 'Save:get("${1:key}")', 'get(key) → value', range),
 				fn(monaco, 'Save.has', 'Save:has("${1:key}")', 'has(key) → bool', range),
@@ -627,6 +660,9 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(monaco, 'Save.clear', 'Save:clear()', 'clear()', range),
 				fn(monaco, 'Save.load', 'Save:load("${1:filepath}")', 'load(filepath) → bool', range),
 				fn(monaco, 'Save.commit', 'Save:commit("${1:filepath}")', 'commit(filepath) → bool', range),
+				fn(monaco, 'Save.setTrue', 'Save:setTrue("${1:key}")', 'setTrue(key)', range),
+				fn(monaco, 'Save.setFalse', 'Save:setFalse("${1:key}")', 'setFalse(key)', range),
+
 				fn(monaco, 'Data.get', 'Data:get("${1:category}")', 'get(category) → value', range),
 				fn(monaco, 'Data.has', 'Data:has("${1:category}")', 'has(category) → bool', range),
 
@@ -742,6 +778,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 						'UNKNOWN',
 					] as const
 				).map((t) => constant(monaco, `EntityTag.${t}`, 'EntityTag enum', range)),
+
 				...(
 					[
 						'GROUND',
@@ -754,9 +791,11 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 						'UNKNOWN',
 					] as const
 				).map((l) => constant(monaco, `Layer.${l}`, 'Layer enum', range)),
+
 				...(['TOP', 'BOTTOM', 'LEFT', 'RIGHT', 'UNKNOWN'] as const).map((d) =>
 					constant(monaco, `Direction.${d}`, 'Direction enum', range)
 				),
+
 				...(
 					[
 						'POSITION',
@@ -766,6 +805,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 						'MOVEMENT',
 						'SCRIPT',
 						'INTERACTION',
+						'PERSISTENCE',
 					] as const
 				).map((c) => constant(monaco, `ComponentsType.${c}`, 'ComponentsType enum', range)),
 
@@ -798,52 +838,28 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					'getInteract() → InteractionComponent',
 					range
 				),
-				fn(monaco, 'entity.interact', '${1:entity}:interact()', 'interact()', range),
-				fn(monaco, 'entity.disable', '${1:entity}:disable()', 'disable()', range),
-				fn(
-					monaco,
-					'entity.hasComponent',
-					'${1:entity}:hasComponent(ComponentsType.${2:MOVEMENT})',
-					'hasComponent(componentType) → bool',
-					range
-				),
-				fn(monaco, 'pos.get', '${1:pos}:get()', 'get() → Position', range),
-				fn(monaco, 'pos.direction', '${1:pos}.direction', 'direction: Direction', range),
-				fn(monaco, 'move.move', '${1:move}:move(Direction.${2:RIGHT})', 'move(direction)', range),
-				fn(
-					monaco,
-					'move.setIsActive',
-					'${1:move}:setIsActive(${2:true})',
-					'setIsActive(bool)',
-					range
-				),
-				fn(monaco, 'move.getIsActive', '${1:move}:getIsActive()', 'getIsActive() → bool', range),
-				fn(
-					monaco,
-					'render.setIsActive',
-					'${1:render}:setIsActive(${2:true})',
-					'setIsActive(bool)',
-					range
-				),
-				fn(
-					monaco,
-					'render.getIsActive',
-					'${1:render}:getIsActive()',
-					'getIsActive() → bool',
-					range
-				),
-				fn(
-					monaco,
-					'anim.play',
-					'${1:anim}:play("${2:animName}", ${3:false})',
-					'play(name, forceRestart?)',
-					range
-				),
 				fn(
 					monaco,
 					'entity.getCollider',
 					'${1:entity}:getCollider()',
 					'getCollider() → CollisionComponent',
+					range
+				),
+				fn(
+					monaco,
+					'entity.getPersistence',
+					'${1:entity}:getPersistence()',
+					'getPersistence() → PersistentComponent',
+					range
+				),
+				fn(monaco, 'entity.interact', '${1:entity}:interact()', 'interact()', range),
+				fn(monaco, 'entity.disable', '${1:entity}:disable()', 'disable()', range),
+				fn(monaco, 'entity.getId', '${1:entity}:getId()', 'getId() → string', range),
+				fn(
+					monaco,
+					'entity.hasComponent',
+					'${1:entity}:hasComponent(ComponentsType.${2:MOVEMENT})',
+					'hasComponent(componentType) → bool',
 					range
 				),
 				fn(
@@ -884,23 +900,53 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				),
 				fn(
 					monaco,
-					'World.createEntity',
-					'World:createEntity(EntityTag.${1:UNKNOWN}, Layer.${2:ENTITIES})',
-					'createEntity(tag, layer) → Entity',
+					'entity.addPersistence',
+					'${1:entity}:addPersistence("${2:saveFlag}")',
+					'addPersistence(saveFlag)',
+					range
+				),
+
+				fn(monaco, 'pos.get', '${1:pos}:get()', 'get() → Position', range),
+				fn(monaco, 'pos.direction', '${1:pos}.direction', 'direction: Direction', range),
+				fn(
+					monaco,
+					'pos.setIsActive',
+					'${1:pos}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(monaco, 'pos.getIsActive', '${1:pos}:getIsActive()', 'getIsActive() → bool', range),
+
+				fn(monaco, 'move.move', '${1:move}:move(Direction.${2:RIGHT})', 'move(direction)', range),
+				fn(
+					monaco,
+					'move.setIsActive',
+					'${1:move}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(monaco, 'move.getIsActive', '${1:move}:getIsActive()', 'getIsActive() → bool', range),
+
+				fn(
+					monaco,
+					'render.setIsActive',
+					'${1:render}:setIsActive(${2:true})',
+					'setIsActive(bool)',
 					range
 				),
 				fn(
 					monaco,
-					'World.destroyEntity',
-					'World:destroyEntity(${1:entity})',
-					'destroyEntity(entity)',
+					'render.getIsActive',
+					'${1:render}:getIsActive()',
+					'getIsActive() → bool',
 					range
 				),
+
 				fn(
 					monaco,
-					'World.registerCollider',
-					'World:registerCollider(${1:entity})',
-					'registerCollider(entity)',
+					'anim.play',
+					'${1:anim}:play("${2:animName}", ${3:false})',
+					'play(name, forceRestart?)',
 					range
 				),
 				fn(monaco, 'anim.pause', '${1:anim}:pause()', 'pause()', range),
@@ -908,6 +954,8 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 				fn(monaco, 'anim.stop', '${1:anim}:stop()', 'stop()', range),
 				fn(monaco, 'anim.isPlaying', '${1:anim}:isPlaying()', 'isPlaying() → bool', range),
 				fn(monaco, 'anim.currentAnim', '${1:anim}:currentAnim()', 'currentAnim() → string', range),
+				fn(monaco, 'anim.setSet', '${1:anim}:setSet("${2:setName}")', 'setSet(setName)', range),
+				fn(monaco, 'anim.getSet', '${1:anim}:getSet()', 'getSet() → string', range),
 				fn(
 					monaco,
 					'anim.setIsActive',
@@ -916,6 +964,7 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					range
 				),
 				fn(monaco, 'anim.getIsActive', '${1:anim}:getIsActive()', 'getIsActive() → bool', range),
+
 				fn(
 					monaco,
 					'interact.setIsActive',
@@ -927,6 +976,28 @@ export function registerLuaCompletions(monaco: typeof Monaco) {
 					monaco,
 					'interact.getIsActive',
 					'${1:interact}:getIsActive()',
+					'getIsActive() → bool',
+					range
+				),
+
+				fn(
+					monaco,
+					'persistence.getSaveFlag',
+					'${1:persistence}:getSaveFlag()',
+					'getSaveFlag() → string',
+					range
+				),
+				fn(
+					monaco,
+					'persistence.setIsActive',
+					'${1:persistence}:setIsActive(${2:true})',
+					'setIsActive(bool)',
+					range
+				),
+				fn(
+					monaco,
+					'persistence.getIsActive',
+					'${1:persistence}:getIsActive()',
 					'getIsActive() → bool',
 					range
 				),

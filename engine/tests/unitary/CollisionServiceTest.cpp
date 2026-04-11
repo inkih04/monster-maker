@@ -108,3 +108,106 @@ TEST_F(CollisionServiceTest, LargeObjectOccupiesMultipleCells) {
     EXPECT_FALSE(service.isAreaFree(Position(47, 47), 16, 16, nullptr));
     EXPECT_TRUE(service.isAreaFree(Position(48, 48), 16, 16, nullptr));
 }
+
+TEST_F(CollisionServiceTest, LineOfSight_ReturnsNullWhenEmpty) {
+    Entity* source = createObstacle(0, 0, 16, 16);
+    service.initCollisionCache({source});
+
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 10);
+    EXPECT_EQ(seen, nullptr);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_DetectsTargetToTheRight) {
+    Entity* source = createObstacle(0, 0, 16, 16);
+    Entity* target = createObstacle(64, 0, 16, 16);
+    service.initCollisionCache({source, target});
+
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 10);
+    EXPECT_EQ(seen, target);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_DetectsTargetToTheLeft) {
+    Entity* source = createObstacle(128, 0, 16, 16);
+    Entity* target = createObstacle(64, 0, 16, 16);
+    service.initCollisionCache({source, target});
+
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::LEFT, 10);
+    EXPECT_EQ(seen, target);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_DetectsTargetBelow) {
+    Entity* source = createObstacle(0, 0, 16, 16);
+    Entity* target = createObstacle(0, 64, 16, 16);
+    service.initCollisionCache({source, target});
+
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::BOTTOM, 10);
+    EXPECT_EQ(seen, target);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_DetectsTargetAbove) {
+    Entity* source = createObstacle(0, 128, 16, 16);
+    Entity* target = createObstacle(0, 64, 16, 16);
+    service.initCollisionCache({source, target});
+
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::TOP, 10);
+    EXPECT_EQ(seen, target);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_BlockedByWallBeforeTarget) {
+    Entity* source = createObstacle(0, 0, 16, 16);
+    Entity* wall   = createObstacle(32, 0, 16, 16);
+    Entity* target = createObstacle(96, 0, 16, 16);
+    service.initCollisionCache({source, wall, target});
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 10);
+    EXPECT_EQ(seen, wall);
+    EXPECT_NE(seen, target);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_ReturnsNullWhenOutOfRange) {
+    Entity* source = createObstacle(0, 0, 16, 16);
+    Entity* target = createObstacle(160, 0, 16, 16);
+    service.initCollisionCache({source, target});
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 5);
+    EXPECT_EQ(seen, nullptr);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_ReachesTargetExactlyAtMaxRange) {
+    Entity* source = createObstacle(0, 0, 16, 16);
+    Entity* target = createObstacle(160, 0, 16, 16);
+    service.initCollisionCache({source, target});
+
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 10);
+    EXPECT_EQ(seen, target);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_SourceDoesNotBlockItself) {
+    Entity* source = createObstacle(64, 0, 16, 16);
+    Entity* target = createObstacle(128, 0, 16, 16);
+    service.initCollisionCache({source, target});
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 10);
+    EXPECT_EQ(seen, target);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_UnknownDirectionReturnsNull) {
+    Entity* source = createObstacle(0, 0, 16, 16);
+    Entity* target = createObstacle(64, 0, 16, 16);
+    service.initCollisionCache({source, target});
+
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::UNKNOWN, 10);
+    EXPECT_EQ(seen, nullptr);
+}
+
+TEST_F(CollisionServiceTest, LineOfSight_NullSourceReturnsNull) {
+    Entity* seen = service.getEntityInLineOfSight(nullptr, Direction::RIGHT, 10);
+    EXPECT_EQ(seen, nullptr);
+}
+
+
+TEST_F(CollisionServiceTest, LineOfSight_NoFalsePositivePerpendicularEntity) {
+    Entity* source = createObstacle(0, 0, 16, 16);
+    Entity* target = createObstacle(0, 64, 16, 16);
+    service.initCollisionCache({source, target});
+
+    Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 10);
+    EXPECT_EQ(seen, nullptr);
+}

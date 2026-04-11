@@ -6,6 +6,7 @@
 #define POKEMONGAMEENGINE_COLLISIONSERVICE_H
 #include <unordered_map>
 
+#include "Direction.h"
 #include "Position.h"
 
 class Entity;
@@ -24,6 +25,7 @@ class CollisionService {
         void updatePositionCollisionCache(const Position& oldPos, const Position& newPos, Entity* entity);
         void initCollisionCache(const std::vector<Entity*>& collisionEntities);
 
+        Entity *getEntityInLineOfSight(const Entity *source, Direction direction, int maxRange) const;
 };
 
 #endif //POKEMONGAMEENGINE_COLLISIONSERVICE_H
