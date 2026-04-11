@@ -179,7 +179,8 @@
 		"noResults": "No results found.",
 		"deleteColumnTooltip": "Delete language",
 		"deleteRowTooltip": "Delete key",
-		"emptyKey": "Empty key"
+		"emptyKey": "Empty key",
+		"loadingTable": "Loading locals"
 	},
 	"dialogueEditor": {
 		"speakerPlaceholder": "Speaker...",

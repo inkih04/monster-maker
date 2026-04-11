@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 type RunMode = 'play' | 'debug' | null;
 type EditorMode = 'map' | 'code' | null;
-type CodeEditorMode = 'single' | 'duo' | 'dialog' | null;
+type CodeEditorMode = 'single' | 'duo' | 'dialog' | 'json' | null;
 
 interface EngineStore {
 	isRunning: boolean;

@@ -48,7 +48,8 @@ void ScriptBindings::registerDataManager(sol::state& lua, DataManager& dataManag
     lua.new_usertype<DataManager>("DataManager",
         sol::no_constructor,
         "get", &DataManager::get,
-        "has", &DataManager::has
+        "has", &DataManager::has,
+        "load", &DataManager::loadFromFile
     );
     lua["Data"] = std::ref(dataManager);
 }

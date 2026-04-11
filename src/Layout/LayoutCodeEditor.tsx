@@ -27,6 +27,7 @@ function LayoutCodeEditor() {
 			{codeEditorMode === 'single' && <CodeEditorSingle />}
 			{codeEditorMode === 'duo' && <CodeEditorDuo />}
 			{codeEditorMode === 'dialog' && <CodeEditorDialogDuo />}
+			{codeEditorMode === 'json' && <CodeEditorMemory />}
 		</div>
 	);
 }
@@ -149,6 +150,18 @@ function CodeEditorDialogDuo() {
 			<div className="layoutCodeEditor--DialogEditor-main">
 				<LocalizationTable />
 			</div>
+			<CodeEditorLoadingOverlay />
+		</div>
+	);
+}
+
+function CodeEditorMemory() {
+	const openFile = useCodeEditorStore((state) => state.openFile);
+	const updateContent = useCodeEditorStore((state) => state.updateContent);
+
+	return (
+		<div className="layoutCodeEditor--single" style={{ position: 'relative' }}>
+			<CodeEditor language="json" value={openFile?.content ?? ''} onChange={updateContent} />
 			<CodeEditorLoadingOverlay />
 		</div>
 	);
