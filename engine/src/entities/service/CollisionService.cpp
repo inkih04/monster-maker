@@ -3,6 +3,7 @@
 //
 #include "../../../include/service/CollisionService.h"
 #include <functional>
+#include <iostream>
 
 #include "ColliderComponent.h"
 #include "ComponentsType.h"
@@ -64,36 +65,52 @@ Entity* CollisionService::getEntityInLineOfSight(
     Position srcPos = posComp->getPosition();
     int baseX = srcPos.x + (collComp ? collComp->getOffsetX() : 0);
     int baseY = srcPos.y + (collComp ? collComp->getOffsetY() : 0);
+    int colW  = collComp ? collComp->getWidth()  : GameConfig::GridSize;
+    int colH  = collComp ? collComp->getHeight() : GameConfig::GridSize;
 
-    int stepX = 0;
-    int stepY = 0;
+    int stepX = 0, stepY = 0;
+    int rayX  = 0, rayY  = 0;
+
     switch (direction) {
-        case Direction::RIGHT:  stepX =  GameConfig::GridSize; break;
-        case Direction::LEFT:   stepX = -GameConfig::GridSize; break;
-        case Direction::BOTTOM: stepY =  GameConfig::GridSize; break;
-        case Direction::TOP:    stepY = -GameConfig::GridSize; break;
+        case Direction::RIGHT:
+            stepX = GameConfig::GridSize;
+            rayX  = baseX + colW;
+            rayY  = baseY + colH / 2;  // centro vertical
+            break;
+        case Direction::LEFT:
+            stepX = -GameConfig::GridSize;
+            rayX  = baseX;
+            rayY  = baseY + colH / 2;  // centro vertical
+            break;
+        case Direction::BOTTOM:
+            stepY = GameConfig::GridSize;
+            rayX  = baseX + colW / 2;  // centro horizontal
+            rayY  = baseY + colH;
+            break;
+        case Direction::TOP:
+            stepY = -GameConfig::GridSize;
+            rayX  = baseX + colW / 2;  // centro horizontal
+            rayY  = baseY;
+            break;
         default: return nullptr;
     }
 
-    int curX = baseX + stepX;
-    int curY = baseY + stepY;
+    auto snapToGrid = [](int v) -> int {
+        return (v >= 0)
+            ? (v / GameConfig::GridSize) * GameConfig::GridSize
+            : ((v - GameConfig::GridSize + 1) / GameConfig::GridSize) * GameConfig::GridSize;
+    };
 
-    for (int step = 0; step <= maxRange; ++step) {
-        int cellX = (curX / GameConfig::GridSize) * GameConfig::GridSize;
-        int cellY = (curY / GameConfig::GridSize) * GameConfig::GridSize;
+    for (int step = 1; step <= maxRange; ++step) {
+        int checkX = rayX + stepX * step;
+        int checkY = rayY + stepY * step;
 
-        if (curX < 0) cellX = ((curX - GameConfig::GridSize + 1) / GameConfig::GridSize) * GameConfig::GridSize;
-        if (curY < 0) cellY = ((curY - GameConfig::GridSize + 1) / GameConfig::GridSize) * GameConfig::GridSize;
-
-        Position key(cellX, cellY);
+        Position key(snapToGrid(checkX), snapToGrid(checkY));
 
         auto it = m_collisionEntities.find(key);
         if (it != m_collisionEntities.end() && it->second != source) {
             return it->second;
         }
-
-        curX += stepX;
-        curY += stepY;
     }
 
     return nullptr;

@@ -1,16 +1,28 @@
 {
-	"projects": [
-		{
-			"path": "/home/inkih/Desktop/test",
-			"name": "Test1",
-			"defaultTilesize": 32,
-			"color": "#F7DC6F"
-		},
-		{
-			"path": "/home/inkih/Desktop/test",
-			"name": "Base",
-			"color": "#F8B195",
-			"defaultTilesize": 32
-		}
-	]
+  "projects": [
+    {
+      "path": "/home/inkih/Desktop/test",
+      "name": "Test1",
+      "defaultTilesize": 32,
+      "color": "#F7DC6F"
+    },
+    {
+      "path": "/home/inkih/Desktop/test",
+      "name": "Base",
+      "color": "#F8B195",
+      "defaultTilesize": 32
+    },
+    {
+      "path": "/home/inkih/Desktop/test",
+      "name": "resourcesT",
+      "defaultTilesize": 32,
+      "color": "#45B7D1"
+    },
+    {
+      "path": "/home/inkih/Desktop/test",
+      "name": "resourcesT (copy)",
+      "defaultTilesize": 32,
+      "color": "#45B7D1"
+    }
+  ]
 }

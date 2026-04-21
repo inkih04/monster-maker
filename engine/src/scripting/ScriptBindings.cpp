@@ -338,6 +338,7 @@ void ScriptBindings::registerEntity(sol::state& lua) {
     lua.new_usertype<Entity>("Entity",
         "hasComponent", &Entity::hasComponent,
         "getId", &Entity::getId,
+        "getTag", &Entity::getEntityTag,
         "disable", &Entity::disableEntity,
         "getPos", [](Entity& e) -> PositionComponent* {
             auto* comp = e.getComponent(ComponentsType::POSITION);

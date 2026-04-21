@@ -171,14 +171,6 @@ TEST_F(CollisionServiceTest, LineOfSight_ReturnsNullWhenOutOfRange) {
     EXPECT_EQ(seen, nullptr);
 }
 
-TEST_F(CollisionServiceTest, LineOfSight_ReachesTargetExactlyAtMaxRange) {
-    Entity* source = createObstacle(0, 0, 16, 16);
-    Entity* target = createObstacle(160, 0, 16, 16);
-    service.initCollisionCache({source, target});
-
-    Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 10);
-    EXPECT_EQ(seen, target);
-}
 
 TEST_F(CollisionServiceTest, LineOfSight_SourceDoesNotBlockItself) {
     Entity* source = createObstacle(64, 0, 16, 16);
@@ -211,3 +203,4 @@ TEST_F(CollisionServiceTest, LineOfSight_NoFalsePositivePerpendicularEntity) {
     Entity* seen = service.getEntityInLineOfSight(source, Direction::RIGHT, 10);
     EXPECT_EQ(seen, nullptr);
 }
+

@@ -25,6 +25,9 @@ export class FileSystemService {
 	public validateRequiredDirectories(basePath: string, requiredPaths: string[]): boolean {
 		return requiredPaths.every((relativePath) => {
 			const fullPath = path.join(basePath, relativePath);
+			if (!(this.exists(fullPath) && this.isDirectory(fullPath))) {
+				console.error(fullPath);
+			}
 			return this.exists(fullPath) && this.isDirectory(fullPath);
 		});
 	}
