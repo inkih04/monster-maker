@@ -5,7 +5,6 @@ import { useFolderStore } from '../common/globalStores/useFolderStore';
 import { FileItem } from '../../global/types/fileItem';
 
 
-// Debounce delay in ms — avoids hammering the FS on every keystroke
 const SAVE_DEBOUNCE_MS = 600;
 
 export function useDialogEditor() {
@@ -22,7 +21,6 @@ export function useDialogEditor() {
 		setLoading,
 		setSaving,
 		setError,
-		// mutations — re-exported as-is so the component stays thin
 		updateDialogueId,
 		addDialogue,
 		deleteDialogue,
@@ -34,14 +32,13 @@ export function useDialogEditor() {
 		deleteChoice,
 	} = useDialogueStore();
 
-	// ── UI-only state (not worth putting in the global store) ──────────────
+
 	const [editingIdIndex, setEditingIdIndex] = useState<number | null>(null);
 	const [focusedPageIndex, setFocusedPageIndex] = useState<{
 		dialogIndex: number;
 		pageIndex: number;
 	} | null>(null);
 
-	// ── Debounced save ─────────────────────────────────────────────────────
 	const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const persistToFile = useCallback(async () => {
@@ -69,7 +66,6 @@ export function useDialogEditor() {
 		}, SAVE_DEBOUNCE_MS);
 	}, [persistToFile]);
 
-	// Register the save callback once so the store can call it after mutations
 	useEffect(() => {
 		registerDialogueSaveCallback(scheduleSave);
 		return () => {
@@ -78,7 +74,6 @@ export function useDialogEditor() {
 		};
 	}, [scheduleSave]);
 
-	// ── Load file ──────────────────────────────────────────────────────────
 	const loadDialogFile = useCallback(
 		async (file: FileItem) => {
 			if (!selectedFolder?.path || !currentProject) return;
@@ -107,10 +102,8 @@ export function useDialogEditor() {
 		[currentProject, selectedFolder, loadDialogues, setLoading, setError]
 	);
 
-	// ── Wrapped mutations that also manage local UI state ─────────────────
 	const handleAddDialogue = useCallback(() => {
 		addDialogue();
-		// after addDialogue the new item is at the end; we want its id input focused
 		setEditingIdIndex(useDialogueStore.getState().dialogues.length - 1);
 	}, [addDialogue]);
 
@@ -124,7 +117,6 @@ export function useDialogEditor() {
 	);
 
 	return {
-		// state
 		dialogues,
 		currentFilePath,
 		isLoading,
@@ -132,15 +124,9 @@ export function useDialogEditor() {
 		error,
 		editingIdIndex,
 		focusedPageIndex,
-
-		// setters for ui-only state
 		setEditingIdIndex,
 		setFocusedPageIndex,
-
-		// file ops
 		loadDialogFile,
-
-		// mutations
 		updateDialogueId,
 		handleAddDialogue,
 		deleteDialogue,

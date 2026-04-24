@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 import { useMapStore } from '../../Map/MapGState';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
-import { UI_CSS_DEFAULT_CONTENT, UI_HTML_DEFAULT_CONTENT } from '../../Files/customHooks/useFileCreate';
+import {
+	UI_CSS_DEFAULT_CONTENT,
+	UI_HTML_DEFAULT_CONTENT,
+} from '../../Files/customHooks/useFileCreate';
 
 interface FileToBeCreatedStore {
 	isOpen: boolean;
@@ -51,7 +54,10 @@ export const useFileToBeCreatedStore = create<FileToBeCreatedStore>((set, get) =
 			const hiddenFolderPath = await window.api.pathUnion(path, `.${baseName}`);
 
 			const assetFiles = [
-				{ name: `${baseName}_HTML.rmli`, content: UI_HTML_DEFAULT_CONTENT(baseName) },
+				{
+					name: `${baseName}_HTML.rmli`,
+					content: UI_HTML_DEFAULT_CONTENT(baseName, `${baseName}_CSS.css`),
+				},
 				{ name: `${baseName}_CSS.css`, content: UI_CSS_DEFAULT_CONTENT(baseName) },
 			];
 
