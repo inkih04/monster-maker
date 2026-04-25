@@ -4,7 +4,6 @@ on:
   push:
     branches:
   pull_request:
-    branches:
 
 jobs:
   test-editor:
@@ -17,13 +16,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22.16.0'
+          node-version: '20'
 
       - name: Install Editor Dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run Vitest Tests
-        run: npm test
+        run: npm run test
 
   test-engine:
     name: Test Engine (C++)
@@ -42,14 +41,16 @@ jobs:
           libgl1-mesa-dev libglu1-mesa-dev libfreetype-dev
 
       - name: Configure CMake
+        working-directory: ./engine
         run: >
           cmake -B build -S . 
           -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" 
           -DCMAKE_BUILD_TYPE=Release
 
       - name: Build Unit Tests
+        working-directory: ./engine
         run: cmake --build build --target UnitTests -j 4
 
       - name: Run Unit Tests
-        working-directory: build
+        working-directory: ./engine/build
         run: ctest --output-on-failure

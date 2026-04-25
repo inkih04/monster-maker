@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <cmath>
-
+#include <iostream>
 #include "ScriptComponet.h"
 #include "../../include/service/CollisionService.h"
 
