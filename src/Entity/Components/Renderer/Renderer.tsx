@@ -3,7 +3,6 @@ import { createPortal } from 'react-dom';
 import { Component, ComponentBody, ComponentHeader } from '../basic/InspectorComponent';
 import { VideoCamera, NavArrowDown } from 'iconoir-react';
 import './Renderer.css';
-import { useMapStore } from '../../../Map/MapGState';
 import NumberInput from '../../../common/components/numericInput/NumericInput';
 import { useEngineConfigStore } from '../../../Tagger/useEngineConfigStore';
 import { DEFAULT_SHADER_TAG } from '../../../Tagger/body/Shaders/shaderEntryUtils';

@@ -10,5 +10,8 @@ export interface FileItem {
 		| 'fragment'
 		| 'local'
 		| 'dialog'
-		| 'data';
+		| 'data'
+		| 'music'
+		| 'font'
+		| 'undefined';
 }

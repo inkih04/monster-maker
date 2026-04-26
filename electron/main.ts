@@ -233,7 +233,8 @@ function createWindow() {
 	if (VITE_DEV_SERVER_URL) {
 		win.loadURL(VITE_DEV_SERVER_URL);
 	} else {
-		win.loadFile(path.join(RENDERER_DIST, 'index.html'));
+		const indexPath = path.join(RENDERER_DIST, 'index.html');
+		win.loadFile(indexPath).catch((err) => console.error('Error cargando index:', err));
 	}
 
 	setupProjectConfigHandlers(win);

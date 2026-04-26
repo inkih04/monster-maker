@@ -4,7 +4,7 @@ import { ProjectData } from '../../global/types/projectData';
 import { ProjectFile } from '../../global/types/projectFile';
 import { log } from 'console';
 import FolderNode from '../../global/types/folderNode';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
 import { spawn } from 'child_process';
@@ -58,10 +58,6 @@ export class ProjectConfigManager {
 		} catch (error) {
 			return { success: false, error: String(error) };
 		}
-	}
-
-	private isMapFile(filePath: string): boolean {
-		return path.extname(filePath).toLowerCase() === '.map';
 	}
 
 	public updateShaders(
@@ -416,12 +412,11 @@ export class ProjectConfigManager {
 	}
 
 	private getConfigPath(): string {
-		if (process.env.NODE_ENV === 'development') {
+		if (!app.isPackaged) {
 			return path.join(process.cwd(), 'src', 'assets', 'projects.json');
 		}
-		return path.join(process.resourcesPath, 'assets', 'projects.json');
+		return path.join(app.getPath('userData'), 'projects.json');
 	}
-
 	public getEngineSourcePath(): string {
 		if (process.env.NODE_ENV === 'development') {
 			return path.join(process.cwd(), 'engine', 'exe');

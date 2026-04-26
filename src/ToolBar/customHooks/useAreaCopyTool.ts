@@ -35,12 +35,11 @@ export function useAreaCopyTool(): UseAreaCopyToolResult {
 	const activeLayer = useMapStore((state) => state.activeLayer);
 	const selectedTilePositions = useMapStore((state) => state.selectedTilePositions);
 	const toggleSelectedTilePosition = useMapStore((state) => state.toggleSelectedTilePosition);
-	const clearSelection = useMapStore((state) => state.clearSelection);
 	const setIsDirty = useMapStore((state) => state.setIsDirty);
 
 	const [isActive, setIsActive] = useState(false);
 	const [previewPosition, setPreviewPosition] = useState<PreviewPosition | null>(null);
-	const [copiedTiles, setCopiedTiles] = useState<CopiedTileData[]>([]);
+	const [copiedTiles] = useState<CopiedTileData[]>([]);
 
 	const buildCopyBuffer = useCallback(
 		(positions: typeof selectedTilePositions) => {
@@ -82,7 +81,7 @@ export function useAreaCopyTool(): UseAreaCopyToolResult {
 			const newEntities = { ...map.entities };
 			const newPaintedTiles = [...mapState.paintedTiles];
 
-			buffer.forEach(({ offsetX, offsetY, entityId: srcId }) => {
+			buffer.forEach(({ offsetX, offsetY}) => {
 				const destX = tileX + offsetX;
 				const destY = tileY + offsetY;
 

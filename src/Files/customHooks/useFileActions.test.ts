@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach} from 'vitest';
 import { useFileActions } from './useFileActions';
 import { useProjectStore } from '../../Project/ProjectConfigGState';
 import { useMapStore } from '../../Map/MapGState';
