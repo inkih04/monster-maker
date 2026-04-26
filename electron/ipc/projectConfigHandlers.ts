@@ -33,7 +33,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-	ipcMain.handle('config:open', async (_event, pd: ProjectData, defaultTileSize: number) => {
+	ipcMain.handle('config:open', async (_event, pd: ProjectData) => {
 		try {
 			const directoryHasBeenOpened: boolean = configManager.openProjectDirectory(pd);
 			if (directoryHasBeenOpened) {
@@ -178,7 +178,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-	ipcMain.handle('validate-project-path', async (event, projectData: ProjectData) => {
+	ipcMain.handle('validate-project-path', async (_event, projectData: ProjectData) => {
 		return configManager.validateProjectPath(projectData);
 	});
 

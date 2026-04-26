@@ -31,7 +31,7 @@ export function setupMapHandlers(): void {
 		}
 	});
 
-	ipcMain.handle('save-image', async (event, base64Data) => {
+	ipcMain.handle('save-image', async (_event, base64Data) => {
 		const { filePath } = await dialog.showSaveDialog({
 			title: 'Export Map to PNG',
 			defaultPath: 'map.png',

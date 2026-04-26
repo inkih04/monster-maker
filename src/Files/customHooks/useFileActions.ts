@@ -31,7 +31,6 @@ export function useFileActions() {
 	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const changeCodeEditorMode = useEngineStore((state) => state.changeCodeEditorMode);
 
-	const isTranslateMode = useEngineStore((state) => state.translate);
 	const changeTranslateMode = useEngineStore((state) => state.changeTranslate);
 
 	const { notify } = useNotify();

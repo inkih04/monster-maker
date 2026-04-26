@@ -111,12 +111,6 @@ function DebugTerminal() {
 		});
 	}, []);
 
-	const handleScrollToBottom = useCallback(() => {
-		if (bodyRef.current) {
-			bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-			isAtBottomRef.current = true;
-		}
-	}, []);
 
 	const emptyMessage =
 		logs.length > 0 ? (

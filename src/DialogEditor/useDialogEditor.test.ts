@@ -2,7 +2,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useDialogEditor } from './useDialogEditor';
-import { useDialogueStore, registerDialogueSaveCallback } from './DialogueGState';
+import { registerDialogueSaveCallback } from './DialogueGState';
 import { useProjectStore } from '../Project/ProjectConfigGState';
 import { useFolderStore } from '../common/globalStores/useFolderStore';
 
