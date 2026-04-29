@@ -485,7 +485,8 @@ export class ProjectConfigManager {
 	}
 
 	public removeProject(pd: ProjectData): void {
-		this.config.projects = this.config.projects.filter((p) => p.path !== pd.path);
+		console.log(pd);
+		this.config.projects = this.config.projects.filter((p) => p.name !== pd.name);
 		this.saveProjectConfiguration();
 	}
 

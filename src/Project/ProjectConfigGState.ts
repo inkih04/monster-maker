@@ -10,7 +10,7 @@ interface ProjectStore {
 	loadProjects: () => Promise<void>;
 	addProject: (project: ProjectData) => Promise<{ success: boolean; error?: string }>;
 	openProject: (project: ProjectData) => Promise<{ success: boolean; error?: string }>;
-	removeProject: (path: string) => Promise<boolean>;
+	removeProject: (pd: ProjectData) => Promise<boolean>;
 	setCurrentProject: (project: ProjectData | null) => void;
 	reset: () => void;
 	setIsModalOpen: (open: boolean) => void;
@@ -89,14 +89,11 @@ export const useProjectStore = create<ProjectStore>((set) => ({
 		}
 	},
 
-	removeProject: async (path: string) => {
+	removeProject: async (pd: ProjectData) => {
 		if (!window.api || !window.api.removeProject) return false;
 
 		try {
-			const project = useProjectStore.getState().projects.find((p) => p.path === path);
-			if (!project) return false;
-
-			const result = await window.api.removeProject(project);
+			const result = await window.api.removeProject(pd);
 
 			if (result.success) {
 				await useProjectStore.getState().loadProjects();
