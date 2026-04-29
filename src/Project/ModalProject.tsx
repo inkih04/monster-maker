@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { ProjectData } from '../../global/types/projectData';
 import * as VisuallyHidden from '@radix-ui/react-visually-hidden';
 import { useEngineConfigStore } from '../Tagger/useEngineConfigStore';
+import DeleteConfirmation from '../common/components/delete/DeleteConfirmation';
 
 function ModalProject() {
 	const { t } = useTranslation();
@@ -18,6 +19,7 @@ function ModalProject() {
 	const [searchValue, setSearchValue] = useState('');
 	const { isModalOpen, setIsModalOpen, setCurrentProject, removeProject } = useProjectStore();
 	const loadEngineConfig = useEngineConfigStore((get) => get.loadEngineConfig);
+	const [projectToDelete, setProjectToDelete] = useState<ProjectData | null>(null);
 
 	const { projects, loadProjects } = useProjectStore();
 
@@ -35,13 +37,20 @@ function ModalProject() {
 		const isValid = await window.api.validateProjectPath(project);
 
 		if (!isValid) {
-			await removeProject(project.path);
+			await removeProject(project);
 			return;
 		}
 
 		setIsModalOpen(false);
 		setCurrentProject(project);
 		loadEngineConfig(project);
+	};
+
+	const handleRemoveProject = async (project: ProjectData | null) => {
+		if (!project) return
+		const hasBeenDeleted = await removeProject(project);
+		console.log(hasBeenDeleted);
+		setProjectToDelete(null);
 	};
 
 	return (
@@ -76,6 +85,7 @@ function ModalProject() {
 										name={project.name}
 										path={project.path}
 										color={project.color}
+										onDelete={() => setProjectToDelete(project)}
 									/>
 								))}
 							</div>
@@ -83,6 +93,15 @@ function ModalProject() {
 					</Dialog.Content>
 				</Dialog.Portal>
 			</Dialog.Root>
+
+			<DeleteConfirmation
+				open={projectToDelete !== null}
+				onOpenChange={(open) => {
+					if (!open) setProjectToDelete(null);
+				}}
+				itemName={projectToDelete?.name ?? ''}
+				onConfirm={() => handleRemoveProject(projectToDelete)}
+			/>
 
 			<Create open={showNewProject} onOpenChange={setShowNewProject} />
 			<OpenProject open={showOpenProject} onOpenChange={setShowOpenProject} />

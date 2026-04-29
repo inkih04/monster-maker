@@ -129,18 +129,12 @@ describe('useProjectStore', () => {
 	});
 
 	describe('removeProject', () => {
-		it('should return false if project is not found in state', async () => {
-			const result = await useProjectStore.getState().removeProject('/non/existent/path');
-			expect(result).toBe(false);
-			expect(mockRemoveProject).not.toHaveBeenCalled();
-		});
-
 		it('should remove project and reload projects on success', async () => {
 			useProjectStore.setState({ projects: [mockProject] });
 			mockRemoveProject.mockResolvedValue({ success: true });
 			mockGetProjects.mockResolvedValue([]);
 
-			const result = await useProjectStore.getState().removeProject(mockProject.path);
+			const result = await useProjectStore.getState().removeProject(mockProject);
 
 			expect(result).toBe(true);
 			expect(mockRemoveProject).toHaveBeenCalledWith(mockProject);
@@ -152,7 +146,7 @@ describe('useProjectStore', () => {
 			useProjectStore.setState({ projects: [mockProject] });
 			mockRemoveProject.mockResolvedValue({ success: false });
 
-			const result = await useProjectStore.getState().removeProject(mockProject.path);
+			const result = await useProjectStore.getState().removeProject(mockProject);
 
 			expect(result).toBe(false);
 		});
