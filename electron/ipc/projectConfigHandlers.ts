@@ -432,4 +432,23 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			return { success: false, error: String(error) };
 		}
 	});
+
+	ipcMain.handle('config:saveLanguage', (_event, lng: string) => {
+		try {
+			configManager.saveLanguage(lng);
+			return { success: true, error: '' };
+		} catch (error) {
+			console.error('Error saving language:', error);
+			return { success: false, error: 'Error saving language:' };
+		}
+	});
+
+	ipcMain.handle('config:getLanguage', () => {
+		try {
+			return configManager.getLanguage();
+		} catch (error) {
+			console.error('Error getting language:', error);
+			return undefined;
+		}
+	});
 }

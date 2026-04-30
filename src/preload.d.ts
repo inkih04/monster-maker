@@ -11,6 +11,8 @@ declare global {
 	interface Window {
 		api: {
 			getProjects: () => Promise<ProjectData[]>;
+			getLanguage: () => Promise<string>;
+			saveLanguage: (lng: string) => Promise<{ success: boolean; error?: string }>;
 			addProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			removeProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			selectFolder: (

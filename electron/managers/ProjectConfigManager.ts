@@ -507,6 +507,15 @@ export class ProjectConfigManager {
 		}
 	}
 
+	public saveLanguage(lng: string): void {
+		this.config.language = lng;
+		this.saveProjectConfiguration();
+	}
+
+	public getLanguage(): string | undefined {
+		return this.config.language;
+	}
+
 	public openProjectDirectory(pd: ProjectData): boolean {
 		try {
 			if (!this.validateProjectPath(pd)) {
