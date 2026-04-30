@@ -104,6 +104,10 @@ contextBridge.exposeInMainWorld('api', {
 	saveFileCompletePath: (name: string, completePath: string, content: string) =>
 		ipcRenderer.invoke('config:saveFileCompletePath', name, completePath, content),
 
+	saveLanguage: (lng: string) => ipcRenderer.invoke('config:saveLanguage', lng),
+
+	getLanguage: () => ipcRenderer.invoke('config:getLanguage'),
+
 	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'data') => void) => {
 		const subscription = (
 			_event: Electron.IpcRendererEvent,

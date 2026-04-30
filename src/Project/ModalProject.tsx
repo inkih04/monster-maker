@@ -47,7 +47,7 @@ function ModalProject() {
 	};
 
 	const handleRemoveProject = async (project: ProjectData | null) => {
-		if (!project) return
+		if (!project) return;
 		const hasBeenDeleted = await removeProject(project);
 		console.log(hasBeenDeleted);
 		setProjectToDelete(null);
