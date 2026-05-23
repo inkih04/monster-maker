@@ -2,10 +2,12 @@
 classDiagram
 
 Renderer "1"-- "*" Texture
-Entity --  Renderer
-Entity -- ResourceManager
+Renderer ..> ResourceManager : uses
+RenderComponent ..> Renderer : uses
+Entity *-- RenderComponent
 Renderer "1"-- "*" Shader
 Renderer "1"-- "*" Camera
+
 
     class ResourceManager {
         -static unordered_map~string, unique_ptr~ Texture~~ textures
@@ -99,6 +101,19 @@ Renderer "1"-- "*" Camera
     -void updateViewMatrix()
     -float m_width
     -float m_height
+    }
+
+    class RenderComponent {
+        -string m_spriteSheetPath
+        -SpriteRect spriteRect
+        -int shaderMode
+        -float m_height
+        -float m_width
+        -glm::vec2 getPrettyPosition() const
+        -void draw() const
+        +void setSpriteRect(const SpriteRect& rect)
+        +void render()
+        +void update(int deltaTime)
     }
 
 ```mermaid
