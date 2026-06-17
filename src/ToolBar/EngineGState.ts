@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 type RunMode = 'play' | 'debug' | null;
 type EditorMode = 'map' | 'code' | null;
-type CodeEditorMode = 'single' | 'duo' | 'dialog' | null;
+type CodeEditorMode = 'single' | 'duo' | 'dialog' | 'json' | null;
 
 interface EngineStore {
 	isRunning: boolean;
@@ -11,6 +11,9 @@ interface EngineStore {
 	codeEditorMode: CodeEditorMode;
 	translate: boolean;
 
+	paused: boolean;
+
+	chagePaused: (value: boolean) => void;
 	changeCodeEditorMode: (mode: CodeEditorMode) => void;
 	changeEditorMode: (mode: EditorMode) => void;
 	startEngine: (mode: 'play' | 'debug', mapPath?: string) => void;
@@ -27,9 +30,13 @@ export const useEngineStore = create<EngineStore>((set) => ({
 	editorMode: 'map',
 	codeEditorMode: null,
 	translate: false,
+	paused: false,
 
 	changeCodeEditorMode(mode) {
 		set({ codeEditorMode: mode });
+	},
+	chagePaused(value) {
+		set({ paused: value });
 	},
 
 	changeTranslate(value) {
@@ -58,7 +65,7 @@ export const useEngineStore = create<EngineStore>((set) => ({
 	},
 
 	resetEngineState: () => {
-		set({ isRunning: false, runMode: null });
+		set({ isRunning: false, runMode: null, paused: false });
 		console.log('Engine state reset');
 	},
 	reset: () => {
@@ -68,6 +75,7 @@ export const useEngineStore = create<EngineStore>((set) => ({
 			editorMode: 'map',
 			translate: false,
 			codeEditorMode: null,
+			paused: false,
 		});
 		console.log('Engine state reset');
 	},

@@ -64,6 +64,8 @@
 	"errorFolder": "Se produjo un error al eliminar la carpeta",
 	"persistenceComponent": "Permite definir un flag que el motor que se consulta al cargar un mapa para decidir si la entidad debe instanciarse o si ya fue recogida/destruida previamente.",
 	"menu": {
+		"compressMaps": "Comprimir mapas",
+		"decompressMaps": "Descomprimir mapas",
 		"dialog": "Diálogo",
 		"view": "Vista",
 		"showCollisions": "Mostrar Colisiones",
@@ -177,7 +179,8 @@
 		"noResults": "No se encontraron resultados.",
 		"deleteColumnTooltip": "Eliminar idioma",
 		"deleteRowTooltip": "Eliminar clave",
-		"emptyKey": "Clave vacía"
+		"emptyKey": "Clave vacía",
+		"loadingTable": "Cargando traducciones"
 	},
 	"dialogueEditor": {
 		"speakerPlaceholder": "Hablante...",

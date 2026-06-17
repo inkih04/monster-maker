@@ -183,3 +183,85 @@ TEST_F(InputManagerTest, EdgeCase_UntrackedKey_ShouldOnlyUseKeyDown) {
 
     EXPECT_FALSE(input.isKeyPressed(GLFW_KEY_F1));
 }
+
+TEST_F(InputManagerTest, Axis2D_NoKeysPressed_ShouldReturnZero) {
+    auto& input = InputManager::getInstance();
+
+    mockWindow->setKeyState(GLFW_KEY_W, GLFW_RELEASE);
+    mockWindow->setKeyState(GLFW_KEY_S, GLFW_RELEASE);
+    mockWindow->setKeyState(GLFW_KEY_A, GLFW_RELEASE);
+    mockWindow->setKeyState(GLFW_KEY_D, GLFW_RELEASE);
+
+    glm::vec2 axis = input.getAxis2D(GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, false);
+
+    EXPECT_FLOAT_EQ(axis.x, 0.0f);
+    EXPECT_FLOAT_EQ(axis.y, 0.0f);
+}
+
+TEST_F(InputManagerTest, Axis2D_UpKey_ShouldReturnNegativeY) {
+    auto& input = InputManager::getInstance();
+
+    mockWindow->setKeyState(GLFW_KEY_W, GLFW_PRESS);
+
+    glm::vec2 axis = input.getAxis2D(GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, false);
+
+    EXPECT_FLOAT_EQ(axis.x, 0.0f);
+    EXPECT_FLOAT_EQ(axis.y, -1.0f);
+}
+
+TEST_F(InputManagerTest, Axis2D_DownKey_ShouldReturnPositiveY) {
+    auto& input = InputManager::getInstance();
+
+    mockWindow->setKeyState(GLFW_KEY_S, GLFW_PRESS);
+
+    glm::vec2 axis = input.getAxis2D(GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, false);
+
+    EXPECT_FLOAT_EQ(axis.x, 0.0f);
+    EXPECT_FLOAT_EQ(axis.y, 1.0f);
+}
+
+TEST_F(InputManagerTest, Axis2D_LeftKey_ShouldReturnNegativeX) {
+    auto& input = InputManager::getInstance();
+
+    mockWindow->setKeyState(GLFW_KEY_A, GLFW_PRESS);
+
+    glm::vec2 axis = input.getAxis2D(GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, false);
+
+    EXPECT_FLOAT_EQ(axis.x, -1.0f);
+    EXPECT_FLOAT_EQ(axis.y, 0.0f);
+}
+
+TEST_F(InputManagerTest, Axis2D_RightKey_ShouldReturnPositiveX) {
+    auto& input = InputManager::getInstance();
+
+    mockWindow->setKeyState(GLFW_KEY_D, GLFW_PRESS);
+
+    glm::vec2 axis = input.getAxis2D(GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, false);
+
+    EXPECT_FLOAT_EQ(axis.x, 1.0f);
+    EXPECT_FLOAT_EQ(axis.y, 0.0f);
+}
+
+TEST_F(InputManagerTest, Axis2D_OppositeVertical_ShouldCancel) {
+    auto& input = InputManager::getInstance();
+
+    mockWindow->setKeyState(GLFW_KEY_W, GLFW_PRESS);
+    mockWindow->setKeyState(GLFW_KEY_S, GLFW_PRESS);
+
+    glm::vec2 axis = input.getAxis2D(GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, false);
+
+    EXPECT_FLOAT_EQ(axis.x, 0.0f);
+    EXPECT_FLOAT_EQ(axis.y, 0.0f);
+}
+
+TEST_F(InputManagerTest, Axis2D_OppositeHorizontal_ShouldCancel) {
+    auto& input = InputManager::getInstance();
+
+    mockWindow->setKeyState(GLFW_KEY_A, GLFW_PRESS);
+    mockWindow->setKeyState(GLFW_KEY_D, GLFW_PRESS);
+
+    glm::vec2 axis = input.getAxis2D(GLFW_KEY_W, GLFW_KEY_S, GLFW_KEY_A, GLFW_KEY_D, false);
+
+    EXPECT_FLOAT_EQ(axis.x, 0.0f);
+    EXPECT_FLOAT_EQ(axis.y, 0.0f);
+}

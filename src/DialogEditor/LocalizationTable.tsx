@@ -310,7 +310,7 @@ export const LocalizationTable: React.FC = () => {
 	if (isLoading) {
 		return (
 			<div className="edtable--table-wrapper edtable--loading">
-				<span>{t('localizationTable.loading', 'Cargando traducciones...')}</span>
+				<span>{t('localizationTable.loadingTable', 'Cargando traducciones...')}</span>
 			</div>
 		);
 	}

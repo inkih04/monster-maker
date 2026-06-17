@@ -1,4 +1,5 @@
 import './Project.css';
+import { Trash } from 'iconoir-react';
 
 interface ProjectProps {
 	index: number;
@@ -6,6 +7,7 @@ interface ProjectProps {
 	path: string;
 	color?: string;
 	onClick?: () => void;
+	onDelete?: (e: React.MouseEvent) => void;
 }
 
 function Project(props: Readonly<ProjectProps>) {
@@ -14,6 +16,11 @@ function Project(props: Readonly<ProjectProps>) {
 		if (trimmed.length === 0) return '';
 		if (trimmed.length === 1) return trimmed.toUpperCase();
 		return trimmed.substring(0, 2).toUpperCase();
+	};
+
+	const handleDelete = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		props.onDelete?.(e);
 	};
 
 	return (
@@ -25,6 +32,14 @@ function Project(props: Readonly<ProjectProps>) {
 				<span className="project-title"> {props.name} </span>
 				<span className="project-path"> {props.path} </span>
 			</div>
+			<button
+				className="project-delete-btn"
+				onClick={handleDelete}
+				tabIndex={-1}
+				aria-label="Delete project"
+			>
+				<Trash />
+			</button>
 		</button>
 	);
 }

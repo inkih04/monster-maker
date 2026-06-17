@@ -1,0 +1,56 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+  pull_request:
+
+jobs:
+  test-editor:
+    name: Test Editor (Electron)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Editor Dependencies
+        run: npm install
+
+      - name: Run Vitest Tests
+        run: npm run test
+
+  test-engine:
+    name: Test Engine (C++)
+    runs-on: ubuntu-latest
+    env:
+      VCPKG_ROOT: /usr/local/share/vcpkg
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies (Linux)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake pkg-config \
+          libx11-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev \
+          libgl1-mesa-dev libglu1-mesa-dev libfreetype-dev
+
+      - name: Configure CMake
+        working-directory: ./engine
+        run: >
+          cmake -B build -S . 
+          -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" 
+          -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Unit Tests
+        working-directory: ./engine
+        run: cmake --build build --target UnitTests -j 4
+
+      - name: Run Unit Tests
+        working-directory: ./engine/build
+        run: ctest --output-on-failure

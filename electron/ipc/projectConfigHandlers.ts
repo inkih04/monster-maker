@@ -33,7 +33,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-	ipcMain.handle('config:open', async (_event, pd: ProjectData, defaultTileSize: number) => {
+	ipcMain.handle('config:open', async (_event, pd: ProjectData) => {
 		try {
 			const directoryHasBeenOpened: boolean = configManager.openProjectDirectory(pd);
 			if (directoryHasBeenOpened) {
@@ -178,7 +178,7 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	});
 
-	ipcMain.handle('validate-project-path', async (event, projectData: ProjectData) => {
+	ipcMain.handle('validate-project-path', async (_event, projectData: ProjectData) => {
 		return configManager.validateProjectPath(projectData);
 	});
 
@@ -396,6 +396,25 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 		}
 	);
 
+	ipcMain.handle('config:compressAllMaps', async (_event, pd: ProjectData) => {
+		try {
+			return await configManager.compressAllMaps(pd);
+		} catch (error) {
+			return { success: false, count: 0, error: String(error) };
+		}
+	});
+
+	ipcMain.handle('config:decompressAllMaps', async (_event, pd: ProjectData) => {
+		try {
+			return await configManager.decompressAllMaps(pd);
+		} catch (error) {
+			return { success: false, count: 0, error: String(error) };
+		}
+	});
+	ipcMain.handle('config:sendEngineCommand', (_event, command: 'PAUSE' | 'RESUME') =>
+		configManager.sendEngineCommand(command)
+	);
+
 	ipcMain.handle('config:importLocalFile', async () => {
 		try {
 			const result = await dialog.showOpenDialog({
@@ -411,6 +430,25 @@ export function setupProjectConfigHandlers(mainWindow: BrowserWindow): void {
 			return { success: true, content };
 		} catch (error) {
 			return { success: false, error: String(error) };
+		}
+	});
+
+	ipcMain.handle('config:saveLanguage', (_event, lng: string) => {
+		try {
+			configManager.saveLanguage(lng);
+			return { success: true, error: '' };
+		} catch (error) {
+			console.error('Error saving language:', error);
+			return { success: false, error: 'Error saving language:' };
+		}
+	});
+
+	ipcMain.handle('config:getLanguage', () => {
+		try {
+			return configManager.getLanguage();
+		} catch (error) {
+			console.error('Error getting language:', error);
+			return undefined;
 		}
 	});
 }

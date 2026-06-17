@@ -7,6 +7,7 @@ import { useTileSetStore } from '../../Tileset/TileSetGState';
 import { useEngineStore } from '../../ToolBar/EngineGState';
 import { useCodeEditorStore } from '../../CodeEditor/CodeEditorGState';
 import { scriptContent } from '../../Files/defaultContentFiles/scripts/scriptDefaultContent';
+import { useNotify } from '../components/toast/ToastContext';
 
 export function FileListener() {
 	const openFileCreation = useFileToBeCreatedStore((state) => state.setOpen);
@@ -17,7 +18,7 @@ export function FileListener() {
 	const currentProject = useProjectStore((state) => state.currentProject);
 	const exportToEngineFormat = useMapStore((state) => state.exportToEngineFormat);
 	const setIsDirty = useMapStore((state) => state.setIsDirty);
-
+	const { notify } = useNotify();
 	const resetMap = useMapStore((state) => state.reset);
 	const resetProject = useProjectStore((state) => state.reset);
 	const resetFolder = useFolderStore((state) => state.reset);
@@ -45,6 +46,25 @@ export function FileListener() {
 
 		return cleanup;
 	}, [exportToEngineFormat]);
+
+	useEffect(() => {
+		const unsubCompress = window.api.onCompressMapsRequest(async () => {
+			if (!currentProject) return;
+			const result = await window.api.compressAllMaps(currentProject);
+			notify('Maps', `${result.count} maps compressed`, result.success ? 'success' : 'error');
+		});
+
+		const unsubDecompress = window.api.onDecompressMapsRequest(async () => {
+			if (!currentProject) return;
+			const result = await window.api.decompressAllMaps(currentProject);
+			notify('Maps', `${result.count} maps decompressed`, result.success ? 'success' : 'error');
+		});
+
+		return () => {
+			unsubCompress();
+			unsubDecompress();
+		};
+	}, [currentProject, notify]);
 
 	useEffect(() => {
 		const cleanupCreate = window.api.onCreateNewFile((fileType) => {
@@ -81,6 +101,13 @@ export function FileListener() {
 					extension = '.lua';
 					defaultContent = scriptContent;
 					break;
+
+				case 'data':
+					extension = '.data';
+					defaultContent = `{
+					
+}`;
+					break;
 				case 'dialog':
 					extension = '.json';
 					defaultContent = `{
@@ -116,7 +143,7 @@ export function FileListener() {
 			if (editorMode === 'code') {
 				const codeEditorMode = useEngineStore.getState().codeEditorMode;
 
-				if (codeEditorMode === 'single') {
+				if (codeEditorMode === 'single' || codeEditorMode === 'json') {
 					const { openFile } = useCodeEditorStore.getState();
 					if (!openFile || !currentProject) return;
 					await window.api.saveFile(openFile.relativePath, openFile.content, currentProject);

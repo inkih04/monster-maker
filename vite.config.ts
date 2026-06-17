@@ -1,29 +1,38 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import path from 'node:path';
 import electron from 'vite-plugin-electron/simple';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-	plugins: [
-		react(),
-		electron({
-			main: {
-				entry: 'electron/main.ts',
-			},
-			preload: {
-				input: path.join(__dirname, 'electron/preload.ts'),
-			},
-			renderer: process.env.NODE_ENV === 'test' ? undefined : {},
-		}),
-	],
-	build: {
-		rollupOptions: {
-			output: {
-				manualChunks: {
-					monaco: ['monaco-editor'],
-				},
-			},
-
-		},
-	},
+    base: './',
+    plugins: [
+        react(),
+        electron({
+            main: {
+                entry: 'electron/main.ts',
+            },
+            preload: {
+                input: path.join(__dirname, 'electron/preload.ts'),
+            },
+            renderer: process.env.NODE_ENV === 'test' ? undefined : {},
+        }),
+    ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('monaco-editor')) {
+                        return 'monaco';
+                    }
+                },
+            },
+        },
+    },
+    test: {
+        globals: true,
+        environment: 'jsdom',
+        setupFiles: ['./src/setupTests.ts'],
+        include: ['src/**/*.{test,spec}.{ts,tsx}'],
+        exclude: ['electron/**'],
+    },
 });

@@ -3,6 +3,7 @@
 **Editor de Fangames + Motor 2D en C++**
 
 MonsterMaker es una herramienta completa de creación de fangames 2D estilo Pokémon, que combina un editor visual moderno construido con Electron y React, con un potente motor de juego desarrollado en C++ y OpenGL.
+Creado como parte de mi trabajo de final de grado (TFG) en la Facultad de Ingieneria de Barcelona (UPC FIB)
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
@@ -14,6 +15,7 @@ MonsterMaker es una herramienta completa de creación de fangames 2D estilo Pok�
 
 ## Tabla de Contenidos
 
+- [Capturas de Pantalla](#-capturas-de-pantalla-interface)
 - [Descripción](#descripción)
 - [Características Principales](#características-principales)
 - [Arquitectura del Proyecto](#arquitectura-del-proyecto)
@@ -27,6 +29,35 @@ MonsterMaker es una herramienta completa de creación de fangames 2D estilo Pok�
 - [Testing](#testing)
 - [Contribuir](#contribuir)
 - [Licencia](#licencia)
+
+---
+
+## 📸 Capturas de Pantalla (Interface)
+
+<details>
+  <summary><b>Haz clic aquí para desplegar las imágenes del editor 💻</b></summary>
+  <br>
+
+### Vista del Editor de Mapas
+Representación del espacio de trabajo visual donde se gestionan las capas y el diseño de niveles del juego.
+<img src="img/MonsterMaker.png" alt="MonsterMaker Editor de Mapas" width="100%">
+
+### Gestor de UI
+Módulo encargado de la creación de elementos de UI.
+<img src="img/UI.png" alt="Gestor de UI" width="100%">
+
+### Gestor de Locales
+Módulo encargado de gestionar importar y exportar locales
+<img src="img/Locales.png" alt="Editor de Locales" width="100%">
+
+### Gestor de Dialogos
+Módulo encargado de gestionar y crear diálogos.
+<img src="img/Dialog.png" alt="Editor de diálogos" width="100%">
+
+### Modo Debug
+Modo debug junto con su terminal al incializar el motor permite ver colisiones y triggers 
+<img src="img/Engine.png" alt="Editor de diálogos" width="100%">
+</details>
 
 ---
 

@@ -11,6 +11,7 @@ import {
 	Bug,
 	CodeBrackets,
 	Codepen,
+	Pause,
 	ChatBubbleTranslate,
 } from 'iconoir-react';
 import './ToolBar.css';
@@ -35,6 +36,9 @@ function ToolBar() {
 	const isTranslateMode = useEngineStore((state) => state.translate);
 	const changeTranslateMode = useEngineStore((state) => state.changeTranslate);
 	const editorMode = useEngineStore((state) => state.editorMode);
+
+	const isPaused = useEngineStore((state) => state.paused);
+	const changePaused = useEngineStore((state) => state.chagePaused);
 
 	const codeEditorMode = useEngineStore((state) => state.codeEditorMode);
 	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
@@ -103,6 +107,15 @@ function ToolBar() {
 			!isTranslateMode &&
 			(editorMode === 'map' || (editorMode === 'code' && codeEditorMode === 'dialog'))
 		);
+	};
+
+	const doPause = async () => {
+		changePaused(!isPaused);
+		if (isPaused) {
+			await window.api.sendEngineCommand('RESUME');
+		} else {
+			await window.api.sendEngineCommand('PAUSE');
+		}
 	};
 
 	const shouldDisablePlay = (): boolean => {
@@ -258,13 +271,16 @@ function ToolBar() {
 			<div className="action-buttons">
 				{runMode === 'debug' && (
 					<>
-						<button
-							onClick={handlePlay}
-							className={`tool-button ${shouldDisablePlay() ? 'disabled' : ''}`}
-							disabled={shouldDisablePlay()}
-						>
-							<Play className="play-button" />
-						</button>
+						{isPaused && (
+							<button onClick={doPause} className={`tool-button`}>
+								<Play className="play-button" />
+							</button>
+						)}
+						{!isPaused && (
+							<button onClick={doPause} className={`tool-button`}>
+								<Pause className="pause-button2" />
+							</button>
+						)}
 						<button onClick={handleStop} className="tool-button">
 							<Square className="pause-button" />
 						</button>

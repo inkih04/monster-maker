@@ -31,7 +31,6 @@ export function useFileActions() {
 	const changeEditorMode = useEngineStore((state) => state.changeEditorMode);
 	const changeCodeEditorMode = useEngineStore((state) => state.changeCodeEditorMode);
 
-	const isTranslateMode = useEngineStore((state) => state.translate);
 	const changeTranslateMode = useEngineStore((state) => state.changeTranslate);
 
 	const { notify } = useNotify();
@@ -95,6 +94,14 @@ export function useFileActions() {
 			}
 			return;
 		}
+		if (file.type === 'data') {
+			if (isCodeDirty) {
+				setShowSaveConfirm(true);
+			} else {
+				handleOpenData(file);
+			}
+			return;
+		}
 
 		if (file.type === 'dialog') {
 			handleOpenDialog(file);
@@ -136,6 +143,24 @@ export function useFileActions() {
 
 	const handleOpenScript = async (file: FileItem) => {
 		changeCodeEditorMode('single');
+		changeEditorMode('code');
+		changeTranslateMode(false);
+		if (!selectedFolder?.path || !currentProject) return;
+
+		useCodeEditorStore.getState().setIsLoadingFile(true);
+
+		const result = await window.api.getFile(file.path, selectedFolder.path, currentProject);
+		const relativePath = await window.api.pathUnion(selectedFolder.path, file.path);
+		if (result.success && result.content) {
+			useCodeEditorStore.getState().setOpenFile(relativePath, result.content.content);
+		} else {
+			useCodeEditorStore.getState().setIsLoadingFile(false);
+		}
+		return;
+	};
+
+	const handleOpenData = async (file: FileItem) => {
+		changeCodeEditorMode('json');
 		changeEditorMode('code');
 		changeTranslateMode(false);
 		if (!selectedFolder?.path || !currentProject) return;

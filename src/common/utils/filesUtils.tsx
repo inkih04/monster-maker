@@ -7,7 +7,8 @@ import musicIcon from '../../assets/img/music.png';
 import undefined from '../../assets/img/Fichero.png';
 import rmlui from '../../assets/img/Rmlui.png';
 import fonts from '../../assets/img/fonts.png';
-import dialog from '../../assets/img/Dialog.png';
+import dialog from '../../assets/img/Dialog.png'
+import bd from '../../assets/img/bd.png';
 
 export function getFileIcon(type: string) {
 	switch (type) {
@@ -30,7 +31,9 @@ export function getFileIcon(type: string) {
 		case 'dialog':
 			return <img src={dialog} alt="dialog" className="files--icon-img" />;
 		case 'local':
-			return <img src={dialog} alt="dialog" className="files--icon-img" />;
+			return <img src={dialog} alt="local" className="files--icon-img" />;
+		case 'data':
+			return <img src={bd} alt="local" className="files--icon-img" />;
 
 		default:
 			return <img src={undefined} alt="File" className="files--icon-img" />;
@@ -50,7 +53,8 @@ export function getFileType(
 	| 'font'
 	| 'undefined'
 	| 'dialog'
-	| 'local' {
+	| 'local'
+	| 'data' {
 	const extension = fileName.split('.').pop()?.toLowerCase();
 
 	if (extension === 'lua') return 'script';
@@ -65,6 +69,8 @@ export function getFileType(
 	if (extension === 'ui') return 'ui';
 	if (extension === 'ttf' || extension === 'otf' || extension === 'woff' || extension === 'wolff')
 		return 'font';
+
+	if (extension === 'data') return 'data';
 
 	return 'undefined';
 }

@@ -3,7 +3,7 @@
 	flex-direction: row;
 	width: 20vw;
 	gap: 20px;
-	box-shadow: 0 0px 10px rgba(0, 0, 0, 0.25);
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
 	background-color: var(--color-3);
 	border-radius: var(--radius);
 	transition: background-color 0.2s ease;
@@ -14,6 +14,7 @@
 	cursor: pointer;
 	text-align: left;
 	font: inherit;
+	position: relative;
 }
 
 .project-container:hover {
@@ -25,9 +26,9 @@
 }
 
 .project-color {
-	width: 60px;          
-	height: 100%;         
-	min-width: 40px;      
+	width: 60px;
+	height: 100%;
+	min-width: 40px;
 
 	display: flex;
 	align-items: center;
@@ -40,7 +41,6 @@
 	transition: filter 0.2s ease;
 	border-radius: var(--radius);
 }
-
 
 .project-content {
 	margin-top: 5px;
@@ -70,4 +70,40 @@
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	width: 100%;
+}
+
+.project-delete-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+
+	width: 32px;
+	height: 32px;
+	margin-right: 10px;
+	align-self: center;
+
+	background: transparent;
+	border: none;
+	border-radius: var(--radius, 4px);
+	cursor: pointer;
+	padding: 6px;
+	color: currentColor;
+
+	opacity: 0;
+	pointer-events: none;
+	transition:
+		opacity 0.15s ease,
+		background-color 0.15s ease,
+		color 0.15s ease;
+}
+
+.project-container:hover .project-delete-btn {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.project-delete-btn:hover {
+	background-color: rgba(220, 50, 50, 0.15);
+	color: #e05252;
 }

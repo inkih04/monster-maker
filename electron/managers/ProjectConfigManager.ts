@@ -4,7 +4,7 @@ import { ProjectData } from '../../global/types/projectData';
 import { ProjectFile } from '../../global/types/projectFile';
 import { log } from 'console';
 import FolderNode from '../../global/types/folderNode';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, app } from 'electron';
 import { FileSystemWatcher } from './FileSystemWatcher';
 import { FileSystemService } from './FileSystemService';
 import { spawn } from 'child_process';
@@ -197,14 +197,64 @@ export class ProjectConfigManager {
 			if (!this.fileSystemService.exists(dirPath)) {
 				return { success: false, error: `Directory does not exist: ${dirPath}` };
 			}
+			const exists = this.fileSystemService.exists(completePath);
+			const shouldCompress = exists && this.fileSystemService.isCompressed(completePath);
+			let success = false;
+			if (shouldCompress) {
+				success = this.fileSystemService.saveCompressedFile(completePath, content);
+			} else {
+				success = this.fileSystemService.saveFile(completePath, content);
+			}
 
-			if (this.fileSystemService.saveFile(completePath, content)) {
+			if (success) {
 				return { success: true };
 			} else {
 				return { success: false };
 			}
 		} catch (error) {
 			return { success: false, error: String(error) };
+		}
+	}
+
+	public async compressAllMaps(
+		pd: ProjectData
+	): Promise<{ success: boolean; count: number; error?: string }> {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const mapFiles = this.fileSystemService.findFilesByExtension(projectPath, '.map');
+			let count = 0;
+
+			for (const filePath of mapFiles) {
+				if (this.fileSystemService.isCompressed(filePath)) continue;
+				const content = this.fileSystemService.readFile(filePath);
+				const ok = this.fileSystemService.saveCompressedFile(filePath, content);
+				if (ok) count++;
+			}
+
+			return { success: true, count };
+		} catch (error) {
+			return { success: false, count: 0, error: String(error) };
+		}
+	}
+
+	public async decompressAllMaps(
+		pd: ProjectData
+	): Promise<{ success: boolean; count: number; error?: string }> {
+		try {
+			const projectPath = this.fileSystemService.getProjectPath(pd);
+			const mapFiles = this.fileSystemService.findFilesByExtension(projectPath, '.map');
+			let count = 0;
+
+			for (const filePath of mapFiles) {
+				if (!this.fileSystemService.isCompressed(filePath)) continue;
+				const content = this.fileSystemService.readCompressedFile(filePath);
+				const ok = this.fileSystemService.saveFile(filePath, content);
+				if (ok) count++;
+			}
+
+			return { success: true, count };
+		} catch (error) {
+			return { success: false, count: 0, error: String(error) };
 		}
 	}
 
@@ -253,24 +303,21 @@ export class ProjectConfigManager {
 			const projectPath = this.fileSystemService.getProjectPath(pd);
 			const completePath = path.join(projectPath, path.join(folderPath, fileRelativePath));
 
-			console.log(completePath);
-
 			if (!this.fileSystemService.exists(completePath)) {
-				console.log(`File does not exist: ${completePath}`);
 				return { success: false, error: 'File does not exist' };
 			}
 
 			if (this.fileSystemService.isDirectory(completePath)) {
-				console.log(`Path is a directory, not a file: ${completePath}`);
 				return { success: false, error: 'Path is a directory' };
 			}
 
-			const cont = this.fileSystemService.readFile(completePath);
-			const relativeP = path.join(folderPath, fileRelativePath);
+			const content = this.fileSystemService.isCompressed(completePath)
+				? this.fileSystemService.readCompressedFile(completePath)
+				: this.fileSystemService.readFile(completePath);
 
-			return { success: true, content: { relativePath: relativeP, content: cont } };
+			const relativeP = path.join(folderPath, fileRelativePath);
+			return { success: true, content: { relativePath: relativeP, content: content } };
 		} catch (error) {
-			console.log(`Error getting file: ${error}`);
 			return { success: false, error: String(error) };
 		}
 	}
@@ -365,12 +412,11 @@ export class ProjectConfigManager {
 	}
 
 	private getConfigPath(): string {
-		if (process.env.NODE_ENV === 'development') {
+		if (!app.isPackaged) {
 			return path.join(process.cwd(), 'src', 'assets', 'projects.json');
 		}
-		return path.join(process.resourcesPath, 'assets', 'projects.json');
+		return path.join(app.getPath('userData'), 'projects.json');
 	}
-
 	public getEngineSourcePath(): string {
 		if (process.env.NODE_ENV === 'development') {
 			return path.join(process.cwd(), 'engine', 'exe');
@@ -439,7 +485,8 @@ export class ProjectConfigManager {
 	}
 
 	public removeProject(pd: ProjectData): void {
-		this.config.projects = this.config.projects.filter((p) => p.path !== pd.path);
+		console.log(pd);
+		this.config.projects = this.config.projects.filter((p) => p.name !== pd.name);
 		this.saveProjectConfiguration();
 	}
 
@@ -458,6 +505,15 @@ export class ProjectConfigManager {
 		} catch (error) {
 			log(error + ' (fail while adding the project)');
 		}
+	}
+
+	public saveLanguage(lng: string): void {
+		this.config.language = lng;
+		this.saveProjectConfiguration();
+	}
+
+	public getLanguage(): string | undefined {
+		return this.config.language;
 	}
 
 	public openProjectDirectory(pd: ProjectData): boolean {
@@ -694,7 +750,7 @@ export class ProjectConfigManager {
 			const child = spawn(executablePath, args, {
 				cwd: projectPath,
 				detached: false,
-				stdio: ['ignore', 'pipe', 'pipe'],
+				stdio: ['pipe', 'pipe', 'pipe'],
 			});
 
 			this.engineProcess = child;
@@ -717,6 +773,21 @@ export class ProjectConfigManager {
 		} catch (error) {
 			console.error(`Error running engine: ${error}`);
 			this.engineProcess = null;
+			return { success: false, error: String(error) };
+		}
+	}
+
+	public sendEngineCommand(command: 'PAUSE' | 'RESUME'): { success: boolean; error?: string } {
+		if (!this.engineProcess || this.engineProcess.killed) {
+			return { success: false, error: 'No engine process is running' };
+		}
+		if (!this.engineProcess.stdin) {
+			return { success: false, error: 'Engine stdin is not available' };
+		}
+		try {
+			this.engineProcess.stdin.write(command + '\n');
+			return { success: true };
+		} catch (error) {
 			return { success: false, error: String(error) };
 		}
 	}

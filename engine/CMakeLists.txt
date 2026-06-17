@@ -55,6 +55,7 @@ find_package(lua CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(RmlUi CONFIG REQUIRED)
+find_package(ZLIB REQUIRED)
 
 if(APPLE)
     find_library(OPENGL_FRAMEWORK OpenGL)
@@ -108,6 +109,8 @@ add_executable(MonsterMakerEngine ${GAME_SOURCES}
         src/entities/service/BlockEntityComponentByTag.cpp
         include/service/BlockEntityComponentByTag.h
         include/components/PersistenceComponent.h
+        include/EngineCommandListener.h
+        src/core/EngineCommandListener.cpp
 )
 
 add_custom_command(TARGET MonsterMakerEngine POST_BUILD
@@ -194,7 +197,6 @@ add_executable(UnitTests
         tests/unitary/CollisionServiceTest.cpp
         tests/unitary/BorderMapServiceTest.cpp
         src/entities/service/BordersMapService.cpp
-        tests/unitary/SesionManagerTest.cpp
 )
 
 target_link_libraries(UnitTests

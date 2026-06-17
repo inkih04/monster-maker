@@ -11,6 +11,8 @@ declare global {
 	interface Window {
 		api: {
 			getProjects: () => Promise<ProjectData[]>;
+			getLanguage: () => Promise<string>;
+			saveLanguage: (lng: string) => Promise<{ success: boolean; error?: string }>;
 			addProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			removeProject: (pd: ProjectData) => Promise<{ success: boolean; error?: string }>;
 			selectFolder: (
@@ -92,8 +94,17 @@ declare global {
 			) => Promise<{ success: boolean; error?: string }>;
 
 			onCreateNewFile: (
-				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog') => void
+				callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog' | 'data') => void
 			) => () => void;
+
+			onCompressMapsRequest: (callback: () => void) => () => void;
+			onDecompressMapsRequest: (callback: () => void) => () => void;
+			compressAllMaps: (
+				pd: ProjectData
+			) => Promise<{ success: boolean; count: number; error?: string }>;
+			decompressAllMaps: (
+				pd: ProjectData
+			) => Promise<{ success: boolean; count: number; error?: string }>;
 			onAddNewFile: (callback: () => void) => () => void;
 			onCloseProject: (callback: () => void) => () => void;
 			onSaveFile: (callback: () => void) => () => void;
@@ -160,6 +171,9 @@ declare global {
 				content: string
 			) => Promise<{ success: boolean; error?: string }>;
 			importLocalFile: () => Promise<{ success: boolean; content?: string; error?: string }>;
+			sendEngineCommand: (
+				command: 'PAUSE' | 'RESUME'
+			) => Promise<{ success: boolean; error?: string }>;
 		};
 	}
 }

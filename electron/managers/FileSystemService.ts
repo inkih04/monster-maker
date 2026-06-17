@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { ProjectData } from '../../global/types/projectData';
+import * as zlib from 'zlib';
 import FolderNode from '../../global/types/folderNode';
 import { log } from 'console';
 
@@ -24,6 +25,9 @@ export class FileSystemService {
 	public validateRequiredDirectories(basePath: string, requiredPaths: string[]): boolean {
 		return requiredPaths.every((relativePath) => {
 			const fullPath = path.join(basePath, relativePath);
+			if (!(this.exists(fullPath) && this.isDirectory(fullPath))) {
+				console.error(fullPath);
+			}
 			return this.exists(fullPath) && this.isDirectory(fullPath);
 		});
 	}
@@ -59,6 +63,7 @@ export class FileSystemService {
 		return [
 			base,
 			path.join(base, 'ui'),
+			path.join(base, 'data'),
 			path.join(base, 'fonts'),
 			path.join(base, 'dialogues'),
 			path.join(base, '.locals'),
@@ -93,6 +98,65 @@ export class FileSystemService {
 			log(error);
 			return false;
 		}
+	}
+
+	public isCompressed(filePath: string): boolean {
+		try {
+			const buf = Buffer.alloc(2);
+			const fd = fs.openSync(filePath, 'r');
+			fs.readSync(fd, buf, 0, 2, 0);
+			fs.closeSync(fd);
+			return buf[0] === 0x78;
+		} catch (error) {
+			console.error('Error comprobando compresión en:', filePath, error);
+			return false;
+		}
+	}
+
+	public findFilesByExtension(basePath: string, ext: string): string[] {
+		const results: string[] = [];
+
+		const walk = (dir: string) => {
+			const items = fs.readdirSync(dir);
+			for (const item of items) {
+				const fullPath = path.join(dir, item);
+				if (this.isDirectory(fullPath)) {
+					walk(fullPath);
+				} else if (path.extname(item).toLowerCase() === ext) {
+					results.push(fullPath);
+				}
+			}
+		};
+
+		if (this.exists(basePath)) walk(basePath);
+		return results;
+	}
+
+	public saveCompressedFile(filePath: string, content: string): boolean {
+		try {
+			if (this.isDirectory(filePath)) return false;
+
+			const parentDir = path.dirname(filePath);
+			if (!this.exists(parentDir)) {
+				fs.mkdirSync(parentDir, { recursive: true });
+			}
+
+			const compressed = zlib.deflateSync(Buffer.from(content, 'utf-8'));
+			fs.writeFileSync(filePath, compressed);
+			return true;
+		} catch (error) {
+			log(error);
+			return false;
+		}
+	}
+
+	public readCompressedFile(filePath: string): string {
+		const raw = fs.readFileSync(filePath);
+		const isCompressed = raw.length >= 2 && raw[0] === 0x78;
+		if (isCompressed) {
+			return zlib.inflateSync(raw).toString('utf-8');
+		}
+		return raw.toString('utf-8');
 	}
 
 	public deleteFile(filePath: string): boolean {

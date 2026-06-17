@@ -48,7 +48,8 @@ void ScriptBindings::registerDataManager(sol::state& lua, DataManager& dataManag
     lua.new_usertype<DataManager>("DataManager",
         sol::no_constructor,
         "get", &DataManager::get,
-        "has", &DataManager::has
+        "has", &DataManager::has,
+        "load", &DataManager::loadFromFile
     );
     lua["Data"] = std::ref(dataManager);
 }
@@ -337,6 +338,7 @@ void ScriptBindings::registerEntity(sol::state& lua) {
     lua.new_usertype<Entity>("Entity",
         "hasComponent", &Entity::hasComponent,
         "getId", &Entity::getId,
+        "getTag", &Entity::getEntityTag,
         "disable", &Entity::disableEntity,
         "getPos", [](Entity& e) -> PositionComponent* {
             auto* comp = e.getComponent(ComponentsType::POSITION);
@@ -516,7 +518,15 @@ void ScriptBindings::registerEntityManager(sol::state& lua) {
                 return;
             }
             em.registerCollisionEntity(entity);
-        }
+        },
+
+        "hasLineOfSight", [](EntityManager& em, Entity* entity, Direction direction,sol::optional<int> maxRange) -> Entity*{
+                if (!entity) {
+                    std::cout << "[ENGINE][WARNING] World:hasLineOfSight called with nil entity." << std::endl;
+                    return nullptr;
+                }
+                return em.getCollisionService()->getEntityInLineOfSight(entity, direction, maxRange.value_or(10));
+            }
     );
 }
 

@@ -185,25 +185,25 @@ classDiagram
     %% -------------------------------------------------------
     %% Relaciones UI Core
     %% -------------------------------------------------------
-    UiManager "1" *-- "*" UiDocument       : owns
+    UiManager "1" *-- "*" UiDocument
     UiManager *-- RmlRenderInterface
     UiManager *-- RmlSystemInterface
     UiManager *-- RmlFileInterface
-    UiManager ..> UiDocumentLoader         : uses
-    UiDocumentLoader ..> UiDocumentDef     : creates
-    UiDocument ..> ScriptEngine            : uses (getState)
-    UiDocument ..> UiDocumentDef           : built from
+    UiManager ..> UiDocumentLoader
+    UiDocumentLoader ..> UiDocumentDef
+    UiDocument ..> ScriptEngine
+    UiDocument ..> UiDocumentDef
 
     %% -------------------------------------------------------
     %% Relaciones Dialog System
     %% -------------------------------------------------------
-    DialogManager *-- ActiveChain          : tracks state
-    DialogManager "1" o-- "*" DialogFile   : registered files
-    DialogManager ..> UiManager            : openDocument / getDocument / closeDocument
-    DialogManager ..> LocalizationManager  : get(key)
+    DialogManager *-- ActiveChain
+    DialogManager "1" o-- "*" DialogFile
+    DialogManager ..> UiManager
+    DialogManager ..> LocalizationManager
     ActiveChain *-- DialogChain
-    DialogFile "1" *-- "*" DialogChain     : contains
+    DialogFile "1" *-- "*" DialogChain
     DialogChain "1" *-- "*" DialogPage
     DialogPage "1" *-- "*" DialogChoice
-    DialogLoader ..> DialogFile            : creates
+    DialogLoader ..> DialogFile
 ```mermaid

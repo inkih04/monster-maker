@@ -129,6 +129,11 @@ function buildAppMenu() {
 						type: 'normal',
 						click: () => win?.webContents.send('create-new-file', 'dialog'),
 					},
+					{
+						label: 'Data',
+						type: 'normal',
+						click: () => win?.webContents.send('create-new-file', 'data'),
+					},
 				],
 			},
 			{
@@ -141,6 +146,17 @@ function buildAppMenu() {
 				type: 'normal',
 				accelerator: 'CmdOrCtrl+S',
 				click: () => win?.webContents.send('save-file'),
+			},
+			{ type: 'separator' },
+			{
+				label: t('menu.compressMaps'),
+				type: 'normal',
+				click: () => win?.webContents.send('compress-maps-request'),
+			},
+			{
+				label: t('menu.decompressMaps'),
+				type: 'normal',
+				click: () => win?.webContents.send('decompress-maps-request'),
 			},
 			{ type: 'separator' },
 			{
@@ -217,7 +233,8 @@ function createWindow() {
 	if (VITE_DEV_SERVER_URL) {
 		win.loadURL(VITE_DEV_SERVER_URL);
 	} else {
-		win.loadFile(path.join(RENDERER_DIST, 'index.html'));
+		const indexPath = path.join(RENDERER_DIST, 'index.html');
+		win.loadFile(indexPath).catch((err) => console.error('Error cargando index:', err));
 	}
 
 	setupProjectConfigHandlers(win);

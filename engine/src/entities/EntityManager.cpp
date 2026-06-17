@@ -5,7 +5,7 @@
 
 #include <algorithm>
 #include <cmath>
-
+#include <iostream>
 #include "ScriptComponet.h"
 #include "../../include/service/CollisionService.h"
 
@@ -28,6 +28,7 @@ Entity* EntityManager::createEntity() {
 Entity* EntityManager::createEntity(EntityTag tag, EntityLayer layer, std::string id) {
     auto entity = std::make_unique<Entity>(id);
     Entity* entityPtr = entity.get();
+    entity->addTag(tag);
     entity->setCollisionService(m_collisionService.get());
     entity->setInteractionService(m_interactionService.get());
     m_entities.push_back(std::move(entity));

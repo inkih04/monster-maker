@@ -46,6 +46,7 @@ class EntityManager {
         std::vector<Entity*> getEntitiesByComponent(ComponentsType type) const;
         BordersMapService* getBordersMapService() const { return m_bordersMapService.get(); }
         Entity* adoptEntity(std::unique_ptr<Entity> entity, EntityTag tag, EntityLayer layer);
+        CollisionService* getCollisionService() const { return m_collisionService.get(); }
 
         void registerCollisionEntity(Entity *entity);
 };

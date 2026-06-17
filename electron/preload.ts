@@ -53,14 +53,24 @@ contextBridge.exposeInMainWorld('api', {
 		ipcRenderer.send('show-file-context-menu', fileData),
 	showFileListContextMenu: () => ipcRenderer.send('show-filelist-context-menu'),
 	onCreateFileInline: (
-		callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog') => void
+		callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog' | 'data') => void
 	) => {
 		const subscription = (
 			_event: Electron.IpcRendererEvent,
-			fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog'
+			fileType: 'map' | 'prefab' | 'script' | 'ui' | 'dialog' | 'data'
 		) => callback(fileType);
 		ipcRenderer.on('create-file-inline', subscription);
 		return () => ipcRenderer.removeListener('create-file-inline', subscription);
+	},
+	compressAllMaps: (pd: ProjectData) => ipcRenderer.invoke('config:compressAllMaps', pd),
+	decompressAllMaps: (pd: ProjectData) => ipcRenderer.invoke('config:decompressAllMaps', pd),
+	onCompressMapsRequest: (callback: () => void) => {
+		ipcRenderer.on('compress-maps-request', callback);
+		return () => ipcRenderer.removeAllListeners('compress-maps-request');
+	},
+	onDecompressMapsRequest: (callback: () => void) => {
+		ipcRenderer.on('decompress-maps-request', callback);
+		return () => ipcRenderer.removeAllListeners('decompress-maps-request');
 	},
 	onFileAction: (
 		callback: (action: string, fileData: { name: string; path: string; type: string }) => void
@@ -94,10 +104,14 @@ contextBridge.exposeInMainWorld('api', {
 	saveFileCompletePath: (name: string, completePath: string, content: string) =>
 		ipcRenderer.invoke('config:saveFileCompletePath', name, completePath, content),
 
-	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script' | 'ui') => void) => {
+	saveLanguage: (lng: string) => ipcRenderer.invoke('config:saveLanguage', lng),
+
+	getLanguage: () => ipcRenderer.invoke('config:getLanguage'),
+
+	onCreateNewFile: (callback: (fileType: 'map' | 'prefab' | 'script' | 'ui' | 'data') => void) => {
 		const subscription = (
 			_event: Electron.IpcRendererEvent,
-			fileType: 'map' | 'prefab' | 'script' | 'ui'
+			fileType: 'map' | 'prefab' | 'script' | 'ui' | 'data'
 		) => callback(fileType);
 		ipcRenderer.on('create-new-file', subscription);
 		return () => ipcRenderer.removeListener('create-new-file', subscription);
@@ -191,4 +205,6 @@ contextBridge.exposeInMainWorld('api', {
 	saveLocalFile: (defaultFileName: string, content: string) =>
 		ipcRenderer.invoke('config:saveLocalFile', defaultFileName, content),
 	importLocalFile: () => ipcRenderer.invoke('config:importLocalFile'),
+	sendEngineCommand: (command: 'PAUSE' | 'RESUME') =>
+		ipcRenderer.invoke('config:sendEngineCommand', command),
 });

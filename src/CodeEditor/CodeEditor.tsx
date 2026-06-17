@@ -14,7 +14,7 @@ import './CodeEditor.css';
 
 loader.config({ monaco });
 
-export type CodeEditorLanguage = 'lua' | 'html' | 'css';
+export type CodeEditorLanguage = 'lua' | 'html' | 'css' | 'json';
 
 interface CodeEditorProps {
 	language: CodeEditorLanguage;
