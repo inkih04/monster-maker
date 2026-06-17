@@ -43,6 +43,7 @@
 			"map_dirty": "El mapa actual tiene cambios sin guardar. Guarda para ver los cambios en el motor.",
 			"success_debug": "Motor iniciado en modo DEBUG con el mapa: {{map}}, puedes usar control + c para ver colisiones",
 			"fail_start": "Error al iniciar el motor",
+			"success_play": "Iniciando motor",
 			"stop_success": "Motor detenido correctamente",
 			"texture_too_large": "Esta textura podría ser demasiado grande para Mac. Al: {{height}}px An: {{width}}px",
 			"error_title": "Error",

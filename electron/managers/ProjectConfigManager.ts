@@ -12,6 +12,7 @@ import { EngineLog, LogLevel } from '../../global/types/engineLog';
 import { EngineConfig, DEFAULT_ENGINE_CONFIG, GameConfig } from '../../global/types/engineConfig';
 import { TileSetConfig } from '../../global/types/tileSetConfig';
 import { AtlasService } from './atlasService';
+import * as fs from 'fs';
 
 const ENGINE_CONFIG_FILENAME = '.engineConfig.json';
 
@@ -740,6 +741,12 @@ export class ProjectConfigManager {
 
 			if (!this.fileSystemService.exists(executablePath)) {
 				return { success: false, error: `Executable not found: ${executablePath}` };
+			}
+
+			try {
+				fs.chmodSync(executablePath, '755');
+			} catch (chmodError) {
+					console.warn(`Could not set executable permissions on ${executablePath}:`, chmodError);
 			}
 
 			const args: string[] = [];
